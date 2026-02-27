@@ -1,0 +1,3 @@
+# Image/CV dependencies for Python 3.10+
+tensorflow>=2.13.0,<2.18.0
+pillow>=10.0.0,<11.0.0

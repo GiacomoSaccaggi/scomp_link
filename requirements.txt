@@ -1,0 +1,17 @@
+# Core dependencies - version-specific files in requirements/ directory
+# Install with: pip install -r requirements/requirements-py<version>.txt
+# Or use setup.py which auto-detects Python version: pip install .
+
+# For Python 3.7: pip install -r requirements/requirements-py37.txt
+# For Python 3.8: pip install -r requirements/requirements-py38.txt
+# For Python 3.9: pip install -r requirements/requirements-py39.txt
+# For Python 3.10: pip install -r requirements/requirements-py310.txt
+# For Python 3.11: pip install -r requirements/requirements-py311.txt
+# For Python 3.12: pip install -r requirements/requirements-py312.txt
+# For Python 3.13: pip install -r requirements/requirements-py313.txt
+
+# Optional dependencies:
+# Utils: pip install -r requirements/requirements-utils.txt
+# Dev/Testing: pip install -r requirements/requirements-dev.txt
+# NLP: pip install -r requirements/requirements-nlp-py<version>.txt
+# Image/CV: pip install -r requirements/requirements-img-py<version>.txt

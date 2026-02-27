@@ -1,0 +1,9 @@
+# Python 3.9 compatible versions
+numpy>=1.19.0,<1.27.0
+pandas>=1.2.0,<2.2.0
+scipy>=1.5.0,<1.12.0
+scikit-learn>=0.24.0,<1.4.0
+matplotlib>=3.3.0,<3.9.0
+plotly>=4.14.0,<5.20.0
+boruta>=0.3
+seaborn>=0.11.0,<0.14.0

@@ -1,0 +1,9 @@
+# Python 3.11 compatible versions
+numpy>=1.23.0,<2.0.0
+pandas>=1.5.0,<2.3.0
+scipy>=1.9.0,<1.14.0
+scikit-learn>=1.1.0,<1.6.0
+matplotlib>=3.6.0,<3.10.0
+plotly>=5.10.0,<6.0.0
+boruta>=0.3
+seaborn>=0.11.0,<0.14.0
