@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "scomp-link"
-version = "0.1.0"
+version = "0.1.1"
 description = "The Astromech arm for your Python data projects — end-to-end ML toolkit"
 readme = "README.md"
 license = {text = "MIT"}
