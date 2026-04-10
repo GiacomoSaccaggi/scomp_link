@@ -9,4 +9,4 @@ from .preprocessing.data_processor import Preprocessor
 from .models.model_factory import ModelFactory
 from .validation.model_validator import Validator
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
