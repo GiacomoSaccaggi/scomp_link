@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SCOMP-LINK: The Astromech Arm for Your Python Projects</title>
+    
+    <!-- Bootstrap Core CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    
+    <!-- Bootstrap Core JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <style>
+        body {
+            margin: 0;
+            background-color: black;
+            overflow-x: hidden;
+        }
+
+        .star {
+            position: fixed;
+            width: 1px;
+            height: 1px;
+            background-color: white;
+            z-index: 0;
+        }
+
+        /* Navigation override for Star Wars theme */
+        .navbar-custom {
+            background-color: rgba(0, 0, 0, 0.9);
+            border-bottom: 1px solid #FFE81F;
+        }
+        
+        .navbar-custom .navbar-brand,
+        .navbar-custom .nav li a {
+            color: #FFE81F !important;
+        }
+        
+        .navbar-custom .navbar-brand:hover,
+        .navbar-custom .nav li a:hover {
+            color: #FFF !important;
+        }
+
+        /* Hide default header */
+        .intro-header {
+            display: none;
+        }
+
+        /* Star Wars intro animation */
+        .intro {
+            position: fixed;
+            top: 40%;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1;
+            animation: intro 6s ease-out 1s;
+            color: rgb(75, 213, 238);
+            font-weight: 400;
+            font-size: 2em;
+            opacity: 0;
+            text-align: center;
+            width: 80%;
+        }
+
+        @keyframes intro {
+            0% { opacity: 0; }
+            20% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        /* Logo animation */
+        .logo {
+            position: fixed;
+            top: 30%;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1;
+            animation: logo 9s ease-out 9s;
+            opacity: 0;
+        }
+
+        @keyframes logo {
+            0% {
+                transform: translateX(-50%) scale(2.75);
+                opacity: 1;
+            }
+            50% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+                transform: translateX(-50%) scale(0.1);
+            }
+        }
+
+        /* Scrolling text board */
+        #board {
+            font-family: Century Gothic, CenturyGothic, AppleGothic, sans-serif;
+            transform: perspective(300px) rotateX(25deg);
+            transform-origin: 50% 100%;
+            text-align: justify;
+            position: fixed;
+            margin-left: -9em;
+            font-weight: bold;
+            overflow: hidden;
+            font-size: 300%;
+            height: 50em;
+            width: 18em;
+            bottom: 0;
+            left: 50%;
+            z-index: 1;
+        }
+
+        #board:after {
+            position: absolute;
+            content: ' ';
+            bottom: 60%;
+            left: 0;
+            right: 0;
+            top: 0;
+        }
+
+        #content {
+            animation: scroll 100s linear 16s;
+            position: absolute;
+            top: 100%;
+        }
+
+        @keyframes scroll {
+            0% { top: 100%; }
+            100% { top: -170%; }
+        }
+
+        #board p {
+            color: #FFFF82;
+            margin: 0.5em 0;
+        }
+
+        #title, #subtitle {
+            text-align: center;
+            color: #FFE81F;
+        }
+
+        #board a {
+            color: #FFE81F;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+
+        #board a:hover {
+            color: #FFF;
+            text-shadow: 0 0 10px #FFE81F;
+        }
+
+        /* Footer override */
+        footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            border-top: 1px solid #FFE81F;
+            padding: 20px 0;
+            z-index: 10;
+        }
+
+        footer .fa-stack {
+            color: #FFE81F;
+        }
+
+        footer .copyright {
+            color: #FFE81F;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+        <div class="container-fluid">
+            <div class="navbar-header page-scroll">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    Menu <i class="fa fa-bars"></i>
+                </button>
+                <a class="navbar-brand" href="https://giacomosaccaggi.github.io">Home</a>
+            </div>
+
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="https://github.com/GiacomoSaccaggi/scomp_link">Go to the pkg!</a>
+                    </li>
+                    <li>
+                        <a href="https://giacomosaccaggi.github.io/all.html">All projects</a>
+                    </li>
+                    <li>
+                        <a href="https://giacomosaccaggi.github.io/contact.html">Contact</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Star Wars Opening Crawl -->
+    <section class="intro">
+        A long time ago, in a codebase far,<br> far away....
+    </section>
+
+    <section class="logo">
+        <div style="font-size: 4em; font-weight: bold; color: #FFE81F; text-align: center; font-family: 'Arial Black', sans-serif;">
+            SCOMP-LINK
+        </div>
+    </section>
+
+    <div id="board">
+        <div id="content">
+            <p id="title">Episode IV</p>
+            <p id="subtitle">THE ASTROMECH ARM</p>
+
+            <br>
+
+            <p>In a data galaxy far, far away, scientists and engineers face a constant struggle against chaos. Messy pipelines, endless manual tweaking, and the <strong>Dark Side of repetitive coding</strong> threaten to consume their most precious resource: time.</p>
+
+            <p>But a new hope emerges from the Rebel Alliance of automation...</p>
+
+            <br>
+
+            <p id="title">SCOMP-LINK</p>
+
+            <p>A legendary toolkit built to bring balance to the Force of Machine Learning. Much like the versatile interface of an astromech droid, SCOMP-LINK plugs directly into your data, taking over the flight controls and automating the entire journey from raw input to final victory.</p>
+
+            <br>
+
+            <p id="title">THE JEDI POWERS</p>
+
+            <p><strong>TOTAL AUTOPILOT</strong><br>
+            It handles the whole mission: importing data, cleaning up the mess, building the model, and checking the results. No manual steering required.</p>
+
+            <p><strong>A DROID FOR EVERY TERRAIN</strong><br>
+            Whether you are dealing with spreadsheets, complex text, or starship images, SCOMP-LINK knows the way. One tool to master them all.</p>
+
+            <p><strong>HYPERSPACE NAVIGATION</strong><br>
+            The built-in "brain" analyzes your data and automatically chooses the fastest, most accurate model—calculating the best route through the stars.</p>
+
+            <p><strong>FLUENT IN 6 MILLION LANGUAGES</strong><br>
+            Using advanced neural networks (BERT), it understands human language better than a protocol droid, even when examples are scarce.</p>
+
+            <p><strong>STRENGTH IN NUMBERS</strong><br>
+            Why rely on one pilot? SCOMP-LINK can combine multiple models into an Elite Squadron for superior performance.</p>
+
+            <p><strong>MISSION DEBRIEFINGS</strong><br>
+            After every run, it generates a beautiful, interactive HTML report. Clear charts tell you exactly how the mission went—no guesswork involved.</p>
+
+            <br>
+
+            <p id="title">THE WORKFLOW</p>
+
+            <p><strong>STAGES 1-12: PREPARATION</strong><br>
+            The droid scans the data, scrubs it clean, and selects the best "weapons" (features) for the task ahead.</p>
+
+            <p><strong>MODELING & OPTIMIZATION</strong><br>
+            Fixing gaps, managing outliers, and tuning engines to peak performance automatically.</p>
+
+            <p><strong>VALIDATION</strong><br>
+            Rigorous testing of every hit and miss. You get the full tactical picture before deploying to the fleet.</p>
+
+            <br>
+
+            <p id="title">ADVANCED CAPABILITIES</p>
+
+            <p><strong>ELITE TEXT ANALYSIS</strong><br>
+            Perfect for sorting through thousands of messages or documents. It recognizes patterns even with "Few-Shot" training (minimal guidance).</p>
+
+            <p><strong>SMART REGRESSION</strong><br>
+            It predicts numerical values by testing every possible mathematical strategy until it finds the winning one.</p>
+
+            <br>
+
+            <p id="title">BATTLE-HARDENED DESIGN</p>
+
+            <p>• <strong>Resilient:</strong> Built to handle any data environment.<br>
+            • <strong>Modular:</strong> Add "upgrades" like Computer Vision only when needed.<br>
+            • <strong>Reliable:</strong> 41/41 combat simulations (tests) passing. 100% success rate.</p>
+
+            <br>
+
+            <p id="title">THE FORCE IS STRONG</p>
+
+            <p>SCOMP-LINK brings order to the Machine Learning galaxy. Stop wasting time on manual labor and start focusing on the big picture. From cleaning data to generating final reports—everything is taken care of.</p>
+
+            <p>No more trial and error. No more repetitive code. Just pure, automated power.</p>
+
+            <br>
+
+            <p id="title">MAY THE CODE BE WITH YOU</p>
+
+            <p>Join the Rebellion against boring workflows. Install SCOMP-LINK today and let intelligent automation guide your journey.</p>
+
+            <p>pip install .[all]</p>
+
+            <br>
+
+            <p style="text-align: center;"><a href="https://github.com/GiacomoSaccaggi/scomp_link" target="_blank">→ VISIT THE REBEL BASE ON GITHUB ←</a></p>
+
+            <br><br>
+
+            <p style="text-align: center; font-size: 0.8em;">SCOMP-LINK v1.0<br>
+            The Astromech Arm for Your Python Projects<br>
+            MIT License • Python 3.7+ • 41/41 Tests Passing</p>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                    <ul class="list-inline text-center">
+                        <li>
+                            <a href="https://twitter.com/SaccaggiGiacomo">
+                                <span class="fa-stack fa-lg">
+                                    <i class="fa fa-circle fa-stack-2x"></i>
+                                    <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                                </span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://www.linkedin.com/in/giacomo-saccaggi-782439163/">
+                                <span class="fa-stack fa-lg">
+                                    <i class="fa fa-circle fa-stack-2x"></i>
+                                    <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                                </span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://github.com/GiacomoSaccaggi/">
+                                <span class="fa-stack fa-lg">
+                                    <i class="fa fa-circle fa-stack-2x"></i>
+                                    <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                                </span>
+                            </a>
+                        </li>
+                    </ul>
+                    <p class="copyright text-muted">Copyright &copy; GiacomoSaccaggi</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Create starfield
+        const numStars = 100;
+        for (let i = 0; i < numStars; i++) {
+            let star = document.createElement("div");
+            star.className = "star";
+            star.style.top = Math.floor(Math.random() * window.innerHeight) + 'px';
+            star.style.left = Math.floor(Math.random() * window.innerWidth) + 'px';
+            document.body.appendChild(star);
+        }
+    </script>
+
+</body>
+</html>
