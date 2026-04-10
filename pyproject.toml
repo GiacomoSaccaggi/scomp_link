@@ -159,10 +159,10 @@ all = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/yourusername/scomp-link"
-Documentation = "https://github.com/yourusername/scomp-link#readme"
-Repository = "https://github.com/yourusername/scomp-link"
-Issues = "https://github.com/yourusername/scomp-link/issues"
+Homepage = "https://github.com/GiacomoSaccaggi/scomp-link"
+Documentation = "https://github.com/GiacomoSaccaggi/scomp-link#readme"
+Repository = "https://github.com/GiacomoSaccaggi/scomp-link"
+Issues = "https://github.com/GiacomoSaccaggi/scomp-link/issues"
 
 # ── Setuptools configuration ──
 
