@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=64", "wheel"]
+requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -7,10 +7,13 @@ name = "scomp-link"
 version = "0.1.0"
 description = "The Astromech arm for your Python data projects — end-to-end ML toolkit"
 readme = "README.md"
-license = "MIT"
+license = {text = "MIT"}
 requires-python = ">=3.7"
 authors = [
-    {name = "scomp-link contributors"},
+    {name = "Saccaggi Giacomo", email = "giacomo.saccaggi@gmail.com"}
+]
+maintainers = [
+    {name = "Saccaggi Giacomo", email = "giacomo.saccaggi@gmail.com"}
 ]
 classifiers = [
     "Development Status :: 4 - Beta",
@@ -163,7 +166,11 @@ Issues = "https://github.com/yourusername/scomp-link/issues"
 
 # ── Setuptools configuration ──
 
+[tool.setuptools]
+include-package-data = true
+
 [tool.setuptools.packages.find]
+where = ["."]
 include = ["scomp_link*"]
 
 [tool.setuptools.package-data]
