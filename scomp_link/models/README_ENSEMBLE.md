@@ -147,6 +147,7 @@ See `examples/example_14_ensemble_advanced_cv.py` for complete working examples.
 
 Run tests:
 ```bash
+pip install pytest
 pytest tests/test_ensemble_advanced_cv.py -v
 ```
 

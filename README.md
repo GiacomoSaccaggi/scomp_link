@@ -4,7 +4,7 @@
 
 [![Tests](https://img.shields.io/badge/tests-41%2F41%20passing-brightgreen)]()
 [![Coverage](https://img.shields.io/badge/coverage-~100%25-brightgreen)]()
-[![Python](https://img.shields.io/badge/python-3.7%2B-blue)]()
+[![Python](https://img.shields.io/badge/python-3.10%2B-blue)]()
 [![License](https://img.shields.io/badge/license-MIT-blue)]()
 
 ## Overview
@@ -61,6 +61,7 @@ SUCCESS → Ensemble Learning → Reinforcement Learning
 - 🧠 **Intelligent Model Selection**: Decision-tree-based algorithm selection
 - 🔄 **Advanced Validation**: LOOCV, Bootstrap, K-Fold CV
 - 🎭 **Ensemble Learning**: Voting and stacking strategies
+- 🔍 **Anomaly Detection**: Multi-method consensus for tabular and time series data
 - 🌐 **Domain Agnostic**: No hard-coded assumptions
 - 🔌 **Pluggable Architecture**: Optional dependencies loaded on-demand
 - 📊 **Automated Reporting**: Interactive HTML reports with Plotly
@@ -69,41 +70,11 @@ SUCCESS → Ensemble Learning → Reinforcement Learning
 
 ## Installation
 
-### Basic Installation
-
 ```bash
-# Clone the repository
-git clone <repository-url>
-cd scomp_link
-
-# Install core dependencies
-pip install -r requirements.txt
-
-# Or install as package
-pip install .
+pip install scomp-link
 ```
 
-### Optional Features
-
-```bash
-# Install with NLP support (torch, transformers, spacy)
-pip install .[nlp]
-
-# Install with computer vision support (tensorflow, pillow)
-pip install .[img]
-
-# Install with utility packages (tqdm, PyJWT)
-pip install .[utils]
-
-# Install ALL optional dependencies (includes contrastive learning)
-pip install .[all]
-```
-
-**Note**: For contrastive text classification, install NLP dependencies:
-```bash
-pip install torch transformers
-pip install faiss-cpu  # Optional, for fast inference
-```
+Requires Python 3.10+. All dependencies (NLP, CV, anomaly detection) are included.
 
 ---
 
@@ -284,6 +255,112 @@ classifier.load('./models/my_classifier')
 - ✅ Learns semantic relationships
 - ✅ Fast inference with FAISS
 - ✅ Transfer learning from BERT
+
+---
+
+### Anomaly Detection for Tabular Data (NEW! 🆕)
+
+Detect anomalies using multi-method consensus voting:
+
+```python
+from scomp_link.models.anomaly_detector import AnomalyDetector
+import pandas as pd
+
+# Load your data
+df = pd.read_csv("data.csv")
+
+# Initialize detector with 4 methods
+detector = AnomalyDetector(
+    contamination=0.05,          # Expected 5% anomalies
+    methods=['iforest', 'lof', 'tabnet', 'transformer'],
+    consensus_threshold=2,       # At least 2 methods must agree
+    verbose=True
+)
+
+# Run detection
+results = detector.fit_predict(df, features=['col1', 'col2', 'col3'])
+
+# View method comparison
+print(results['comparison'])
+#        method  n_anomalies   pct
+# 0     iforest           50  5.0
+# 1         lof           48  4.8
+# 2      tabnet           52  5.2
+# 3 transformer           47  4.7
+# 4 consensus(≥2)         35  3.5
+
+# Get anomalous rows
+anomalies = results['data'][results['data']['is_anomaly']]
+
+# Generate grouped report
+report = detector.report(group_by=['category_column'])
+print(report)
+```
+
+**Methods:**
+- **Isolation Forest**: Tree-based, non-parametric isolation of outliers
+- **Local Outlier Factor (LOF)**: Density-based, detects local neighborhood anomalies
+- **TabNet Autoencoder**: Neural attention on tabular features (requires `pytorch-tabnet`)
+- **Transformer Autoencoder**: Self-attention across features as tokens (requires `torch`)
+
+**Use Cases:**
+- Fraud detection
+- Manufacturing quality control
+- Network intrusion detection
+- Data quality monitoring
+
+---
+
+### Time Series Anomaly Detection (NEW! 🆕)
+
+Detect anomalies in univariate time series with multiple methods:
+
+```python
+from scomp_link.models.ts_anomaly_detector import TimeSeriesAnomalyDetector
+import numpy as np
+
+# Prepare data: train on normal data, detect on new data
+train_values = df_train['value'].values  # Normal time series
+test_values = df_test['value'].values    # May contain anomalies
+
+# Initialize detector
+detector = TimeSeriesAnomalyDetector(
+    methods=['autoencoder', 'moving_avg', 'moving_median', 'arima'],
+    time_steps=288,          # Sequence length (e.g., 1 day at 5-min intervals)
+    window_size=48,          # Window for moving avg/median
+    n_sigma=3.0,             # Std deviations for threshold
+    ae_epochs=50,            # Autoencoder training epochs
+    threshold_percentile=95.0
+)
+
+# Fit on normal data (trains autoencoder)
+detector.fit(train_values)
+
+# Detect anomalies
+results = detector.detect(test_values)
+
+# Boolean array of anomalies
+anomalies = results['anomalies']  # True where anomaly detected
+
+# Per-method results
+for method, flags in results['methods'].items():
+    print(f"{method}: {flags.sum()} anomalies")
+
+# Consensus score (how many methods flagged each point)
+print(results['consensus_score'])
+```
+
+**Methods:**
+- **Conv1D Autoencoder**: Learns normal temporal patterns, flags high reconstruction error (requires `tensorflow`)
+- **Moving Average**: Flags deviations beyond N standard deviations from rolling mean
+- **Moving Median**: Robust variant using MAD (Median Absolute Deviation)
+- **ARIMA Residuals**: Flags large residuals from fitted ARIMA model (requires `statsmodels`)
+
+**Use Cases:**
+- IoT sensor monitoring
+- Server metrics alerting
+- Financial time series surveillance
+- Predictive maintenance
 
 ---
 
@@ -636,14 +713,15 @@ See [Ensemble & Advanced CV Documentation](scomp_link/models/README_ENSEMBLE.md)
 The package includes comprehensive tests with ~100% coverage:
 
 ```bash
+# Install dev dependencies
+pip install scomp-link
+pip install pytest pytest-cov
+
 # Run all tests
-python3 -m pytest tests/test_comprehensive.py -v
+python3 -m pytest tests/ -v
 
 # Run with coverage report
-python3 -m pytest tests/test_comprehensive.py --cov=scomp_link --cov-report=html
-
-# Run specific test class
-python3 -m pytest tests/test_comprehensive.py::TestScompLinkPipeline -v
+python3 -m pytest tests/ --cov=scomp_link --cov-report=html
 ```
 
 Test coverage includes:
@@ -668,6 +746,8 @@ scomp_link/
 │   │   ├── model_factory.py
 │   │   ├── regressor_optimizer.py
 │   │   ├── classifier_optimizer.py
+│   │   ├── anomaly_detector.py
+│   │   ├── ts_anomaly_detector.py
 │   │   ├── supervised_text.py
 │   │   ├── supervised_img.py
 │   │   ├── unsupervised_text.py
@@ -708,12 +788,29 @@ scomp_link/
 - scikit-learn
 - matplotlib
 - plotly
-- boruta
+- seaborn
 
-### Optional
-- **NLP**: torch, transformers, spacy
-- **Computer Vision**: tensorflow, pillow
-- **Utilities**: tqdm, PyJWT
+### NLP (Included)
+- torch
+- transformers
+- spacy
+- faiss-cpu
+- sentence-transformers
+
+### Computer Vision (Included)
+- tensorflow
+- pillow
+
+### Anomaly Detection (Included)
+- pytorch-tabnet
+- statsmodels
+
+### Utilities (Included)
+- tqdm
+- PyJWT
+- markdown
+- weasyprint
+- playwright
 
 ---
 
@@ -724,6 +821,14 @@ Contributions are welcome! Please ensure:
 - Code follows existing patterns
 - Documentation is updated
 - New features include tests
+
+```bash
+# Development setup
+git clone https://github.com/GiacomoSaccaggi/scomp-link.git
+cd scomp_link
+pip install -e ".[dev]"
+pytest tests/ -v
+```
 
 ---
 

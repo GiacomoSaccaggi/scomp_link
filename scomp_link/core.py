@@ -203,28 +203,35 @@ class ScompLinkPipeline:
                         "metrics": {"trained": True, "epochs": epochs}
                     }
                 else:
-                    from .models.supervised_text import SpacyEmbeddingModel
                     from sklearn.model_selection import train_test_split
+                    from sklearn.feature_extraction.text import TfidfVectorizer
+                    from sklearn.linear_model import SGDClassifier
+                    from sklearn.pipeline import Pipeline
+                    from sklearn.metrics import accuracy_score, f1_score
                     
-                    # Prepare data for Spacy model
-                    to_tag = {}
-                    tagged = {}
-                    for idx, row in self.df.iterrows():
-                        to_tag[idx] = row[text_col]
-                        tagged[idx] = row[self.target_col]
+                    texts = self.df[text_col].tolist()
+                    labels = self.df[self.target_col].tolist()
                     
-                    categories = list(self.df[self.target_col].unique())
+                    X_train, X_test, y_train, y_test = train_test_split(
+                        texts, labels, test_size=test_size, random_state=42
+                    )
                     
-                    classifier = SpacyEmbeddingModel(lan=text_language, model_name=text_model)
+                    pipeline = Pipeline([
+                        ('tfidf', TfidfVectorizer(max_features=10000, ngram_range=(1, 2))),
+                        ('clf', SGDClassifier(loss='modified_huber', random_state=42))
+                    ])
                     
-                    print(f"Training Spacy text classifier with CNN for {epochs} epochs...")
-                    nlp_model, scores = classifier.training(to_tag, tagged, categories)
+                    pipeline.fit(X_train, y_train)
+                    y_pred = pipeline.predict(X_test)
                     
-                    self.model = classifier
+                    acc = accuracy_score(y_test, y_pred)
+                    f1 = f1_score(y_test, y_pred, average='weighted', zero_division=0)
+                    
+                    self.model = pipeline
                     self.results = {
                         "status": "success",
-                        "model_type": "Spacy Text Classifier (CNN)",
-                        "metrics": scores
+                        "model_type": "TF-IDF Text Classifier (SGD)",
+                        "metrics": {"accuracy": acc, "f1_weighted": f1}
                     }
                 
                 return self.results
@@ -453,8 +460,8 @@ class ScompLinkPipeline:
         import os
         import pickle
         
-        # Check if it's a contrastive text model
-        if os.path.isdir(path) and os.path.exists(os.path.join(path, 'model_config.json')):
+        # Check if it's a contrastive text model (saves metadata.json + model.pt)
+        if os.path.isdir(path) and os.path.exists(os.path.join(path, 'metadata.json')):
             from .models.contrastive_text import ContrastiveTextClassifier
             classifier = ContrastiveTextClassifier()
             classifier.load(path)
@@ -480,10 +487,16 @@ class ScompLinkPipeline:
             
         Returns:
         --------
-        predictions : array
+        predictions : array or list
             Model predictions
         """
         if self.model is None:
             raise ValueError("No model loaded. Load a model first with load_model()")
+        
+        # Handle ContrastiveTextClassifier (list of strings)
+        if hasattr(self.model, 'predict_batch') and isinstance(X, (list, pd.Series)):
+            if isinstance(X, list) and len(X) > 0 and isinstance(X[0], str):
+                results_df = self.model.predict_batch(pd.Series(X))
+                return results_df['prediction'].tolist()
         
         return self.model.predict(X)

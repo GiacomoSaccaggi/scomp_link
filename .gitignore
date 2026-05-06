@@ -64,3 +64,4 @@ staging/
 # Environment
 .env
 .env.local
+/develop/

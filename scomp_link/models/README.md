@@ -214,13 +214,7 @@ print(f"Mean CV Score: {scores['mean_score']:.4f}")
 ### Text Classification
 
 ```python
-from scomp_link.models.supervised_text import SpacyEmbeddingModel
-
-# Traditional approach
-classifier = SpacyEmbeddingModel(lan='en', model_name='bert-base-uncased')
-nlp_model, scores = classifier.training(to_tag, tagged, categories)
-
-# Contrastive learning approach
+# Contrastive learning approach (recommended)
 from scomp_link.models.contrastive_text import ContrastiveTextClassifier
 
 classifier = ContrastiveTextClassifier(
@@ -318,11 +312,15 @@ See [Advanced CV Documentation](README_ENSEMBLE.md) for details.
 
 ## Dependencies
 
+All included with `pip install scomp-link`:
 - scikit-learn: Core ML algorithms
 - numpy, pandas: Data manipulation
-- torch, transformers: Deep learning (optional)
-- tensorflow: Image models (optional)
-- spacy: NLP (optional)
+- torch, transformers: Deep learning, contrastive text
+- tensorflow: Image models, time series autoencoder
+- faiss-cpu: Fast similarity search
+- sentence-transformers: Text embeddings
+- pytorch-tabnet: Tabular anomaly detection
+- statsmodels: ARIMA-based anomaly detection
 
 ## See Also
 

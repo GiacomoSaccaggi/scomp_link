@@ -23,6 +23,7 @@ class SpacyEmbeddingModel(object):
     """
     def __init__(self, lan: str = 'en', model_name: str = 'bert-base-uncased'):
         import os
+        import sys
         import torch
         from transformers import AutoTokenizer, AutoModel
         from .contrastive_net import ContrastiveSiameseModel
@@ -33,7 +34,11 @@ class SpacyEmbeddingModel(object):
                               'sl', 'sk', 'es', 'sv', 'hu', 'tl', 'ta', 'tt', 'te', 'th', 'tr', 'uk', 'ur', 'vi', 'yo']
         self.punctuation = '!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~'
 
-        self.nlp, self.stop_words = self._select_language(lan, 'md')
+        result = self._select_language(lan, 'md')
+        if not result or len(result) != 2:
+            raise ValueError(f"Failed to load spaCy model for language '{lan}'. "
+                             f"Try: {sys.executable} -m spacy download {lan}_core_web_md")
+        self.nlp, self.stop_words = result
         
         # Initialize Contrastive Model for embeddings
         self.tokenizer = AutoTokenizer.from_pretrained(model_name)
@@ -47,6 +52,7 @@ class SpacyEmbeddingModel(object):
         :param dict_size: size of dictionary
         :return: spacy dict and stopwords
         """
+        import sys
         import spacy
         import subprocess
         if lan in self.all_spacy_lan:
@@ -67,7 +73,7 @@ class SpacyEmbeddingModel(object):
                     pass
             if nlp == 'not find':
                 try:
-                    subprocess.call(f'python -m spacy download {lan}_core_news_{dict_size}', shell=True)
+                    subprocess.call(f'{sys.executable} -m spacy download {lan}_core_news_{dict_size}', shell=True)
                     nlp = spacy.load(f'{lan}_core_news_{dict_size}')
                 except Exception as e:
                     if nlp != 'not find':
@@ -75,7 +81,7 @@ class SpacyEmbeddingModel(object):
                     pass
             if nlp == 'not find':
                 try:
-                    subprocess.call(f'python -m spacy download {lan}_core_web_{dict_size}', shell=True)
+                    subprocess.call(f'{sys.executable} -m spacy download {lan}_core_web_{dict_size}', shell=True)
                     nlp = spacy.load(f'{lan}_core_web_{dict_size}')
                 except Exception as e:
                     if nlp != 'not find':

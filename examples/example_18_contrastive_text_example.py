@@ -45,3 +45,6 @@ print(f"\nPrediction: {result['predictions'][0]} (confidence: {result['confidenc
 classifier.save('./models/text_classifier')
 
 print("\n✅ Example completed!")
+
+import os
+os._exit(0)

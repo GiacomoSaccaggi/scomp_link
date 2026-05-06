@@ -328,10 +328,14 @@ report.html (self-contained)
 
 ## Dependencies
 
+All included with `pip install scomp-link`:
 - plotly: Interactive visualizations
 - pandas: DataFrame rendering
-- json: Data serialization
-- jwt: Optional token handling
+- matplotlib: Static plots (base64 embedding)
+- markdown: Markdown to HTML conversion
+- weasyprint: PDF export
+- playwright: PDF export (alternative)
+- PyJWT: Optional token handling
 
 ## See Also
 

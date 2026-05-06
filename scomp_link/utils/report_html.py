@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-# encoding utf-8
 """
 
 ██████╗ ███████╗██████╗  █████╗ ██████╗ ████████╗
@@ -20,6 +19,8 @@
 import pandas as pd
 import plotly
 import json
+import base64
+import io
 from plotly.io.json import to_json_plotly
 # Read constants from encrypted file
 import os
@@ -298,6 +299,41 @@ class ScompLinkHTMLReport:
             h2{font-size:10px}
             h3{font-size:3px}
             }
+            /* --- PDF PRINT STYLES --- */
+            @media print {
+                .collapsiblemygs {
+                    page-break-before: always;
+                    background-color: transparent !important;
+                    color: black !important;
+                    font-size: 24px !important;
+                    font-weight: bold;
+                    border-bottom: 2px solid var(--accentBg);
+                    padding: 0 0 10px 0 !important;
+                    margin-top: 30px !important;
+                }
+                .content {
+                    display: block !important;
+                    background-color: white !important;
+                    padding: 0 !important;
+                }
+                select, input[type="submit"], input[type="button"], label {
+                    display: none !important;
+                }
+                .print-grid-container {
+                    display: flex !important;
+                    flex-wrap: wrap !important;
+                    justify-content: space-between !important;
+                }
+                .print-grid-item {
+                    display: block !important;
+                    width: 48% !important;
+                    page-break-inside: avoid;
+                }
+                body {
+                    -webkit-print-color-adjust: exact;
+                    print-color-adjust: exact;
+                }
+            }
             </style>
             <script src="https://cdn.plot.ly/plotly-2.9.0.min.js"></script>
         """.replace('{font_family}', font_family) \
@@ -451,7 +487,7 @@ class ScompLinkHTMLReport:
                 url_img_logo='',
                 # optional logo URL (empty for neutral branding)
                 # optional secondary logo URL (empty for neutral branding)
-                url_background_header='',
+                url_background_header='https://giacomosaccaggi.github.io/articoli/sfondo.png',
                 description='Automatic Report',
                 author='scomp-link toolkit',
                 language='en',
@@ -718,6 +754,41 @@ class ScompLinkHTMLReport:
             h2{font-size:10px}
             h3{font-size:3px}
             }
+            /* --- PDF PRINT STYLES --- */
+            @media print {
+                .collapsiblemygs {
+                    page-break-before: always;
+                    background-color: transparent !important;
+                    color: black !important;
+                    font-size: 24px !important;
+                    font-weight: bold;
+                    border-bottom: 2px solid var(--accentBg);
+                    padding: 0 0 10px 0 !important;
+                    margin-top: 30px !important;
+                }
+                .content {
+                    display: block !important;
+                    background-color: white !important;
+                    padding: 0 !important;
+                }
+                select, input[type="submit"], input[type="button"], label {
+                    display: none !important;
+                }
+                .print-grid-container {
+                    display: flex !important;
+                    flex-wrap: wrap !important;
+                    justify-content: space-between !important;
+                }
+                .print-grid-item {
+                    display: block !important;
+                    width: 48% !important;
+                    page-break-inside: avoid;
+                }
+                body {
+                    -webkit-print-color-adjust: exact;
+                    print-color-adjust: exact;
+                }
+            }
             </style>
             <script src="https://cdn.plot.ly/plotly-2.9.0.min.js"></script>
         """.replace('{font_family}', font_family) \
@@ -978,7 +1049,8 @@ class ScompLinkHTMLReport:
                            });
                            """
             script += """\
-                    <div id="{idhide}" style="display:{display}">
+                    <div id="{idhide}" class="print-grid-item" style="display:{display}">
+                        <h3 class="print-grid-title">{grid_title}</h3>
                         <div id="{id}" class="plotly-graph-div"></div>
                         <script>
                                 Plotly.newPlot(\n
@@ -993,6 +1065,7 @@ class ScompLinkHTMLReport:
                         """.format(
                 idhide=idhide,
                 display=display,
+                grid_title=' - '.join(single_title) if isinstance(single_title, tuple) else single_title,
                 id=id_plotdiv,
                 data=jdata,
                 layout=jlayout,
@@ -1011,7 +1084,7 @@ class ScompLinkHTMLReport:
                  + \
                  f"""
                          <input type="submit"  onclick="SelectFunction{title_}()">
-                   """ + script + """
+                   """ + '<div class="print-grid-container">' + script + '</div>' + """
                         <script>
                             function SelectFunction{idhide_}() {start_fun}
                                 {hide_element}
@@ -1044,6 +1117,53 @@ class ScompLinkHTMLReport:
         """
         self.html_report += self.single_plotly(fig, title)
         print('Added graph to report!')
+
+    def add_matplotlib_graph_to_report(self,
+                                       fig: 'matplotlib.figure.Figure',
+                                       title: str,
+                                       dpi: int = 150,
+                                       img_format: str = 'png'):
+        """
+        Add a matplotlib figure to the report as a base64-encoded image.
+
+        :param fig: matplotlib.figure.Figure
+        :param title: str - title displayed above the image
+        :param dpi: int - resolution of the exported image (default 150)
+        :param img_format: str - image format, 'png' or 'svg' (default 'png')
+
+        ## example
+        import matplotlib.pyplot as plt
+        fig, ax = plt.subplots()
+        ax.plot(range(10), range(10))
+        report.add_matplotlib_graph_to_report(fig, 'My Matplotlib Graph')
+        """
+        buf = io.BytesIO()
+        fig.savefig(buf, format=img_format, dpi=dpi, bbox_inches='tight')
+        buf.seek(0)
+        img_base64 = base64.b64encode(buf.read()).decode('utf-8')
+        buf.close()
+        mime = 'image/svg+xml' if img_format == 'svg' else f'image/{img_format}'
+        self.html_report += f'<h2>{title}</h2>'
+        self.html_report += f'<img src="data:{mime};base64,{img_base64}" style="width:100%;max-width:100%;" alt="{title}">'
+        print('Added matplotlib graph to report!')
+
+    def add_image_to_report(self, image_path: str, title: str):
+        """
+        Add a local image file to the report as a base64-encoded image.
+
+        :param image_path: str - absolute or relative path to the image file
+        :param title: str - title displayed above the image
+
+        ## example
+        report.add_image_to_report('/path/to/image.png', 'My Image')
+        """
+        ext = os.path.splitext(image_path)[1].lower().lstrip('.')
+        mime = 'image/svg+xml' if ext == 'svg' else f'image/{ext}'
+        with open(image_path, 'rb') as f:
+            img_base64 = base64.b64encode(f.read()).decode('utf-8')
+        self.html_report += f'<h2>{title}</h2>'
+        self.html_report += f'<img src="data:{mime};base64,{img_base64}" style="width:100%;max-width:100%;" alt="{title}">'
+        print('Added image to report!')
 
     def add_many_plots_with_selection_box_to_report(self,
                                                     figures_dict: dict,
@@ -1098,11 +1218,163 @@ class ScompLinkHTMLReport:
     def add_dataframe(self, df: pd.DataFrame, title: str, limit_max=2000) -> 'html plotly code':
         if len(df) < limit_max:
             self.html_report += f'<a href="#" onclick="download_table_as_csv('+f"'{title.replace(' ', '')}'"+');">Download as CSV</a>'
-            tab = df.to_html().replace('class="dataframe"', f'id="{title.replace(" ", "")}"').replace('border="1"', 'border="0"')
-            self.html_report += f'<div id="table-wrapper"><div id="table-scroll">{tab}</div></div>'
+            tab = df.to_html(index=False, classes='scomp-table').replace('border="1"', 'border="0"')
+            tab = tab.replace('class="dataframe scomp-table"', f'id="{title.replace(" ", "")}" class="scomp-table"')
+            tab = tab.replace('style="text-align: right;"', 'style="text-align: left;"')
+            self.html_report += f'''
+            <div id="table-wrapper">
+                <div id="table-scroll">
+                    {tab}
+                </div>
+            </div>
+            <style>
+                .scomp-table {{
+                    width: 100%;
+                    border-collapse: collapse;
+                    font-size: 13px;
+                    font-family: inherit;
+                }}
+                .scomp-table thead tr {{
+                    background-color: {self.main_color} !important;
+                    color: white !important;
+                    text-align: left;
+                }}
+                .scomp-table th {{
+                    color: white !important;
+                    background-color: {self.main_color} !important;
+                }}
+                .scomp-table th, .scomp-table td {{
+                    padding: 10px 12px;
+                    border-bottom: 1px solid #e0e0e0;
+                }}
+                .scomp-table tbody tr:nth-child(even) {{
+                    background-color: #f8f9fa;
+                }}
+                .scomp-table tbody tr:hover {{
+                    background-color: {self.light_color}22;
+                }}
+            </style>'''
             print('Added table to report!')
         else:
             print('The DataFrame is to big!')
+
+    def save_pdf(self, file_name='export.pdf'):
+        """
+        Saves the report as a PDF by rendering the HTML in a headless browser.
+        This ensures all JavaScript (Plotly/Highcharts) is executed and visible.
+        Automatically installs Chromium on first use if not already present.
+
+        :param file_name: str - output PDF file path (default 'export.pdf')
+
+        ## example
+        report.save_pdf('my_report.pdf')
+        """
+        import tempfile
+        import subprocess
+        from playwright.sync_api import sync_playwright
+
+        # Auto-install Chromium if not present
+        try:
+            with sync_playwright() as p:
+                p.chromium.executable_path
+        except Exception:
+            print("Chromium not found. Installing automatically...")
+            subprocess.run(["playwright", "install", "chromium"], check=True)
+
+        temp_html_path = tempfile.mktemp(suffix=".html")
+        self.save_html(temp_html_path)
+
+        print(f"Starting PDF generation... Loading graphs.")
+
+        try:
+            with sync_playwright() as p:
+                browser = p.chromium.launch(headless=True)
+                page = browser.new_page()
+                file_url = f"file://{os.path.abspath(temp_html_path)}"
+                page.goto(file_url, wait_until="networkidle")
+                page.wait_for_timeout(2000)
+                # Prepare page for PDF: fix layout, avoid page breaks
+                page.evaluate("""() => {
+                    // Page break avoidance
+                    document.querySelectorAll('.plotly-graph-div, img, #table-wrapper, .print-grid-item').forEach(el => {
+                        el.style.pageBreakInside = 'avoid';
+                        el.style.breakInside = 'avoid';
+                    });
+                    document.querySelectorAll('h2').forEach(el => {
+                        el.style.pageBreakAfter = 'avoid';
+                        el.style.breakAfter = 'avoid';
+                    });
+                    
+                    // Hide UI elements (combo boxes, labels, buttons, select2 widgets)
+                    document.querySelectorAll('select, input[type="submit"], input[type="button"], label, br, .form-control, .select2-container').forEach(el => {
+                        el.style.display = 'none';
+                        el.style.visibility = 'hidden';
+                        el.style.height = '0';
+                        el.style.overflow = 'hidden';
+                    });
+                    
+                    // Open all collapsed sections
+                    document.querySelectorAll('.content').forEach(el => {
+                        el.style.display = 'block';
+                    });
+                    
+                    // Grid: show all items, equal columns
+                    document.querySelectorAll('.print-grid-container').forEach(container => {
+                        container.style.display = 'grid';
+                        container.style.gridTemplateColumns = '1fr 1fr';
+                        container.style.gap = '20px';
+                    });
+                    document.querySelectorAll('.print-grid-item').forEach(el => {
+                        el.style.display = 'block';
+                    });
+                    
+                    // Constrain all Plotly graphs to container
+                    document.querySelectorAll('.plotly-graph-div').forEach(el => {
+                        el.style.maxWidth = '100%';
+                        el.style.overflow = 'hidden';
+                    });
+                    
+                    // Remove report padding to use full page width
+                    var report = document.querySelector('.report');
+                    if (report) {
+                        report.style.paddingLeft = '5%';
+                        report.style.paddingRight = '5%';
+                    }
+                }""")
+                
+                # Resize Plotly graphs to fit their containers
+                page.wait_for_timeout(500)
+                page.evaluate("""() => {
+                    if (window.Plotly) {
+                        // Get the report content width
+                        var report = document.querySelector('.report');
+                        var reportWidth = report ? report.clientWidth : 800;
+                        
+                        document.querySelectorAll('.js-plotly-plot').forEach(el => {
+                            var container = el.closest('.plotly-graph-div');
+                            var inGrid = el.closest('.print-grid-item');
+                            if (container) {
+                                var targetWidth = inGrid ? container.clientWidth : reportWidth;
+                                Plotly.relayout(el, { width: targetWidth, autosize: true });
+                            }
+                        });
+                    }
+                }""")
+                page.wait_for_timeout(1000)
+                page.pdf(
+                    path=file_name,
+                    format="A4",
+                    print_background=True,
+                    scale=0.5,
+                    margin={"top": "20px", "bottom": "20px", "left": "20px", "right": "20px"}
+                )
+                browser.close()
+                print(f"PDF successfully saved as {file_name}!")
+        except Exception as e:
+            print(f"An error occurred while generating the PDF: {e}")
+        finally:
+            if os.path.exists(temp_html_path):
+                os.remove(temp_html_path)
 
     def save_html(self, file_name='export.html'):
         js = """
