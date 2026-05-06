@@ -263,3 +263,7 @@ playwright install chromium
 - [Workflow Documentation](../WORKFLOW.md) - Complete workflow mapping
 - [Ensemble Learning](../scomp_link/models/README_ENSEMBLE.md) - Advanced features
 - [VERSION_REQUIREMENTS.md](../VERSION_REQUIREMENTS.md) - Dependency versions
+
+---
+
+📦 [scomp-link on PyPI](https://pypi.org/project/scomp-link/)

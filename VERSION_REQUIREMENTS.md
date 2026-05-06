@@ -202,3 +202,7 @@ bash run_all_examples.sh
 - Python 3.7–3.9 are **no longer supported**. Legacy files in `requirements/` are kept but untested.
 - All version constraints are tested via tox on macOS (Apple Silicon) with pyenv-managed interpreters.
 - TensorFlow on M1/M2 Macs may show a warning about `tf.keras.optimizers.Adam` running slowly — this is cosmetic and does not affect correctness.
+
+---
+
+📦 [scomp-link on PyPI](https://pypi.org/project/scomp-link/)

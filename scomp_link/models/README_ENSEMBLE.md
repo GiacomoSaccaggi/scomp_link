@@ -175,3 +175,7 @@ Results include:
 - `optimizer_results`: Individual model performances
 - `ensemble_scores`: Ensemble cross-validation scores
 - `advanced_cv`: LOOCV/Bootstrap validation results
+
+---
+
+📦 [scomp-link on PyPI](https://pypi.org/project/scomp-link/)

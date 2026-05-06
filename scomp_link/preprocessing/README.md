@@ -219,3 +219,7 @@ All included with `pip install scomp-link`:
 - [Model Selection](../models/README.md)
 - [Validation](../validation/README.md)
 - [Complete Pipeline](../README.md)
+
+---
+
+📦 [scomp-link on PyPI](https://pypi.org/project/scomp-link/)

@@ -438,6 +438,10 @@ pytest tests/ --cov=scomp_link --cov-report=html
 open htmlcov/index.html
 ```
 
+---
+
+📦 [scomp-link on PyPI](https://pypi.org/project/scomp-link/)
+
 ## See Also
 
 - [Main README](../README.md) - Package overview

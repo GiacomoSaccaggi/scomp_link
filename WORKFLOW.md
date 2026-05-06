@@ -563,3 +563,7 @@ scomp_link/
 - [VERSION_REQUIREMENTS.md](VERSION_REQUIREMENTS.md) — Dependency versions
 - [examples/README.md](examples/README.md) — All 18 examples documented
 - [Ensemble Learning](scomp_link/models/README_ENSEMBLE.md) — Voting & Stacking
+
+---
+
+📦 [scomp-link on PyPI](https://pypi.org/project/scomp-link/)

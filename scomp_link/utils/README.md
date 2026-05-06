@@ -342,3 +342,7 @@ All included with `pip install scomp-link`:
 - [Validation Reports](../validation/README.md)
 - [Visualization Examples](../../examples/)
 - [Complete Pipeline](../README.md)
+
+---
+
+📦 [scomp-link on PyPI](https://pypi.org/project/scomp-link/)
