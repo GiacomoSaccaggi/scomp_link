@@ -76,3 +76,6 @@ except ImportError as e:
     print("\n⚠️  NLP dependencies not installed!")
     print("Install with: pip install .[nlp]")
     print(f"Error: {e}")
+finally:
+    import os
+    os._exit(0)

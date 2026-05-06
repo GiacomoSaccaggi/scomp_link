@@ -33,6 +33,10 @@ tests/
 
 ### Run All Tests
 ```bash
+# Install package
+pip install scomp-link
+pip install pytest pytest-cov
+
 # Basic run
 pytest tests/ -v
 
@@ -304,15 +308,15 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.7, 3.8, 3.9, 3.10, 3.11, 3.12, 3.13]
+        python-version: ['3.10', '3.11', '3.12', '3.13']
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install dependencies
-        run: pip install -e .[dev]
+        run: pip install -e ".[dev]"
       - name: Run tests
         run: pytest tests/ --cov=scomp_link --cov-report=xml
 ```
@@ -420,7 +424,7 @@ pytest tests/ -n auto
 ```
 Tests: 54/54 passing ✅
 Coverage: ~100% ✅
-Python Versions: 3.7-3.13 ✅
+Python Versions: 3.10-3.13 ✅
 CI/CD: Automated ✅
 ```
 

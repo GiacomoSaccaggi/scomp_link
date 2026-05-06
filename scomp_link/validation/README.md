@@ -372,11 +372,11 @@ The pipeline automatically:
 
 ## Dependencies
 
+All included with `pip install scomp-link`:
 - scikit-learn: Metrics and CV strategies
 - numpy: Numerical operations
 - pandas: Data handling
 - plotly: Interactive visualizations
-- matplotlib: Static plots
 
 ## See Also
 

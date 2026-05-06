@@ -159,6 +159,10 @@ class ContrastiveTextClassifier:
                 self.augment_prob = augment_prob
                 self.app_frequencies = df['app_name'].value_counts().to_dict()
                 self.popular_apps = list(df['app_name'].value_counts().head(1000).index)
+                # Build label-to-indices mapping for pair generation
+                self._label_to_indices = {}
+                for idx, label in enumerate(self.app_names):
+                    self._label_to_indices.setdefault(label, []).append(idx)
         
         train_dataset = TextDataset(train_df, self.tokenizer)
         
@@ -391,10 +395,12 @@ class ContrastiveTextClassifier:
         # Save weights
         torch.save(self.siamese_model.state_dict(), os.path.join(path, 'model.pt'))
         
-        # Save metadata
+        # Save metadata including embedding_dim for correct reload
+        embedding_dim = self.siamese_model.projection_layer[-1].out_features
         metadata = {
             'labels': self.labels,
-            'label_freq_cache': self.label_freq_cache
+            'label_freq_cache': self.label_freq_cache,
+            'embedding_dim': embedding_dim
         }
         with open(os.path.join(path, 'metadata.json'), 'w') as f:
             json.dump(metadata, f, indent=4)
@@ -406,8 +412,14 @@ class ContrastiveTextClassifier:
     
     def load(self, path='./ContrastiveTextModel', model_name='bert-base-uncased'):
         """Load model and embeddings"""
-        # Reinitialize
-        self.__init__(model_name=model_name, use_faiss=self.use_faiss)
+        # Load metadata first to get embedding_dim
+        with open(os.path.join(path, 'metadata.json'), 'r') as f:
+            metadata = json.load(f)
+        
+        embedding_dim = metadata.get('embedding_dim', 256)
+        
+        # Reinitialize with correct embedding_dim
+        self.__init__(model_name=model_name, use_faiss=self.use_faiss, embedding_dim=embedding_dim)
         
         # Load weights
         self.siamese_model.load_state_dict(
@@ -415,11 +427,8 @@ class ContrastiveTextClassifier:
         )
         self.siamese_model.eval()
         
-        # Load metadata
-        with open(os.path.join(path, 'metadata.json'), 'r') as f:
-            metadata = json.load(f)
         self.labels = metadata['labels']
-        self.label_freq_cache = metadata['label_freq_cache']
+        self.label_freq_cache = metadata.get('label_freq_cache', {})
         
         # Load embeddings
         self.label_embeddings = np.loadtxt(os.path.join(path, 'embeddings.csv'), delimiter=',')

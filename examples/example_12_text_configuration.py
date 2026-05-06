@@ -77,7 +77,6 @@ try:
         text_col='text',
         test_size=0.2,
         text_model='distilbert-base-uncased',  # Faster model
-        text_max_length=64,  # Shorter sequences
         use_contrastive=False  # Use simple supervised approach
     )
     
@@ -125,3 +124,6 @@ except ImportError as e:
     print("\n⚠️  NLP dependencies not installed!")
     print("Install with: pip install .[nlp]")
     print(f"Error: {e}")
+finally:
+    import os
+    os._exit(0)

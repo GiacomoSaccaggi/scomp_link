@@ -32,7 +32,7 @@ run_example() {
     fi
 }
 
-# Run core examples (no optional dependencies)
+# Run all examples
 run_example "examples/example_01_numerical_small.py" "Example 01 - Numerical Small"
 run_example "examples/example_02_numerical_medium_lasso.py" "Example 02 - Numerical Medium Lasso"
 run_example "examples/example_03_numerical_mixed_features.py" "Example 03 - Numerical Mixed Features"
@@ -41,34 +41,15 @@ run_example "examples/example_05_classification_large.py" "Example 05 - Classifi
 run_example "examples/example_06_clustering_known.py" "Example 06 - Clustering Known"
 run_example "examples/example_07_clustering_unknown.py" "Example 07 - Clustering Unknown"
 run_example "examples/example_08_numerical_very_large.py" "Example 08 - Numerical Very Large"
-
-# Run NLP examples (requires NLP dependencies)
-if python3 -c "import torch, transformers" 2>/dev/null; then
-    echo ""
-    echo "📝 NLP dependencies found, running text examples..."
-    run_example "examples/example_09_text_classification.py" "Example 09 - Text Classification"
-    run_example "examples/example_12_text_configuration.py" "Example 12 - Text Configuration"
-    
-    if python3 -c "from sentence_transformers import SentenceTransformer" 2>/dev/null; then
-        run_example "examples/example_13_text_unsupervised.py" "Example 13 - Text Unsupervised"
-    else
-        echo "⚠️  Skipping Example 13 (requires sentence-transformers)"
-    fi
-else
-    echo "⚠️  Skipping text examples (NLP dependencies not installed)"
-    echo "   Install with: pip install .[nlp]"
-fi
-
-# Run image examples (requires image/CV dependencies)
-if python3 -c "import tensorflow" 2>/dev/null; then
-    echo ""
-    echo "🖼️  Image/CV dependencies found, running image examples..."
-    run_example "examples/example_10_image_classification.py" "Example 10 - Image Classification"
-    run_example "examples/example_11_image_clustering.py" "Example 11 - Image Clustering"
-else
-    echo "⚠️  Skipping image examples (Image/CV dependencies not installed)"
-    echo "   Install with: pip install .[img]"
-fi
+run_example "examples/example_09_text_classification.py" "Example 09 - Text Classification"
+run_example "examples/example_10_image_classification.py" "Example 10 - Image Classification"
+run_example "examples/example_11_image_clustering.py" "Example 11 - Image Clustering"
+run_example "examples/example_12_text_configuration.py" "Example 12 - Text Configuration"
+run_example "examples/example_13_text_unsupervised.py" "Example 13 - Text Unsupervised"
+run_example "examples/example_14_ensemble_advanced_cv.py" "Example 14 - Ensemble & Advanced CV"
+run_example "examples/example_15_anomaly_detection.py" "Example 15 - Anomaly Detection"
+run_example "examples/example_16_ts_anomaly_detection.py" "Example 16 - Time Series Anomaly Detection"
+run_example "examples/contrastive_text_example.py" "Contrastive Text Classification"
 
 # Summary
 echo ""
@@ -81,7 +62,7 @@ echo ""
 
 # List saved models
 echo "Saved models:"
-find staging -name "*.pkl" -o -name "*.json" | sort
+find staging -name "*.pkl" -o -name "*.json" -o -name "*.pt" | sort
 
 echo ""
 echo "=========================================="

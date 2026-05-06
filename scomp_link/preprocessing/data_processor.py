@@ -34,8 +34,11 @@ class Preprocessor:
         P4: Pulizia dei dati (rimozione di errori formali e logici e di outlier).
         """
         print("P4: Cleaning data...")
-        # Basic cleaning: drop duplicates
-        self.df = self.df.drop_duplicates()
+        # Basic cleaning: drop duplicates (skip if columns contain unhashable types)
+        try:
+            self.df = self.df.drop_duplicates()
+        except TypeError:
+            pass
         
         if remove_outliers:
             numeric_cols = self.df.select_dtypes(include=[np.number]).columns

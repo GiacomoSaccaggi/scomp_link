@@ -208,11 +208,11 @@ X_train, X_test, y_train, y_test = prep.prepare_datasets(
 
 ## Dependencies
 
+All included with `pip install scomp-link`:
 - pandas: DataFrame operations
 - numpy: Numerical computations
 - scikit-learn: Preprocessing transformers
 - scipy: Statistical functions
-- boruta: Feature selection
 
 ## See Also
 

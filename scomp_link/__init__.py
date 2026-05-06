@@ -4,6 +4,8 @@ try:
 except ImportError:
     pass
 from .models.classifier_optimizer import ClassifierOptimizer
+from .models.anomaly_detector import AnomalyDetector
+from .models.ts_anomaly_detector import TimeSeriesAnomalyDetector
 from .core import ScompLinkPipeline
 from .preprocessing.data_processor import Preprocessor
 from .models.model_factory import ModelFactory

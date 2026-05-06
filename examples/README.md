@@ -2,11 +2,11 @@
 
 ## Overview
 
-This directory contains 14 comprehensive examples demonstrating all features of scomp-link, organized by workflow phase and use case.
+This directory contains 18 comprehensive examples demonstrating all features of scomp-link, organized by workflow phase and use case.
 
 ## Examples by Workflow Phase
 
-### Preprocessing Examples (P1-P12)
+### Preprocessing & Regression (P1-P12)
 
 **example_01_numerical_small.py**
 - Small dataset (< 1000 records)
@@ -24,7 +24,7 @@ This directory contains 14 comprehensive examples demonstrating all features of 
 - Automatic encoding and scaling
 - **Workflow:** P7 Transformation → Gradient Boosting
 
-### Classification Examples
+### Classification
 
 **example_04_classification_small.py**
 - Small classification dataset
@@ -36,7 +36,7 @@ This directory contains 14 comprehensive examples demonstrating all features of 
 - ≥ 300 records per category
 - **Workflow:** SGD / Gradient Boosting / Random Forest
 
-### Clustering Examples
+### Clustering
 
 **example_06_clustering_known.py**
 - Known number of clusters
@@ -46,28 +46,32 @@ This directory contains 14 comprehensive examples demonstrating all features of 
 - Unknown number of clusters
 - **Workflow:** Mean-Shift Clustering
 
-### Large Dataset Examples
+### Large Dataset
 
 **example_08_numerical_very_large.py**
 - > 100,000 records
 - **Workflow:** SGD Regressor for scalability
 
-### Text Classification Examples
+### Text Classification
 
 **example_09_text_classification.py**
-- Traditional text classification
-- Spacy + CNN
-- **Workflow:** Text preprocessing → CNN training
+- Contrastive learning text classification
+- BERT-based embeddings + FAISS
+- Save/load model and predict
+- **Workflow:** Contrastive training → Semantic similarity → Prediction
 
 **example_12_text_configuration.py**
-- Advanced text configuration
-- Custom language and model selection
+- Configuration options comparison
+- Option 1: Contrastive Learning (BERT + FAISS)
+- Option 2: TF-IDF + SGD (fast, simple)
+- Save/load and predict demo
 
 **example_13_text_unsupervised.py**
-- Text clustering
-- Topic modeling
+- Text clustering with sentence-transformers
+- Semantic embeddings + KMeans
+- Save/load clusterer
 
-### Image Examples
+### Image
 
 **example_10_image_classification.py**
 - Image classification with CNN
@@ -78,23 +82,55 @@ This directory contains 14 comprehensive examples demonstrating all features of 
 - Unsupervised image clustering
 - Feature extraction + KMeans
 
-### Advanced Features (NEW!)
+### Ensemble & Advanced Validation
 
 **example_14_ensemble_advanced_cv.py**
 - Ensemble Learning (Voting/Stacking)
 - Advanced Cross-Validation (LOOCV/Bootstrap)
-- Complete workflow demonstration
+- Multiple models comparison
 - **Workflow:** Multiple models → Ensemble → Advanced validation
 
-**contrastive_text_example.py**
-- Contrastive learning for text
-- BERT-based embeddings
-- Few-shot learning
-- **Workflow:** Contrastive training → Semantic similarity
+### Anomaly Detection
+
+**example_15_anomaly_detection.py**
+- Multi-method anomaly detection for tabular data
+- 4 methods: Isolation Forest, LOF, TabNet Autoencoder, Transformer Autoencoder
+- Consensus voting for robust anomaly labels
+- **Workflow:** Data → Multi-method detection → Consensus → Report
+
+**example_16_ts_anomaly_detection.py**
+- Time series anomaly detection
+- 4 methods: Conv1D Autoencoder, Moving Average, Moving Median, ARIMA Residuals
+- Train on normal data, detect on new data
+- **Workflow:** Fit normal → Detect anomalies → Per-method results
+
+### Reporting
+
+**example_17_report_html.py**
+- Full HTML report generation demo
+- Titles, text, DataFrames, collapsible sections
+- Plotly graphs (single, combobox selection, multi-filter)
+- Matplotlib graphs (base64 embedded)
+- Plotly utilities: histogram, barchart, linechart, area_chart
+- PDF export (requires playwright)
+
+### Contrastive Learning
+
+**example_18_contrastive_text_example.py**
+- Direct usage of ContrastiveTextClassifier
+- BERT-based contrastive embeddings
+- Few-shot learning scenario
+- Save/load model
+- **Workflow:** Contrastive training → Semantic similarity → Prediction
 
 ## Running Examples
 
-### Run All Examples
+### Run All Examples (via tox, multi-version)
+```bash
+rm -rf .tox && ./run_tox_all_versions.sh
+```
+
+### Run All Examples (current env)
 ```bash
 bash run_all_examples.sh
 ```
@@ -102,19 +138,6 @@ bash run_all_examples.sh
 ### Run Individual Example
 ```bash
 python3 examples/example_01_numerical_small.py
-```
-
-### Run with Virtual Environment
-```bash
-# Create environment
-python3 -m venv venv
-source venv/bin/activate  # On Windows: venv\\Scripts\\activate
-
-# Install dependencies
-pip install -e .[all]
-
-# Run example
-python3 examples/example_14_ensemble_advanced_cv.py
 ```
 
 ## Example Structure
@@ -153,56 +176,6 @@ results = pipe.run_pipeline(
 print(results)
 ```
 
-## Examples by Feature
-
-### Basic Features
-- **Data Cleaning**: examples 01-03
-- **Feature Selection**: example 02
-- **Model Selection**: all examples
-- **Validation**: all examples
-
-### Advanced Features
-- **Ensemble Learning**: example 14
-- **Advanced CV**: example 14
-- **Text Classification**: examples 09, 12, 13, contrastive
-- **Image Processing**: examples 10, 11
-- **Clustering**: examples 06, 07, 11, 13
-
-### Optimization Features
-- **Grid Search**: examples 02, 03, 05
-- **Hyperparameter Tuning**: examples 02-05
-- **Cross-Validation**: all examples
-- **Bootstrap**: example 14
-- **LOOCV**: example 14
-
-## Expected Outputs
-
-Each example generates:
-
-1. **Console Output**
-   - Progress messages
-   - Model selection decisions
-   - Training progress
-   - Metrics summary
-
-2. **HTML Report**
-   - `ScompLink_Validation_Report.html`
-   - Interactive visualizations
-   - Metrics tables
-   - Model diagnostics
-
-3. **Return Dictionary**
-   ```python
-   {
-       "status": "success",
-       "model_type": "...",
-       "metrics": {...},
-       "advanced_cv": {...},  # If enabled
-       "ensemble_scores": {...},  # If enabled
-       "report_path": "..."
-   }
-   ```
-
 ## Workflow Mapping
 
 | Example | Workflow Phases | Decision Tree Branch |
@@ -215,58 +188,42 @@ Each example generates:
 | 06 | Clustering, known categories | KMeans |
 | 07 | Clustering, unknown categories | Mean-Shift |
 | 08 | > 100k records | SGD Regressor |
-| 09 | Text, supervised | CNN + Spacy |
+| 09 | Text, contrastive learning | BERT + FAISS |
 | 10 | Images, classification | CNN/Pre-trained |
 | 11 | Images, clustering | Feature extraction |
-| 12 | Text, configuration | Custom NLP |
-| 13 | Text, unsupervised | Topic modeling |
+| 12 | Text, configuration options | Contrastive / TF-IDF |
+| 13 | Text, unsupervised | Sentence-transformers + KMeans |
 | 14 | Ensemble + Advanced CV | Multiple models |
-| contrastive | Text, contrastive learning | BERT embeddings |
+| 15 | Anomaly detection, tabular | IForest/LOF/TabNet/Transformer |
+| 16 | Anomaly detection, time series | AE/MovAvg/MovMed/ARIMA |
+| 17 | HTML/PDF report generation | ScompLinkHTMLReport |
+| 18 | Text, contrastive (direct API) | ContrastiveTextClassifier |
 
-## Customization
+## Examples by Feature
 
-### Modify Example Parameters
+### Basic Features
+- **Data Cleaning**: examples 01-03
+- **Feature Selection**: example 02
+- **Model Selection**: all examples
+- **Validation**: all examples
 
-```python
-# Change dataset size
-N = 5000  # Instead of 1000
+### Advanced Features
+- **Ensemble Learning**: example 14
+- **Advanced CV**: example 14
+- **Anomaly Detection (Tabular)**: example 15
+- **Anomaly Detection (Time Series)**: example 16
+- **Text Classification**: examples 09, 12, 18
+- **Text Clustering**: example 13
+- **Image Processing**: examples 10, 11
+- **Clustering**: examples 06, 07, 11, 13
+- **HTML Reporting**: example 17
 
-# Change model parameters
-models_to_test = {
-    'CustomModel': {
-        'model': YourModel(),
-        'params_grid': {
-            'param1': [value1, value2],
-            'param2': [value3, value4]
-        }
-    }
-}
-
-# Change validation strategy
-results = pipe.run_pipeline(
-    task_type="regression",
-    test_size=0.3,  # Instead of 0.2
-    advanced_cv=True,
-    cv_methods=['loocv', 'bootstrap'],
-    bootstrap_iterations=2000  # Instead of 1000
-)
-```
-
-### Add Custom Preprocessing
-
-```python
-from scomp_link.preprocessing import Preprocessor
-
-# Custom preprocessing
-prep = Preprocessor(df)
-df_clean = prep.clean_data(outlier_threshold=2.5)
-df_integrated = prep.integrate_data(external_df, on='id')
-selected_features = prep.feature_selection(target_col='y', n_features=15)
-
-# Use in pipeline
-pipe.import_and_clean_data(df_integrated)
-pipe.select_variables(target_col='y', feature_cols=selected_features)
-```
+### Optimization Features
+- **Grid Search**: examples 02, 03, 05
+- **Hyperparameter Tuning**: examples 02-05
+- **Cross-Validation**: all examples
+- **Bootstrap**: example 14
+- **LOOCV**: example 14
 
 ## Troubleshooting
 
@@ -274,24 +231,13 @@ pipe.select_variables(target_col='y', feature_cols=selected_features)
 
 **1. Missing Dependencies**
 ```bash
-# Install all dependencies
-pip install -e .[all]
-
-# Or specific groups
-pip install -e .[nlp]  # For text examples
-pip install -e .[img]  # For image examples
+pip install scomp-link
 ```
 
 **2. Memory Issues (Large Datasets)**
 ```python
 # Reduce dataset size
 df = df.sample(n=10000, random_state=42)
-
-# Or use SGD for large data
-pipe.choose_model("numerical_prediction", metadata={
-    "only_numerical_exogenous": True
-})
-# Automatically selects SGD for > 100k records
 ```
 
 **3. Slow Optimization**
@@ -300,49 +246,20 @@ pipe.choose_model("numerical_prediction", metadata={
 models_to_test = {
     'Model': {
         'model': Model(),
-        'params_grid': {
-            'param': [value1, value2]  # Fewer values
-        }
+        'params_grid': {'param': [value1, value2]}
     }
 }
-
-# Or estimate time first
-optimizer.estimate_optimization_time(time_per_combination=60)
 ```
 
-**4. LOOCV Too Slow**
-```python
-# Use bootstrap instead
-results = pipe.run_pipeline(
-    advanced_cv=True,
-    cv_methods=['bootstrap'],  # Skip LOOCV
-    bootstrap_iterations=500
-)
+**4. PDF Export (example 17)**
+```bash
+pip install playwright
+playwright install chromium
 ```
-
-## Performance Tips
-
-1. **Start Small**: Test with subset of data first
-2. **Estimate Time**: Use `estimate_optimization_time()`
-3. **Parallel Processing**: Enable in optimizers (future feature)
-4. **Cache Results**: Save trained models with `pipe.save_model()`
-5. **Skip LOOCV**: For datasets > 1000 samples
-
-## Next Steps
-
-After running examples:
-
-1. **Explore Reports**: Open generated HTML files
-2. **Modify Parameters**: Experiment with different settings
-3. **Try Your Data**: Replace synthetic data with real datasets
-4. **Combine Features**: Use ensemble + advanced CV together
-5. **Read Documentation**: Check module READMEs for details
 
 ## See Also
 
 - [Main README](../README.md) - API reference
 - [Workflow Documentation](../WORKFLOW.md) - Complete workflow mapping
-- [Preprocessing](../scomp_link/preprocessing/README.md) - P1-P12 phases
-- [Models](../scomp_link/models/README.md) - Model selection
-- [Validation](../scomp_link/validation/README.md) - Validation strategies
 - [Ensemble Learning](../scomp_link/models/README_ENSEMBLE.md) - Advanced features
+- [VERSION_REQUIREMENTS.md](../VERSION_REQUIREMENTS.md) - Dependency versions
