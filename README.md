@@ -6,6 +6,7 @@
 [![Coverage](https://img.shields.io/badge/coverage-~100%25-brightgreen)]()
 [![Python](https://img.shields.io/badge/python-3.10%2B-blue)]()
 [![License](https://img.shields.io/badge/license-MIT-blue)]()
+[![PyPI](https://img.shields.io/pypi/v/scomp-link)](https://pypi.org/project/scomp-link/)
 
 ## Overview
 
@@ -848,3 +849,5 @@ For issues, questions, or contributions:
 ---
 
 **May the code be with you.** 🚀
+
+📦 [scomp-link on PyPI](https://pypi.org/project/scomp-link/)

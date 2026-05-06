@@ -327,3 +327,7 @@ All included with `pip install scomp-link`:
 - [Preprocessing](../preprocessing/README.md)
 - [Validation](../validation/README.md)
 - [Ensemble Learning](README_ENSEMBLE.md)
+
+---
+
+📦 [scomp-link on PyPI](https://pypi.org/project/scomp-link/)
