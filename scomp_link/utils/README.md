@@ -6,6 +6,10 @@ The utilities module provides supporting tools for HTML report generation, visua
 
 ## Core Components
 
+### Decorators (`decorators.py`)
+
+General-purpose Python decorators for timing, retrying, caching, logging, memory profiling, deprecation warnings, argument validation, and more. See [Decorators](#decorators) section below.
+
 ### ScompLinkHTMLReport
 
 Programmatic HTML report builder with embedded Plotly visualizations:
@@ -164,6 +168,70 @@ Reports include:
 - **jQuery**: DOM manipulation
 - **Select2**: Enhanced dropdowns
 - **Highcharts**: Additional charting (optional)
+
+## Decorators
+
+### General-Purpose Decorators
+
+```python
+from scomp_link.utils.decorators import (
+    timer,
+    retry,
+    log_call,
+    memory_usage,
+    cache,
+    deprecated,
+    suppress_exceptions,
+    validate_args,
+    run_once
+)
+```
+
+| Decorator | Description |
+|-----------|-------------|
+| `@timer` | Prints execution time (auto-formats seconds or minutes) |
+| `@retry(max_attempts=3, delay=1.0)` | Retries on failure with configurable attempts and backoff delay |
+| `@log_call` | Logs function name, arguments, and return type |
+| `@memory_usage` | Prints peak memory usage via `tracemalloc` |
+| `@cache` | In-memory memoization with `.cache_clear()` method |
+| `@deprecated("msg")` | Emits `DeprecationWarning` on each call |
+| `@suppress_exceptions(default=None)` | Catches all exceptions, returns default value |
+| `@validate_args(param=lambda x: ...)` | Validates arguments before execution |
+| `@run_once` | Executes only on first call, caches result for subsequent calls |
+
+### Examples
+
+```python
+@timer
+@memory_usage
+def train_model(X, y):
+    model.fit(X, y)
+    return model
+# ⏱️  train_model completed in 12.34s
+# 🧠 train_model — peak memory: 245.3 MB
+
+@retry(max_attempts=3, delay=2.0, exceptions=(ConnectionError,))
+def fetch_data(url):
+    return requests.get(url).json()
+
+@validate_args(df=lambda x: len(x) > 0, threshold=lambda x: 0 <= x <= 1)
+def filter_data(df, threshold=0.5):
+    return df[df['score'] > threshold]
+
+@deprecated("Use process_v2() instead")
+def process_v1(data):
+    ...
+
+@cache
+def expensive_computation(n):
+    return sum(range(n))
+
+@run_once
+def load_global_config():
+    return yaml.safe_load(open('config.yaml'))
+```
+
+---
 
 ## Visualization Utilities
 
