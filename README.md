@@ -2,70 +2,19 @@
 
 ## May the code be with you
 
-[![Tests](https://img.shields.io/badge/tests-41%2F41%20passing-brightgreen)]()
-[![Coverage](https://img.shields.io/badge/coverage-~100%25-brightgreen)]()
-[![Python](https://img.shields.io/badge/python-3.10%2B-blue)]()
+[![CI](https://github.com/GiacomoSaccaggi/scomp-link/actions/workflows/ci.yml/badge.svg)](https://github.com/GiacomoSaccaggi/scomp-link/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/GiacomoSaccaggi/scomp-link/branch/main/graph/badge.svg)](https://codecov.io/gh/GiacomoSaccaggi/scomp-link)
+[![Python](https://img.shields.io/pypi/pyversions/scomp-link)](https://pypi.org/project/scomp-link/)
 [![License](https://img.shields.io/badge/license-MIT-blue)]()
 [![PyPI](https://img.shields.io/pypi/v/scomp-link)](https://pypi.org/project/scomp-link/)
 
+---
+
 ## Overview
 
-**scomp-link** is a general-purpose machine learning toolkit that automates the complete ML workflow from problem identification to model validation. It implements a comprehensive decision-tree-based analysis workflow covering all phases from data preprocessing (P1-P12) to model selection, training, validation, and ensemble learning.
+**scomp-link** is an end-to-end machine learning toolkit that automates the complete ML workflow — from data profiling and preprocessing to model selection, training, validation, explainability, monitoring, and deployment.
 
-### Complete Analysis Workflow
-
-The package implements the full data science workflow:
-
-```
-PROBLEM IDENTIFICATION → OBJECTIVES FORMULATION → ANALYSIS DEVELOPMENT
-    ↓
-PREPROCESSING (P1-P12):
-  P1: Business/Problem Understanding
-  P2: Data Understanding
-  P3: Data Acquisition
-  P4: Data Cleaning
-  P5: Data Integration (Record Linkage)
-  P6: Data Selection
-  P7: Data Transformation
-  P8: Data Mining
-  P9: Relationship Evaluation
-  P10: Feature Selection
-  P11: EDA (Exploratory Data Analysis)
-  P12: Dataset Preparation
-    ↓
-MODEL SELECTION (Decision Tree):
-  - Numerical Prediction (< 1k, 1k-100k, > 100k records)
-  - Categorical Classification (Images, Categorical, Mixed)
-  - Clustering (Known/Unknown categories)
-  - Time Series (UCM, VAR/VARMA)
-  - Multi-target Prediction
-    ↓
-MODELING (M1-M4):
-  M1: Missing Values Handling
-  M2: Outlier Management
-  M3: Algorithm Parameters
-  M4: Validation Parameters (LOOCV, K-Fold, Bootstrap)
-    ↓
-VALIDATION:
-  V1: Interpretation vs Flexibility
-  V2: Underfitting vs Overfitting
-  V3: Evaluation Metrics
-    ↓
-FAIL → Return to Model Selection
-SUCCESS → Ensemble Learning → Reinforcement Learning
-```
-
-### Key Features
-
-- 🚀 **End-to-End Automation**: Complete workflow from problem to solution
-- 🎯 **Multi-Modal Support**: Tabular, text, and image data
-- 🧠 **Intelligent Model Selection**: Decision-tree-based algorithm selection
-- 🔄 **Advanced Validation**: LOOCV, Bootstrap, K-Fold CV
-- 🎭 **Ensemble Learning**: Voting and stacking strategies
-- 🔍 **Anomaly Detection**: Multi-method consensus for tabular and time series data
-- 🌐 **Domain Agnostic**: No hard-coded assumptions
-- 🔌 **Pluggable Architecture**: Optional dependencies loaded on-demand
-- 📊 **Automated Reporting**: Interactive HTML reports with Plotly
+It includes a **full-featured CLI** for zero-code ML workflows and a Python API for programmatic use.
 
 ---
 
@@ -75,663 +24,223 @@ SUCCESS → Ensemble Learning → Reinforcement Learning
 pip install scomp-link
 ```
 
-Requires Python 3.10+. All dependencies (NLP, CV, anomaly detection) are included.
+Requires Python 3.10+.
 
 ---
 
-## Quick Start
+## Key Features
 
-### 1. Basic Regression Pipeline
-
-```python
-from scomp_link import ScompLinkPipeline
-import pandas as pd
-import numpy as np
-
-# Create synthetic data
-N = 1000
-df = pd.DataFrame({
-    'x1': np.random.randn(N),
-    'x2': np.random.randn(N),
-    'y':  2*np.random.randn(N) + 0.5
-})
-
-# Build and run pipeline
-pipe = ScompLinkPipeline("Demo Numerical Prediction")
-pipe.set_objectives(["Minimize RMSE"])
-pipe.import_and_clean_data(df)
-pipe.select_variables(target_col='y')
-pipe.choose_model("numerical_prediction", 
-                 metadata={"only_numerical_exogenous": True, 
-                          "all_variables_important": False})
-results = pipe.run_pipeline(task_type="regression")
-
-print(results)
-# Output: {'status': 'success', 'model_type': '...', 'metrics': {...}, 'report_path': '...'}
-```
-
-An HTML validation report is automatically generated: `ScompLink_Validation_Report.html`
+| Category | Features |
+|----------|----------|
+| **Pipeline** | Automated model selection, training, validation, HTML reports |
+| **CLI** | 13 commands — `run`, `predict`, `explain`, `engineer`, `forecast`, `anomaly`, `drift`, `fairness`, `quality`, `report`, `compare`, `info`, `init` |
+| **Preprocessing** | Data cleaning, feature engineering (interactions, log, dates, target encoding, binning), data quality profiling |
+| **Models** | Regression, classification, clustering, time series forecasting, anomaly detection, text (BERT contrastive), images (CNN) |
+| **Tuning** | Optuna (Bayesian), Halving Grid Search, Early Stopping CV |
+| **Validation** | K-Fold, LOOCV, Bootstrap, ensemble (voting/stacking) |
+| **Explainability** | SHAP values, LIME explanations |
+| **Monitoring** | Data drift detection (PSI + KS test) |
+| **Fairness** | Demographic parity, disparate impact (4/5 rule), equalized odds |
+| **Persistence** | Custom `.scomp` format (model + preprocessor + config + metrics + sample data) |
+| **Reporting** | Interactive HTML reports (Plotly), data quality reports |
 
 ---
 
-## Complete Usage Guide
-
-### Core Pipeline API
-
-#### 1. Initialize Pipeline
-
-```python
-from scomp_link import ScompLinkPipeline
-
-pipe = ScompLinkPipeline("Your Project Name")
-```
-
-#### 2. Set Objectives
-
-```python
-# For regression
-pipe.set_objectives(["Minimize RMSE", "Maximize R2"])
-
-# For classification
-pipe.set_objectives(["Maximize Accuracy", "Maximize F1"])
-```
-
-#### 3. Import and Clean Data
-
-```python
-import pandas as pd
-
-df = pd.read_csv("your_data.csv")
-pipe.import_and_clean_data(df)
-# Automatically removes duplicates and outliers
-```
-
-#### 4. Select Variables
-
-```python
-# Auto-select all features except target
-pipe.select_variables(target_col='target_column')
-
-# Or specify features manually
-pipe.select_variables(target_col='target_column', 
-                     feature_cols=['feature1', 'feature2'])
-```
-
-#### 5. Choose Model
-
-The pipeline uses intelligent model selection based on your data characteristics:
-
-```python
-# Numerical Prediction
-pipe.choose_model("numerical_prediction", 
-                 metadata={
-                     "only_numerical_exogenous": True,  # All features are numeric
-                     "all_variables_important": False    # Feature selection needed
-                 })
-
-# Categorical Classification
-pipe.choose_model("categorical_known", 
-                 metadata={
-                     "records_per_category": 500,
-                     "exogenous_type": "mixed"  # categorical/numerical
-                 })
-
-# Clustering
-pipe.choose_model("categorical_unknown", 
-                 metadata={"categories_known": True})
-```
-
-#### 6. Run Pipeline
-
-```python
-# For regression
-results = pipe.run_pipeline(task_type="regression", test_size=0.2)
-
-# For classification
-results = pipe.run_pipeline(task_type="classification", test_size=0.2)
-
-# Access results
-print(f"Model: {results['model_type']}")
-print(f"Metrics: {results['metrics']}")
-print(f"Report: {results['report_path']}")
-```
-
----
-
-## Advanced Usage
-
-### Using Contrastive Learning for Text Classification (NEW! 🆕)
-
-```python
-from scomp_link.models.contrastive_text import ContrastiveTextClassifier
-import pandas as pd
-
-# Prepare data
-df = pd.DataFrame({
-    'text': ['AI revolutionizes tech', 'Team wins championship', ...],
-    'category': ['Technology', 'Sports', ...]
-})
-
-# Initialize classifier
-classifier = ContrastiveTextClassifier(
-    model_name='bert-base-uncased',
-    use_faiss=True,  # Fast inference
-    embedding_dim=128
-)
-
-# Train with contrastive learning
-classifier.train_contrastive(
-    df,
-    text_col='text',
-    label_col='category',
-    epochs=5,
-    batch_size=64,
-    validation_split=0.2
-)
-
-# Single prediction
-prediction = classifier.predict("New smartphone with AI", top_k=3, return_confidence=True)
-print(prediction)  # {'predictions': ['Technology', ...], 'confidences': [0.95, ...]}
-
-# Batch prediction
-test_df = pd.DataFrame({'text': test_texts})
-results = classifier.predict_batch(test_df['text'], top_k=2)
-print(results[['text', 'prediction', 'confidence']])
-
-# Save/Load model
-classifier.save('./models/my_classifier')
-classifier.load('./models/my_classifier')
-```
-
-**Use Cases**:
-- Text categorization with many classes
-- Semantic similarity tasks
-- Few-shot learning scenarios
-- URL-to-App classification
-- Document classification
-
-**Advantages over traditional methods**:
-- ✅ Better performance with many classes (100+)
-- ✅ Works well with limited data per class
-- ✅ Learns semantic relationships
-- ✅ Fast inference with FAISS
-- ✅ Transfer learning from BERT
-
----
-
-### Anomaly Detection for Tabular Data (NEW! 🆕)
-
-Detect anomalies using multi-method consensus voting:
-
-```python
-from scomp_link.models.anomaly_detector import AnomalyDetector
-import pandas as pd
-
-# Load your data
-df = pd.read_csv("data.csv")
-
-# Initialize detector with 4 methods
-detector = AnomalyDetector(
-    contamination=0.05,          # Expected 5% anomalies
-    methods=['iforest', 'lof', 'tabnet', 'transformer'],
-    consensus_threshold=2,       # At least 2 methods must agree
-    verbose=True
-)
-
-# Run detection
-results = detector.fit_predict(df, features=['col1', 'col2', 'col3'])
-
-# View method comparison
-print(results['comparison'])
-#        method  n_anomalies   pct
-# 0     iforest           50  5.0
-# 1         lof           48  4.8
-# 2      tabnet           52  5.2
-# 3 transformer           47  4.7
-# 4 consensus(≥2)         35  3.5
-
-# Get anomalous rows
-anomalies = results['data'][results['data']['is_anomaly']]
-
-# Generate grouped report
-report = detector.report(group_by=['category_column'])
-print(report)
-```
-
-**Methods:**
-- **Isolation Forest**: Tree-based, non-parametric isolation of outliers
-- **Local Outlier Factor (LOF)**: Density-based, detects local neighborhood anomalies
-- **TabNet Autoencoder**: Neural attention on tabular features (requires `pytorch-tabnet`)
-- **Transformer Autoencoder**: Self-attention across features as tokens (requires `torch`)
-
-**Use Cases:**
-- Fraud detection
-- Manufacturing quality control
-- Network intrusion detection
-- Data quality monitoring
-
----
-
-### Time Series Anomaly Detection (NEW! 🆕)
-
-Detect anomalies in univariate time series with multiple methods:
-
-```python
-from scomp_link.models.ts_anomaly_detector import TimeSeriesAnomalyDetector
-import numpy as np
-
-# Prepare data: train on normal data, detect on new data
-train_values = df_train['value'].values  # Normal time series
-test_values = df_test['value'].values    # May contain anomalies
-
-# Initialize detector
-detector = TimeSeriesAnomalyDetector(
-    methods=['autoencoder', 'moving_avg', 'moving_median', 'arima'],
-    time_steps=288,          # Sequence length (e.g., 1 day at 5-min intervals)
-    window_size=48,          # Window for moving avg/median
-    n_sigma=3.0,             # Std deviations for threshold
-    ae_epochs=50,            # Autoencoder training epochs
-    threshold_percentile=95.0
-)
-
-# Fit on normal data (trains autoencoder)
-detector.fit(train_values)
-
-# Detect anomalies
-results = detector.detect(test_values)
-
-# Boolean array of anomalies
-anomalies = results['anomalies']  # True where anomaly detected
-
-# Per-method results
-for method, flags in results['methods'].items():
-    print(f"{method}: {flags.sum()} anomalies")
-
-# Consensus score (how many methods flagged each point)
-print(results['consensus_score'])
-```
-
-**Methods:**
-- **Conv1D Autoencoder**: Learns normal temporal patterns, flags high reconstruction error (requires `tensorflow`)
-- **Moving Average**: Flags deviations beyond N standard deviations from rolling mean
-- **Moving Median**: Robust variant using MAD (Median Absolute Deviation)
-- **ARIMA Residuals**: Flags large residuals from fitted ARIMA model (requires `statsmodels`)
-
-**Use Cases:**
-- IoT sensor monitoring
-- Server metrics alerting
-- Financial time series surveillance
-- Predictive maintenance
-
----
-
-### Using Optimizers Directly
-
-#### Regression Optimizer
-
-```python
-from scomp_link.models.regressor_optimizer import RegressorOptimizer
-from sklearn.linear_model import LinearRegression, Lasso
-from sklearn.ensemble import RandomForestRegressor
-
-# Define models to test
-models_to_test = {
-    'LinearRegression': {
-        'model': LinearRegression(),
-        'params_grid': {
-            'fit_intercept': [True, False]
-        }
-    },
-    'Lasso': {
-        'model': Lasso(),
-        'params_grid': {
-            'alpha': [0.1, 1.0, 10.0]
-        }
-    },
-    'RandomForest': {
-        'model': RandomForestRegressor(),
-        'params_grid': {
-            'n_estimators': [100, 200],
-            'max_depth': [10, 20, None]
-        }
-    }
-}
-
-# Run optimizer
-optimizer = RegressorOptimizer(
-    df=df,
-    y_col='target',
-    x_cols=['feature1', 'feature2', 'feature3'],
-    x_complexity_col='feature1',  # For visualization
-    models_to_test=models_to_test,
-    select_features=True  # Apply Boruta feature selection
-)
-
-# Estimate optimization time
-optimizer.estimate_optimization_time(time_per_combination=60)
-
-# Test all models
-optimizer.test_models_regression()
-
-# Access results
-for model_name, results in optimizer.model_results.items():
-    print(f"{model_name}: {results['Params']}")
-
-# Generate visualization
-fig = optimizer.grafico_fit_con_errore('LinearRegression')
-fig.show()
-```
-
-#### Classification Optimizer
-
-```python
-from scomp_link.models.classifier_optimizer import ClassifierOptimizer
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.svm import SVC
-
-models_to_test = {
-    'RandomForest': {
-        'model': RandomForestClassifier(),
-        'params_grid': {
-            'n_estimators': [100, 200],
-            'max_depth': [10, 20]
-        }
-    },
-    'SVC': {
-        'model': SVC(probability=True),
-        'params_grid': {
-            'C': [1, 10],
-            'kernel': ['rbf', 'linear']
-        }
-    }
-}
-
-optimizer = ClassifierOptimizer(
-    df=df,
-    y_col='target',
-    x_cols=['feature1', 'feature2'],
-    models_to_test=models_to_test
-)
-
-optimizer.test_models_classification()
-```
-
-### Preprocessing Utilities
-
-```python
-from scomp_link import Preprocessor
-
-# Initialize preprocessor
-prep = Preprocessor(df)
-
-# Clean data
-cleaned_df = prep.clean_data(remove_outliers=True, outlier_threshold=3.0)
-
-# Integrate external data
-external_df = pd.read_csv("external_data.csv")
-integrated_df = prep.integrate_data(external_df, on='id', how='left')
-
-# Feature selection
-top_features = prep.feature_selection(target_col='target', n_features=10)
-
-# Run EDA
-summary = prep.run_eda()
-print(summary['shape'])
-print(summary['missing_values'])
-
-# Prepare train/test splits
-X_train, X_test, y_train, y_test = prep.prepare_datasets('target', test_size=0.2)
-```
-
-### Validation and Metrics
-
-```python
-from scomp_link import Validator
-from sklearn.linear_model import LinearRegression
-
-# Train a model
-model = LinearRegression()
-model.fit(X_train, y_train)
-y_pred = model.predict(X_test)
-
-# Create validator
-validator = Validator(model)
-
-# Evaluate metrics
-metrics = validator.evaluate(y_test, y_pred, task_type="regression")
-print(f"RMSE: {metrics['rmse']:.4f}")
-print(f"R²: {metrics['r2']:.4f}")
-
-# K-Fold Cross Validation
-cv_scores = validator.k_fold_cv(X_train, y_train, k=5)
-print(f"CV Mean: {cv_scores.mean():.4f} (+/- {cv_scores.std():.4f})")
-
-# Generate HTML report
-validator.generate_validation_report(
-    y_test, y_pred, 
-    task_type="regression",
-    report_name="My_Validation_Report.html"
-)
-```
-
-### Custom HTML Reports
-
-```python
-from scomp_link.utils.report_html import ScompLinkHTMLReport
-import plotly.express as px
-
-# Create report
-report = ScompLinkHTMLReport(
-    title='Custom Analysis Report',
-    main_color='#6E37FA',
-    light_color='#9682FF',
-    dark_color='#4614B4'
-)
-
-# Add sections
-report.open_section("Data Analysis")
-report.add_title("Distribution Analysis")
-report.add_text("This section shows the distribution of key variables.")
-
-# Add Plotly graphs
-fig = px.scatter(df, x='x1', y='y', title='Scatter Plot')
-report.add_graph_to_report(fig, 'Feature vs Target')
-
-# Add dataframes
-report.add_dataframe(df.head(20), 'Sample Data')
-
-report.close_section()
-
-# Save report
-report.save_html('custom_report.html')
-```
-
-### Visualization Utilities
-
-```python
-from scomp_link.utils.plotly_utils import (
-    histogram, multiple_histograms, 
-    barchart, linechart, area_chart
-)
-
-# Single histogram
-fig = histogram(df['age'], 'Age Distribution', h=600)
-fig.show()
-
-# Multiple histograms by category
-fig = multiple_histograms(
-    df['value'], 
-    df['category'],
-    category_name='Product Category',
-    y_label='Sales',
-    h=300
-)
-fig.show()
-
-# Bar chart
-fig = barchart(
-    categories=['A', 'B', 'C'],
-    metric_values_list=[[10, 20, 30], [15, 25, 35]],
-    y_axis_titles=['Metric 1', 'Metric 2']
-)
-fig.show()
-
-# Line chart
-fig = linechart(
-    date_list=['2024-01-01', '2024-01-02', '2024-01-03'],
-    lines=[[10, 15, 20], [5, 10, 15]],
-    y_labels=['Series 1', 'Series 2'],
-    title_text='Time Series Analysis'
-)
-fig.show()
-```
-
----
-
-## Model Selection Decision Tree
-
-The pipeline automatically selects the best model based on your data:
-
-### Numerical Prediction
-- **< 1000 records**: Econometric Model
-- **1000-100k records**:
-  - Only numerical features:
-    - All important: Ridge / SVR
-    - Feature selection needed: Lasso / Elastic Net
-  - Mixed features: Gradient Boosting / Random Forest
-- **> 100k records**:
-  - Only numerical: SGD Regressor
-  - Mixed: Gradient Boosting / Random Forest
-
-### Categorical Classification
-- **Image data**:
-  - < 500 per category: Pre-trained model
-  - ≥ 500 per category: CNN (ResNet/Inception)
-- **Categorical features**:
-  - < 5 features: Theorical Psychometric Model
-  - ≥ 5 features: Naive Bayes / Classification Tree
-- **Mixed features**:
-  - < 300 per category: SVC / K-Neighbors / Naive Bayes
-  - ≥ 300 per category: SGD / Gradient Boosting / Random Forest
-
-### Clustering
-- Categories known: KMeans / Hierarchical Clustering
-- Categories unknown: Mean-Shift Clustering
-
----
-
-## Validation Reports
-
-Every pipeline run generates an HTML report containing:
-
-### Regression Reports
-- **Metrics Summary**: MSE, RMSE, MAE, R²
-- **Observed vs Predicted**: Scatter plot with ideal line
-- **Residuals Distribution**: Histogram of prediction errors
-- **Residuals Analysis**: Binned residuals with confidence intervals
-
-### Classification Reports
-- **Metrics Summary**: Accuracy, F1, Precision, Recall
-- **Confusion Matrix**: Interactive heatmap
-- **Confidence Distribution**: Probability distributions per class
-- **ROC Curves**: (when applicable)
-
-All reports are:
-- ✅ Self-contained HTML files
-- ✅ Interactive (Plotly-based)
-- ✅ Responsive design
-- ✅ Exportable to CSV
-
----
-
-## Ensemble Learning & Advanced Cross-Validation (NEW! 🆕)
-
-### Ensemble Learning
-
-Combine multiple models for improved performance:
-
-```python
-from scomp_link import ScompLinkPipeline
-
-# Define multiple models to test
-models_to_test = {
-    'Ridge': {'model': Ridge(), 'params_grid': {'alpha': [0.1, 1.0, 10.0]}},
-    'Lasso': {'model': Lasso(), 'params_grid': {'alpha': [0.1, 1.0, 10.0]}},
-    'RandomForest': {'model': RandomForestRegressor(), 'params_grid': {'n_estimators': [50, 100]}}
-}
-
-pipe = ScompLinkPipeline("Ensemble Demo")
-pipe.import_and_clean_data(df)
-pipe.select_variables(target_col='y')
-
-# Run with ensemble
-results = pipe.run_pipeline(
-    task_type="regression",
-    models_to_test=models_to_test,
-    use_ensemble=True,              # Enable ensemble
-    ensemble_strategy='voting'       # or 'stacking'
-)
-
-print(f"Ensemble Score: {results['ensemble_scores']['mean_score']:.4f}")
-```
-
-**Strategies:**
-- **Voting**: Average predictions from all models
-- **Stacking**: Use meta-learner to combine predictions
-
-### Advanced Cross-Validation
-
-Go beyond K-Fold with LOOCV and Bootstrap:
-
-```python
-results = pipe.run_pipeline(
-    task_type="regression",
-    models_to_test=models_to_test,
-    advanced_cv=True,                    # Enable advanced CV
-    cv_methods=['loocv', 'bootstrap'],   # Validation methods
-    bootstrap_iterations=1000            # Bootstrap samples
-)
-
-# Access advanced CV results
-for method, cv_result in results['advanced_cv'].items():
-    print(f"{cv_result['method']}: {cv_result['mean_score']:.4f}")
-    if 'confidence_interval_95' in cv_result:
-        ci = cv_result['confidence_interval_95']
-        print(f"  95% CI: [{ci[0]:.4f}, {ci[1]:.4f}]")
-```
-
-**Methods:**
-- **LOOCV (C1)**: Leave-One-Out Cross Validation (for small datasets)
-- **Bootstrap (C3)**: Resampling with confidence intervals
-- **K-Fold (C2)**: Standard cross-validation (default)
-
-See [Ensemble & Advanced CV Documentation](scomp_link/models/README_ENSEMBLE.md) for details.
-
----
-
-## Testing
-
-The package includes comprehensive tests with ~100% coverage:
+## CLI Quick Start
 
 ```bash
-# Install dev dependencies
-pip install scomp-link
-pip install pytest pytest-cov
+# Scaffold a new project
+scomp-link init my_project
 
-# Run all tests
-python3 -m pytest tests/ -v
+# Profile your data
+scomp-link quality --data data.csv --output report.html
 
-# Run with coverage report
-python3 -m pytest tests/ --cov=scomp_link --cov-report=html
+# Feature engineering
+scomp-link engineer --data data.csv --target y --interactions --log-transform --output features.csv
+
+# Train a model
+scomp-link run --data features.csv --target y --task regression --save-artifact model.scomp
+
+# Predict
+scomp-link predict --artifact model.scomp --data new_data.csv --output predictions.csv
+
+# Explain
+scomp-link explain --artifact model.scomp --data test.csv
+
+# Detect drift
+scomp-link drift --reference train.csv --current production.csv
+
+# Forecast time series
+scomp-link forecast --data series.csv --column value --horizon 30
+
+# Anomaly detection
+scomp-link anomaly --data data.csv --methods iforest,lof
+
+# Fairness check
+scomp-link fairness --data preds.csv --target y_true --predicted y_pred --sensitive gender
+
+# Compare models
+scomp-link compare --artifacts v1.scomp v2.scomp
+
+# Generate EDA report
+scomp-link report --data data.csv --output eda_report.html
+
+# Generate model evaluation report
+scomp-link report --artifact model.scomp --data test.csv --output model_report.html
 ```
 
-Test coverage includes:
-- ✅ Core pipeline functionality (12 tests)
-- ✅ Preprocessing operations (8 tests)
-- ✅ Model factory (9 tests)
-- ✅ Validation and metrics (6 tests)
-- ✅ Integration workflows (3 tests)
-- ✅ Edge cases (3 tests)
+---
+
+## Python API Quick Start
+
+```python
+from scomp_link import ScompLinkPipeline, ScompArtifact, set_verbosity
+import pandas as pd
+
+# Control output
+set_verbosity("info")  # "silent" | "warning" | "info" | "debug"
+
+# Build pipeline
+pipe = ScompLinkPipeline("My Project")
+pipe.set_objectives(["Minimize RMSE"])
+pipe.import_and_clean_data(df)
+pipe.select_variables(target_col='target')
+pipe.choose_model("numerical_prediction")
+results = pipe.run_pipeline(task_type="regression")
+
+# Save as artifact
+artifact = ScompArtifact()
+artifact.set_model(pipe.model)
+artifact.set_config(task_type='regression', target_col='target')
+artifact.set_metrics(results['metrics'])
+artifact.save('model.scomp')
+
+# Load and predict
+loaded = ScompArtifact.load('model.scomp')
+predictions = loaded.predict(new_data)
+```
+
+---
+
+## Feature Engineering
+
+```python
+from scomp_link import FeatureEngineer
+
+fe = FeatureEngineer(
+    interactions=True,      # Polynomial interactions
+    log_transform=True,     # Log1p for skewed features
+    date_features=True,     # Extract year/month/dow/weekend
+    target_encode=True,     # Encode high-cardinality categoricals
+    auto_bin=True,          # Quantile binning
+)
+X_train_eng = fe.fit_transform(X_train, y_train)
+X_test_eng = fe.transform(X_test)
+```
+
+---
+
+## Advanced Hyperparameter Tuning
+
+```python
+from scomp_link.models.advanced_tuning import OptunaOptimizer
+
+def param_space(trial):
+    return {
+        'n_estimators': trial.suggest_int('n_estimators', 50, 500),
+        'max_depth': trial.suggest_int('max_depth', 3, 20),
+        'learning_rate': trial.suggest_float('learning_rate', 0.01, 0.3, log=True),
+    }
+
+optimizer = OptunaOptimizer(GradientBoostingRegressor, param_space, scoring='r2', n_trials=100)
+best_model = optimizer.optimize(X_train, y_train)
+```
+
+---
+
+## Explainability
+
+```python
+from scomp_link import ShapExplainer, LimeExplainer
+
+# SHAP
+shap_exp = ShapExplainer(model, X_train[:100])
+shap_exp.explain(X_test)
+importance = shap_exp.feature_importance()
+fig = shap_exp.plot_importance()
+
+# LIME
+lime_exp = LimeExplainer(model, X_train, task='regression')
+exp = lime_exp.explain_instance(X_test.iloc[0])
+fig = lime_exp.plot_explanation(exp)
+```
+
+---
+
+## Data Drift Detection
+
+```python
+from scomp_link import DriftDetector
+
+detector = DriftDetector(X_train, psi_threshold=0.2)
+report = detector.detect(X_production)
+summary = detector.summary(report)
+fig = detector.plot_drift_report(report)
+```
+
+---
+
+## Fairness & Bias Metrics
+
+```python
+from scomp_link import FairnessMetrics
+
+fm = FairnessMetrics(y_true, y_pred, sensitive_feature=df['gender'])
+report = fm.compute_all()
+print(fm.summary(report))
+fig = fm.plot_fairness_report(report)
+```
+
+---
+
+## Time Series Forecasting
+
+```python
+from scomp_link import TimeSeriesForecaster
+
+fc = TimeSeriesForecaster(method='auto', horizon=30)
+fc.fit(series)
+forecast = fc.predict_with_ci()
+cv_results = fc.walk_forward_cv(series, n_splits=5)
+fig = fc.plot_forecast()
+```
+
+---
+
+## Data Quality Report
+
+```python
+from scomp_link import DataQualityReport
+
+dqr = DataQualityReport(df)
+report = dqr.generate()  # missing, cardinality, constants, duplicates, correlations
+dqr.save_html('quality_report.html')
+```
+
+---
+
+## Anomaly Detection
+
+```python
+from scomp_link import AnomalyDetector
+
+detector = AnomalyDetector(
+    contamination=0.05,
+    methods=['iforest', 'lof', 'tabnet', 'transformer'],
+    consensus_threshold=2,
+)
+results = detector.fit_predict(df, features=['col1', 'col2', 'col3'])
+```
 
 ---
 
@@ -739,92 +248,68 @@ Test coverage includes:
 
 ```
 scomp_link/
-├── scomp_link/              # Main package
-│   ├── core.py              # ScompLinkPipeline orchestrator
-│   ├── preprocessing/       # Data cleaning and preparation
-│   │   └── data_processor.py
-│   ├── models/              # Model implementations
-│   │   ├── model_factory.py
-│   │   ├── regressor_optimizer.py
-│   │   ├── classifier_optimizer.py
-│   │   ├── anomaly_detector.py
-│   │   ├── ts_anomaly_detector.py
-│   │   ├── supervised_text.py
-│   │   ├── supervised_img.py
-│   │   ├── unsupervised_text.py
-│   │   ├── unsupervised_img.py
-│   │   ├── contrastive_net.py
-│   │   └── url_to_app_model.py
-│   ├── validation/          # Model validation
-│   │   ├── model_validator.py
-│   │   └── validation_model.py
-│   └── utils/               # Utilities
-│       ├── report_html.py
-│       └── plotly_utils.py
-├── tests/                   # Test suite
-│   └── test_comprehensive.py
-├── requirements.txt         # Core dependencies
-├── setup.py                 # Package configuration
-└── README.md                # This file
+├── cli.py                    # CLI (12 commands)
+├── core.py                   # ScompLinkPipeline orchestrator
+├── preprocessing/
+│   ├── data_processor.py     # Preprocessor (polars backend)
+│   ├── feature_engineer.py   # FeatureEngineer (sklearn-compatible)
+│   └── data_quality.py       # DataQualityReport
+├── models/
+│   ├── model_factory.py      # Decision-tree model selection
+│   ├── regressor_optimizer.py
+│   ├── classifier_optimizer.py
+│   ├── ensemble_optimizer.py
+│   ├── advanced_tuning.py    # Optuna, Halving, EarlyStopping
+│   ├── forecaster.py         # TimeSeriesForecaster
+│   ├── anomaly_detector.py
+│   ├── ts_anomaly_detector.py
+│   ├── contrastive_text.py   # BERT contrastive learning
+│   ├── supervised_text.py
+│   └── supervised_img.py
+├── validation/
+│   ├── model_validator.py    # Metrics + HTML reports
+│   ├── advanced_cv.py        # LOOCV, Bootstrap
+│   └── fairness.py           # FairnessMetrics
+├── explainability/
+│   └── explainer.py          # ShapExplainer, LimeExplainer
+├── monitoring/
+│   └── drift_detector.py     # DriftDetector (PSI + KS)
+├── persistence/
+│   └── artifact.py           # ScompArtifact (.scomp format)
+└── utils/
+    ├── logger.py             # Configurable logging
+    ├── report_html.py        # HTML report builder
+    └── plotly_utils.py       # Chart utilities
 ```
 
 ---
 
-## Design Principles
+## Testing
 
-1. **Generalized**: No project-specific behavior or assumptions
-2. **Pluggable**: Optional dependencies loaded on-demand
-3. **Consistent APIs**: Unified interfaces across all models and tools
-4. **Automation-First**: Minimize manual configuration while maintaining flexibility
-5. **Fail Gracefully**: Optional features degrade without breaking core functionality
+```bash
+# Run all tests (185 tests)
+pytest tests/ -v
+
+# With coverage
+pytest tests/ --cov=scomp_link --cov-report=html
+```
 
 ---
 
-## Dependencies
+## Documentation
 
-### Core (Always Required)
-- numpy
-- pandas
-- scipy
-- scikit-learn
-- matplotlib
-- plotly
-- seaborn
+Full documentation with API reference and CLI guide:
 
-### NLP (Included)
-- torch
-- transformers
-- spacy
-- faiss-cpu
-- sentence-transformers
-
-### Computer Vision (Included)
-- tensorflow
-- pillow
-
-### Anomaly Detection (Included)
-- pytorch-tabnet
-- statsmodels
-
-### Utilities (Included)
-- tqdm
-- PyJWT
-- markdown
-- weasyprint
-- playwright
+```bash
+pip install mkdocs mkdocs-material "mkdocstrings[python]"
+mkdocs serve  # http://localhost:8000
+```
 
 ---
 
 ## Contributing
 
-Contributions are welcome! Please ensure:
-- All tests pass (`pytest tests/`)
-- Code follows existing patterns
-- Documentation is updated
-- New features include tests
-
 ```bash
-# Development setup
 git clone https://github.com/GiacomoSaccaggi/scomp-link.git
 cd scomp_link
 pip install -e ".[dev]"
@@ -835,16 +320,7 @@ pytest tests/ -v
 
 ## License
 
-MIT License - See repository-level license file.
-
----
-
-## Support
-
-For issues, questions, or contributions:
-- Open an issue on GitHub
-- Check existing documentation
-- Review test examples in `tests/test_comprehensive.py`
+MIT License
 
 ---
 

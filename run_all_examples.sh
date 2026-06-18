@@ -49,7 +49,16 @@ run_example "examples/example_13_text_unsupervised.py" "Example 13 - Text Unsupe
 run_example "examples/example_14_ensemble_advanced_cv.py" "Example 14 - Ensemble & Advanced CV"
 run_example "examples/example_15_anomaly_detection.py" "Example 15 - Anomaly Detection"
 run_example "examples/example_16_ts_anomaly_detection.py" "Example 16 - Time Series Anomaly Detection"
-run_example "examples/contrastive_text_example.py" "Contrastive Text Classification"
+run_example "examples/example_17_report_html.py" "Example 17 - HTML Reports"
+run_example "examples/example_18_contrastive_text_example.py" "Example 18 - Contrastive Text"
+run_example "examples/example_19_explainability.py" "Example 19 - Explainability (SHAP + LIME)"
+run_example "examples/example_20_advanced_tuning.py" "Example 20 - Advanced Tuning (Optuna)"
+run_example "examples/example_21_drift_detection.py" "Example 21 - Drift Detection"
+run_example "examples/example_22_pipeline_persistence.py" "Example 22 - Pipeline Persistence (.scomp)"
+run_example "examples/example_23_feature_engineering.py" "Example 23 - Feature Engineering"
+run_example "examples/example_24_time_series_forecasting.py" "Example 24 - Time Series Forecasting"
+run_example "examples/example_25_fairness_metrics.py" "Example 25 - Fairness Metrics"
+run_example "examples/example_26_data_quality.py" "Example 26 - Data Quality Report"
 
 # Summary
 echo ""
@@ -61,8 +70,8 @@ echo "📂 Models saved in: ./staging/"
 echo ""
 
 # List saved models
-echo "Saved models:"
-find staging -name "*.pkl" -o -name "*.json" -o -name "*.pt" | sort
+echo "Saved artifacts:"
+find staging -name "*.pkl" -o -name "*.json" -o -name "*.pt" -o -name "*.scomp" 2>/dev/null | sort
 
 echo ""
 echo "=========================================="

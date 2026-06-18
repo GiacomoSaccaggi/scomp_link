@@ -1,5 +1,5 @@
 #!/bin/bash
-# Setup and run tox across all Python versions (3.7 - 3.13)
+# Setup and run tox across all Python versions (3.10 - 3.13)
 # Requires: pyenv, tox
 
 set -e
@@ -14,7 +14,7 @@ echo "scomp-link Multi-Version Test Runner"
 echo "=========================================="
 
 # Python versions to test
-VERSIONS=("3.10.13" "3.11.8" "3.12.2" "3.13.0")
+VERSIONS=("3.10.15" "3.11.11" "3.12.8" "3.13.2")
 
 # 1. Install missing Python versions via pyenv
 echo ""
@@ -66,5 +66,5 @@ tox
 
 echo ""
 echo "=========================================="
-echo "✅ All done!"
+echo "✅ All done! (189 tests × 4 Python versions)"
 echo "=========================================="
