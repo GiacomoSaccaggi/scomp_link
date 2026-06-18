@@ -26,6 +26,11 @@ from sklearn.ensemble import IsolationForest
 from sklearn.neighbors import LocalOutlierFactor
 from sklearn.preprocessing import StandardScaler
 
+from scomp_link.utils.logger import get_logger
+logger = get_logger(__name__)
+from scomp_link.utils.decorators import timer
+
+
 warnings.filterwarnings("ignore", category=UserWarning)
 
 
@@ -112,7 +117,7 @@ class AnomalyDetector(BaseEstimator):
 
     def _log(self, msg: str):
         if self.verbose:
-            print(msg)
+            logger.info(msg)
 
     # ------------------------------------------------------------------
     # 1. Isolation Forest
@@ -270,6 +275,7 @@ class AnomalyDetector(BaseEstimator):
     # Public API
     # ------------------------------------------------------------------
 
+    @timer
     def fit_predict(
         self,
         df: pd.DataFrame,

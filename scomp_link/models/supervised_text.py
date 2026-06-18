@@ -1,3 +1,7 @@
+
+from scomp_link.utils.logger import get_logger
+logger = get_logger(__name__)
+
 # -*- coding: utf-8 -*-
 """
 
@@ -62,14 +66,14 @@ class SpacyEmbeddingModel(object):
                 nlp = spacy.load(f'{lan}_core_web_{dict_size}')
             except Exception as e:
                 if nlp != 'not find':
-                    print(e)
+                    logger.info(e)
                 pass
             if nlp == 'not find':
                 try:
                     nlp = spacy.load(f'{lan}_core_news_{dict_size}')
                 except Exception as e:
                     if nlp != 'not find':
-                        print(e)
+                        logger.info(e)
                     pass
             if nlp == 'not find':
                 try:
@@ -77,7 +81,7 @@ class SpacyEmbeddingModel(object):
                     nlp = spacy.load(f'{lan}_core_news_{dict_size}')
                 except Exception as e:
                     if nlp != 'not find':
-                        print(e)
+                        logger.info(e)
                     pass
             if nlp == 'not find':
                 try:
@@ -85,8 +89,8 @@ class SpacyEmbeddingModel(object):
                     nlp = spacy.load(f'{lan}_core_web_{dict_size}')
                 except Exception as e:
                     if nlp != 'not find':
-                        print(e)
-                    print('\033[91m\tError:\n\t-\tFailed download of dictionary\n\t\t-\tThe dictionary size does'
+                        logger.info(e)
+                    logger.info('\033[91m\tError:\n\t-\tFailed download of dictionary\n\t\t-\tThe dictionary size does'
                           ' not exist\n\t\t-\tSpacy does not support this language\n\n\t\tView all languages in '
                           'website:\n\t\thttps://spacy.io/usage/models\033[0m\033[0m')
                 return []
@@ -213,7 +217,7 @@ class SpacyEmbeddingModel(object):
 
             return nlp, STOP_WORDS
         else:
-            print(f'\033[91m\tLanguage not managed, select in this languages:\n\t{",".join(self.all_spacy_lan)}\n\t'
+            logger.info(f'\033[91m\tLanguage not managed, select in this languages:\n\t{",".join(self.all_spacy_lan)}\n\t'
                   'View all languages in website:\n\t\thttps://spacy.io/usage/models\033[0m')
             return []
 
@@ -235,7 +239,7 @@ class SpacyEmbeddingModel(object):
         """
         Report training progress
         """
-        print(
+        logger.info(
             "{0:.3f}\t{1:.3f}\t{2:.3f}\t{3:.3f}".format(
                 losses["textcat"],
                 scores["textcat_p"],
@@ -362,7 +366,7 @@ class SpacyEmbeddingModel(object):
             textcat.add_label(cl)
 
         (train_texts, train_cats), (dev_texts, dev_cats) = __load_textcat_data(texts, y_lab, texts_test, y_lab_test)
-        print(
+        logger.info(
             "Number of examples ({} training, {} evaluation)".format(
                 len(train_texts), len(dev_texts)
             )
@@ -399,15 +403,15 @@ class SpacyEmbeddingModel(object):
         with self.nlp.disable_pipes(*other_pipes):
             optimizer = self.nlp.begin_training()
             self.configure_optimizer(optimizer, opt_params)
-            print("Training the model...")
-            print("{:^5}\t{:^5}\t{:^5}\t{:^5}".format("LOSS", "P", "R", "F"))
+            logger.info("Training the model...")
+            logger.info("{:^5}\t{:^5}\t{:^5}\t{:^5}".format("LOSS", "P", "R", "F"))
             for i in range(epoch):
                 losses = {"textcat": 0.0}
                 if use_tqdm:
                     try:
                         train_data = tqdm.tqdm(train_data, leave=False)
                     except Exception as e:
-                        print(e)
+                        logger.info(e)
                         pass
                 batches = minibatch(train_data, size=batch_size)
                 for batch in batches:
@@ -418,19 +422,19 @@ class SpacyEmbeddingModel(object):
                 with textcat.model.use_params(optimizer.averages):
                     scores = self.evaluate_textcat(self.nlp.tokenizer, textcat, dev_texts, dev_cats)
                     scores1 = self.evaluate_textcat(self.nlp.tokenizer, textcat, train_texts, train_cats)
-                print('Epoca ' + str(i))
-                print('\nResults Test:\n')
+                logger.info('Epoca ' + str(i))
+                logger.info('\nResults Test:\n')
                 best_acc = max(best_acc, scores["acc"])
                 self.report_progress(i, best_acc, losses, scores)
-                print('\nResults Train:\n')
+                logger.info('\nResults Train:\n')
                 best_acc = max(best_acc, scores1["acc"])
                 self.report_progress(i, best_acc, losses, scores1)
                 should_stop = early_stopping.update(scores)
                 if should_stop:
-                    print('The model does not learn, try to change CNN architecture')
+                    logger.info('The model does not learn, try to change CNN architecture')
                     break
 
-        print('Predicting values train...')
+        logger.info('Predicting values train...')
         ytrain = []
         for ytr in train_cats:
             ytrain.append(str(categ[np.where([i for prev, i in ytr.items()])[0][0]]))
@@ -438,7 +442,7 @@ class SpacyEmbeddingModel(object):
         for yte in dev_cats:
             ytest.append(str(categ[np.where([i for prev, i in yte.items()])[0][0]]))
 
-        print('Predicting values test...')
+        logger.info('Predicting values test...')
         fitted_y_test = []
         for i, val in enumerate(dev_texts):
             fitted_y_test.append(categ[np.argmax([i for prev, i in self.nlp(val).cats.items()])])
@@ -446,7 +450,7 @@ class SpacyEmbeddingModel(object):
         for i, val in enumerate(train_texts):
             fitted_y_train.append(categ[np.argmax([i for prev, i in self.nlp(val).cats.items()])])
 
-        print('Last things...')
+        logger.info('Last things...')
         from sklearn.metrics import classification_report, confusion_matrix
 
         clasification_report_tr = classification_report(ytrain, fitted_y_train)

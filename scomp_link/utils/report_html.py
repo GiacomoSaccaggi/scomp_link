@@ -26,6 +26,10 @@ from plotly.io.json import to_json_plotly
 import os
 import jwt
 
+from scomp_link.utils.logger import get_logger
+logger = get_logger(__name__)
+
+
 
 class ScompLinkHTMLReport:
     def __init_subclass__(cls, title,
@@ -391,7 +395,7 @@ class ScompLinkHTMLReport:
                           });
                         }
                         document.addEventListener("DOMContentLoaded", function() {
-                            // Funzione per eseguire il resize degli svg-container, delle immagini SVG e dei rect
+                            // Function to resize svg-containers, SVG images and rect elements
                             function resizeElements() {
                                 // Seleziona tutti gli elementi con la classe 'svg-container'
                                 var svgContainers = document.querySelectorAll('.svg-container');
@@ -468,7 +472,7 @@ class ScompLinkHTMLReport:
                                  
                             }
                         
-                            // Chiama la funzione quando il documento è completamente caricato
+                            // Call the function when the document is fully loaded
                             resizeElements();
                         });
                         
@@ -844,7 +848,7 @@ class ScompLinkHTMLReport:
                           });
                         }
                         document.addEventListener("DOMContentLoaded", function() {
-                            // Funzione per eseguire il resize degli svg-container, delle immagini SVG e dei rect
+                            // Function to resize svg-containers, SVG images and rect elements
                             function resizeElements() {
                                 // Seleziona tutti gli elementi con la classe 'svg-container'
                                 var svgContainers = document.querySelectorAll('.svg-container');
@@ -921,7 +925,7 @@ class ScompLinkHTMLReport:
                                 
                             }
                         
-                            // Chiama la funzione quando il documento è completamente caricato
+                            // Call the function when the document is fully loaded
                             resizeElements();
                         });
                         
@@ -1116,7 +1120,7 @@ class ScompLinkHTMLReport:
         demo_report.add_graph_to_report(fig, 'My first Graph')
         """
         self.html_report += self.single_plotly(fig, title)
-        print('Added graph to report!')
+        logger.info('Added graph to report!')
 
     def add_matplotlib_graph_to_report(self,
                                        fig: 'matplotlib.figure.Figure',
@@ -1145,7 +1149,7 @@ class ScompLinkHTMLReport:
         mime = 'image/svg+xml' if img_format == 'svg' else f'image/{img_format}'
         self.html_report += f'<h2>{title}</h2>'
         self.html_report += f'<img src="data:{mime};base64,{img_base64}" style="width:100%;max-width:100%;" alt="{title}">'
-        print('Added matplotlib graph to report!')
+        logger.info('Added matplotlib graph to report!')
 
     def add_image_to_report(self, image_path: str, title: str):
         """
@@ -1163,7 +1167,7 @@ class ScompLinkHTMLReport:
             img_base64 = base64.b64encode(f.read()).decode('utf-8')
         self.html_report += f'<h2>{title}</h2>'
         self.html_report += f'<img src="data:{mime};base64,{img_base64}" style="width:100%;max-width:100%;" alt="{title}">'
-        print('Added image to report!')
+        logger.info('Added image to report!')
 
     def add_many_plots_with_selection_box_to_report(self,
                                                     figures_dict: dict,
@@ -1187,7 +1191,7 @@ class ScompLinkHTMLReport:
         """
         labels = kwargs.get('labels', 'Choose a label')
         self.html_report += self.select_plotly(figures_dict, title, labels=labels)
-        print('Added graph to report!')
+        logger.info('Added graph to report!')
 
     def open_section(self,
                      section_title: str, ingore_multi_section=False
@@ -1195,25 +1199,25 @@ class ScompLinkHTMLReport:
         if not self.section_just_open or ingore_multi_section:
             self.html_report += f'<button class="collapsiblemygs">{section_title}</button> <div class="content">'
             self.section_just_open = True
-            print('Open section to report!')
+            logger.info('Open section to report!')
         else:
-            print('Warning you already have an open section')
+            logger.info('Warning you already have an open section')
 
     def close_section(self, ingore_multi_section=False) -> 'html plotly code':
         if self.section_just_open or ingore_multi_section:
             self.html_report += f'</div>'
             self.section_just_open = False
-            print('Close section to report!')
+            logger.info('Close section to report!')
         else:
-            print('Warning you did not open section yet')
+            logger.info('Warning you did not open section yet')
 
     def add_title(self, title: str) -> 'html plotly code':
         self.html_report += f'<h2>{title}</h2>'
-        print('Added title to report!')
+        logger.info('Added title to report!')
 
     def add_text(self, text: str) -> 'html plotly code':
         self.html_report += f'<p>{text}</p>'
-        print('Added text to report!')
+        logger.info('Added text to report!')
 
     def add_dataframe(self, df: pd.DataFrame, title: str, limit_max=2000) -> 'html plotly code':
         if len(df) < limit_max:
@@ -1254,9 +1258,9 @@ class ScompLinkHTMLReport:
                     background-color: {self.light_color}22;
                 }}
             </style>'''
-            print('Added table to report!')
+            logger.info('Added table to report!')
         else:
-            print('The DataFrame is to big!')
+            logger.info('The DataFrame is to big!')
 
     def save_pdf(self, file_name='export.pdf'):
         """
@@ -1278,13 +1282,13 @@ class ScompLinkHTMLReport:
             with sync_playwright() as p:
                 p.chromium.executable_path
         except Exception:
-            print("Chromium not found. Installing automatically...")
+            logger.info("Chromium not found. Installing automatically...")
             subprocess.run(["playwright", "install", "chromium"], check=True)
 
         temp_html_path = tempfile.mktemp(suffix=".html")
         self.save_html(temp_html_path)
 
-        print(f"Starting PDF generation... Loading graphs.")
+        logger.info(f"Starting PDF generation... Loading graphs.")
 
         try:
             with sync_playwright() as p:
@@ -1369,9 +1373,9 @@ class ScompLinkHTMLReport:
                     margin={"top": "20px", "bottom": "20px", "left": "20px", "right": "20px"}
                 )
                 browser.close()
-                print(f"PDF successfully saved as {file_name}!")
+                logger.info(f"PDF successfully saved as {file_name}!")
         except Exception as e:
-            print(f"An error occurred while generating the PDF: {e}")
+            logger.info(f"An error occurred while generating the PDF: {e}")
         finally:
             if os.path.exists(temp_html_path):
                 os.remove(temp_html_path)
@@ -1403,4 +1407,4 @@ class ScompLinkHTMLReport:
                     """
         with open(file_name, 'w', encoding="utf-8") as f:
             f.write(html_txt)
-        print('Saved!')
+        logger.info('Saved!')

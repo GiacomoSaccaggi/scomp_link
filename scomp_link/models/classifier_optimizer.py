@@ -28,6 +28,10 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
 from .regressor_optimizer import Boruta
 
+from scomp_link.utils.logger import get_logger
+logger = get_logger(__name__)
+
+
 class ClassifierOptimizer:
     """
     ClassifierOptimizer is a class designed to optimize classification models by performing feature selection,
@@ -48,7 +52,7 @@ class ClassifierOptimizer:
             self.support_ = selector.support_
             selected_x_cols = [x_cols[i] for i, s in enumerate(self.support_) if s]
             self.X = df[selected_x_cols]
-            print(f"Selected features: {selected_x_cols}")
+            logger.info(f"Selected features: {selected_x_cols}")
         else:
             self.X = df[x_cols]
         
@@ -92,12 +96,12 @@ class ClassifierOptimizer:
 
     def test_models_classification(self):
         for model_name, model_data in self.models_to_test.items():
-            print(f"\n\t... Testing {model_name}:\n\t", datetime.now().strftime("%Y-%m-%d %H:%M:%S"), "\n\t... Optimizing HyperParameters ...\n\t")
+            logger.info(f"\n\t... Testing {model_name}:\n\t{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\t... Optimizing HyperParameters ...\n\t")
             model = model_data['model']
             params_grid = model_data['params_grid']
 
             best_classifier, best_params = self.select_hyperparameters(model, params_grid)
-            print(f"\n\t", datetime.now().strftime("%Y-%m-%d %H:%M:%S"), f"\n\t... Training the Final Model ...\n\t")
+            logger.info(f"\n\t{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\t... Training the Final Model ...\n\t")
 
             best_classifier.fit(self.X_train, self.y_train)
             y_pred = best_classifier.predict(self.X_test)
@@ -114,14 +118,14 @@ class ClassifierOptimizer:
                 'Report': classification_report(self.y_test, y_pred),
                 'Confusion_Matrix': confusion_matrix(self.y_test, y_pred)
             }
-            print(datetime.now().strftime("%Y-%m-%d %H:%M:%S"), f"\n\t... Finished ...\n\t")
+            logger.info(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\t... Finished ...\n\t")
 
     def print_results(self):
         for model_name, results in self.model_results.items():
-            print(f"--- {model_name} ---")
-            print(f"Best Params: {results['Params']}")
-            print("Classification Report:")
-            print(results['Report'])
-            print("Confusion Matrix:")
-            print(results['Confusion_Matrix'])
-            print("\n")
+            logger.info(f"--- {model_name} ---")
+            logger.info(f"Best Params: {results['Params']}")
+            logger.info("Classification Report:")
+            logger.info(results['Report'])
+            logger.info("Confusion Matrix:")
+            logger.info(results['Confusion_Matrix'])
+            logger.info("\n")

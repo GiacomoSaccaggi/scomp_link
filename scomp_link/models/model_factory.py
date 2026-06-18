@@ -30,6 +30,9 @@ from .supervised_text import SpacyEmbeddingModel
 from .supervised_img import CNNImg
 from .unsupervised_img import ClusterImg
 
+from scomp_link.utils.logger import get_logger
+logger = get_logger(__name__)
+
 try:
     from .unsupervised_text import LDAText
 except ImportError:
@@ -46,7 +49,7 @@ class ModelFactory:
     """
     @staticmethod
     def get_model(model_type: str, **kwargs):
-        print(f"Creating model of type: {model_type}")
+        logger.info(f"Creating model of type: {model_type}")
         
         # New automated optimizers
         if model_type == "ClassifierOptimizer":
@@ -59,7 +62,7 @@ class ModelFactory:
             if ContrastiveTextClassifier is not None:
                 return ContrastiveTextClassifier(**kwargs)
             else:
-                print("⚠️ ContrastiveTextClassifier requires torch and transformers")
+                logger.info("⚠️ ContrastiveTextClassifier requires torch and transformers")
                 return SpacyEmbeddingModel(**kwargs)  # Fallback
         elif "Spacy" in model_type or "Supervised Text" in model_type:
             return SpacyEmbeddingModel(**kwargs)
@@ -67,7 +70,7 @@ class ModelFactory:
             if LDAText is not None:
                 return LDAText(**kwargs)
             else:
-                print("⚠️ LDAText not available")
+                logger.info("⚠️ LDAText not available")
                 return None
         
         # Image models
@@ -118,5 +121,5 @@ class ModelFactory:
             from sklearn.linear_model import LinearRegression
             return LinearRegression()
             
-        print(f"Warning: Model type '{model_type}' not explicitly matched. Returning None.")
+        logger.info(f"Warning: Model type '{model_type}' not explicitly matched. Returning None.")
         return None

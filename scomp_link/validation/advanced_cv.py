@@ -15,6 +15,10 @@ from sklearn.model_selection import LeaveOneOut, cross_val_score
 from sklearn.utils import resample
 from sklearn.base import clone
 
+from scomp_link.utils.logger import get_logger
+logger = get_logger(__name__)
+
+
 
 class AdvancedCV:
     """
@@ -129,14 +133,14 @@ class AdvancedCV:
         
         # LOOCV - skip if dataset is too large
         if include_loocv and len(X) < 1000:
-            print("Running Leave-One-Out Cross Validation...")
+            logger.info("Running Leave-One-Out Cross Validation...")
             results['loocv'] = AdvancedCV.loocv(model, X, y, scoring=scoring)
         elif include_loocv:
-            print("⚠️  LOOCV skipped: dataset too large (>1000 samples)")
+            logger.info("⚠️  LOOCV skipped: dataset too large (>1000 samples)")
         
         # Bootstrap
         if include_bootstrap:
-            print(f"Running Bootstrap validation ({bootstrap_iterations} iterations)...")
+            logger.info(f"Running Bootstrap validation ({bootstrap_iterations} iterations)...")
             results['bootstrap'] = AdvancedCV.bootstrap(model, X, y, n_iterations=bootstrap_iterations)
         
         return results

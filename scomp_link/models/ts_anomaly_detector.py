@@ -28,6 +28,10 @@ import numpy as np
 import pandas as pd
 from typing import Optional, List, Dict, Tuple
 
+from scomp_link.utils.logger import get_logger
+logger = get_logger(__name__)
+
+
 
 class TimeSeriesAnomalyDetector:
     """
@@ -99,7 +103,7 @@ class TimeSeriesAnomalyDetector:
 
     def _log(self, msg: str):
         if self.verbose:
-            print(msg)
+            logger.info(msg)
 
     # ------------------------------------------------------------------
     # Autoencoder

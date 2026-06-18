@@ -19,6 +19,10 @@
 import numpy as np
 from sklearn.base import BaseEstimator, ClassifierMixin
 
+from scomp_link.utils.logger import get_logger
+logger = get_logger(__name__)
+
+
 
 class CNNImg(BaseEstimator, ClassifierMixin):
     """
@@ -52,8 +56,8 @@ class CNNImg(BaseEstimator, ClassifierMixin):
         if self.n_classes is None:
             self.n_classes = len(self.classes_)
         
-        print(f"CNNImg: Training on {len(X)} images, {self.n_classes} classes")
-        print("⚠️ Note: This is a placeholder. For production, use TensorFlow/PyTorch implementation.")
+        logger.info(f"CNNImg: Training on {len(X)} images, {self.n_classes} classes")
+        logger.info("⚠️ Note: This is a placeholder. For production, use TensorFlow/PyTorch implementation.")
         
         # Placeholder: In production, build and train CNN here
         # from tensorflow.keras.applications import VGG16
