@@ -131,6 +131,9 @@ dependencies = [
     "pytorch-tabnet>=4.0.0,<5.0.0",
     "statsmodels>=0.13.0,<1.0.0",
 
+    # --- Keras compat ---
+    "tf-keras>=2.16.0;  python_version >= '3.12'",
+
     # --- polars ---
     "polars>=0.20.0,<2.0.0",
     "pyarrow>=12.0.0",
