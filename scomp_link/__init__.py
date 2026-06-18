@@ -11,4 +11,22 @@ from .preprocessing.data_processor import Preprocessor
 from .models.model_factory import ModelFactory
 from .validation.model_validator import Validator
 
-__version__ = "0.1.1"
+# New modules
+try:
+    from .explainability import ShapExplainer, LimeExplainer
+except ImportError:
+    pass
+try:
+    from .models.advanced_tuning import OptunaOptimizer, HalvingSearchOptimizer, EarlyStoppingCV
+except ImportError:
+    pass
+from .monitoring import DriftDetector
+from .persistence import ScompArtifact
+from .preprocessing.feature_engineer import FeatureEngineer
+from .preprocessing.data_quality import DataQualityReport
+from .models.forecaster import TimeSeriesForecaster
+from .validation.fairness import FairnessMetrics
+
+from .utils.logger import set_verbosity
+
+__version__ = "1.1.0"

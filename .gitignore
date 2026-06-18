@@ -65,3 +65,8 @@ staging/
 .env
 .env.local
 /develop/
+
+# scomp-link specific
+tmp/
+site/
+*.scomp
