@@ -16,6 +16,10 @@ import functools
 import warnings
 from typing import Any, Callable, Optional
 
+from scomp_link.utils.logger import get_logger
+logger = get_logger(__name__)
+
+
 
 def timer(func: Callable) -> Callable:
     """
@@ -32,10 +36,10 @@ def timer(func: Callable) -> Callable:
         result = func(*args, **kwargs)
         elapsed = time.perf_counter() - start
         if elapsed < 60:
-            print(f"⏱️  {func.__name__} completed in {elapsed:.2f}s")
+            logger.info(f"⏱️  {func.__name__} completed in {elapsed:.2f}s")
         else:
             minutes, seconds = divmod(elapsed, 60)
-            print(f"⏱️  {func.__name__} completed in {int(minutes)}m {seconds:.1f}s")
+            logger.info(f"⏱️  {func.__name__} completed in {int(minutes)}m {seconds:.1f}s")
         return result
     return wrapper
 
@@ -58,7 +62,7 @@ def retry(max_attempts: int = 3, delay: float = 1.0, exceptions: tuple = (Except
                 except exceptions as e:
                     if attempt == max_attempts:
                         raise
-                    print(f"⚠️  {func.__name__} failed (attempt {attempt}/{max_attempts}): {e}")
+                    logger.info(f"⚠️  {func.__name__} failed (attempt {attempt}/{max_attempts}): {e}")
                     time.sleep(delay)
         return wrapper
     return decorator
@@ -78,9 +82,9 @@ def log_call(func: Callable) -> Callable:
         args_repr = [repr(a)[:50] for a in args]
         kwargs_repr = [f"{k}={repr(v)[:30]}" for k, v in kwargs.items()]
         signature = ", ".join(args_repr + kwargs_repr)
-        print(f"📞 {func.__name__}({signature})")
+        logger.info(f"📞 {func.__name__}({signature})")
         result = func(*args, **kwargs)
-        print(f"   ↳ returned {type(result).__name__}")
+        logger.info(f"   ↳ returned {type(result).__name__}")
         return result
     return wrapper
 
@@ -101,7 +105,7 @@ def memory_usage(func: Callable) -> Callable:
         result = func(*args, **kwargs)
         current, peak = tracemalloc.get_traced_memory()
         tracemalloc.stop()
-        print(f"🧠 {func.__name__} — peak memory: {peak / 1024 / 1024:.1f} MB")
+        logger.info(f"🧠 {func.__name__} — peak memory: {peak / 1024 / 1024:.1f} MB")
         return result
     return wrapper
 
@@ -123,7 +127,7 @@ def cache(func: Callable) -> Callable:
         if key not in memo:
             memo[key] = func(*args, **kwargs)
         else:
-            print(f"💾 {func.__name__} — cache hit")
+            logger.info(f"💾 {func.__name__} — cache hit")
         return memo[key]
 
     wrapper.cache_clear = memo.clear
@@ -165,7 +169,7 @@ def suppress_exceptions(default: Any = None, log: bool = True):
                 return func(*args, **kwargs)
             except Exception as e:
                 if log:
-                    print(f"❌ {func.__name__} failed: {e}")
+                    logger.info(f"❌ {func.__name__} failed: {e}")
                 return default
         return wrapper
     return decorator

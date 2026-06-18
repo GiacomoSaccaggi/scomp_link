@@ -16,6 +16,11 @@ from .preprocessing.data_processor import Preprocessor
 from .models.model_factory import ModelFactory
 from .validation.model_validator import Validator
 
+from scomp_link.utils.logger import get_logger
+logger = get_logger(__name__)
+from scomp_link.utils.decorators import timer
+
+
 class ScompLinkPipeline:
     """
     ScompLinkPipeline: The "Astromech arm" for Python data projects.
@@ -36,14 +41,14 @@ class ScompLinkPipeline:
     def set_objectives(self, objectives: List[str]):
         """Formulation of objectives (Obiettivi)."""
         self.objectives = objectives
-        print(f"Objectives formulated: {self.objectives}")
+        logger.info(f"Objectives formulated: {self.objectives}")
 
     def import_and_clean_data(self, df: pd.DataFrame):
         """Importation and cleaning of data (P3-P4)."""
-        print("Importing and cleaning data...")
+        logger.info("Importing and cleaning data...")
         self.preprocessor = Preprocessor(df)
         self.df = self.preprocessor.clean_data()
-        print(f"Data imported. Rows after cleaning: {len(self.df)}")
+        logger.info(f"Data imported. Rows after cleaning: {len(self.df)}")
 
     def select_variables(self, target_col: str, feature_cols: Optional[List[str]] = None):
         """Selection of target and objective variables (Sel)."""
@@ -52,14 +57,14 @@ class ScompLinkPipeline:
             self.feature_cols = feature_cols
         else:
             self.feature_cols = [c for c in self.df.columns if c != target_col]
-        print(f"Target selected: {self.target_col}")
+        logger.info(f"Target selected: {self.target_col}")
 
     def choose_model(self, objective_type: str, metadata: Optional[Dict[str, Any]] = None):
         """
         Logic based on the Mermaid graph decision tree.
         """
         metadata = metadata or {}
-        print(f"Choosing model for objective: {objective_type}")
+        logger.info(f"Choosing model for objective: {objective_type}")
         
         if objective_type == "categorical_known":
             if metadata.get("data_type") == "images":
@@ -116,9 +121,10 @@ class ScompLinkPipeline:
             else:
                 self.model_type = "MLP"
         
-        print(f"Selected model type: {self.model_type}")
+        logger.info(f"Selected model type: {self.model_type}")
         self.model = ModelFactory.get_model(self.model_type, **metadata)
 
+    @timer
     def run_pipeline(self, test_size=0.2, task_type="regression", models_to_test=None, 
                      text_col=None, image_col=None, n_clusters=None, epochs=3, batch_size=32,
                      text_model='bert-base-uncased', text_language='en', use_contrastive=True,
@@ -140,7 +146,7 @@ class ScompLinkPipeline:
 
         # CLUSTERING PATH
         if task_type == "clustering":
-            print("MODELLAZIONE: Running Clustering...")
+            logger.info("MODELLAZIONE: Running Clustering...")
             from sklearn.cluster import KMeans, MeanShift, estimate_bandwidth
             from sklearn.metrics import silhouette_score
             
@@ -175,7 +181,7 @@ class ScompLinkPipeline:
         
         # TEXT CLASSIFICATION PATH
         if task_type == "text" and text_col:
-            print("MODELLAZIONE: Running Text Classification...")
+            logger.info("MODELLAZIONE: Running Text Classification...")
             try:
                 if use_contrastive:
                     from .models.contrastive_text import ContrastiveTextClassifier
@@ -186,7 +192,7 @@ class ScompLinkPipeline:
                         use_faiss=True
                     )
                     
-                    print(f"Training contrastive text classifier for {epochs} epochs...")
+                    logger.info(f"Training contrastive text classifier for {epochs} epochs...")
                     classifier.train_contrastive(
                         self.df,
                         text_col=text_col,
@@ -236,12 +242,12 @@ class ScompLinkPipeline:
                 
                 return self.results
             except ImportError:
-                print("⚠️  NLP dependencies not installed. Install with: pip install .[nlp]")
+                logger.info("⚠️  NLP dependencies not installed. Install with: pip install .[nlp]")
                 raise
         
         # IMAGE CLASSIFICATION PATH
         if task_type == "image" and image_col:
-            print("MODELLAZIONE: Running Image Classification...")
+            logger.info("MODELLAZIONE: Running Image Classification...")
             try:
                 from .models.supervised_img import CNNImg
                 from sklearn.model_selection import train_test_split
@@ -271,12 +277,12 @@ class ScompLinkPipeline:
                 }
                 return self.results
             except ImportError:
-                print("⚠️  Image/CV dependencies not installed. Install with: pip install .[img]")
+                logger.info("⚠️  Image/CV dependencies not installed. Install with: pip install .[img]")
                 raise
         
         # IMAGE CLUSTERING PATH
         if task_type == "image_clustering" and image_col:
-            print("MODELLAZIONE: Running Image Clustering...")
+            logger.info("MODELLAZIONE: Running Image Clustering...")
             try:
                 from .models.unsupervised_img import ClusterImg
                 from sklearn.metrics import silhouette_score
@@ -299,15 +305,15 @@ class ScompLinkPipeline:
                 }
                 return self.results
             except ImportError:
-                print("⚠️  Image/CV dependencies not installed. Install with: pip install .[img]")
+                logger.info("⚠️  Image/CV dependencies not installed. Install with: pip install .[img]")
                 raise
 
         # STANDARD REGRESSION/CLASSIFICATION PATH
-        print("P12: Preparing datasets...")
+        logger.info("P12: Preparing datasets...")
         X_train, X_test, y_train, y_test = self.preprocessor.prepare_datasets(self.target_col, test_size=test_size)
 
         if task_type == "regression" and models_to_test:
-            print("MODELLAZIONE: Running RegressorOptimizer...")
+            logger.info("MODELLAZIONE: Running RegressorOptimizer...")
             from .models.regressor_optimizer import RegressorOptimizer
             optimizer = RegressorOptimizer(self.df, self.target_col, self.feature_cols, 
                                           x_complexity_col=self.feature_cols[0],
@@ -316,7 +322,7 @@ class ScompLinkPipeline:
             
             # Ensemble Learning
             if use_ensemble and len(optimizer.model_results) > 1:
-                print(f"\n🎯 Creating {ensemble_strategy} ensemble from {len(optimizer.model_results)} models...")
+                logger.info(f"\n🎯 Creating {ensemble_strategy} ensemble from {len(optimizer.model_results)} models...")
                 from .models.ensemble_optimizer import EnsembleOptimizer
                 
                 base_models = [(name, result['Model']) for name, result in optimizer.model_results.items()]
@@ -324,7 +330,7 @@ class ScompLinkPipeline:
                 ensemble.fit(X_train, y_train)
                 
                 ensemble_scores = ensemble.evaluate_ensemble(X_train, y_train, cv=5)
-                print(f"✅ Ensemble CV Score: {ensemble_scores['mean_score']:.4f} (±{ensemble_scores['std_score']:.4f})")
+                logger.info(f"✅ Ensemble CV Score: {ensemble_scores['mean_score']:.4f} (±{ensemble_scores['std_score']:.4f})")
                 
                 self.model = ensemble.ensemble_model
                 self.results = {
@@ -337,7 +343,7 @@ class ScompLinkPipeline:
             return self.results
 
         if task_type == "classification" and models_to_test:
-            print("MODELLAZIONE: Running ClassifierOptimizer...")
+            logger.info("MODELLAZIONE: Running ClassifierOptimizer...")
             from .models.classifier_optimizer import ClassifierOptimizer
             optimizer = ClassifierOptimizer(self.df, self.target_col, self.feature_cols, 
                                            models_to_test=models_to_test)
@@ -345,7 +351,7 @@ class ScompLinkPipeline:
             
             # Ensemble Learning
             if use_ensemble and len(optimizer.model_results) > 1:
-                print(f"\n🎯 Creating {ensemble_strategy} ensemble from {len(optimizer.model_results)} models...")
+                logger.info(f"\n🎯 Creating {ensemble_strategy} ensemble from {len(optimizer.model_results)} models...")
                 from .models.ensemble_optimizer import EnsembleOptimizer
                 
                 base_models = [(name, result['Model']) for name, result in optimizer.model_results.items()]
@@ -353,7 +359,7 @@ class ScompLinkPipeline:
                 ensemble.fit(X_train, y_train)
                 
                 ensemble_scores = ensemble.evaluate_ensemble(X_train, y_train, cv=5)
-                print(f"✅ Ensemble CV Score: {ensemble_scores['mean_score']:.4f} (±{ensemble_scores['std_score']:.4f})")
+                logger.info(f"✅ Ensemble CV Score: {ensemble_scores['mean_score']:.4f} (±{ensemble_scores['std_score']:.4f})")
                 
                 self.model = ensemble.ensemble_model
                 self.results = {
@@ -368,10 +374,10 @@ class ScompLinkPipeline:
         if self.model is None:
             raise ValueError("Model must be chosen before running the pipeline.")
 
-        print(f"MODELLAZIONE: Training {self.model_type}...")
+        logger.info(f"MODELLAZIONE: Training {self.model_type}...")
         self.model.fit(X_train, y_train)
         
-        print("VALUTAZIONE: Evaluating results...")
+        logger.info("VALUTAZIONE: Evaluating results...")
         y_pred = self.model.predict(X_test)
         y_proba = None
         if task_type == "classification" and hasattr(self.model, "predict_proba"):
@@ -383,7 +389,7 @@ class ScompLinkPipeline:
         # Advanced Cross-Validation
         advanced_cv_results = None
         if advanced_cv:
-            print("\n🔬 Running Advanced Cross-Validation...")
+            logger.info("\n🔬 Running Advanced Cross-Validation...")
             from .validation.advanced_cv import AdvancedCV
             
             X = self.df[self.feature_cols]
@@ -399,9 +405,9 @@ class ScompLinkPipeline:
                 bootstrap_iterations=bootstrap_iterations
             )
             
-            print("\n✅ Advanced CV Results:")
+            logger.info("\n✅ Advanced CV Results:")
             for method, result in advanced_cv_results.items():
-                print(f"  {result['method']}: {result['mean_score']:.4f} (±{result['std_score']:.4f})")
+                logger.info(f"  {result['method']}: {result['mean_score']:.4f} (±{result['std_score']:.4f})")
         
         validator.generate_validation_report(y_test, y_pred, task_type=task_type, 
                                              y_proba=y_proba, report_name="ScompLink_Validation_Report.html")
@@ -439,12 +445,12 @@ class ScompLinkPipeline:
         if hasattr(self.model, 'save'):
             # Contrastive text classifier
             self.model.save(path)
-            print(f"✅ Model saved to {path}")
+            logger.info(f"✅ Model saved to {path}")
         else:
             # Standard sklearn models
             with open(model_path, 'wb') as f:
                 pickle.dump(self.model, f)
-            print(f"✅ Model saved to {model_path}")
+            logger.info(f"✅ Model saved to {model_path}")
         
         return path
     
@@ -466,13 +472,13 @@ class ScompLinkPipeline:
             classifier = ContrastiveTextClassifier()
             classifier.load(path)
             self.model = classifier
-            print(f"✅ Contrastive model loaded from {path}")
+            logger.info(f"✅ Contrastive model loaded from {path}")
         else:
             # Standard sklearn model
             model_path = os.path.join(path, 'model.pkl') if os.path.isdir(path) else path
             with open(model_path, 'rb') as f:
                 self.model = pickle.load(f)
-            print(f"✅ Model loaded from {model_path}")
+            logger.info(f"✅ Model loaded from {model_path}")
         
         return self.model
     

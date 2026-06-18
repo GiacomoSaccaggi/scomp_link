@@ -29,6 +29,10 @@ from tqdm.auto import tqdm
 from torch.utils.data import DataLoader, WeightedRandomSampler
 from transformers import AutoTokenizer, AutoModel
 
+
+from scomp_link.utils.logger import get_logger
+logger = get_logger(__name__)
+
 try:
     import faiss
     FAISS_AVAILABLE = True
@@ -52,12 +56,12 @@ def print_throughput(func):
     @wraps(func)
     def wrapper(self, text_series, *args, **kwargs):
         n_items = len(text_series)
-        print(f"\n🚀 Processing {n_items} texts...")
+        logger.info(f"\n🚀 Processing {n_items} texts...")
         start = time.time()
         result = func(self, text_series, *args, **kwargs)
         elapsed = time.time() - start
         throughput = n_items / elapsed if elapsed > 0 else 0
-        print(f"✅ Completed in {elapsed:.2f}s ({throughput:.1f} texts/s)\n")
+        logger.info(f"✅ Completed in {elapsed:.2f}s ({throughput:.1f} texts/s)\n")
         return result
     return wrapper
 
@@ -103,9 +107,9 @@ class ContrastiveTextClassifier:
         self.use_faiss = use_faiss and FAISS_AVAILABLE
         self.faiss_index = None
         if self.use_faiss:
-            print("✅ FAISS enabled for fast inference")
+            logger.info("✅ FAISS enabled for fast inference")
         else:
-            print("⚠️ FAISS disabled - using numpy (slower)")
+            logger.info("⚠️ FAISS disabled - using numpy (slower)")
         
         # Storage for embeddings and labels
         self.label_embeddings = None
@@ -131,7 +135,7 @@ class ContrastiveTextClassifier:
             validation_split: Validation set ratio
             early_stopping_patience: Early stopping patience
         """
-        print("🚀 Preparing contrastive training...")
+        logger.info("🚀 Preparing contrastive training...")
         
         # Rename columns for compatibility with SiameseDataset
         df_train = df.copy()
@@ -143,7 +147,7 @@ class ContrastiveTextClassifier:
             val_size = int(len(df_train) * validation_split)
             train_df = df_train.iloc[:-val_size].reset_index(drop=True)
             val_df = df_train.iloc[-val_size:].reset_index(drop=True)
-            print(f"📊 Train: {len(train_df)}, Validation: {len(val_df)}")
+            logger.info(f"📊 Train: {len(train_df)}, Validation: {len(val_df)}")
         else:
             train_df = df_train
             val_df = None
@@ -171,7 +175,7 @@ class ContrastiveTextClassifier:
             sample_weights = SiameseDataset.get_sample_weights(train_df)
             sampler = WeightedRandomSampler(sample_weights, len(sample_weights))
             train_loader = DataLoader(train_dataset, batch_size=batch_size, sampler=sampler)
-            print("✅ Weighted sampling enabled")
+            logger.info("✅ Weighted sampling enabled")
         else:
             train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
         
@@ -188,14 +192,14 @@ class ContrastiveTextClassifier:
             {'params': self.siamese_model.projection_layer.parameters(), 'lr': lr * 10}
         ], weight_decay=0.01)
         
-        print(f"✅ Differentiated LR: BERT={lr:.2e}, Projection={lr*10:.2e}")
-        print(f"✅ Gradient accumulation: {accumulation_steps} steps")
+        logger.info(f"✅ Differentiated LR: BERT={lr:.2e}, Projection={lr*10:.2e}")
+        logger.info(f"✅ Gradient accumulation: {accumulation_steps} steps")
         
         # Early stopping
         early_stopping = EarlyStopping(patience=early_stopping_patience, min_delta=0.001)
         
         self.siamese_model.train()
-        print(f"\n🎯 Starting training for {epochs} epochs...\n")
+        logger.info(f"\n🎯 Starting training for {epochs} epochs...\n")
         
         for epoch in range(epochs):
             total_loss = 0
@@ -221,16 +225,16 @@ class ContrastiveTextClassifier:
             # Validation
             if val_loader is not None:
                 val_loss = self._validate(val_loader, criterion)
-                print(f"Epoch {epoch + 1}/{epochs} - Train Loss: {avg_train_loss:.4f}, Val Loss: {val_loss:.4f}")
+                logger.info(f"Epoch {epoch + 1}/{epochs} - Train Loss: {avg_train_loss:.4f}, Val Loss: {val_loss:.4f}")
                 
                 if early_stopping(val_loss):
-                    print(f"⚠️ Early stopping at epoch {epoch + 1}")
+                    logger.info(f"⚠️ Early stopping at epoch {epoch + 1}")
                     break
             else:
-                print(f"Epoch {epoch + 1}/{epochs} - Train Loss: {avg_train_loss:.4f}")
+                logger.info(f"Epoch {epoch + 1}/{epochs} - Train Loss: {avg_train_loss:.4f}")
         
         self.siamese_model.eval()
-        print("\n✅ Training completed!\n")
+        logger.info("\n✅ Training completed!\n")
         
         # Calculate embeddings and build index
         self._calculate_label_embeddings(df_train, label_col)
@@ -254,7 +258,7 @@ class ContrastiveTextClassifier:
     
     def _calculate_label_embeddings(self, df, label_col):
         """Calculate embeddings for all unique labels"""
-        print("Calculating label embeddings...")
+        logger.info("Calculating label embeddings...")
         self.siamese_model.eval()
         
         unique_labels = df[label_col].unique().tolist()
@@ -277,18 +281,18 @@ class ContrastiveTextClassifier:
         for label in unique_labels:
             self.label_freq_cache[label] = label_counts.get(label, 0) / total
         
-        print(f"✅ Embeddings calculated for {len(unique_labels)} labels")
+        logger.info(f"✅ Embeddings calculated for {len(unique_labels)} labels")
     
     def _build_faiss_index(self):
         """Build FAISS index for fast search"""
         if not self.use_faiss or self.label_embeddings is None:
             return
         
-        print("🔨 Building FAISS index...")
+        logger.info("🔨 Building FAISS index...")
         embedding_dim = self.label_embeddings.shape[1]
         self.faiss_index = faiss.IndexFlatL2(embedding_dim)
         self.faiss_index.add(self.label_embeddings.astype('float32'))
-        print(f"✅ FAISS index built with {self.faiss_index.ntotal} vectors")
+        logger.info(f"✅ FAISS index built with {self.faiss_index.ntotal} vectors")
     
     def predict(self, text, top_k=1, return_confidence=False):
         """
@@ -348,7 +352,7 @@ class ContrastiveTextClassifier:
         texts = list(text_series)
         all_embeddings = []
         
-        print(f"Encoding {len(texts)} texts...")
+        logger.info(f"Encoding {len(texts)} texts...")
         with torch.no_grad():
             for i in tqdm(range(0, len(texts), batch_size), desc="Encoding"):
                 batch_texts = texts[i:i + batch_size]
@@ -362,7 +366,7 @@ class ContrastiveTextClassifier:
         embeddings = np.vstack(all_embeddings).astype('float32')
         del all_embeddings
         
-        print(f"Searching top-{top_k} predictions...")
+        logger.info(f"Searching top-{top_k} predictions...")
         if self.use_faiss and self.faiss_index is not None:
             distances, indices = self.faiss_index.search(embeddings, top_k)
             similarities = 1 - (distances ** 2 / 2)
@@ -408,7 +412,7 @@ class ContrastiveTextClassifier:
         # Save embeddings
         np.savetxt(os.path.join(path, 'embeddings.csv'), self.label_embeddings, delimiter=',')
         
-        print(f"✅ Model saved to {path}")
+        logger.info(f"✅ Model saved to {path}")
     
     def load(self, path='./ContrastiveTextModel', model_name='bert-base-uncased'):
         """Load model and embeddings"""
@@ -437,4 +441,4 @@ class ContrastiveTextClassifier:
         if self.use_faiss:
             self._build_faiss_index()
         
-        print(f"✅ Model loaded from {path}")
+        logger.info(f"✅ Model loaded from {path}")

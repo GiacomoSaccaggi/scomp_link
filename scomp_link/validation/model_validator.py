@@ -16,6 +16,10 @@ import plotly.graph_objects as go
 from typing import Any, Dict, Optional
 from ..utils.report_html import ScompLinkHTMLReport
 
+from scomp_link.utils.logger import get_logger
+logger = get_logger(__name__)
+
+
 class Validator:
     """
     Handles modeling and validation phases (M4, C1-C4, V1-V3).
@@ -27,27 +31,27 @@ class Validator:
         """
         C2: K-Fold Cross Validation.
         """
-        print(f"C2: Running {k}-Fold Cross Validation...")
+        logger.info(f"C2: Running {k}-Fold Cross Validation...")
         kf = KFold(n_splits=k, shuffle=True, random_state=42)
         scores = cross_val_score(self.model, X, y, cv=kf)
-        print(f"Mean CV Score: {np.mean(scores):.4f} (+/- {np.std(scores):.4f})")
+        logger.info(f"Mean CV Score: {np.mean(scores):.4f} (+/- {np.std(scores):.4f})")
         return scores
 
     def loocv(self, X, y):
         """
         C1: Leave-one-out Cross Validation LOOCV.
         """
-        print("C1: Running LOOCV (this might be slow)...")
+        logger.info("C1: Running LOOCV (this might be slow)...")
         loo = LeaveOneOut()
         scores = cross_val_score(self.model, X, y, cv=loo)
-        print(f"Mean LOOCV Score: {np.mean(scores):.4f}")
+        logger.info(f"Mean LOOCV Score: {np.mean(scores):.4f}")
         return scores
 
     def evaluate(self, y_true, y_pred, task_type: str = "regression", y_proba: Optional[np.ndarray] = None) -> Dict[str, float]:
         """
         V3: Metriche per valutare i modelli.
         """
-        print(f"V3: Evaluating metrics for {task_type}...")
+        logger.info(f"V3: Evaluating metrics for {task_type}...")
         metrics = {}
         if task_type == "regression":
             from sklearn.metrics import mean_squared_error, r2_score, mean_absolute_error
@@ -63,7 +67,7 @@ class Validator:
             metrics["recall"] = float(recall_score(y_true, y_pred, average='weighted'))
         
         for name, value in metrics.items():
-            print(f" - {name}: {value:.4f}")
+            logger.info(f" - {name}: {value:.4f}")
         return metrics
 
     def generate_validation_report(self, y_true, y_pred, task_type: str = "regression", 
@@ -72,7 +76,7 @@ class Validator:
         """
         Generates an HTML report with validation graphs.
         """
-        print(f"Generating {task_type} validation report...")
+        logger.info(f"Generating {task_type} validation report...")
         report = ScompLinkHTMLReport(title=f"Model Validation Report - {task_type.capitalize()}")
         
         metrics = self.evaluate(y_true, y_pred, task_type=task_type)
@@ -133,4 +137,4 @@ class Validator:
             report.close_section()
 
         report.save_html(report_name)
-        print(f"Report saved to {report_name}")
+        logger.info(f"Report saved to {report_name}")

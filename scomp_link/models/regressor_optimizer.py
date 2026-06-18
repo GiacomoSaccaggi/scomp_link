@@ -36,6 +36,10 @@ from sklearn.ensemble import GradientBoostingRegressor, RandomForestRegressor
 from sklearn.linear_model import SGDRegressor, Lasso, LinearRegression, ElasticNet
 from sklearn.preprocessing import OneHotEncoder, PolynomialFeatures, StandardScaler
 
+from scomp_link.utils.logger import get_logger
+logger = get_logger(__name__)
+
+
 
 
 class Boruta(BaseEstimator, TransformerMixin):
@@ -419,7 +423,7 @@ class Boruta(BaseEstimator, TransformerMixin):
             content = map(str, [n_iter, n_confirmed, n_tentative, n_rejected])
             result = '\n'.join([x[0] + '\t' + x[1] for x in zip(cols, content)])
             output = "\n\n Boruta finished running.\n\n" + result
-        print(output)
+        logger.info(output)
 
 
 class RegressorOptimizer:
@@ -458,7 +462,7 @@ class RegressorOptimizer:
         if select_features:
             self.X, self.y, self.dropped_columns = self.select_features(df, y_col, x_cols)
             col_dropped = "\n\t".join(self.dropped_columns)
-            print(f'Columns dropped: \n\t{col_dropped}')
+            logger.info(f'Columns dropped: \n\t{col_dropped}')
         else:
             self.X = df[x_cols]
             self.y = df[y_col]
@@ -483,7 +487,7 @@ class RegressorOptimizer:
             ]
         )
 
-        # Lista di modelli con relativi parametri da testare per regressione
+        # List of models with parameters to test for regression
         self.models_to_test = models_to_test
 
         # Dizionario per salvare i risultati dei modelli
@@ -491,30 +495,30 @@ class RegressorOptimizer:
 
         # Dividi il dataset in set di training e test
         self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(self.X, self.y, test_size = 0.2, random_state = 42)
-        # Definisci la strategia di cross-validation
+        # Define cross-validation strategy
         self.cv_strategy = KFold(n_splits=5, shuffle=True, random_state = 15121)
 
     @staticmethod
     def select_features(df, y_col, x_cols):
         """
-        Descrizione della funzione:
-        Questa funzione preprocessa il dataset, crea dummy per le variabili categoriche e binarie, utilizza un Random Forest per valutare
-        l'importanza delle features e applica l'algoritmo Boruta per selezionare le variabili più significative rispetto al target.
+        Description:
+        This function preprocesses the dataset, creates dummies for categorical and binary variables, uses a Random Forest to evaluate
+        feature importance and applies the Boruta algorithm to select the most significant variables relative to the target.
 
         L'algoritmo Boruta è un metodo wrapper per la selezione delle feature che si basa sull'utilizzo di un classificatore
-        (in questo caso, un regressore Random Forest) per identificare le variabili più importanti. Utilizza iterazioni e confronti
-        tra feature 'reali' e feature 'ombre' generate casualmente per determinare l'importanza delle variabili e selezionare quelle
+        (in this case, a Random Forest regressor) to identify the most important variables. It uses iterations and comparisons
+        between 'real' features and randomly generated 'shadow' features to determine variable importance and select those
         rilevanti per il modello.
 
-        Pacchetti da cui dipende la funzione sono:
+        Dependencies:
         numpy, pandas,  Boruta, sklearn.ensemble.RandomForestRegressor, sklearn.preprocessing.OneHotEncoder
 
-        PARAMETRI:
+        PARAMETERS:
          1. df: DataFrame contenente i dati
          2. y_col: Nome della colonna target
          3. x_cols: Lista delle colonne predittive
 
-        Esempio di utilizzo:
+        Usage example:
 
         df = ...  # Carica il DataFrame
         y_column = 'target_column'
@@ -523,7 +527,7 @@ class RegressorOptimizer:
         Final_X, Y = RegressorOptimizer.select_features(df, y_column, X_columns)
 
 
-        \n\n\033[100mBest Practice: mettere sempre la descrizione di una funzione così da poter sempre capire a cosa serve\033[0m
+        \n\n\033[100mBest Practice: always include a function description so you can always understand its purpose\033[0m
         """
 
 
@@ -568,7 +572,7 @@ class RegressorOptimizer:
 
         # Identifica le colonne numeriche, categoriche e binarie
         categorical_cols = X.select_dtypes(include = ['object']).columns.tolist()
-        print(categorical_cols)
+        logger.info(categorical_cols)
         binary_cols = X.select_dtypes(include = ['bool']).columns.tolist()
         numeric_cols = X.select_dtypes(include = ['int64', 'float64']).columns.tolist()
 
@@ -607,22 +611,22 @@ class RegressorOptimizer:
 
     def estimate_optimization_time(self, time_per_combination):
         """
-        Descrizione della funzione:
-        Questa funzione stima il tempo totale necessario per ottimizzare i modelli di regressione usando una combinazione di iperparametri.
+        Description:
+        This function estimates the total time required to optimize regression models using a hyperparameter grid.
 
-        Pacchetti da cui dipende la funzione sono:
+        Dependencies:
         Nessun pacchetto esterno.
 
-        PARAMETRI:
+        PARAMETERS:
         1. time_per_combination: Tempo stimato per valutare una singola combinazione di iperparametri
 
-        Esempio di utilizzo:
+        Usage example:
 
         optimizer = RegressorOptimizer(...)
         optimizer.estimate_optimization_time(5)  # Stima il tempo con 5 secondi per combinazione
 
 
-        \n\n\033[100mBest Practice: mettere sempre la descrizione di una funzione così da poter sempre capire a cosa serve\033[0m
+        \n\n\033[100mBest Practice: always include a function description so you can always understand its purpose\033[0m
         """
         total_time = 0
 
@@ -636,23 +640,23 @@ class RegressorOptimizer:
             model_time = num_combinations * time_per_combination
             total_time += model_time
 
-            print(f"Estimated time for optimizing {model_name}: {round(model_time/60/60, 2)} hour")
+            logger.info(f"Estimated time for optimizing {model_name}: {round(model_time/60/60, 2)} hour")
 
-        print(f"Total estimated time for optimization: {round(total_time/60/60, 2)} hour")
+        logger.info(f"Total estimated time for optimization: {round(total_time/60/60, 2)} hour")
 
     def select_hyperparameters(self, regressor, params_grid):
         """
-        Descrizione della funzione:
-        Questa funzione esegue una ricerca dei migliori iperparametri per il regressore utilizzando una Grid Search con Cross-Validation.
+        Description:
+        This function performs a search for the best hyperparameters for the regressor using Grid Search with Cross-Validation.
 
-        Pacchetti da cui dipende la funzione sono:
+        Dependencies:
         sklearn.pipeline.Pipeline, sklearn.model_selection.GridSearchCV
 
-        PARAMETRI:
+        PARAMETERS:
          1. regressor: Il regressore per il quale si vogliono ottimizzare gli iperparametri
          2. params_grid: Dizionario contenente la griglia degli iperparametri da testare
 
-        Esempio di utilizzo:
+        Usage example:
 
         regressor_to_optimize = RandomForestRegressor()
         parameters_to_test = {'n_estimators': [100, 200], 'max_depth': [5, 10]}
@@ -661,7 +665,7 @@ class RegressorOptimizer:
         best_regressor, best_params = optimizer.select_hyperparameters(regressor_to_optimize, parameters_to_test)
 
 
-        \n\n\033[100mBest Practice: mettere sempre la descrizione di una funzione così da poter sempre capire a cosa serve\033[0m
+        \n\n\033[100mBest Practice: always include a function description so you can always understand its purpose\033[0m
         """
         pipeline = Pipeline([
             ('preprocessor', self.preprocessor),
@@ -680,33 +684,33 @@ class RegressorOptimizer:
 
     def test_models_regression(self):
         """
-        Descrizione della funzione:
-        Questa funzione testa diversi modelli di regressione con gli iperparametri ottimizzati e valuta le prestazioni
+        Description:
+        This function tests multiple regression models with optimized hyperparameters and evaluates performance
         su un set di dati di test.
 
-        Pacchetti da cui dipende la funzione sono:
+        Dependencies:
         Nessun pacchetto esterno.
 
-        PARAMETRI:
+        PARAMETERS:
         Nessun parametro esplicito, ma utilizza gli attributi della classe `RegressorOptimizer`
 
-        Esempio di utilizzo:
+        Usage example:
 
         optimizer = RegressorOptimizer(...)
         optimizer.test_models_regression()
 
 
-        \n\n\033[100mBest Practice: mettere sempre la descrizione di una funzione così da poter sempre capire a cosa serve\033[0m
+        \n\n\033[100mBest Practice: always include a function description so you can always understand its purpose\033[0m
         """
         for model_name, model_data in self.models_to_test.items():
-            print(f"\n\t... Testing {model_name}:\n\t", datetime.now().strftime("%Y-%m-%d %H:%M:%S"), f"\n\t... Optimizing HyperParameters ...\n\t")
+            logger.info(f"\n\t... Testing {model_name}:\n\t{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\t... Optimizing HyperParameters ...\n\t")
             # Ottieni il modello e la griglia dei parametri da testare
             model = model_data['model']
             params_grid = model_data['params_grid']
 
             # Seleziona i migliori iperparametri
             best_regressor, best_params = self.select_hyperparameters( model, params_grid)
-            print(f"\n\t", datetime.now().strftime("%Y-%m-%d %H:%M:%S"), f"\n\t... Training the Final Model ...\n\t")
+            logger.info(f"\n\t{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\t... Training the Final Model ...\n\t")
 
             # Fai il fit del regressore migliore sul set di training
             best_regressor.fit(self.X_train, self.y_train)
@@ -722,27 +726,27 @@ class RegressorOptimizer:
                 'Fitted_Test': y_pred,
                 'True_Test': self.y_test,
             }
-            print(datetime.now().strftime("%Y-%m-%d %H:%M:%S"), f"\n\t... Finished ...\n\t")
+            logger.info(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\t... Finished ...\n\t")
 
 
 
 
     def grafico_fit_con_errore(self, model_name, h=16 ,w=9):
         """
-        Descrizione della funzione:
-        Questa funzione restituisce grafici sui fit relativamente ad un regressore.
+        Description:
+        This function returns fit plots for a given regressor.
 
-        Pacchetti da cui dipende la funzione sono:
+        Dependencies:
         numpy, matplotlib.pyplot, scipy.optimize.curve_fit
 
-        PARAMETRI:
+        PARAMETERS:
          1. x: regressore
          2. y: valori osservati
          3. fitted: valori previsti
          4. h: altezza dell'immagine finale
          5. w: larghezza dell'immagine finale
 
-        Esempio di utilizzo:
+        Usage example:
 
         epon = lambda x, a, b, c: a*np.exp(b*x)+c
         a, b, c = [0.4, 0.3, 0.2]
@@ -756,7 +760,7 @@ class RegressorOptimizer:
         grafico_fit_con_errore(x, y, fitted, 8, 6)
 
 
-        \n\n\033[100mBest Practice: mettere sempre la descrizione di una funzione così da poter sempre capire a cosa serve\033[0m
+        \n\n\033[100mBest Practice: always include a function description so you can always understand its purpose\033[0m
         """
 
         x = self.x_graph_col
@@ -816,7 +820,7 @@ class RegressorOptimizer:
 
 if __name__ == '__main__':
 
-    # Dati di esempio
+    # Sample data
     import hashlib
     size_df = 2000
     random_from_string = lambda x: int(hashlib.sha256(str(x).encode('utf-8')).hexdigest(), 16) % 11

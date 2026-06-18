@@ -20,6 +20,10 @@ import numpy as np
 from sklearn.base import BaseEstimator, ClusterMixin
 from sklearn.cluster import KMeans
 
+from scomp_link.utils.logger import get_logger
+logger = get_logger(__name__)
+
+
 
 class ClusterImg(BaseEstimator, ClusterMixin):
     """
@@ -48,8 +52,8 @@ class ClusterImg(BaseEstimator, ClusterMixin):
             X: Image data (n_samples, height, width, channels) or flattened features
             y: Ignored (unsupervised)
         """
-        print(f"ClusterImg: Clustering {len(X)} images into {self.n_clusters} clusters")
-        print("⚠️ Note: This is a placeholder. For production, use CNN feature extraction.")
+        logger.info(f"ClusterImg: Clustering {len(X)} images into {self.n_clusters} clusters")
+        logger.info("⚠️ Note: This is a placeholder. For production, use CNN feature extraction.")
         
         # Flatten images if needed
         if len(X.shape) > 2:

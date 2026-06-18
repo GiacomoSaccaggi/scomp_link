@@ -19,6 +19,10 @@ from datetime import date, datetime
 from plotly.subplots import make_subplots
 from scomp_link.utils.report_html import ScompLinkHTMLReport
 
+from scomp_link.utils.logger import get_logger
+logger = get_logger(__name__)
+
+
 color1 = ["#6E37FA", "#32BBB9", "#FF9408", "#F40953", "#FA32A0", "#B30095", "#FFD500", "#AAF564", "#50E6AA", "#2765F0"]
 color2 = ["#EAE4FF", "#C4EDEC", "#FEDEB4", "#FFAEBB", "#FFB4DD", "#E694D9", "#FFF4B3", "#DCFFAE", "#C1F6DC", "#DCF0FF"]
 color3 = ["#DCD2FF", "#88DCDA", "#FFBE6A", "#FF8296", "#FF8CC8", "#DB64C7", "#FFEA69", "#C8FF78", "#8FEFC8", "#AADCFA"]
@@ -63,35 +67,35 @@ def multiple_histograms(variable_float_for_distribution,
     try:
         num = np.asarray(variable_float_for_distribution).astype(float)
         categ = np.asarray(category_variable).astype(str)
-        print('\x1b[0;37;42m Correct import of varibles \x1b[0m')
+        logger.info('\x1b[0;37;42m Correct import of varibles \x1b[0m')
     except:
-        print('\x1b[0;37;41m Error in importing variables \x1b[0m')
+        logger.info('\x1b[0;37;41m Error in importing variables \x1b[0m')
 
-    # trovo le categorie e divido il set di dati
+    # find categories and split the dataset
     try:
         labels = np.unique(categ)
         sizes = np.asarray([len(np.where(categ == i)[0]) for i in labels]).astype(int)
         location = [np.where(categ == i)[0] for i in labels]
-        print('\x1b[0;37;42m Correct categorisation of the dataset \x1b[0m')
+        logger.info('\x1b[0;37;42m Correct categorisation of the dataset \x1b[0m')
     except:
-        print('\x1b[0;37;41m Error in the categorisation of the dataset \x1b[0m')
+        logger.info('\x1b[0;37;41m Error in the categorisation of the dataset \x1b[0m')
 
     # Troppe categorie
     if len(sizes)>10:
-        print('\x1b[0;37;41m Ended because there are too many categories \x1b[0m')
+        logger.info('\x1b[0;37;41m Ended because there are too many categories \x1b[0m')
         return None
 
 
     try:
         fig = make_subplots(rows=len(location), cols=1)
-        print('\x1b[0;37;42m Correct initialisation of the image \x1b[0m')
+        logger.info('\x1b[0;37;42m Correct initialisation of the image \x1b[0m')
     except:
-        print('\x1b[0;37;41m Image initialisation error \x1b[0m')
+        logger.info('\x1b[0;37;41m Image initialisation error \x1b[0m')
 
     # creo grafici
     for i, q in enumerate(location):
         if sizes[i] < 5:
-            print('\x1b[0;37;41m Category ' + labels[i] + ' with less than 5 values, will not be printed \x1b[0m')
+            logger.info('\x1b[0;37;41m Category ' + labels[i] + ' with less than 5 values, will not be printed \x1b[0m')
         else:
             values = num[q]
             arrayhist = np.histogram(values)
@@ -131,7 +135,7 @@ def multiple_histograms(variable_float_for_distribution,
                                      mode = 'lines',
                                      legendgroup=f"group{i+1}",
                                      name = 'Cumulative function', line_color=color1[i]), row = i+1, col = 1)
-            print('\x1b[0;37;42m Category ' + labels[i] + ' done! \x1b[0m')
+            logger.info('\x1b[0;37;42m Category ' + labels[i] + ' done! \x1b[0m')
 
 
     style = {f'yaxis{round(len(location)/2) if round(len(location)/2)>0 else ""}_title': y_label,
