@@ -1,0 +1,193 @@
+# -*- coding: utf-8 -*-
+"""
+███████╗███████╗ █████╗ ████████╗██╗   ██╗██████╗ ███████╗
+██╔════╝██╔════╝██╔══██╗╚══██╔══╝██║   ██║██╔══██╗██╔════╝
+█████╗  █████╗  ███████║   ██║   ██║   ██║██████╔╝█████╗  
+██╔══╝  ██╔══╝  ██╔══██║   ██║   ██║   ██║██╔══██╗██╔══╝  
+██║     ███████╗██║  ██║   ██║   ╚██████╔╝██║  ██║███████╗
+╚═╝     ╚══════╝╚═╝  ╚═╝   ╚═╝    ╚═════╝ ╚═╝  ╚═╝╚══════╝
+
+███████╗███╗   ██╗ ██████╗ ██╗███╗   ██╗███████╗███████╗██████╗ 
+██╔════╝████╗  ██║██╔════╝ ██║████╗  ██║██╔════╝██╔════╝██╔══██╗
+█████╗  ██╔██╗ ██║██║  ██╗ ██║██╔██╗ ██║█████╗  █████╗  ██████╔╝
+██╔══╝  ██║╚████║██║  ╚██╗██║██║╚████║██╔══╝  ██╔══╝  ██╔══██╗
+███████╗██║ ╚███║╚██████╔╝██║██║ ╚███║███████╗███████╗██║  ██║
+╚══════╝╚═╝  ╚══╝ ╚═════╝ ╚═╝╚═╝  ╚══╝╚══════╝╚══════╝╚═╝  ╚═╝
+"""
+import numpy as np
+import pandas as pd
+from typing import Optional, List, Dict, Union
+from sklearn.base import BaseEstimator, TransformerMixin
+
+from scomp_link.utils.logger import get_logger
+logger = get_logger(__name__)
+from scomp_link.utils.decorators import timer, memory_usage
+
+
+
+class FeatureEngineer(BaseEstimator, TransformerMixin):
+    """
+    Automated feature engineering for tabular data.
+    sklearn-compatible (fit/transform).
+
+    Dependencies: numpy, pandas, scikit-learn
+
+    PARAMETERS:
+     1. interactions: generate polynomial interaction features (default True)
+     2. interaction_degree: max polynomial degree (default 2)
+     3. log_transform: apply log1p to skewed numeric features (default True)
+     4. skew_threshold: skewness above this triggers log transform (default 1.0)
+     5. date_features: extract date components from datetime columns (default True)
+     6. target_encode: apply target encoding to high-cardinality categoricals (default True)
+     7. target_encode_threshold: cardinality above this triggers encoding (default 10)
+     8. auto_bin: bin continuous features into quantile buckets (default False)
+     9. n_bins: number of quantile bins (default 5)
+
+    Usage example:
+        fe = FeatureEngineer(interactions=True, log_transform=True)
+        fe.fit(X_train, y_train)
+        X_train_eng = fe.transform(X_train)
+        X_test_eng = fe.transform(X_test)
+    """
+
+    def __init__(self, interactions: bool = True, interaction_degree: int = 2,
+                 log_transform: bool = True, skew_threshold: float = 1.0,
+                 date_features: bool = True, target_encode: bool = True,
+                 target_encode_threshold: int = 10, auto_bin: bool = False,
+                 n_bins: int = 5):
+        self.interactions = interactions
+        self.interaction_degree = interaction_degree
+        self.log_transform = log_transform
+        self.skew_threshold = skew_threshold
+        self.date_features = date_features
+        self.target_encode = target_encode
+        self.target_encode_threshold = target_encode_threshold
+        self.auto_bin = auto_bin
+        self.n_bins = n_bins
+
+        # Fitted state
+        self._numeric_cols = []
+        self._skewed_cols = []
+        self._date_cols = []
+        self._high_card_cols = []
+        self._target_encoding_maps: Dict[str, Dict] = {}
+        self._bin_edges: Dict[str, np.ndarray] = {}
+        self._interaction_cols: List[str] = []
+
+    @timer
+    def fit(self, X: pd.DataFrame, y: Optional[pd.Series] = None) -> "FeatureEngineer":
+        """Fit the feature engineer on training data."""
+        logger.info("🔬 FeatureEngineer: fitting...")
+        self._numeric_cols = X.select_dtypes(include=[np.number]).columns.tolist()
+        self._date_cols = X.select_dtypes(include=['datetime64', 'datetime64[ns]']).columns.tolist()
+
+        # Detect skewed columns
+        if self.log_transform:
+            for col in self._numeric_cols:
+                skew = X[col].skew()
+                if abs(skew) > self.skew_threshold and (X[col] >= 0).all():
+                    self._skewed_cols.append(col)
+
+        # Detect high-cardinality categoricals
+        if self.target_encode and y is not None:
+            cat_cols = X.select_dtypes(include=['object', 'category']).columns.tolist()
+            for col in cat_cols:
+                if X[col].nunique() > self.target_encode_threshold:
+                    self._high_card_cols.append(col)
+                    # Compute target encoding map (mean of target per category)
+                    mapping = pd.DataFrame({'val': X[col], 'y': y}).groupby('val')['y'].mean().to_dict()
+                    self._target_encoding_maps[col] = mapping
+
+        # Compute bin edges
+        if self.auto_bin:
+            for col in self._numeric_cols:
+                try:
+                    edges = np.percentile(X[col].dropna(), np.linspace(0, 100, self.n_bins + 1))
+                    self._bin_edges[col] = np.unique(edges)
+                except Exception:
+                    pass
+
+        # Interaction column pairs
+        if self.interactions and len(self._numeric_cols) >= 2:
+            from itertools import combinations
+            self._interaction_cols = list(combinations(self._numeric_cols[:10], 2))  # cap at top 10
+
+        logger.info(f"  ✅ Skewed cols (log): {len(self._skewed_cols)}")
+        logger.info(f"  ✅ Date cols: {len(self._date_cols)}")
+        logger.info(f"  ✅ Target-encoded cols: {len(self._high_card_cols)}")
+        logger.info(f"  ✅ Interaction pairs: {len(self._interaction_cols)}")
+        return self
+
+    def transform(self, X: pd.DataFrame) -> pd.DataFrame:
+        """Transform data with engineered features."""
+        df = X.copy()
+
+        # Log transforms for skewed features
+        if self.log_transform:
+            for col in self._skewed_cols:
+                if col in df.columns:
+                    df[f"{col}_log"] = np.log1p(df[col])
+
+        # Date feature extraction
+        if self.date_features:
+            for col in self._date_cols:
+                if col in df.columns:
+                    dt = pd.to_datetime(df[col])
+                    df[f"{col}_year"] = dt.dt.year
+                    df[f"{col}_month"] = dt.dt.month
+                    df[f"{col}_day_of_week"] = dt.dt.dayofweek
+                    df[f"{col}_is_weekend"] = dt.dt.dayofweek.isin([5, 6]).astype(int)
+                    df[f"{col}_quarter"] = dt.dt.quarter
+                    df = df.drop(columns=[col])
+
+        # Target encoding
+        if self.target_encode:
+            for col in self._high_card_cols:
+                if col in df.columns:
+                    global_mean = np.mean(list(self._target_encoding_maps[col].values()))
+                    df[f"{col}_target_enc"] = df[col].map(self._target_encoding_maps[col]).fillna(global_mean)
+                    df = df.drop(columns=[col])
+
+        # Polynomial interactions
+        if self.interactions:
+            for col_a, col_b in self._interaction_cols:
+                if col_a in df.columns and col_b in df.columns:
+                    df[f"{col_a}_x_{col_b}"] = df[col_a] * df[col_b]
+
+        # Auto-binning
+        if self.auto_bin:
+            for col, edges in self._bin_edges.items():
+                if col in df.columns and len(edges) > 1:
+                    df[f"{col}_bin"] = pd.cut(df[col], bins=edges, labels=False, include_lowest=True)
+
+        return df
+
+    @memory_usage
+    def fit_transform(self, X: pd.DataFrame, y: Optional[pd.Series] = None) -> pd.DataFrame:
+        """Fit and transform in one step."""
+        return self.fit(X, y).transform(X)
+
+    def get_feature_names(self, X: pd.DataFrame) -> List[str]:
+        """Return list of output feature names after transform."""
+        return self.transform(X.head(1)).columns.tolist()
+
+
+if __name__ == '__main__':
+    # Sample data
+    np.random.seed(42)
+    size_df = 500
+    df = pd.DataFrame({
+        'income': np.random.exponential(50000, size_df),  # skewed
+        'age': np.random.normal(35, 10, size_df),
+        'score': np.random.exponential(100, size_df),  # skewed
+        'city': np.random.choice(['NYC', 'LA', 'CHI', 'HOU', 'PHX', 'PHI',
+                                   'SA', 'SD', 'DAL', 'SJ', 'AUS', 'JAX'], size_df),
+        'signup_date': pd.date_range('2020-01-01', periods=size_df, freq='D'),
+    })
+    y = 0.5 * df['income'] + 100 * df['age'] + np.random.randn(size_df) * 1000
+
+    fe = FeatureEngineer(interactions=True, log_transform=True,
+                         date_features=True, target_encode=True, auto_bin=True)
+    df_eng = fe.fit_transform(df, y)
+    logger.info(f"\n🎯 Original shape: {df.shape} → Engineered shape: {df_eng.shape}")
+    logger.info(f"   New columns: {[c for c in df_eng.columns if c not in df.columns]}")
