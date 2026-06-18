@@ -7,7 +7,7 @@ Use Case: Group similar texts without labels
 
 import pandas as pd
 import numpy as np
-from scomp_link import ScompLinkPipeline
+from scomp_link import ScompLinkPipeline, set_verbosity
 
 print("=" * 70)
 print("EXAMPLE 13: Text Unsupervised - Text Embeddings and Clustering")

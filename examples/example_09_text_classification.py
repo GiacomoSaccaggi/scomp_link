@@ -7,7 +7,7 @@ Use Case: Multi-class text classification with semantic understanding
 
 import pandas as pd
 import numpy as np
-from scomp_link import ScompLinkPipeline
+from scomp_link import ScompLinkPipeline, set_verbosity
 
 print("=" * 70)
 print("EXAMPLE 9: Text Classification - Contrastive Learning")
