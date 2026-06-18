@@ -7,7 +7,7 @@ Use Case: Shows how to configure text classification models
 
 import pandas as pd
 import numpy as np
-from scomp_link import ScompLinkPipeline
+from scomp_link import ScompLinkPipeline, set_verbosity
 
 print("=" * 70)
 print("EXAMPLE 12: Text Classification - Configuration Options")
