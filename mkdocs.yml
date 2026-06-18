@@ -1,0 +1,64 @@
+site_name: scomp-link
+site_description: "The Astromech Arm for Your Python Projects — End-to-End ML Toolkit"
+site_url: https://giacomosaccaggi.github.io/scomp-link/
+repo_url: https://github.com/GiacomoSaccaggi/scomp-link
+repo_name: GiacomoSaccaggi/scomp-link
+
+theme:
+  name: material
+  palette:
+    - scheme: slate
+      primary: deep purple
+      accent: cyan
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+    - scheme: default
+      primary: deep purple
+      accent: cyan
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+  features:
+    - navigation.sections
+    - navigation.expand
+    - content.code.copy
+    - search.highlight
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            show_source: false
+            show_root_heading: true
+            heading_level: 2
+            members_order: source
+            docstring_style: google
+
+markdown_extensions:
+  - admonition
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - toc:
+      permalink: true
+
+nav:
+  - Home: index.md
+  - Quick Start: quickstart.md
+  - CLI Reference: cli.md
+  - API Reference:
+    - Pipeline: api/pipeline.md
+    - Preprocessing: api/preprocessing.md
+    - Models: api/models.md
+    - Validation: api/validation.md
+    - Explainability: api/explainability.md
+    - Monitoring: api/monitoring.md
+    - Persistence: api/persistence.md
+    - Tuning: api/tuning.md
+  - Examples: examples.md
+  - Changelog: changelog.md
