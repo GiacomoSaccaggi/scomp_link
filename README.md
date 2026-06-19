@@ -4,9 +4,12 @@
 
 [![CI](https://github.com/GiacomoSaccaggi/scomp_link/actions/workflows/ci.yml/badge.svg)](https://github.com/GiacomoSaccaggi/scomp_link/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/GiacomoSaccaggi/scomp_link/branch/main/graph/badge.svg)](https://codecov.io/gh/GiacomoSaccaggi/scomp_link)
-[![Python](https://img.shields.io/pypi/pyversions/scomp-link)](https://pypi.org/project/scomp-link/)
 [![PyPI](https://img.shields.io/pypi/v/scomp-link)](https://pypi.org/project/scomp-link/)
+[![Python](https://img.shields.io/pypi/pyversions/scomp-link)](https://pypi.org/project/scomp-link/)
+[![Downloads](https://img.shields.io/pypi/dm/scomp-link)](https://pypi.org/project/scomp-link/)
 [![License](https://img.shields.io/github/license/GiacomoSaccaggi/scomp_link)](https://github.com/GiacomoSaccaggi/scomp_link/blob/main/LICENSE)
+[![Code style: ruff](https://img.shields.io/badge/code%20style-ruff-000000.svg)](https://github.com/astral-sh/ruff)
+[![Typed](https://img.shields.io/badge/typing-typed-blue)](https://peps.python.org/pep-0561/)
 
 ---
 
