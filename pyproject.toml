@@ -102,7 +102,7 @@ dependencies = [
     "matplotlib>=3.8.0,<4.0.0;    python_version >= '3.13'",
 
     # --- plotly ---
-    "plotly>=5.0.0,<6.0.0",
+    "plotly>=5.0.0,<7.0.0",
 
     # --- seaborn ---
     "seaborn>=0.11.0,<0.14.0",
