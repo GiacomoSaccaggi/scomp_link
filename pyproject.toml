@@ -169,12 +169,11 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/GiacomoSaccaggi/scomp_link"
-Documentation = "https://giacomosaccaggi.github.io/scomp_link/"
+Homepage = "https://giacomosaccaggi.github.io/scomp_link/"
+Documentation = "https://github.com/GiacomoSaccaggi/scomp_link/wiki"
 Repository = "https://github.com/GiacomoSaccaggi/scomp_link"
 Issues = "https://github.com/GiacomoSaccaggi/scomp_link/issues"
 Changelog = "https://github.com/GiacomoSaccaggi/scomp_link/blob/main/CHANGELOG.md"
-Wiki = "https://github.com/GiacomoSaccaggi/scomp_link/wiki"
 
 # ── Setuptools configuration ──
 
