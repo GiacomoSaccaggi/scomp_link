@@ -660,7 +660,7 @@ Examples:
   scomp-link info --artifact model.scomp
 """,
     )
-    parser.add_argument("--version", action="version", version="%(prog)s 1.1.2")
+    parser.add_argument("--version", action="version", version="%(prog)s 1.1.3")
     subparsers = parser.add_subparsers(dest="command", help="Available commands")
 
     # ── run ──
