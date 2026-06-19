@@ -67,9 +67,7 @@ jobs:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     permissions:
-      pages: write
-      id-token: write
-      contents: read
+      contents: write
 
     steps:
       - uses: actions/checkout@v4
@@ -82,11 +80,5 @@ jobs:
       - name: Install dependencies
         run: pip install mkdocs mkdocs-material "mkdocstrings[python]" -e .
 
-      - name: Build docs
-        run: mkdocs build
-
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./site
+      - name: Build and deploy docs
+        run: mkdocs gh-deploy --force
