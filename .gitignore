@@ -70,3 +70,5 @@ staging/
 tmp/
 site/
 *.scomp
+wiki/
+/models/
