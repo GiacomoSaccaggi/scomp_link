@@ -151,7 +151,7 @@ dependencies = [
 
     # --- PDF conversion ---
     "markdown>=3.3.0,<4.0.0",
-    "weasyprint>=57.0,<63.0",
+    "weasyprint>=57.0,<70.0",
     "playwright>=1.40.0,<2.0.0",
 ]
 
