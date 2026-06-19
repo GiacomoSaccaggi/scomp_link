@@ -164,7 +164,7 @@ scomp-link = "scomp_link.cli:main"
 
 # Development and testing
 dev = [
-    "pytest>=6.0.0,<9.0.0",
+    "pytest>=6.0.0,<10.0.0",
     "pytest-cov>=2.10.0,<6.0.0",
 ]
 
