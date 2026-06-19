@@ -192,6 +192,10 @@ class TestPredictCommand:
 class TestExplainCommand:
 
     def test_explain_output(self, artifact_path, regression_csv, tmp_dir):
+        try:
+            import shap
+        except (ImportError, ValueError):
+            pytest.skip("shap not available")
         output = str(tmp_dir / "importance.csv")
         code = run_cli("explain", "--artifact", artifact_path, "--data", regression_csv,
                        "--n-samples", "20", "--output", output, "--silent")

@@ -35,10 +35,21 @@ class ShapExplainer:
 
     def __init__(self, model, X_background: pd.DataFrame):
         import shap
+        # Suppress transformers/keras import errors triggered by shap's internal checks
+        import warnings
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            try:
+                self.explainer = shap.Explainer(model, X_background)
+            except (ValueError, ImportError):
+                # Fallback to TreeExplainer or KernelExplainer
+                try:
+                    self.explainer = shap.TreeExplainer(model, X_background)
+                except Exception:
+                    self.explainer = shap.KernelExplainer(model.predict, X_background)
         self.model = model
         self.X_background = X_background
         self.feature_names = list(X_background.columns) if hasattr(X_background, 'columns') else None
-        self.explainer = shap.Explainer(model, X_background)
         self.shap_values_ = None
 
     @timer
