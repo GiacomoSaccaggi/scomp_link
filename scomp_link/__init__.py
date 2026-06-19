@@ -29,4 +29,4 @@ from .validation.fairness import FairnessMetrics
 
 from .utils.logger import set_verbosity
 
-__version__ = "1.1.2"
+__version__ = "1.1.3"
