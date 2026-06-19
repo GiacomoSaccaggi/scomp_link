@@ -2,11 +2,11 @@
 
 ## May the code be with you
 
-[![CI](https://github.com/GiacomoSaccaggi/scomp-link/actions/workflows/ci.yml/badge.svg)](https://github.com/GiacomoSaccaggi/scomp-link/actions/workflows/ci.yml)
-[![codecov](https://codecov.io/gh/GiacomoSaccaggi/scomp-link/branch/main/graph/badge.svg)](https://codecov.io/gh/GiacomoSaccaggi/scomp-link)
+[![CI](https://github.com/GiacomoSaccaggi/scomp_link/actions/workflows/ci.yml/badge.svg)](https://github.com/GiacomoSaccaggi/scomp_link/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/GiacomoSaccaggi/scomp_link/branch/main/graph/badge.svg)](https://codecov.io/gh/GiacomoSaccaggi/scomp_link)
 [![Python](https://img.shields.io/pypi/pyversions/scomp-link)](https://pypi.org/project/scomp-link/)
-[![License](https://img.shields.io/badge/license-MIT-blue)]()
 [![PyPI](https://img.shields.io/pypi/v/scomp-link)](https://pypi.org/project/scomp-link/)
+[![License](https://img.shields.io/github/license/GiacomoSaccaggi/scomp_link)](https://github.com/GiacomoSaccaggi/scomp_link/blob/main/LICENSE)
 
 ---
 
