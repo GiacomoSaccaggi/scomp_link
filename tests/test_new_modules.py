@@ -38,6 +38,14 @@ def classification_model_and_data():
 
 class TestShapExplainer:
 
+    @pytest.fixture(autouse=True)
+    def _skip_if_shap_broken(self):
+        try:
+            from scomp_link import ShapExplainer
+            import shap
+        except (ImportError, ValueError):
+            pytest.skip("shap not available or incompatible (keras/transformers conflict)")
+
     def test_explain_returns_array(self, regression_model_and_data):
         from scomp_link import ShapExplainer
         model, X_train, X_test, _, _ = regression_model_and_data
