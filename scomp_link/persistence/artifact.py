@@ -174,7 +174,12 @@ class ScompArtifact:
 
     @classmethod
     def load(cls, path: Union[str, Path]) -> "ScompArtifact":
-        """Load a .scomp artifact."""
+        """Load a .scomp artifact.
+
+        ⚠️ SECURITY WARNING: .scomp files use pickle internally.
+        Only load files you created yourself or received from a trusted source.
+        Loading untrusted files can execute arbitrary code.
+        """
         path = Path(path)
         if not path.exists():
             raise FileNotFoundError(f"Artifact not found: {path}")
