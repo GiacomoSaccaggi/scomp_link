@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.1.4 (2026-06-24)
+
+### Added
+- Python 3.14 support (experimental — some optional deps not yet available)
+
+### Changed
+- Replaced abandoned `pytorch-tabnet` with maintained fork `pytorch-tabnet2` (same API)
+- Bumped upper bounds: `torch <2.13`, `transformers <6.0`, `matplotlib <3.11`, `weasyprint <70.0`, `sentence-transformers <6.0`
+- TensorFlow excluded from Python 3.14 (no wheels available yet — [tracking issue](https://github.com/tensorflow/tensorflow/issues/102890))
+- Updated TabNet import path for pytorch-tabnet2 compatibility
+
+### Fixed
+- CI failure on Python 3.14 due to missing TensorFlow wheels
+
 ## 1.0.0 (2026-06-18)
 
 ### Added

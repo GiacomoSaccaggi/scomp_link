@@ -27,7 +27,7 @@ It includes a **full-featured CLI** for zero-code ML workflows and a Python API 
 pip install scomp-link
 ```
 
-Requires Python 3.10+.
+Requires Python 3.10+. Python 3.14 is supported experimentally (TensorFlow not yet available on 3.14).
 
 ---
 
