@@ -90,7 +90,9 @@ def boxplot(data: list, labels: list = None, title: str = '',
     """
     palette = colors or COLORS
     fig, ax = plt.subplots(figsize=(width / 100, height / 100))
-    bp = ax.boxplot(data, labels=labels, patch_artist=True, notch=False)
+    bp = ax.boxplot(data, patch_artist=True, notch=False)
+    if labels:
+        ax.set_xticklabels(labels)
     for i, patch in enumerate(bp['boxes']):
         patch.set_facecolor(palette[i % len(palette)])
         patch.set_alpha(0.7)
