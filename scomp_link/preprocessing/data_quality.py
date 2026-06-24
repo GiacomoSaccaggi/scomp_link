@@ -127,50 +127,44 @@ class DataQualityReport:
         return df.sort_values("correlation", ascending=False).reset_index(drop=True)
 
     def save_html(self, path: str = "data_quality_report.html"):
-        """Generate a standalone HTML report."""
+        """Generate a standalone HTML report using ScompLinkHTMLReport."""
+        from scomp_link.utils.report_html import ScompLinkHTMLReport
+
         if self._report is None:
             self.generate()
         r = self._report
-        html = f"""<!DOCTYPE html><html><head><meta charset="utf-8">
-<title>Data Quality Report</title>
-<style>
-body{{font-family:system-ui;max-width:900px;margin:2rem auto;padding:0 1rem;background:#0f172a;color:#e2e8f0}}
-h1{{background:linear-gradient(135deg,#38bdf8,#a78bfa);-webkit-background-clip:text;
--webkit-text-fill-color:transparent;text-align:center}}
-h2{{color:#38bdf8;border-bottom:1px solid #334155;padding-bottom:.3rem}}
-table{{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.85rem}}
-th{{background:#1e293b;color:#94a3b8;text-align:left;padding:.5rem;text-transform:uppercase;font-size:.7rem}}
-td{{padding:.4rem .5rem;border-bottom:1px solid #1e293b}}
-.metric{{display:inline-block;background:#1e293b;border:1px solid #334155;border-radius:8px;
-padding:.8rem 1.2rem;margin:.3rem;text-align:center}}
-.metric .val{{font-size:1.4rem;font-weight:700;color:#38bdf8}}
-.metric .lbl{{font-size:.7rem;color:#94a3b8;text-transform:uppercase}}
-.warn{{color:#fb923c}} .ok{{color:#34d399}}
-</style></head><body>
-<h1>📊 Data Quality Report</h1>
-<div style="text-align:center;margin:1.5rem 0">
-<div class="metric"><div class="val">{r['overview']['n_rows']:,}</div><div class="lbl">Rows</div></div>
-<div class="metric"><div class="val">{r['overview']['n_cols']}</div><div class="lbl">Columns</div></div>
-<div class="metric"><div class="val">{r['overview']['memory_mb']} MB</div><div class="lbl">Memory</div></div>
-<div class="metric"><div class="val">{r['duplicates']['n_duplicates']}</div><div class="lbl">Duplicates</div></div>
-<div class="metric"><div class="val">{len(r['constants'])}</div><div class="lbl">Constants</div></div>
-</div>
-<h2>Missing Values</h2>"""
-        if len(r['missing']) > 0:
-            html += r['missing'].to_html(index=False, classes='')
-        else:
-            html += '<p class="ok">✅ No missing values</p>'
-        html += "<h2>Cardinality</h2>" + r['cardinality'].to_html(index=False, classes='')
-        html += "<h2>Type Inference</h2>" + r['types'].to_html(index=False, classes='')
-        if len(r['correlations']) > 0:
-            html += "<h2>High Correlations (≥0.95)</h2>" + r['correlations'].to_html(index=False, classes='')
-        if r['constants']:
-            html += f"<h2>Constant Features</h2><p class='warn'>⚠️ {r['constants']}</p>"
-        html += "</body></html>"
 
-        with open(path, 'w') as f:
-            f.write(html)
-        logger.info(f"✅ HTML report saved: {path}")
+        report = ScompLinkHTMLReport('Data Quality Report')
+        report.open_section('Overview')
+        overview_df = pd.DataFrame([r['overview']])
+        report.add_dataframe(overview_df, 'overview_metrics')
+        report.add_text(f"Duplicates: {r['duplicates']['n_duplicates']} ({r['duplicates']['duplicate_pct']}%)")
+        if r['constants']:
+            report.add_text(f"Constant features: {r['constants']}")
+        report.close_section()
+
+        report.open_section('Missing Values')
+        if len(r['missing']) > 0:
+            report.add_dataframe(r['missing'], 'missing_values')
+        else:
+            report.add_text('No missing values detected.')
+        report.close_section()
+
+        report.open_section('Cardinality')
+        report.add_dataframe(r['cardinality'], 'cardinality')
+        report.close_section()
+
+        report.open_section('Type Inference')
+        report.add_dataframe(r['types'], 'type_inference')
+        report.close_section()
+
+        if len(r['correlations']) > 0:
+            report.open_section('High Correlations (>=0.95)')
+            report.add_dataframe(r['correlations'], 'high_correlations')
+            report.close_section()
+
+        report.save_html(path)
+        logger.info(f"\u2705 HTML report saved: {path}")
         return path
 
 

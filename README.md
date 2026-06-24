@@ -45,7 +45,8 @@ Requires Python 3.10+.
 | **Monitoring** | Data drift detection (PSI + KS test) |
 | **Fairness** | Demographic parity, disparate impact (4/5 rule), equalized odds |
 | **Persistence** | Custom `.scomp` format (model + preprocessor + config + metrics + sample data) |
-| **Reporting** | Interactive HTML reports (Plotly), data quality reports |
+| **Visualization** | 31 RAWGraphs SVG charts, Plotly interactive, Highcharts, centralized color system |
+| **Reporting** | Interactive HTML reports with embedded charts, data quality reports |
 
 ---
 
@@ -251,7 +252,7 @@ results = detector.fit_predict(df, features=['col1', 'col2', 'col3'])
 
 ```
 scomp_link/
-├── cli.py                    # CLI (12 commands)
+├── cli.py                    # CLI (13 commands)
 ├── core.py                   # ScompLinkPipeline orchestrator
 ├── preprocessing/
 │   ├── data_processor.py     # Preprocessor (polars backend)
@@ -280,9 +281,12 @@ scomp_link/
 ├── persistence/
 │   └── artifact.py           # ScompArtifact (.scomp format)
 └── utils/
+    ├── colors.py             # Centralized color palettes
     ├── logger.py             # Configurable logging
     ├── report_html.py        # HTML report builder
-    └── plotly_utils.py       # Chart utilities
+    ├── plotly_utils.py       # Plotly chart utilities
+    ├── highcharts.py         # Highcharts visualizations
+    └── rawgraphs/            # 31 SVG chart functions (server-side)
 ```
 
 ---
@@ -290,7 +294,7 @@ scomp_link/
 ## Testing
 
 ```bash
-# Run all tests (185 tests)
+# Run all tests
 pytest tests/ -v
 
 # With coverage

@@ -105,16 +105,19 @@ def html_to_pdf(input_path: str, output_path: str = None, css: str = None) -> st
     return output_path
 
 
+from scomp_link.utils.colors import MAIN, MAIN_DARK
+
+
 def _wrap_html(body: str, css: str = None) -> str:
     """Wrap HTML body content in a full HTML document with optional CSS."""
-    default_css = """
-        body { font-family: sans-serif; font-size: 14px; line-height: 1.6; margin: 40px; color: #333; }
-        h1, h2, h3 { color: #4614B4; }
-        code { background: #f4f4f4; padding: 2px 6px; border-radius: 3px; }
-        pre { background: #f4f4f4; padding: 12px; border-radius: 4px; overflow-x: auto; }
-        table { border-collapse: collapse; width: 100%; margin: 1em 0; }
-        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-        th { background: #6E37FA; color: white; }
+    default_css = f"""
+        body {{ font-family: sans-serif; font-size: 14px; line-height: 1.6; margin: 40px; color: #333; }}
+        h1, h2, h3 {{ color: {MAIN_DARK}; }}
+        code {{ background: #f4f4f4; padding: 2px 6px; border-radius: 3px; }}
+        pre {{ background: #f4f4f4; padding: 12px; border-radius: 4px; overflow-x: auto; }}
+        table {{ border-collapse: collapse; width: 100%; margin: 1em 0; }}
+        th, td {{ border: 1px solid #ddd; padding: 8px; text-align: left; }}
+        th {{ background: {MAIN}; color: white; }}
     """
     style = css if css else default_css
     return f"""<!DOCTYPE html>

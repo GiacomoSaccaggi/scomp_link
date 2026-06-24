@@ -12,6 +12,8 @@ Provides streamgraph, calendar heatmap, and Gantt chart functions
 for embedding in HTML reports.
 """
 
+from scomp_link.utils.colors import PRIMARY_JSON as _DEFAULT_COLORS_JSON
+
 css = '''
     <style>
     #container {
@@ -78,7 +80,6 @@ js = '''
     <script src="https://code.highcharts.com/modules/export-data.js"></script>
     <script>const colors = Highcharts.getOptions().colors;</script>
     '''
-
 
 
 def streamgraphs(title, dates, series_dict:'{serie_name: list_values}', annotation:'dict {annotation_description: int(dates_index)}' = None, area=True):
@@ -206,12 +207,6 @@ def streamgraphs(title, dates, series_dict:'{serie_name: list_values}', annotati
             {html_figure}
             {graph}
             """
-
-
-
-
-
-
 
 
 def calendar_heatmap(title, series_dict: 'dict {"yyyy-mm-dd": round(percentage_value*100, 2)}', min=0, max =1):
@@ -425,7 +420,7 @@ def calendar_heatmap(title, series_dict: 'dict {"yyyy-mm-dd": round(percentage_v
 
 def calendar_gantt(title, series_dict: 'list of dict all info see https://www.highcharts.com/demo/gantt/project-management?redirect-to-jsfiddle', min_date:"yyyy-mm-dd", max_date:"yyyy-mm-dd", colors:str = None):
     if not colors:
-        colors = '["#6E37FA", "#32BBB9", "#FF9408", "#F40953", "#FA32A0", "#B30095", "#FFD500", "#AAF564", "#50E6AA", "#2765F0"]'
+        colors = _DEFAULT_COLORS_JSON
     id_name = title.lower().replace(" ", "_")
     for p in '!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~':
         id_name = id_name.replace(p, '_')

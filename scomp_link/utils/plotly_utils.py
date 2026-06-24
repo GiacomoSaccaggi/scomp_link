@@ -23,13 +23,7 @@ from scomp_link.utils.logger import get_logger
 logger = get_logger(__name__)
 
 
-color1 = ["#6E37FA", "#32BBB9", "#FF9408", "#F40953", "#FA32A0", "#B30095", "#FFD500", "#AAF564", "#50E6AA", "#2765F0"]
-color2 = ["#EAE4FF", "#C4EDEC", "#FEDEB4", "#FFAEBB", "#FFB4DD", "#E694D9", "#FFF4B3", "#DCFFAE", "#C1F6DC", "#DCF0FF"]
-color3 = ["#DCD2FF", "#88DCDA", "#FFBE6A", "#FF8296", "#FF8CC8", "#DB64C7", "#FFEA69", "#C8FF78", "#8FEFC8", "#AADCFA"]
-color4 = ["#BEB4FF", "#009DA8", "#FA7D00", "#FF3C64", "#FF5AB4", "#D13CBD", "#FFC800", "#8CE650", "#00C896", "#64BEF0"]
-color5 = ["#9682FF", "#00889B", "#EB6E00", "#DC0046", "#E11E8C", "#C800AA", "#F0B300", "#74D22C", "#00AA8C", "#1E96F0"]
-color6 = ["#5528D2", "#007396", "#D75F00", "#BE003C", "#C80082", "#81006E", "#E19B00", "#46B900", "#008C78", "#0049BE"]
-color7 = ["#4614B4", "#005F81", "#C35000", "#A00032", "#B40073", "#64005A", "#D29100", "#259600", "#007C6E", "#003CA0"]
+from scomp_link.utils.colors import PRIMARY, LIGHT, MEDIUM_LIGHT, MEDIUM, MEDIUM_DARK, DARK, DARKEST
 
 
 def multiple_histograms(variable_float_for_distribution,
@@ -109,13 +103,13 @@ def multiple_histograms(variable_float_for_distribution,
                 ls_mean.append(np.mean(x_))
                 ls_count.append(len(x_))
             fig.add_trace(go.Histogram(x = values, nbinsx = len(arrayhist[1]) - 1,
-                                        marker_color = color3[i],
+                                        marker_color = MEDIUM_LIGHT[i],
                                         legendgroup=f"group{i+1}",
                                         legendgrouptitle_text=labels[i],
                                         name='Histogram',
                                         opacity = 0.9), row = i+1, col = 1)
             fig.add_shape(type = 'line', x0 = values.mean(), y0 = 0, x1 = values.mean(), y1 = arrayhist[0].max(),
-                          line = dict(color = color7[i], width = 2, dash = 'dot'), row = i+1, col = 1)
+                          line = dict(color = DARKEST[i], width = 2, dash = 'dot'), row = i+1, col = 1)
             fig.add_trace(go.Scatter(x = [round(i, 3) for i in ls_mean], y = ls_count,
                                      mode = 'markers',
                                      error_x = dict(
@@ -124,17 +118,17 @@ def multiple_histograms(variable_float_for_distribution,
                                          array = [round(i, 3) for i in np.sqrt(ls_var)],
                                          thickness = 1.5,
                                          width = 2,
-                                         color = color6[i]
+                                         color = DARK[i]
                                      ),
                                      marker = dict(size = 4),
-                                     marker_color = color1[i],
+                                     marker_color = PRIMARY[i],
                                      legendgroup=f"group{i+1}",
                                      name = 'Standard deviation'), row = i+1, col = 1)
             fig.add_trace(go.Scatter(x = arrayhist[1][:-1],
                                      y = (np.cumsum(arrayhist[0]) / max(np.cumsum(arrayhist[0])) * max(arrayhist[0])),
                                      mode = 'lines',
                                      legendgroup=f"group{i+1}",
-                                     name = 'Cumulative function', line_color=color1[i]), row = i+1, col = 1)
+                                     name = 'Cumulative function', line_color=PRIMARY[i]), row = i+1, col = 1)
             logger.info('\x1b[0;37;42m Category ' + labels[i] + ' done! \x1b[0m')
 
 
@@ -222,7 +216,7 @@ def barchart(categories, metric_values_list, x_axis_title='Category', y_axis_tit
             x=sorted_categories,
             y=metric_values_list[i],
             name=y_axis_titles[i],
-            marker_color=color1[i % len(color1)],  # Cicla i colori se necessario
+            marker_color=PRIMARY[i % len(PRIMARY)],  # Cicla i colori se necessario
             hovertemplate='%{y} %{x}<extra>'+y_axis_titles[i]+'</extra>'
         )
         fig.add_trace(trace, row=i + 1, col=1)
@@ -233,7 +227,7 @@ def barchart(categories, metric_values_list, x_axis_title='Category', y_axis_tit
                 y=metric_values_line_list[i],
                 mode='lines',
                 name='Line',
-                line=dict(color=color3[i % len(color3)]),  # Cicla i colori delle linee se necessario
+                line=dict(color=MEDIUM_LIGHT[i % len(MEDIUM_LIGHT)]),  # Cicla i colori delle linee se necessario
                 hovertemplate='%{y} %{x}<extra>'+y_line_axis_titles[i]+'</extra>'
             )
             fig.add_trace(line_trace, row=i + 1, col=1)
@@ -287,7 +281,7 @@ def area_chart(date_list, lines, title_text='Trend analysis', x_label='date', y_
     for i, line, line_name in zip(range(len(lines)), lines, y_axis_titles):
         fig.add_trace(
             go.Scatter(x = dt, y = line, name = line_name, hoverinfo = 'x+y',  mode = 'lines',
-        line = dict(width = 0.5, color = color1[i % len(color1)]),
+        line = dict(width = 0.5, color = PRIMARY[i % len(PRIMARY)]),
         stackgroup = 'one'))
 
     fig.update_layout(
@@ -333,7 +327,7 @@ def linechart(date_list, lines, title_text='Trend analysis', x_label='date', y_l
         ))
     fig = go.Figure()
     for i, line, line_name in zip(range(len(lines)), lines, y_axis_titles):
-        fig.add_trace(go.Scatter(x = dt, y = line, mode = "lines", name = line_name, line_color=color1[i % len(color1)]))
+        fig.add_trace(go.Scatter(x = dt, y = line, mode = "lines", name = line_name, line_color=PRIMARY[i % len(PRIMARY)]))
     fig.update_layout(
         xaxis = plotly_axis,
         yaxis = plotly_axis,

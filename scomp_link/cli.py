@@ -261,7 +261,7 @@ def cmd_report(args):
         else:
             scomp_link.set_verbosity("info")
 
-        report = ScompLinkHTMLReport(title="Model Report", main_color="#6E37FA")
+        report = ScompLinkHTMLReport(title="Model Report")
         report.open_section("Model Info")
         info_df = pd.DataFrame([{
             "model_type": type(artifact.model).__name__,
@@ -319,7 +319,7 @@ def cmd_report(args):
             sys.exit("Error: --data is required for EDA report")
         df = _load_data(args.data)
 
-        report = ScompLinkHTMLReport(title="EDA Report", main_color="#6E37FA")
+        report = ScompLinkHTMLReport(title="EDA Report")
 
         # Overview
         report.open_section("Dataset Overview")
