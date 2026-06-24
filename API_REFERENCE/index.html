@@ -1,0 +1,3051 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="The Astromech Arm for Your Python Projects — End-to-End ML Toolkit">
+      
+      
+      
+        <link rel="canonical" href="https://giacomosaccaggi.github.io/scomp-link/API_REFERENCE/">
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>scomp-link API Reference - scomp-link</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="deep-purple" data-md-color-accent="cyan">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#scomp-link-api-reference" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="scomp-link" class="md-header__button md-logo" aria-label="scomp-link" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            scomp-link
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              scomp-link API Reference
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="deep-purple" data-md-color-accent="cyan"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="cyan"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/GiacomoSaccaggi/scomp-link" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GiacomoSaccaggi/scomp-link
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="scomp-link" class="md-nav__button md-logo" aria-label="scomp-link" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    scomp-link
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/GiacomoSaccaggi/scomp-link" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GiacomoSaccaggi/scomp-link
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../quickstart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quick Start
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CLI Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    API Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/pipeline/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pipeline
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/preprocessing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Preprocessing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/models/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Models
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/validation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Validation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/explainability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Explainability
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/monitoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Monitoring
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/persistence/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Persistence
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/tuning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tuning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/visualization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Visualization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../examples/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Examples
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../changelog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Changelog
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#table-of-contents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Table of Contents
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#core" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Core
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Core">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#class-scomplinkpipeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        class ScompLinkPipeline
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="class ScompLinkPipeline">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#__init__self-problem_description-str" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        __init__(self, problem_description: str)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#set_objectivesself-objectives-liststr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        set_objectives(self, objectives: List[str])
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#import_and_clean_dataself-df-pddataframe" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        import_and_clean_data(self, df: pd.DataFrame)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#select_variablesself-target_col-str-feature_cols-optionalliststr-none" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        select_variables(self, target_col: str, feature_cols: Optional[List[str]] = None)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#choose_modelself-objective_type-str-metadata-optionaldictstr-any-none" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        choose_model(self, objective_type: str, metadata: Optional[Dict[str, Any]] = None)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#run_pipelineself-test_size02-task_typeregression-models_to_testnone-text_colnone-image_colnone-n_clustersnone-epochs3-batch_size32-text_modelbert-base-uncased-text_languageen-use_contrastivetrue-use_ensemblefalse-ensemble_strategyvoting-advanced_cvfalse-cv_methodsbootstrap-bootstrap_iterations1000" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        run_pipeline(self, test_size=0.2, task_type="regression", models_to_test=None, text_col=None, image_col=None, n_clusters=None, epochs=3, batch_size=32, text_model='bert-base-uncased', text_language='en', use_contrastive=True, use_ensemble=False, ensemble_strategy='voting', advanced_cv=False, cv_methods=['bootstrap'], bootstrap_iterations=1000)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#save_modelself-pathstaging" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        save_model(self, path='./staging')
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#load_modelself-pathstaging" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        load_model(self, path='./staging')
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#predictself-x" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        predict(self, X)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#preprocessing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Preprocessing
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Preprocessing">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#class-preprocessor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        class Preprocessor
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="class Preprocessor">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#__init__self-df-pddataframe" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        __init__(self, df: pd.DataFrame)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clean_dataself-remove_outliers-bool-true-outlier_threshold-float-30" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        clean_data(self, remove_outliers: bool = True, outlier_threshold: float = 3.0)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#integrate_dataself-other_df-pddataframe-on-str-how-str-left" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        integrate_data(self, other_df: pd.DataFrame, on: str, how: str = 'left')
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#transform_dataself" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        transform_data(self)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#feature_selectionself-target_col-str-n_features-optionalint-none" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        feature_selection(self, target_col: str, n_features: Optional[int] = None)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#run_edaself" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        run_eda(self)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#prepare_datasetsself-target_col-str-test_size-float-02" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        prepare_datasets(self, target_col: str, test_size: float = 0.2)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#models" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Models
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Models">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#model-factory" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Model Factory
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#class-modelfactory" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        class ModelFactory
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="class ModelFactory">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#staticmethod-get_modelmodel_type-str-kwargs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        @staticmethod get_model(model_type: str, **kwargs)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#regressor-optimizer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Regressor Optimizer
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#class-regressoroptimizer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        class RegressorOptimizer
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="class RegressorOptimizer">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#__init__self-df-y_col-x_cols-x_complexity_col-models_to_test-select_featuresfalse" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        __init__(self, df, y_col, x_cols, x_complexity_col, models_to_test, select_features=False)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#staticmethod-select_featuresdf-y_col-x_cols" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        @staticmethod select_features(df, y_col, x_cols)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#estimate_optimization_timeself-time_per_combination" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        estimate_optimization_time(self, time_per_combination)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#select_hyperparametersself-regressor-params_grid" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        select_hyperparameters(self, regressor, params_grid)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#test_models_regressionself" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        test_models_regression(self)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#grafico_fit_con_erroreself-model_name-h16-w9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        grafico_fit_con_errore(self, model_name, h=16, w=9)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#boruta-feature-selection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Boruta Feature Selection
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#class-borutabaseestimator-transformermixin" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        class Boruta(BaseEstimator, TransformerMixin)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="class Boruta(BaseEstimator, TransformerMixin)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#__init__self-estimator-n_estimators1000-perc100-alpha005-two_steptrue-max_iter100-random_statenone-verbose1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        __init__(self, estimator, n_estimators=1000, perc=100, alpha=0.05, two_step=True, max_iter=100, random_state=None, verbose=1)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fitself-x-y" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        fit(self, X, y)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#transformself-x-weakfalse" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        transform(self, X, weak=False)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fit_transformself-x-y-weakfalse" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        fit_transform(self, X, y, weak=False)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_fdrcorrectionself-pvals-alpha005-private" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        _fdrcorrection(self, pvals, alpha=0.05) (private)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#classifier-optimizer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Classifier Optimizer
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#class-classifieroptimizer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        class ClassifierOptimizer
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="class ClassifierOptimizer">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#__init__self-df-y_col-x_cols-models_to_test-select_featuresfalse" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        __init__(self, df, y_col, x_cols, models_to_test, select_features=False)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#select_hyperparametersself-classifier-params_grid" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        select_hyperparameters(self, classifier, params_grid)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#test_models_classificationself" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        test_models_classification(self)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#print_resultsself" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        print_results(self)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ensemble-optimizer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ensemble Optimizer
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#class-ensembleoptimizer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        class EnsembleOptimizer
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="class EnsembleOptimizer">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#__init__self-base_models-task_typeclassification-strategyvoting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        __init__(self, base_models, task_type='classification', strategy='voting')
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#create_ensembleself-meta_modelnone" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        create_ensemble(self, meta_model=None)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fitself-x-y_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        fit(self, X, y)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#predictself-x_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        predict(self, X)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#evaluate_ensembleself-x-y-cv5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        evaluate_ensemble(self, X, y, cv=5)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#anomaly-detector-tabular" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Anomaly Detector (Tabular)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#class-anomalydetectorbaseestimator" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        class AnomalyDetector(BaseEstimator)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="class AnomalyDetector(BaseEstimator)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#__init__self-contamination005-methodsnone-lof_neighbors20-tabnet_epochs50-transformer_epochs80-transformer_d_model32-transformer_nhead4-transformer_num_layers2-consensus_threshold2-random_state42-verbosetrue" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        __init__(self, contamination=0.05, methods=None, lof_neighbors=20, tabnet_epochs=50, transformer_epochs=80, transformer_d_model=32, transformer_nhead=4, transformer_num_layers=2, consensus_threshold=2, random_state=42, verbose=True)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fit_predictself-df-pddataframe-features-liststr-dict" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        fit_predict(self, df: pd.DataFrame, features: List[str]) -&gt; Dict
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reportself-group_by-optionalliststr-none-pddataframe" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        report(self, group_by: Optional[List[str]] = None) -&gt; pd.DataFrame
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#time-series-anomaly-detector" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Time Series Anomaly Detector
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#class-timeseriesanomalydetector" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        class TimeSeriesAnomalyDetector
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="class TimeSeriesAnomalyDetector">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#__init__self-methodsnone-time_steps288-ae_epochs50-ae_batch_size128-window_size48-n_sigma30-arima_order510-threshold_percentile950-verbosetrue" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        __init__(self, methods=None, time_steps=288, ae_epochs=50, ae_batch_size=128, window_size=48, n_sigma=3.0, arima_order=(5,1,0), threshold_percentile=95.0, verbose=True)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fitself-values-npndarray" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        fit(self, values: np.ndarray)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#detectself-values-npndarray-dict" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        detect(self, values: np.ndarray) -&gt; Dict
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#contrastive-text-classifier" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Contrastive Text Classifier
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#class-contrastivetextclassifier" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        class ContrastiveTextClassifier
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="class ContrastiveTextClassifier">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#__init__self-model_namebert-base-uncased-use_faisstrue-embedding_dim256" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        __init__(self, model_name='bert-base-uncased', use_faiss=True, embedding_dim=256)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#train_contrastiveself-df-text_coltext-label_collabel-epochs5-batch_size64-lr2e-5-use_weighted_samplingtrue-accumulation_steps2-validation_split01-early_stopping_patience5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        train_contrastive(self, df, text_col='text', label_col='label', epochs=5, batch_size=64, lr=2e-5, use_weighted_sampling=True, accumulation_steps=2, validation_split=0.1, early_stopping_patience=5)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#predictself-text-top_k1-return_confidencefalse" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        predict(self, text, top_k=1, return_confidence=False)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#predict_batchself-text_series-batch_size512-top_k1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        predict_batch(self, text_series, batch_size=512, top_k=1)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#saveself-pathcontrastivetextmodel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        save(self, path='./ContrastiveTextModel')
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#loadself-pathcontrastivetextmodel-model_namebert-base-uncased" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        load(self, path='./ContrastiveTextModel', model_name='bert-base-uncased')
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#contrastive-network-components" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Contrastive Network Components
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Contrastive Network Components">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#class-contrastivesiamesemodelnnmodule" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        class ContrastiveSiameseModel(nn.Module)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#class-contrastivelossnnmodule" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        class ContrastiveLoss(nn.Module)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#class-siamesedatasetdataset" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        class SiameseDataset(Dataset)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#class-earlystopping" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        class EarlyStopping
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#supervised-text" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Supervised Text
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#class-spacyembeddingmodel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        class SpacyEmbeddingModel
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="class SpacyEmbeddingModel">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#__init__self-lanen-model_namebert-base-uncased" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        __init__(self, lan='en', model_name='bert-base-uncased')
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_select_languageself-lan-dict_sizesm-private" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        _select_language(self, lan, dict_size='sm') (private)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#trainingself-to_tag-tagged-categorie" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        training(self, to_tag, tagged, categorie)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cnn_embedding_textcategorizerself-texts-y_lab-texts_test-y_lab_test-classes-width16-embed_size75-patience20-epoch100-learn_rate01-dropout02-batch_size8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        cnn_embedding_textcategorizer(self, texts, y_lab, texts_test, y_lab_test, classes, width=16, embed_size=75, patience=20, epoch=100, learn_rate=0.1, dropout=0.2, batch_size=8, ...)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#evaluate_textcatself-tokenizer-textcat-texts-cats" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        evaluate_textcat(self, tokenizer, textcat, texts, cats)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#report_progressself-epoch-best-losses-scores" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        report_progress(self, epoch, best, losses, scores)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#supervised-image" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Supervised Image
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#class-cnnimgbaseestimator-classifiermixin" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        class CNNImg(BaseEstimator, ClassifierMixin)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="class CNNImg(BaseEstimator, ClassifierMixin)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#__init__self-input_shape224-224-3-n_classesnone-kwargs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        __init__(self, input_shape=(224, 224, 3), n_classes=None, **kwargs)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fitself-x-y_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        fit(self, X, y)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#predictself-x_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        predict(self, X)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#predict_probaself-x" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        predict_proba(self, X)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#unsupervised-text" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Unsupervised Text
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#class-textembeddingclusteringbaseestimator-clustermixin" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        class TextEmbeddingClustering(BaseEstimator, ClusterMixin)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="class TextEmbeddingClustering(BaseEstimator, ClusterMixin)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#__init__self-model_nameall-minilm-l6-v2-n_clusters5-methodkmeans" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        __init__(self, model_name='all-MiniLM-L6-v2', n_clusters=5, method='kmeans')
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fitself-x-ynone" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        fit(self, X, y=None)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#predictself-x_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        predict(self, X)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fit_predictself-x-ynone" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        fit_predict(self, X, y=None)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#unsupervised-image" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Unsupervised Image
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#class-clusterimgbaseestimator-clustermixin" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        class ClusterImg(BaseEstimator, ClusterMixin)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="class ClusterImg(BaseEstimator, ClusterMixin)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#__init__self-n_clusters8-kwargs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        __init__(self, n_clusters=8, **kwargs)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fitself-x-ynone_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        fit(self, X, y=None)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#predictself-x_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        predict(self, X)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fit_predictself-x-ynone_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        fit_predict(self, X, y=None)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Validation
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Validation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#validator" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Validator
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#class-validator" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        class Validator
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="class Validator">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#__init__self-model-any" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        __init__(self, model: Any)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#k_fold_cvself-x-y-k-int-5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        k_fold_cv(self, X, y, k: int = 5)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#loocvself-x-y" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        loocv(self, X, y)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#evaluateself-y_true-y_pred-task_type-str-regression-y_probanone-dictstr-float" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        evaluate(self, y_true, y_pred, task_type: str = "regression", y_proba=None) -&gt; Dict[str, float]
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#generate_validation_reportself-y_true-y_pred-task_typeregression-y_probanone-report_namevalidation_reporthtml" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        generate_validation_report(self, y_true, y_pred, task_type="regression", y_proba=None, report_name="Validation_Report.html")
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#advanced-cross-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Advanced Cross-Validation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#class-advancedcv" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        class AdvancedCV
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="class AdvancedCV">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#staticmethod-loocvmodel-x-y-scoringnone" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        @staticmethod loocv(model, X, y, scoring=None)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#staticmethod-bootstrapmodel-x-y-n_iterations1000-test_size03-random_state42" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        @staticmethod bootstrap(model, X, y, n_iterations=1000, test_size=0.3, random_state=42)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#staticmethod-evaluate_allmodel-x-y-include_loocvtrue-include_bootstraptrue-bootstrap_iterations1000-scoringnone" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        @staticmethod evaluate_all(model, X, y, include_loocv=True, include_bootstrap=True, bootstrap_iterations=1000, scoring=None)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#utilities" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Utilities
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Utilities">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#html-report-builder" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        HTML Report Builder
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#class-scomplinkhtmlreport" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        class ScompLinkHTMLReport
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="class ScompLinkHTMLReport">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#__init__self-title-font_familybaloo-2-url_background_header-descriptionautomatic-report-authorscomp-link-toolkit-languageen-main_color6e37fa-light_color9682ff-dark_color4614b4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        __init__(self, title, font_family='Baloo 2', url_background_header='...', description='Automatic Report', author='scomp-link toolkit', language='en', main_color='#6E37FA', light_color='#9682FF', dark_color='#4614B4')
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#open_sectionself-section_title-str" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        open_section(self, section_title: str)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#close_sectionself" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        close_section(self)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#add_titleself-title-str" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        add_title(self, title: str)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#add_textself-text-str" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        add_text(self, text: str)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#add_graph_to_reportself-fig-title-str" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        add_graph_to_report(self, fig, title: str)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#add_matplotlib_graph_to_reportself-fig-title-str-dpi-int-150-img_format-str-png" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        add_matplotlib_graph_to_report(self, fig, title: str, dpi: int = 150, img_format: str = 'png')
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#add_image_to_reportself-image_path-str-title-str" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        add_image_to_report(self, image_path: str, title: str)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#add_many_plots_with_selection_box_to_reportself-figures_dict-dict-title-str-kwargs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        add_many_plots_with_selection_box_to_report(self, figures_dict: dict, title: str, **kwargs)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#add_dataframeself-df-pddataframe-title-str-limit_max2000" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        add_dataframe(self, df: pd.DataFrame, title: str, limit_max=2000)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#single_plotlyself-fig-title-str-plotdividnone-str" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        single_plotly(self, fig, title: str, plotdivid=None) -&gt; str
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#select_plotlyself-figures_dict-dict-title-str-labelschoose-a-label-str" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        select_plotly(self, figures_dict: dict, title: str, labels='Choose a label') -&gt; str
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#save_htmlself-file_nameexporthtml" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        save_html(self, file_name='export.html')
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#save_pdfself-file_nameexportpdf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        save_pdf(self, file_name='export.pdf')
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#plotly-utilities" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Plotly Utilities
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Plotly Utilities">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#histogramvariable_float_for_distribution-name_of_the_column-h600" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        histogram(variable_float_for_distribution, name_of_the_column, h=600)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multiple_histogramsvariable_float_for_distribution-category_variable-category_namex_label-y_labely_label-h300" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        multiple_histograms(variable_float_for_distribution, category_variable, category_name='x_label', y_label='y_label', h=300)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#barchartcategories-metric_values_list-x_axis_titlecategory-y_axis_titlesnone-orderasc-categorysortednone-metric_values_line_listnone-y_line_axis_titlesnone-percentage_ytrue" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        barchart(categories, metric_values_list, x_axis_title='Category', y_axis_titles=None, order='asc', categorysorted=None, metric_values_line_list=None, y_line_axis_titles=None, percentage_y=True)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#linechartdate_list-lines-title_texttrend-analysis-x_labeldate-y_labelsvalue-format_datey-m-d-yaxis_ticksuffix" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        linechart(date_list, lines, title_text='Trend analysis', x_label='date', y_labels='value', format_date="%Y-%m-%d", yaxis_ticksuffix='')
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#area_chartdate_list-lines-title_texttrend-analysis-x_labeldate-y_labelsvalue-format_datey-m-d-yaxis_ticksuffix" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        area_chart(date_list, lines, title_text='Trend analysis', x_label='date', y_labels='value', format_date="%Y-%m-%d", yaxis_ticksuffix='')
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#highcharts-utilities" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Highcharts Utilities
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Highcharts Utilities">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#streamgraphstitle-dates-series_dict-annotationnone-areatrue" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        streamgraphs(title, dates, series_dict, annotation=None, area=True)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#calendar_heatmaptitle-series_dict-min0-max1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        calendar_heatmap(title, series_dict, min=0, max=1)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#calendar_gantttitle-series_dict-min_date-max_date" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        calendar_gantt(title, series_dict, min_date, max_date)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pdf-converter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PDF Converter
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="PDF Converter">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#markdown_to_pdfinput_path-str-output_path-str-none-css-str-none-str" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        markdown_to_pdf(input_path: str, output_path: str = None, css: str = None) -&gt; str
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#html_to_pdfinput_path-str-output_path-str-none-css-str-none-str" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        html_to_pdf(input_path: str, output_path: str = None, css: str = None) -&gt; str
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#decorator" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Decorator
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Decorator">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#print_throughput-module-scomp_linkmodelscontrastive_text" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        @print_throughput (Module: scomp_link.models.contrastive_text)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="scomp-link-api-reference">scomp-link API Reference<a class="headerlink" href="#scomp-link-api-reference" title="Permanent link">&para;</a></h1>
+<p>Complete English documentation of all classes, methods, and functions in the <code>scomp_link</code> package.</p>
+<hr />
+<h2 id="table-of-contents">Table of Contents<a class="headerlink" href="#table-of-contents" title="Permanent link">&para;</a></h2>
+<ol>
+<li><a href="#core">Core — <code>scomp_link.core</code></a></li>
+<li><a href="#preprocessing">Preprocessing — <code>scomp_link.preprocessing.data_processor</code></a></li>
+<li><a href="#models">Models</a></li>
+<li><a href="#model-factory">Model Factory</a></li>
+<li><a href="#regressor-optimizer">Regressor Optimizer</a></li>
+<li><a href="#boruta-feature-selection">Boruta Feature Selection</a></li>
+<li><a href="#classifier-optimizer">Classifier Optimizer</a></li>
+<li><a href="#ensemble-optimizer">Ensemble Optimizer</a></li>
+<li><a href="#anomaly-detector-tabular">Anomaly Detector (Tabular)</a></li>
+<li><a href="#time-series-anomaly-detector">Time Series Anomaly Detector</a></li>
+<li><a href="#contrastive-text-classifier">Contrastive Text Classifier</a></li>
+<li><a href="#contrastive-network-components">Contrastive Network Components</a></li>
+<li><a href="#supervised-text">Supervised Text (SpacyEmbeddingModel)</a></li>
+<li><a href="#supervised-image">Supervised Image (CNNImg)</a></li>
+<li><a href="#unsupervised-text">Unsupervised Text (TextEmbeddingClustering)</a></li>
+<li><a href="#unsupervised-image">Unsupervised Image (ClusterImg)</a></li>
+<li><a href="#validation">Validation</a></li>
+<li><a href="#validator">Validator</a></li>
+<li><a href="#advanced-cross-validation">Advanced Cross-Validation</a></li>
+<li><a href="#utilities">Utilities</a></li>
+<li><a href="#html-report-builder">HTML Report Builder</a></li>
+<li><a href="#plotly-utilities">Plotly Utilities</a></li>
+<li><a href="#highcharts-utilities">Highcharts Utilities</a></li>
+<li><a href="#pdf-converter">PDF Converter</a></li>
+</ol>
+<hr />
+<h2 id="core">Core<a class="headerlink" href="#core" title="Permanent link">&para;</a></h2>
+<h3 id="class-scomplinkpipeline"><code>class ScompLinkPipeline</code><a class="headerlink" href="#class-scomplinkpipeline" title="Permanent link">&para;</a></h3>
+<p><strong>Module:</strong> <code>scomp_link.core</code></p>
+<p>The main orchestrator class — the "Astromech arm" for Python data projects. Automates the full ML workflow from problem formulation to model evaluation.</p>
+<h4 id="__init__self-problem_description-str"><code>__init__(self, problem_description: str)</code><a class="headerlink" href="#__init__self-problem_description-str" title="Permanent link">&para;</a></h4>
+<p>Initialize the pipeline with a human-readable description of the problem being solved. Sets up internal state for objectives, data, target, features, model, and results.</p>
+<h4 id="set_objectivesself-objectives-liststr"><code>set_objectives(self, objectives: List[str])</code><a class="headerlink" href="#set_objectivesself-objectives-liststr" title="Permanent link">&para;</a></h4>
+<p>Define the analysis objectives (e.g., "Minimize RMSE", "Maximize Accuracy"). Corresponds to the Objectives Formulation phase of the workflow.</p>
+<h4 id="import_and_clean_dataself-df-pddataframe"><code>import_and_clean_data(self, df: pd.DataFrame)</code><a class="headerlink" href="#import_and_clean_dataself-df-pddataframe" title="Permanent link">&para;</a></h4>
+<p>Import a DataFrame and perform automatic cleaning (P3–P4 phases). Creates a <code>Preprocessor</code> instance, removes duplicates and outliers. Stores the cleaned DataFrame internally.</p>
+<h4 id="select_variablesself-target_col-str-feature_cols-optionalliststr-none"><code>select_variables(self, target_col: str, feature_cols: Optional[List[str]] = None)</code><a class="headerlink" href="#select_variablesself-target_col-str-feature_cols-optionalliststr-none" title="Permanent link">&para;</a></h4>
+<p>Select the target variable and feature columns for modeling. If <code>feature_cols</code> is not provided, all columns except the target are used as features.</p>
+<h4 id="choose_modelself-objective_type-str-metadata-optionaldictstr-any-none"><code>choose_model(self, objective_type: str, metadata: Optional[Dict[str, Any]] = None)</code><a class="headerlink" href="#choose_modelself-objective_type-str-metadata-optionaldictstr-any-none" title="Permanent link">&para;</a></h4>
+<p>Select a model based on the decision-tree logic. Uses <code>objective_type</code> to navigate the decision tree and <code>metadata</code> to determine the specific algorithm.</p>
+<p><strong>Supported objective types:</strong>
+- <code>"categorical_known"</code> — Classification with known categories (images, categorical, or mixed features)
+- <code>"categorical_unknown"</code> — Clustering (KMeans/Hierarchical if categories known, Mean-Shift otherwise)
+- <code>"numerical_study"</code> — Numerical analysis (geostatistical, time series, or PCA/statistical tests)
+- <code>"numerical_prediction"</code> — Regression (model chosen based on dataset size and feature types)
+- <code>"multi_numerical_prediction"</code> — Multi-target prediction (VAR/VARMA for time series, MLP otherwise)</p>
+<h4 id="run_pipelineself-test_size02-task_typeregression-models_to_testnone-text_colnone-image_colnone-n_clustersnone-epochs3-batch_size32-text_modelbert-base-uncased-text_languageen-use_contrastivetrue-use_ensemblefalse-ensemble_strategyvoting-advanced_cvfalse-cv_methodsbootstrap-bootstrap_iterations1000"><code>run_pipeline(self, test_size=0.2, task_type="regression", models_to_test=None, text_col=None, image_col=None, n_clusters=None, epochs=3, batch_size=32, text_model='bert-base-uncased', text_language='en', use_contrastive=True, use_ensemble=False, ensemble_strategy='voting', advanced_cv=False, cv_methods=['bootstrap'], bootstrap_iterations=1000)</code><a class="headerlink" href="#run_pipelineself-test_size02-task_typeregression-models_to_testnone-text_colnone-image_colnone-n_clustersnone-epochs3-batch_size32-text_modelbert-base-uncased-text_languageen-use_contrastivetrue-use_ensemblefalse-ensemble_strategyvoting-advanced_cvfalse-cv_methodsbootstrap-bootstrap_iterations1000" title="Permanent link">&para;</a></h4>
+<p>Execute the full modeling pipeline: split data, train model(s), evaluate, and generate validation report.</p>
+<p><strong>Supported task types:</strong>
+- <code>"regression"</code> — Regression with optional multi-model optimization and ensemble
+- <code>"classification"</code> — Classification with optional multi-model optimization and ensemble
+- <code>"clustering"</code> — KMeans or Mean-Shift clustering
+- <code>"text"</code> — Text classification (contrastive BERT or TF-IDF + SGD)
+- <code>"image"</code> — Image classification (CNN)
+- <code>"image_clustering"</code> — Image feature clustering</p>
+<p><strong>Returns:</strong> Dictionary with status, model type, metrics, report path, and optional ensemble/advanced CV results.</p>
+<h4 id="save_modelself-pathstaging"><code>save_model(self, path='./staging')</code><a class="headerlink" href="#save_modelself-pathstaging" title="Permanent link">&para;</a></h4>
+<p>Save the trained model to disk. Uses the model's native <code>save()</code> method for contrastive text models, or <code>pickle</code> for standard sklearn models.</p>
+<h4 id="load_modelself-pathstaging"><code>load_model(self, path='./staging')</code><a class="headerlink" href="#load_modelself-pathstaging" title="Permanent link">&para;</a></h4>
+<p>Load a previously saved model from disk. Automatically detects whether it's a contrastive text model (directory with <code>metadata.json</code>) or a standard pickled sklearn model.</p>
+<h4 id="predictself-x"><code>predict(self, X)</code><a class="headerlink" href="#predictself-x" title="Permanent link">&para;</a></h4>
+<p>Make predictions using the loaded model. Handles both standard sklearn models (array input) and ContrastiveTextClassifier (list of strings input).</p>
+<hr />
+<h2 id="preprocessing">Preprocessing<a class="headerlink" href="#preprocessing" title="Permanent link">&para;</a></h2>
+<h3 id="class-preprocessor"><code>class Preprocessor</code><a class="headerlink" href="#class-preprocessor" title="Permanent link">&para;</a></h3>
+<p><strong>Module:</strong> <code>scomp_link.preprocessing.data_processor</code></p>
+<p>Handles preprocessing phases P1–P12 as described in the scomp-link workflow schema.</p>
+<h4 id="__init__self-df-pddataframe"><code>__init__(self, df: pd.DataFrame)</code><a class="headerlink" href="#__init__self-df-pddataframe" title="Permanent link">&para;</a></h4>
+<p>Initialize with a DataFrame. Stores both a working copy and the original for reference.</p>
+<h4 id="clean_dataself-remove_outliers-bool-true-outlier_threshold-float-30"><code>clean_data(self, remove_outliers: bool = True, outlier_threshold: float = 3.0)</code><a class="headerlink" href="#clean_dataself-remove_outliers-bool-true-outlier_threshold-float-30" title="Permanent link">&para;</a></h4>
+<p><strong>P4: Data Cleaning</strong> — Removes formal/logical errors and outliers. Drops duplicate rows and removes records where any numeric column has a Z-score above the threshold.</p>
+<h4 id="integrate_dataself-other_df-pddataframe-on-str-how-str-left"><code>integrate_data(self, other_df: pd.DataFrame, on: str, how: str = 'left')</code><a class="headerlink" href="#integrate_dataself-other_df-pddataframe-on-str-how-str-left" title="Permanent link">&para;</a></h4>
+<p><strong>P5: Data Integration (Record Linkage)</strong> — Combines data from different sources by merging DataFrames on a shared key column.</p>
+<h4 id="transform_dataself"><code>transform_data(self)</code><a class="headerlink" href="#transform_dataself" title="Permanent link">&para;</a></h4>
+<p><strong>P7: Data Transformation</strong> — Manipulates data into forms suitable for data mining. Currently a placeholder for scaling, encoding, and other transformations.</p>
+<h4 id="feature_selectionself-target_col-str-n_features-optionalint-none"><code>feature_selection(self, target_col: str, n_features: Optional[int] = None)</code><a class="headerlink" href="#feature_selectionself-target_col-str-n_features-optionalint-none" title="Permanent link">&para;</a></h4>
+<p><strong>P10: Feature Selection</strong> — Selects the most important features using correlation-based ranking against the target variable. Returns the top N features sorted by absolute correlation.</p>
+<h4 id="run_edaself"><code>run_eda(self)</code><a class="headerlink" href="#run_edaself" title="Permanent link">&para;</a></h4>
+<p><strong>P11: Exploratory Data Analysis</strong> — Generates a summary dictionary containing dataset shape, missing value counts, data types, and descriptive statistics.</p>
+<h4 id="prepare_datasetsself-target_col-str-test_size-float-02"><code>prepare_datasets(self, target_col: str, test_size: float = 0.2)</code><a class="headerlink" href="#prepare_datasetsself-target_col-str-test_size-float-02" title="Permanent link">&para;</a></h4>
+<p><strong>P12: Dataset Preparation</strong> — Splits the DataFrame into training and test sets (X_train, X_test, y_train, y_test) using <code>random_state=42</code> for reproducibility.</p>
+<hr />
+<h2 id="models">Models<a class="headerlink" href="#models" title="Permanent link">&para;</a></h2>
+<h3 id="model-factory">Model Factory<a class="headerlink" href="#model-factory" title="Permanent link">&para;</a></h3>
+<h3 id="class-modelfactory"><code>class ModelFactory</code><a class="headerlink" href="#class-modelfactory" title="Permanent link">&para;</a></h3>
+<p><strong>Module:</strong> <code>scomp_link.models.model_factory</code></p>
+<p>Factory class that creates model instances based on the scomp-link decision tree string identifiers.</p>
+<h4 id="staticmethod-get_modelmodel_type-str-kwargs"><code>@staticmethod get_model(model_type: str, **kwargs)</code><a class="headerlink" href="#staticmethod-get_modelmodel_type-str-kwargs" title="Permanent link">&para;</a></h4>
+<p>Create and return a model instance based on a string identifier. Uses substring matching to map model type strings to concrete sklearn/custom model classes.</p>
+<p><strong>Supported model types:</strong>
+- Optimizers: <code>"ClassifierOptimizer"</code>, <code>"RegressorOptimizer"</code>
+- Text: <code>"Contrastive Text"</code>, <code>"Spacy"</code>, <code>"Supervised Text"</code>, <code>"LDA"</code>, <code>"Unsupervised Text"</code>
+- Image: <code>"CNN"</code>, <code>"Supervised Img"</code>, <code>"Cluster Img"</code>, <code>"Unsupervised Img"</code>
+- Classification: <code>"Naive Bayes"</code>, <code>"Classification Tree"</code>, <code>"SVC"</code>, <code>"K-Neighbors"</code>, <code>"SGD Classifier"</code>, <code>"Gradient Boosting Classifier"</code>, <code>"Random Forest Classifier"</code>
+- Regression: <code>"Ridge"</code>, <code>"Lasso"</code>, <code>"Elastic Net"</code>, <code>"SVR"</code>, <code>"SGD Regressor"</code>, <code>"Gradient Boosting"</code>, <code>"Random Forest"</code>
+- Clustering: <code>"KMeans"</code>, <code>"Mean-Shift"</code>
+- Other: <code>"Econometric Model"</code>, <code>"Theorical Psychometric Model"</code> (both map to LinearRegression)</p>
+<hr />
+<h3 id="regressor-optimizer">Regressor Optimizer<a class="headerlink" href="#regressor-optimizer" title="Permanent link">&para;</a></h3>
+<h3 id="class-regressoroptimizer"><code>class RegressorOptimizer</code><a class="headerlink" href="#class-regressoroptimizer" title="Permanent link">&para;</a></h3>
+<p><strong>Module:</strong> <code>scomp_link.models.regressor_optimizer</code></p>
+<p>Optimizes regression models by performing feature selection (Boruta), hyperparameter tuning (GridSearchCV), and evaluating multiple regression algorithms on the same dataset.</p>
+<h4 id="__init__self-df-y_col-x_cols-x_complexity_col-models_to_test-select_featuresfalse"><code>__init__(self, df, y_col, x_cols, x_complexity_col, models_to_test, select_features=False)</code><a class="headerlink" href="#__init__self-df-y_col-x_cols-x_complexity_col-models_to_test-select_featuresfalse" title="Permanent link">&para;</a></h4>
+<p>Initialize the optimizer. Splits the dataset into features (X) and target (y). Identifies categorical, binary, and numeric columns and creates a <code>ColumnTransformer</code> with appropriate preprocessing (OneHotEncoder for categorical/binary, StandardScaler for numeric). Splits data into train/test (80/20) and sets up 5-fold cross-validation.</p>
+<p><strong>Parameters:</strong>
+- <code>df</code> — DataFrame containing the data
+- <code>y_col</code> — Name of the target column
+- <code>x_cols</code> — List of predictor columns
+- <code>x_complexity_col</code> — Column for the x-axis in visualization plots
+- <code>models_to_test</code> — Dictionary of <code>{name: {'model': estimator, 'params_grid': {...}}}</code>
+- <code>select_features</code> — If True, applies Boruta feature selection before modeling</p>
+<h4 id="staticmethod-select_featuresdf-y_col-x_cols"><code>@staticmethod select_features(df, y_col, x_cols)</code><a class="headerlink" href="#staticmethod-select_featuresdf-y_col-x_cols" title="Permanent link">&para;</a></h4>
+<p>Preprocesses the dataset, creates dummy variables for categorical and binary columns, uses a Random Forest to evaluate feature importances, and applies the Boruta algorithm to select the most statistically significant features relative to the target.</p>
+<p>The Boruta algorithm is a wrapper method that compares real feature importances against randomly generated "shadow" features across multiple iterations to determine which variables carry information useful for prediction.</p>
+<p><strong>Returns:</strong> Tuple of (selected_X DataFrame, y Series, list of dropped columns)</p>
+<h4 id="estimate_optimization_timeself-time_per_combination"><code>estimate_optimization_time(self, time_per_combination)</code><a class="headerlink" href="#estimate_optimization_timeself-time_per_combination" title="Permanent link">&para;</a></h4>
+<p>Estimates the total time required for model optimization by counting all hyperparameter combinations across all models and multiplying by the estimated time per combination.</p>
+<h4 id="select_hyperparametersself-regressor-params_grid"><code>select_hyperparameters(self, regressor, params_grid)</code><a class="headerlink" href="#select_hyperparametersself-regressor-params_grid" title="Permanent link">&para;</a></h4>
+<p>Performs GridSearchCV with the configured preprocessing pipeline and cross-validation strategy to find the best hyperparameters for a given regressor. Uses negative MSE as the scoring metric.</p>
+<p><strong>Returns:</strong> Tuple of (best fitted pipeline, best parameters dictionary)</p>
+<h4 id="test_models_regressionself"><code>test_models_regression(self)</code><a class="headerlink" href="#test_models_regressionself" title="Permanent link">&para;</a></h4>
+<p>Iterates through all models in <code>models_to_test</code>, optimizes hyperparameters for each, trains the best configuration on the training set, and evaluates on the test set. Stores results (model, params, predictions, true values) in <code>self.model_results</code>.</p>
+<h4 id="grafico_fit_con_erroreself-model_name-h16-w9"><code>grafico_fit_con_errore(self, model_name, h=16, w=9)</code><a class="headerlink" href="#grafico_fit_con_erroreself-model_name-h16-w9" title="Permanent link">&para;</a></h4>
+<p>Generates a 3-panel matplotlib figure for a specific trained model:
+1. <strong>Top panel:</strong> Observed values (red dots) vs. predicted values (blue line) with standard error bands and 95% confidence intervals
+2. <strong>Middle panel:</strong> Raw residuals as a bar chart
+3. <strong>Bottom panel:</strong> Binned residuals showing mean residual per bin with 95% confidence intervals</p>
+<hr />
+<h3 id="boruta-feature-selection">Boruta Feature Selection<a class="headerlink" href="#boruta-feature-selection" title="Permanent link">&para;</a></h3>
+<h3 id="class-borutabaseestimator-transformermixin"><code>class Boruta(BaseEstimator, TransformerMixin)</code><a class="headerlink" href="#class-borutabaseestimator-transformermixin" title="Permanent link">&para;</a></h3>
+<p><strong>Module:</strong> <code>scomp_link.models.regressor_optimizer</code></p>
+<p>Python implementation of the Boruta all-relevant feature selection algorithm. Unlike minimal optimal methods, Boruta finds ALL features carrying information useful for prediction, not just a compact subset.</p>
+<h4 id="__init__self-estimator-n_estimators1000-perc100-alpha005-two_steptrue-max_iter100-random_statenone-verbose1"><code>__init__(self, estimator, n_estimators=1000, perc=100, alpha=0.05, two_step=True, max_iter=100, random_state=None, verbose=1)</code><a class="headerlink" href="#__init__self-estimator-n_estimators1000-perc100-alpha005-two_steptrue-max_iter100-random_statenone-verbose1" title="Permanent link">&para;</a></h4>
+<p><strong>Parameters:</strong>
+- <code>estimator</code> — Estimator with <code>fit()</code> and <code>feature_importances_</code> (typically RandomForest)
+- <code>n_estimators</code> — Number of trees, or <code>'auto'</code> for dynamic calculation
+- <code>perc</code> — Percentile for shadow feature threshold comparison
+- <code>alpha</code> — Significance level for p-value rejection
+- <code>two_step</code> — Use FDR + Bonferroni two-step correction (more conservative)
+- <code>max_iter</code> — Maximum iterations
+- <code>random_state</code> — Random seed
+- <code>verbose</code> — 0=silent, 1=iterations, 2=detailed</p>
+<h4 id="fitself-x-y"><code>fit(self, X, y)</code><a class="headerlink" href="#fitself-x-y" title="Permanent link">&para;</a></h4>
+<p>Run the Boruta selection algorithm. Iteratively creates shadow features (shuffled copies), trains the estimator on real + shadow features, and uses statistical tests to determine which real features are significantly more important than the best shadow features.</p>
+<p>Sets <code>self.support_</code> (boolean mask of confirmed features), <code>self.support_weak_</code> (tentative features), and <code>self.ranking_</code> (feature rankings).</p>
+<h4 id="transformself-x-weakfalse"><code>transform(self, X, weak=False)</code><a class="headerlink" href="#transformself-x-weakfalse" title="Permanent link">&para;</a></h4>
+<p>Reduce input X to selected features. If <code>weak=True</code>, includes tentative features.</p>
+<h4 id="fit_transformself-x-y-weakfalse"><code>fit_transform(self, X, y, weak=False)</code><a class="headerlink" href="#fit_transformself-x-y-weakfalse" title="Permanent link">&para;</a></h4>
+<p>Fit Boruta and transform in one step.</p>
+<h4 id="_fdrcorrectionself-pvals-alpha005-private"><code>_fdrcorrection(self, pvals, alpha=0.05)</code> (private)<a class="headerlink" href="#_fdrcorrectionself-pvals-alpha005-private" title="Permanent link">&para;</a></h4>
+<p>Benjamini/Hochberg FDR p-value correction. Included to avoid dependency on statsmodels.</p>
+<hr />
+<h3 id="classifier-optimizer">Classifier Optimizer<a class="headerlink" href="#classifier-optimizer" title="Permanent link">&para;</a></h3>
+<h3 id="class-classifieroptimizer"><code>class ClassifierOptimizer</code><a class="headerlink" href="#class-classifieroptimizer" title="Permanent link">&para;</a></h3>
+<p><strong>Module:</strong> <code>scomp_link.models.classifier_optimizer</code></p>
+<p>Optimizes classification models via feature selection, hyperparameter tuning (GridSearchCV with StratifiedKFold), and evaluation of multiple classification algorithms.</p>
+<h4 id="__init__self-df-y_col-x_cols-models_to_test-select_featuresfalse"><code>__init__(self, df, y_col, x_cols, models_to_test, select_features=False)</code><a class="headerlink" href="#__init__self-df-y_col-x_cols-models_to_test-select_featuresfalse" title="Permanent link">&para;</a></h4>
+<p>Initialize the optimizer. Sets up preprocessing (OneHotEncoder + StandardScaler), stratified train/test split, and 5-fold stratified cross-validation. Optionally applies Boruta feature selection using a RandomForestClassifier.</p>
+<h4 id="select_hyperparametersself-classifier-params_grid"><code>select_hyperparameters(self, classifier, params_grid)</code><a class="headerlink" href="#select_hyperparametersself-classifier-params_grid" title="Permanent link">&para;</a></h4>
+<p>Performs GridSearchCV on the preprocessing pipeline + classifier, using accuracy scoring and stratified K-fold CV.</p>
+<p><strong>Returns:</strong> Tuple of (best fitted pipeline, best parameters dictionary)</p>
+<h4 id="test_models_classificationself"><code>test_models_classification(self)</code><a class="headerlink" href="#test_models_classificationself" title="Permanent link">&para;</a></h4>
+<p>Iterates through all models, optimizes hyperparameters, trains, and evaluates. Stores results including classification report, confusion matrix, and probability predictions (if available).</p>
+<h4 id="print_resultsself"><code>print_results(self)</code><a class="headerlink" href="#print_resultsself" title="Permanent link">&para;</a></h4>
+<p>Prints a formatted summary of all tested models including best parameters, classification report, and confusion matrix.</p>
+<hr />
+<h3 id="ensemble-optimizer">Ensemble Optimizer<a class="headerlink" href="#ensemble-optimizer" title="Permanent link">&para;</a></h3>
+<h3 id="class-ensembleoptimizer"><code>class EnsembleOptimizer</code><a class="headerlink" href="#class-ensembleoptimizer" title="Permanent link">&para;</a></h3>
+<p><strong>Module:</strong> <code>scomp_link.models.ensemble_optimizer</code></p>
+<p>Combines multiple trained models using voting or stacking ensemble strategies.</p>
+<h4 id="__init__self-base_models-task_typeclassification-strategyvoting"><code>__init__(self, base_models, task_type='classification', strategy='voting')</code><a class="headerlink" href="#__init__self-base_models-task_typeclassification-strategyvoting" title="Permanent link">&para;</a></h4>
+<p><strong>Parameters:</strong>
+- <code>base_models</code> — List of <code>(name, model)</code> tuples with trained models
+- <code>task_type</code> — <code>'classification'</code> or <code>'regression'</code>
+- <code>strategy</code> — <code>'voting'</code> (average predictions) or <code>'stacking'</code> (meta-learner)</p>
+<h4 id="create_ensembleself-meta_modelnone"><code>create_ensemble(self, meta_model=None)</code><a class="headerlink" href="#create_ensembleself-meta_modelnone" title="Permanent link">&para;</a></h4>
+<p>Create the ensemble model. For voting: uses soft voting (classification) or average (regression). For stacking: uses 5-fold CV with an optional meta-learner.</p>
+<h4 id="fitself-x-y_1"><code>fit(self, X, y)</code><a class="headerlink" href="#fitself-x-y_1" title="Permanent link">&para;</a></h4>
+<p>Fit the ensemble model on training data. Creates the ensemble if not already created.</p>
+<h4 id="predictself-x_1"><code>predict(self, X)</code><a class="headerlink" href="#predictself-x_1" title="Permanent link">&para;</a></h4>
+<p>Make predictions with the fitted ensemble.</p>
+<h4 id="evaluate_ensembleself-x-y-cv5"><code>evaluate_ensemble(self, X, y, cv=5)</code><a class="headerlink" href="#evaluate_ensembleself-x-y-cv5" title="Permanent link">&para;</a></h4>
+<p>Evaluate ensemble performance using cross-validation. Returns dictionary with <code>mean_score</code>, <code>std_score</code>, and all <code>scores</code>.</p>
+<hr />
+<h3 id="anomaly-detector-tabular">Anomaly Detector (Tabular)<a class="headerlink" href="#anomaly-detector-tabular" title="Permanent link">&para;</a></h3>
+<h3 id="class-anomalydetectorbaseestimator"><code>class AnomalyDetector(BaseEstimator)</code><a class="headerlink" href="#class-anomalydetectorbaseestimator" title="Permanent link">&para;</a></h3>
+<p><strong>Module:</strong> <code>scomp_link.models.anomaly_detector</code></p>
+<p>Multi-method anomaly detection for tabular data using consensus voting (majority rule) across 4 complementary approaches.</p>
+<p><strong>Methods available:</strong>
+1. <strong>Isolation Forest</strong> — Tree-based, non-parametric isolation of outliers via random recursive partitioning
+2. <strong>Local Outlier Factor (LOF)</strong> — Density-based, detects samples in sparse local neighborhoods
+3. <strong>TabNet Autoencoder</strong> — Neural attention on tabular features; high reconstruction error = anomaly (requires <code>pytorch-tabnet</code>)
+4. <strong>Transformer Autoencoder</strong> — Self-attention across features treated as tokens; high reconstruction error = anomaly (requires <code>torch</code>)</p>
+<h4 id="__init__self-contamination005-methodsnone-lof_neighbors20-tabnet_epochs50-transformer_epochs80-transformer_d_model32-transformer_nhead4-transformer_num_layers2-consensus_threshold2-random_state42-verbosetrue"><code>__init__(self, contamination=0.05, methods=None, lof_neighbors=20, tabnet_epochs=50, transformer_epochs=80, transformer_d_model=32, transformer_nhead=4, transformer_num_layers=2, consensus_threshold=2, random_state=42, verbose=True)</code><a class="headerlink" href="#__init__self-contamination005-methodsnone-lof_neighbors20-tabnet_epochs50-transformer_epochs80-transformer_d_model32-transformer_nhead4-transformer_num_layers2-consensus_threshold2-random_state42-verbosetrue" title="Permanent link">&para;</a></h4>
+<p>Initialize detector with contamination ratio (expected anomaly proportion) and method-specific parameters.</p>
+<h4 id="fit_predictself-df-pddataframe-features-liststr-dict"><code>fit_predict(self, df: pd.DataFrame, features: List[str]) -&gt; Dict</code><a class="headerlink" href="#fit_predictself-df-pddataframe-features-liststr-dict" title="Permanent link">&para;</a></h4>
+<p>Run all configured methods on the specified numeric features and produce consensus labels. Scales data with StandardScaler, runs each method independently, then applies consensus voting.</p>
+<p><strong>Returns:</strong> Dictionary with:
+- <code>'data'</code> — DataFrame with per-method anomaly columns, consensus score, and <code>is_anomaly</code> flag
+- <code>'comparison'</code> — Summary table comparing each method's anomaly count
+- <code>'consensus_threshold'</code> — Minimum methods required to flag an anomaly</p>
+<h4 id="reportself-group_by-optionalliststr-none-pddataframe"><code>report(self, group_by: Optional[List[str]] = None) -&gt; pd.DataFrame</code><a class="headerlink" href="#reportself-group_by-optionalliststr-none-pddataframe" title="Permanent link">&para;</a></h4>
+<p>Generate a grouped summary of detected anomalies. If <code>group_by</code> is provided, aggregates anomaly counts and mean consensus scores by the specified columns.</p>
+<hr />
+<h3 id="time-series-anomaly-detector">Time Series Anomaly Detector<a class="headerlink" href="#time-series-anomaly-detector" title="Permanent link">&para;</a></h3>
+<h3 id="class-timeseriesanomalydetector"><code>class TimeSeriesAnomalyDetector</code><a class="headerlink" href="#class-timeseriesanomalydetector" title="Permanent link">&para;</a></h3>
+<p><strong>Module:</strong> <code>scomp_link.models.ts_anomaly_detector</code></p>
+<p>Multi-method anomaly detection for univariate time series.</p>
+<p><strong>Methods available:</strong>
+1. <strong>Conv1D Autoencoder</strong> — Learns normal temporal patterns from training data; flags high reconstruction error (requires <code>tensorflow</code>)
+2. <strong>Moving Average</strong> — Flags deviations beyond N standard deviations from rolling mean
+3. <strong>Moving Median</strong> — Robust variant using Median Absolute Deviation (MAD) instead of std
+4. <strong>ARIMA Residuals</strong> — Flags large residuals from a fitted ARIMA model (requires <code>statsmodels</code>)</p>
+<h4 id="__init__self-methodsnone-time_steps288-ae_epochs50-ae_batch_size128-window_size48-n_sigma30-arima_order510-threshold_percentile950-verbosetrue"><code>__init__(self, methods=None, time_steps=288, ae_epochs=50, ae_batch_size=128, window_size=48, n_sigma=3.0, arima_order=(5,1,0), threshold_percentile=95.0, verbose=True)</code><a class="headerlink" href="#__init__self-methodsnone-time_steps288-ae_epochs50-ae_batch_size128-window_size48-n_sigma30-arima_order510-threshold_percentile950-verbosetrue" title="Permanent link">&para;</a></h4>
+<p><strong>Key Parameters:</strong>
+- <code>time_steps</code> — Sequence length for autoencoder (e.g., 288 = one day at 5-min intervals)
+- <code>window_size</code> — Rolling window for moving average/median
+- <code>n_sigma</code> — Number of standard deviations for threshold
+- <code>threshold_percentile</code> — Percentile for autoencoder reconstruction error threshold</p>
+<h4 id="fitself-values-npndarray"><code>fit(self, values: np.ndarray)</code><a class="headerlink" href="#fitself-values-npndarray" title="Permanent link">&para;</a></h4>
+<p>Fit the detector on normal (non-anomalous) training data. Computes training mean/std and trains the autoencoder (if included in methods).</p>
+<h4 id="detectself-values-npndarray-dict"><code>detect(self, values: np.ndarray) -&gt; Dict</code><a class="headerlink" href="#detectself-values-npndarray-dict" title="Permanent link">&para;</a></h4>
+<p>Detect anomalies in a time series.</p>
+<p><strong>Returns:</strong> Dictionary with:
+- <code>'anomalies'</code> — Boolean array (True = anomaly, any method flagged it)
+- <code>'methods'</code> — Dictionary of per-method boolean arrays
+- <code>'consensus_score'</code> — Integer array (how many methods flagged each point)</p>
+<hr />
+<h3 id="contrastive-text-classifier">Contrastive Text Classifier<a class="headerlink" href="#contrastive-text-classifier" title="Permanent link">&para;</a></h3>
+<h3 id="class-contrastivetextclassifier"><code>class ContrastiveTextClassifier</code><a class="headerlink" href="#class-contrastivetextclassifier" title="Permanent link">&para;</a></h3>
+<p><strong>Module:</strong> <code>scomp_link.models.contrastive_text</code></p>
+<p>Generalized contrastive learning text classifier using Siamese Networks with BERT. Suitable for text categorization with many classes, semantic similarity, few-shot learning, and scenarios with limited data per class.</p>
+<h4 id="__init__self-model_namebert-base-uncased-use_faisstrue-embedding_dim256"><code>__init__(self, model_name='bert-base-uncased', use_faiss=True, embedding_dim=256)</code><a class="headerlink" href="#__init__self-model_namebert-base-uncased-use_faisstrue-embedding_dim256" title="Permanent link">&para;</a></h4>
+<p>Initialize BERT tokenizer and model, create a ContrastiveSiameseModel, and optionally set up FAISS for fast nearest-neighbor inference.</p>
+<h4 id="train_contrastiveself-df-text_coltext-label_collabel-epochs5-batch_size64-lr2e-5-use_weighted_samplingtrue-accumulation_steps2-validation_split01-early_stopping_patience5"><code>train_contrastive(self, df, text_col='text', label_col='label', epochs=5, batch_size=64, lr=2e-5, use_weighted_sampling=True, accumulation_steps=2, validation_split=0.1, early_stopping_patience=5)</code><a class="headerlink" href="#train_contrastiveself-df-text_coltext-label_collabel-epochs5-batch_size64-lr2e-5-use_weighted_samplingtrue-accumulation_steps2-validation_split01-early_stopping_patience5" title="Permanent link">&para;</a></h4>
+<p>Train the model with contrastive learning. Creates positive/negative text pairs, uses differentiated learning rates (BERT layers get <code>lr</code>, projection layer gets <code>lr*10</code>), gradient accumulation, weighted sampling for class balance, and early stopping on validation loss. After training, computes label embeddings and builds a FAISS index.</p>
+<h4 id="predictself-text-top_k1-return_confidencefalse"><code>predict(self, text, top_k=1, return_confidence=False)</code><a class="headerlink" href="#predictself-text-top_k1-return_confidencefalse" title="Permanent link">&para;</a></h4>
+<p>Predict label(s) for a single text. Encodes the text through BERT + projection, then finds the nearest label embedding(s) via FAISS or cosine similarity.</p>
+<p><strong>Returns:</strong> Single label string (top_k=1) or list of labels, optionally with confidence scores.</p>
+<h4 id="predict_batchself-text_series-batch_size512-top_k1"><code>predict_batch(self, text_series, batch_size=512, top_k=1)</code><a class="headerlink" href="#predict_batchself-text_series-batch_size512-top_k1" title="Permanent link">&para;</a></h4>
+<p>Batch predict labels for multiple texts. Encodes all texts in batches, then performs bulk nearest-neighbor search.</p>
+<p><strong>Returns:</strong> DataFrame with columns: <code>text</code>, <code>prediction</code>, <code>confidence</code>, <code>top_k_predictions</code>, <code>top_k_confidences</code>.</p>
+<h4 id="saveself-pathcontrastivetextmodel"><code>save(self, path='./ContrastiveTextModel')</code><a class="headerlink" href="#saveself-pathcontrastivetextmodel" title="Permanent link">&para;</a></h4>
+<p>Save model weights (<code>model.pt</code>), metadata (<code>metadata.json</code> with labels, frequencies, and embedding_dim), and label embeddings (<code>embeddings.csv</code>).</p>
+<h4 id="loadself-pathcontrastivetextmodel-model_namebert-base-uncased"><code>load(self, path='./ContrastiveTextModel', model_name='bert-base-uncased')</code><a class="headerlink" href="#loadself-pathcontrastivetextmodel-model_namebert-base-uncased" title="Permanent link">&para;</a></h4>
+<p>Load a previously saved model. Reinitializes the architecture with the correct embedding dimension from metadata, loads weights, and rebuilds the FAISS index.</p>
+<hr />
+<h3 id="contrastive-network-components">Contrastive Network Components<a class="headerlink" href="#contrastive-network-components" title="Permanent link">&para;</a></h3>
+<p><strong>Module:</strong> <code>scomp_link.models.contrastive_net</code></p>
+<h4 id="class-contrastivesiamesemodelnnmodule"><code>class ContrastiveSiameseModel(nn.Module)</code><a class="headerlink" href="#class-contrastivesiamesemodelnnmodule" title="Permanent link">&para;</a></h4>
+<p>Siamese network with BERT backbone and a projection layer (Linear → ReLU → Dropout → Linear). Produces L2-normalized embeddings.</p>
+<ul>
+<li><code>forward_one(input_ids, attention_mask)</code> — Encode a single input through BERT [CLS] token + projection layer</li>
+<li><code>forward(text_ids, text_mask, label_ids, label_mask)</code> — Forward pass for both text and label inputs simultaneously</li>
+</ul>
+<h4 id="class-contrastivelossnnmodule"><code>class ContrastiveLoss(nn.Module)</code><a class="headerlink" href="#class-contrastivelossnnmodule" title="Permanent link">&para;</a></h4>
+<p>Contrastive loss function. For positive pairs (label=1): minimizes distance. For negative pairs (label=0): pushes embeddings apart beyond the margin.</p>
+<ul>
+<li><code>forward(emb1, emb2, labels)</code> — Compute loss given two embedding batches and pair labels</li>
+</ul>
+<h4 id="class-siamesedatasetdataset"><code>class SiameseDataset(Dataset)</code><a class="headerlink" href="#class-siamesedatasetdataset" title="Permanent link">&para;</a></h4>
+<p>PyTorch Dataset for generating contrastive pairs. Generates 50% positive pairs (same label) and 50% negative pairs (different label). Includes text augmentation via random word dropout.</p>
+<ul>
+<li><code>get_sample_weights(df)</code> — Static method: calculate inverse-frequency sample weights for balanced sampling</li>
+</ul>
+<h4 id="class-earlystopping"><code>class EarlyStopping</code><a class="headerlink" href="#class-earlystopping" title="Permanent link">&para;</a></h4>
+<p>Training callback that stops training if validation loss doesn't improve for <code>patience</code> epochs.</p>
+<ul>
+<li><code>__call__(val_loss)</code> — Returns True if training should stop</li>
+</ul>
+<hr />
+<h3 id="supervised-text">Supervised Text<a class="headerlink" href="#supervised-text" title="Permanent link">&para;</a></h3>
+<h3 id="class-spacyembeddingmodel"><code>class SpacyEmbeddingModel</code><a class="headerlink" href="#class-spacyembeddingmodel" title="Permanent link">&para;</a></h3>
+<p><strong>Module:</strong> <code>scomp_link.models.supervised_text</code></p>
+<p>Text classification using spaCy NLP pipelines combined with contrastive embeddings. Supports 60+ languages via spaCy models.</p>
+<h4 id="__init__self-lanen-model_namebert-base-uncased"><code>__init__(self, lan='en', model_name='bert-base-uncased')</code><a class="headerlink" href="#__init__self-lanen-model_namebert-base-uncased" title="Permanent link">&para;</a></h4>
+<p>Initialize spaCy model for the specified language and a BERT-based contrastive model for embeddings. Automatically downloads the spaCy model if not present.</p>
+<h4 id="_select_languageself-lan-dict_sizesm-private"><code>_select_language(self, lan, dict_size='sm')</code> (private)<a class="headerlink" href="#_select_languageself-lan-dict_sizesm-private" title="Permanent link">&para;</a></h4>
+<p>Load a spaCy language model and its stop words. Tries <code>{lan}_core_web_{size}</code> first, then <code>{lan}_core_news_{size}</code>, downloading if necessary. Supports all spaCy-supported languages.</p>
+<h4 id="trainingself-to_tag-tagged-categorie"><code>training(self, to_tag, tagged, categorie)</code><a class="headerlink" href="#trainingself-to_tag-tagged-categorie" title="Permanent link">&para;</a></h4>
+<p>Training wrapper. Splits data into train/test (67/33), then calls the CNN text categorizer.</p>
+<h4 id="cnn_embedding_textcategorizerself-texts-y_lab-texts_test-y_lab_test-classes-width16-embed_size75-patience20-epoch100-learn_rate01-dropout02-batch_size8"><code>cnn_embedding_textcategorizer(self, texts, y_lab, texts_test, y_lab_test, classes, width=16, embed_size=75, patience=20, epoch=100, learn_rate=0.1, dropout=0.2, batch_size=8, ...)</code><a class="headerlink" href="#cnn_embedding_textcategorizerself-texts-y_lab-texts_test-y_lab_test-classes-width16-embed_size75-patience20-epoch100-learn_rate01-dropout02-batch_size8" title="Permanent link">&para;</a></h4>
+<p>Train a CNN-based text categorizer using spaCy's built-in <code>textcat</code> pipeline component. Performs text extraction (verbs, nouns, proper nouns), creates category labels, and trains with mini-batch SGD and early stopping. Reports precision, recall, F1, and accuracy on both train and test sets.</p>
+<p><strong>Returns:</strong> Tuple of (trained nlp pipeline, dictionary of classification reports and confusion matrices)</p>
+<h4 id="evaluate_textcatself-tokenizer-textcat-texts-cats"><code>evaluate_textcat(self, tokenizer, textcat, texts, cats)</code><a class="headerlink" href="#evaluate_textcatself-tokenizer-textcat-texts-cats" title="Permanent link">&para;</a></h4>
+<p>Evaluate a text categorization model. Computes weighted precision, recall, F1, and accuracy.</p>
+<h4 id="report_progressself-epoch-best-losses-scores"><code>report_progress(self, epoch, best, losses, scores)</code><a class="headerlink" href="#report_progressself-epoch-best-losses-scores" title="Permanent link">&para;</a></h4>
+<p>Print formatted training progress (loss, precision, recall, F1).</p>
+<hr />
+<h3 id="supervised-image">Supervised Image<a class="headerlink" href="#supervised-image" title="Permanent link">&para;</a></h3>
+<h3 id="class-cnnimgbaseestimator-classifiermixin"><code>class CNNImg(BaseEstimator, ClassifierMixin)</code><a class="headerlink" href="#class-cnnimgbaseestimator-classifiermixin" title="Permanent link">&para;</a></h3>
+<p><strong>Module:</strong> <code>scomp_link.models.supervised_img</code></p>
+<p>Simplified CNN image classifier wrapper with sklearn-compatible interface. Currently a placeholder — for production use, implement with TensorFlow/PyTorch.</p>
+<h4 id="__init__self-input_shape224-224-3-n_classesnone-kwargs"><code>__init__(self, input_shape=(224, 224, 3), n_classes=None, **kwargs)</code><a class="headerlink" href="#__init__self-input_shape224-224-3-n_classesnone-kwargs" title="Permanent link">&para;</a></h4>
+<h4 id="fitself-x-y_2"><code>fit(self, X, y)</code><a class="headerlink" href="#fitself-x-y_2" title="Permanent link">&para;</a></h4>
+<p>Fit the CNN model on image data (n_samples × height × width × channels).</p>
+<h4 id="predictself-x_2"><code>predict(self, X)</code><a class="headerlink" href="#predictself-x_2" title="Permanent link">&para;</a></h4>
+<p>Predict class labels for images.</p>
+<h4 id="predict_probaself-x"><code>predict_proba(self, X)</code><a class="headerlink" href="#predict_probaself-x" title="Permanent link">&para;</a></h4>
+<p>Predict class probabilities for images.</p>
+<hr />
+<h3 id="unsupervised-text">Unsupervised Text<a class="headerlink" href="#unsupervised-text" title="Permanent link">&para;</a></h3>
+<h3 id="class-textembeddingclusteringbaseestimator-clustermixin"><code>class TextEmbeddingClustering(BaseEstimator, ClusterMixin)</code><a class="headerlink" href="#class-textembeddingclusteringbaseestimator-clustermixin" title="Permanent link">&para;</a></h3>
+<p><strong>Module:</strong> <code>scomp_link.models.unsupervised_text</code></p>
+<p>Text clustering using sentence-transformer embeddings + KMeans or hierarchical clustering.</p>
+<h4 id="__init__self-model_nameall-minilm-l6-v2-n_clusters5-methodkmeans"><code>__init__(self, model_name='all-MiniLM-L6-v2', n_clusters=5, method='kmeans')</code><a class="headerlink" href="#__init__self-model_nameall-minilm-l6-v2-n_clusters5-methodkmeans" title="Permanent link">&para;</a></h4>
+<h4 id="fitself-x-ynone"><code>fit(self, X, y=None)</code><a class="headerlink" href="#fitself-x-ynone" title="Permanent link">&para;</a></h4>
+<p>Encode texts into embeddings using the sentence transformer, then fit the clustering algorithm.</p>
+<h4 id="predictself-x_3"><code>predict(self, X)</code><a class="headerlink" href="#predictself-x_3" title="Permanent link">&para;</a></h4>
+<p>Encode new texts and predict their cluster labels.</p>
+<h4 id="fit_predictself-x-ynone"><code>fit_predict(self, X, y=None)</code><a class="headerlink" href="#fit_predictself-x-ynone" title="Permanent link">&para;</a></h4>
+<p>Encode, fit, and predict cluster labels in one step.</p>
+<hr />
+<h3 id="unsupervised-image">Unsupervised Image<a class="headerlink" href="#unsupervised-image" title="Permanent link">&para;</a></h3>
+<h3 id="class-clusterimgbaseestimator-clustermixin"><code>class ClusterImg(BaseEstimator, ClusterMixin)</code><a class="headerlink" href="#class-clusterimgbaseestimator-clustermixin" title="Permanent link">&para;</a></h3>
+<p><strong>Module:</strong> <code>scomp_link.models.unsupervised_img</code></p>
+<p>Simplified image clustering wrapper using KMeans on flattened image features. For production, use CNN feature extraction before clustering.</p>
+<h4 id="__init__self-n_clusters8-kwargs"><code>__init__(self, n_clusters=8, **kwargs)</code><a class="headerlink" href="#__init__self-n_clusters8-kwargs" title="Permanent link">&para;</a></h4>
+<h4 id="fitself-x-ynone_1"><code>fit(self, X, y=None)</code><a class="headerlink" href="#fitself-x-ynone_1" title="Permanent link">&para;</a></h4>
+<p>Flatten images (if multi-dimensional) and fit KMeans clustering.</p>
+<h4 id="predictself-x_4"><code>predict(self, X)</code><a class="headerlink" href="#predictself-x_4" title="Permanent link">&para;</a></h4>
+<p>Flatten images and predict cluster labels using the fitted KMeans model.</p>
+<h4 id="fit_predictself-x-ynone_1"><code>fit_predict(self, X, y=None)</code><a class="headerlink" href="#fit_predictself-x-ynone_1" title="Permanent link">&para;</a></h4>
+<p>Fit and predict in one step.</p>
+<hr />
+<h2 id="validation">Validation<a class="headerlink" href="#validation" title="Permanent link">&para;</a></h2>
+<h3 id="validator">Validator<a class="headerlink" href="#validator" title="Permanent link">&para;</a></h3>
+<h3 id="class-validator"><code>class Validator</code><a class="headerlink" href="#class-validator" title="Permanent link">&para;</a></h3>
+<p><strong>Module:</strong> <code>scomp_link.validation.model_validator</code></p>
+<p>Handles the modeling and validation phases (M4, C1–C4, V1–V3) of the workflow.</p>
+<h4 id="__init__self-model-any"><code>__init__(self, model: Any)</code><a class="headerlink" href="#__init__self-model-any" title="Permanent link">&para;</a></h4>
+<p>Initialize with any fitted model.</p>
+<h4 id="k_fold_cvself-x-y-k-int-5"><code>k_fold_cv(self, X, y, k: int = 5)</code><a class="headerlink" href="#k_fold_cvself-x-y-k-int-5" title="Permanent link">&para;</a></h4>
+<p><strong>C2: K-Fold Cross Validation</strong> — Run K-fold CV and return scores array. Prints mean and standard deviation.</p>
+<h4 id="loocvself-x-y"><code>loocv(self, X, y)</code><a class="headerlink" href="#loocvself-x-y" title="Permanent link">&para;</a></h4>
+<p><strong>C1: Leave-One-Out Cross Validation (LOOCV)</strong> — Run LOOCV (can be slow for large datasets). Returns all scores.</p>
+<h4 id="evaluateself-y_true-y_pred-task_type-str-regression-y_probanone-dictstr-float"><code>evaluate(self, y_true, y_pred, task_type: str = "regression", y_proba=None) -&gt; Dict[str, float]</code><a class="headerlink" href="#evaluateself-y_true-y_pred-task_type-str-regression-y_probanone-dictstr-float" title="Permanent link">&para;</a></h4>
+<p><strong>V3: Model Evaluation Metrics</strong></p>
+<ul>
+<li><strong>Regression metrics:</strong> MSE, RMSE, MAE, R²</li>
+<li><strong>Classification metrics:</strong> Accuracy, F1 (weighted), Precision (weighted), Recall (weighted)</li>
+</ul>
+<h4 id="generate_validation_reportself-y_true-y_pred-task_typeregression-y_probanone-report_namevalidation_reporthtml"><code>generate_validation_report(self, y_true, y_pred, task_type="regression", y_proba=None, report_name="Validation_Report.html")</code><a class="headerlink" href="#generate_validation_reportself-y_true-y_pred-task_typeregression-y_probanone-report_namevalidation_reporthtml" title="Permanent link">&para;</a></h4>
+<p>Generate a self-contained interactive HTML validation report using Plotly.</p>
+<p><strong>Regression reports include:</strong> Metrics summary table, Observed vs Predicted scatter plot, Residuals histogram.</p>
+<p><strong>Classification reports include:</strong> Metrics summary table, Confusion matrix heatmap, Probability distributions per class (if probabilities available).</p>
+<hr />
+<h3 id="advanced-cross-validation">Advanced Cross-Validation<a class="headerlink" href="#advanced-cross-validation" title="Permanent link">&para;</a></h3>
+<h3 id="class-advancedcv"><code>class AdvancedCV</code><a class="headerlink" href="#class-advancedcv" title="Permanent link">&para;</a></h3>
+<p><strong>Module:</strong> <code>scomp_link.validation.advanced_cv</code></p>
+<p>Provides advanced cross-validation strategies beyond standard K-Fold.</p>
+<h4 id="staticmethod-loocvmodel-x-y-scoringnone"><code>@staticmethod loocv(model, X, y, scoring=None)</code><a class="headerlink" href="#staticmethod-loocvmodel-x-y-scoringnone" title="Permanent link">&para;</a></h4>
+<p>Leave-One-Out Cross Validation. Returns dictionary with <code>method</code>, <code>mean_score</code>, <code>std_score</code>, <code>n_splits</code>, and <code>scores</code>.</p>
+<h4 id="staticmethod-bootstrapmodel-x-y-n_iterations1000-test_size03-random_state42"><code>@staticmethod bootstrap(model, X, y, n_iterations=1000, test_size=0.3, random_state=42)</code><a class="headerlink" href="#staticmethod-bootstrapmodel-x-y-n_iterations1000-test_size03-random_state42" title="Permanent link">&para;</a></h4>
+<p>Bootstrap resampling validation with out-of-bag evaluation. Creates <code>n_iterations</code> bootstrap samples, trains a cloned model on each, and evaluates on the held-out samples.</p>
+<p><strong>Returns:</strong> Dictionary with <code>method</code>, <code>mean_score</code>, <code>std_score</code>, <code>n_iterations</code>, <code>scores</code>, and <code>confidence_interval_95</code> (2.5th and 97.5th percentiles).</p>
+<h4 id="staticmethod-evaluate_allmodel-x-y-include_loocvtrue-include_bootstraptrue-bootstrap_iterations1000-scoringnone"><code>@staticmethod evaluate_all(model, X, y, include_loocv=True, include_bootstrap=True, bootstrap_iterations=1000, scoring=None)</code><a class="headerlink" href="#staticmethod-evaluate_allmodel-x-y-include_loocvtrue-include_bootstraptrue-bootstrap_iterations1000-scoringnone" title="Permanent link">&para;</a></h4>
+<p>Run all advanced validation strategies. Skips LOOCV automatically if dataset has more than 1000 samples (too slow).</p>
+<hr />
+<h2 id="utilities">Utilities<a class="headerlink" href="#utilities" title="Permanent link">&para;</a></h2>
+<h3 id="html-report-builder">HTML Report Builder<a class="headerlink" href="#html-report-builder" title="Permanent link">&para;</a></h3>
+<h3 id="class-scomplinkhtmlreport"><code>class ScompLinkHTMLReport</code><a class="headerlink" href="#class-scomplinkhtmlreport" title="Permanent link">&para;</a></h3>
+<p><strong>Module:</strong> <code>scomp_link.utils.report_html</code></p>
+<p>Programmatic HTML report builder with embedded Plotly/Highcharts charts, DataFrames, and images. Uses a stateful builder pattern — methods append content to an internal HTML string.</p>
+<h4 id="__init__self-title-font_familybaloo-2-url_background_header-descriptionautomatic-report-authorscomp-link-toolkit-languageen-main_color6e37fa-light_color9682ff-dark_color4614b4"><code>__init__(self, title, font_family='Baloo 2', url_background_header='...', description='Automatic Report', author='scomp-link toolkit', language='en', main_color='#6E37FA', light_color='#9682FF', dark_color='#4614B4')</code><a class="headerlink" href="#__init__self-title-font_familybaloo-2-url_background_header-descriptionautomatic-report-authorscomp-link-toolkit-languageen-main_color6e37fa-light_color9682ff-dark_color4614b4" title="Permanent link">&para;</a></h4>
+<p>Initialize report with title, styling, and color theme.</p>
+<h4 id="open_sectionself-section_title-str"><code>open_section(self, section_title: str)</code><a class="headerlink" href="#open_sectionself-section_title-str" title="Permanent link">&para;</a></h4>
+<p>Open a new collapsible section in the report. Sections must be closed before opening another.</p>
+<h4 id="close_sectionself"><code>close_section(self)</code><a class="headerlink" href="#close_sectionself" title="Permanent link">&para;</a></h4>
+<p>Close the currently open collapsible section.</p>
+<h4 id="add_titleself-title-str"><code>add_title(self, title: str)</code><a class="headerlink" href="#add_titleself-title-str" title="Permanent link">&para;</a></h4>
+<p>Add an H2 title element to the report.</p>
+<h4 id="add_textself-text-str"><code>add_text(self, text: str)</code><a class="headerlink" href="#add_textself-text-str" title="Permanent link">&para;</a></h4>
+<p>Add a paragraph of text to the report.</p>
+<h4 id="add_graph_to_reportself-fig-title-str"><code>add_graph_to_report(self, fig, title: str)</code><a class="headerlink" href="#add_graph_to_reportself-fig-title-str" title="Permanent link">&para;</a></h4>
+<p>Add a Plotly figure to the report. The figure is serialized to JSON and embedded as inline JavaScript.</p>
+<h4 id="add_matplotlib_graph_to_reportself-fig-title-str-dpi-int-150-img_format-str-png"><code>add_matplotlib_graph_to_report(self, fig, title: str, dpi: int = 150, img_format: str = 'png')</code><a class="headerlink" href="#add_matplotlib_graph_to_reportself-fig-title-str-dpi-int-150-img_format-str-png" title="Permanent link">&para;</a></h4>
+<p>Add a matplotlib figure as a base64-encoded image (PNG or SVG).</p>
+<h4 id="add_image_to_reportself-image_path-str-title-str"><code>add_image_to_report(self, image_path: str, title: str)</code><a class="headerlink" href="#add_image_to_reportself-image_path-str-title-str" title="Permanent link">&para;</a></h4>
+<p>Add a local image file (any format) as a base64-encoded inline image.</p>
+<h4 id="add_many_plots_with_selection_box_to_reportself-figures_dict-dict-title-str-kwargs"><code>add_many_plots_with_selection_box_to_report(self, figures_dict: dict, title: str, **kwargs)</code><a class="headerlink" href="#add_many_plots_with_selection_box_to_reportself-figures_dict-dict-title-str-kwargs" title="Permanent link">&para;</a></h4>
+<p>Add multiple Plotly figures with dropdown selection boxes. The user can switch between plots using combo boxes.</p>
+<h4 id="add_dataframeself-df-pddataframe-title-str-limit_max2000"><code>add_dataframe(self, df: pd.DataFrame, title: str, limit_max=2000)</code><a class="headerlink" href="#add_dataframeself-df-pddataframe-title-str-limit_max2000" title="Permanent link">&para;</a></h4>
+<p>Add a DataFrame as an HTML table with downloadable CSV functionality. Limited to 2000 rows. Tables are styled with the report's color theme.</p>
+<h4 id="single_plotlyself-fig-title-str-plotdividnone-str"><code>single_plotly(self, fig, title: str, plotdivid=None) -&gt; str</code><a class="headerlink" href="#single_plotlyself-fig-title-str-plotdividnone-str" title="Permanent link">&para;</a></h4>
+<p>Convert a Plotly figure to an HTML snippet with responsive JavaScript. Returns the raw HTML string (for internal use or custom embedding).</p>
+<h4 id="select_plotlyself-figures_dict-dict-title-str-labelschoose-a-label-str"><code>select_plotly(self, figures_dict: dict, title: str, labels='Choose a label') -&gt; str</code><a class="headerlink" href="#select_plotlyself-figures_dict-dict-title-str-labelschoose-a-label-str" title="Permanent link">&para;</a></h4>
+<p>Generate HTML with dropdown selectors that show/hide multiple Plotly plots. Supports single or multi-level filtering.</p>
+<h4 id="save_htmlself-file_nameexporthtml"><code>save_html(self, file_name='export.html')</code><a class="headerlink" href="#save_htmlself-file_nameexporthtml" title="Permanent link">&para;</a></h4>
+<p>Save the complete report as a self-contained HTML file.</p>
+<h4 id="save_pdfself-file_nameexportpdf"><code>save_pdf(self, file_name='export.pdf')</code><a class="headerlink" href="#save_pdfself-file_nameexportpdf" title="Permanent link">&para;</a></h4>
+<p>Save the report as PDF by rendering HTML in a headless Chromium browser (via Playwright). Automatically installs Chromium on first use. Ensures all JavaScript charts are rendered, opens all collapsed sections, and arranges plots in a 2-column grid for print.</p>
+<hr />
+<h3 id="plotly-utilities">Plotly Utilities<a class="headerlink" href="#plotly-utilities" title="Permanent link">&para;</a></h3>
+<p><strong>Module:</strong> <code>scomp_link.utils.plotly_utils</code></p>
+<p>Standalone functions for creating common Plotly visualizations with consistent styling.</p>
+<h4 id="histogramvariable_float_for_distribution-name_of_the_column-h600"><code>histogram(variable_float_for_distribution, name_of_the_column, h=600)</code><a class="headerlink" href="#histogramvariable_float_for_distribution-name_of_the_column-h600" title="Permanent link">&para;</a></h4>
+<p>Create a single histogram with standard deviation error bars and cumulative distribution function overlay.</p>
+<p><strong>Parameters:</strong>
+- <code>variable_float_for_distribution</code> — Numeric array (cleaned of NaN/None)
+- <code>name_of_the_column</code> — Label for the distribution
+- <code>h</code> — Height of the plot in pixels</p>
+<h4 id="multiple_histogramsvariable_float_for_distribution-category_variable-category_namex_label-y_labely_label-h300"><code>multiple_histograms(variable_float_for_distribution, category_variable, category_name='x_label', y_label='y_label', h=300)</code><a class="headerlink" href="#multiple_histogramsvariable_float_for_distribution-category_variable-category_namex_label-y_labely_label-h300" title="Permanent link">&para;</a></h4>
+<p>Create stacked subplots of histograms, one per category. Each subplot includes: histogram, mean line, standard deviation error bars, and cumulative distribution function. Limited to 10 categories maximum.</p>
+<p><strong>Parameters:</strong>
+- <code>variable_float_for_distribution</code> — Numeric array
+- <code>category_variable</code> — Categorical array (same length) defining groups
+- <code>category_name</code> — X-axis label
+- <code>y_label</code> — Y-axis label
+- <code>h</code> — Height per subplot in pixels</p>
+<h4 id="barchartcategories-metric_values_list-x_axis_titlecategory-y_axis_titlesnone-orderasc-categorysortednone-metric_values_line_listnone-y_line_axis_titlesnone-percentage_ytrue"><code>barchart(categories, metric_values_list, x_axis_title='Category', y_axis_titles=None, order='asc', categorysorted=None, metric_values_line_list=None, y_line_axis_titles=None, percentage_y=True)</code><a class="headerlink" href="#barchartcategories-metric_values_list-x_axis_titlecategory-y_axis_titlesnone-orderasc-categorysortednone-metric_values_line_listnone-y_line_axis_titlesnone-percentage_ytrue" title="Permanent link">&para;</a></h4>
+<p>Create a multi-panel bar chart with optional line overlays. Each element of <code>metric_values_list</code> creates a separate subplot. Supports custom sort order and optional line traces.</p>
+<h4 id="linechartdate_list-lines-title_texttrend-analysis-x_labeldate-y_labelsvalue-format_datey-m-d-yaxis_ticksuffix"><code>linechart(date_list, lines, title_text='Trend analysis', x_label='date', y_labels='value', format_date="%Y-%m-%d", yaxis_ticksuffix='')</code><a class="headerlink" href="#linechartdate_list-lines-title_texttrend-analysis-x_labeldate-y_labelsvalue-format_datey-m-d-yaxis_ticksuffix" title="Permanent link">&para;</a></h4>
+<p>Create a multi-series line chart with consistent styling. Parses dates from string format and applies the scomp-link color palette.</p>
+<h4 id="area_chartdate_list-lines-title_texttrend-analysis-x_labeldate-y_labelsvalue-format_datey-m-d-yaxis_ticksuffix"><code>area_chart(date_list, lines, title_text='Trend analysis', x_label='date', y_labels='value', format_date="%Y-%m-%d", yaxis_ticksuffix='')</code><a class="headerlink" href="#area_chartdate_list-lines-title_texttrend-analysis-x_labeldate-y_labelsvalue-format_datey-m-d-yaxis_ticksuffix" title="Permanent link">&para;</a></h4>
+<p>Create a stacked area chart. Same interface as <code>linechart</code> but with stacked filled areas.</p>
+<hr />
+<h3 id="highcharts-utilities">Highcharts Utilities<a class="headerlink" href="#highcharts-utilities" title="Permanent link">&para;</a></h3>
+<p><strong>Module:</strong> <code>scomp_link.utils.highcharts</code></p>
+<p>Functions that generate raw HTML/JavaScript snippets for Highcharts-based charts, designed for embedding in HTML reports.</p>
+<h4 id="streamgraphstitle-dates-series_dict-annotationnone-areatrue"><code>streamgraphs(title, dates, series_dict, annotation=None, area=True)</code><a class="headerlink" href="#streamgraphstitle-dates-series_dict-annotationnone-areatrue" title="Permanent link">&para;</a></h4>
+<p>Generate a streamgraph (or stacked area chart) using Highcharts.</p>
+<p><strong>Parameters:</strong>
+- <code>title</code> — Chart title
+- <code>dates</code> — List of date strings for the x-axis
+- <code>series_dict</code> — Dictionary of <code>{series_name: list_of_values}</code>
+- <code>annotation</code> — Optional dictionary of <code>{annotation_text: date_index}</code> for chart annotations
+- <code>area</code> — If True, renders as stacked area chart; if False, renders as streamgraph</p>
+<p><strong>Returns:</strong> HTML string with embedded Highcharts JavaScript.</p>
+<h4 id="calendar_heatmaptitle-series_dict-min0-max1"><code>calendar_heatmap(title, series_dict, min=0, max=1)</code><a class="headerlink" href="#calendar_heatmaptitle-series_dict-min0-max1" title="Permanent link">&para;</a></h4>
+<p>Generate a calendar heatmap (GitHub-style contribution grid) using Highcharts.</p>
+<p><strong>Parameters:</strong>
+- <code>title</code> — Chart title
+- <code>series_dict</code> — Dictionary of <code>{"yyyy-mm-dd": percentage_value}</code> (values 0–100)
+- <code>min</code> — Minimum scale value
+- <code>max</code> — Maximum scale value</p>
+<p><strong>Returns:</strong> HTML string with embedded Highcharts JavaScript.</p>
+<h4 id="calendar_gantttitle-series_dict-min_date-max_date"><code>calendar_gantt(title, series_dict, min_date, max_date)</code><a class="headerlink" href="#calendar_gantttitle-series_dict-min_date-max_date" title="Permanent link">&para;</a></h4>
+<p>Generate a Gantt chart using Highcharts Gantt module.</p>
+<p><strong>Parameters:</strong>
+- <code>title</code> — Chart title
+- <code>series_dict</code> — Dictionary defining tasks and their date ranges
+- <code>min_date</code> — Earliest date on the chart
+- <code>max_date</code> — Latest date on the chart</p>
+<p><strong>Returns:</strong> HTML string with embedded Highcharts Gantt JavaScript.</p>
+<hr />
+<h3 id="pdf-converter">PDF Converter<a class="headerlink" href="#pdf-converter" title="Permanent link">&para;</a></h3>
+<p><strong>Module:</strong> <code>scomp_link.utils.pdf_converter</code></p>
+<p>Utility functions for converting Markdown and HTML files to PDF format.</p>
+<h4 id="markdown_to_pdfinput_path-str-output_path-str-none-css-str-none-str"><code>markdown_to_pdf(input_path: str, output_path: str = None, css: str = None) -&gt; str</code><a class="headerlink" href="#markdown_to_pdfinput_path-str-output_path-str-none-css-str-none-str" title="Permanent link">&para;</a></h4>
+<p>Convert a Markdown file to PDF. Uses the <code>markdown</code> library for HTML conversion and <code>weasyprint</code> for PDF rendering.</p>
+<p><strong>Parameters:</strong>
+- <code>input_path</code> — Path to the .md file
+- <code>output_path</code> — Output PDF path (defaults to same name with .pdf extension)
+- <code>css</code> — Optional custom CSS for styling</p>
+<p><strong>Returns:</strong> Path to the generated PDF file.</p>
+<h4 id="html_to_pdfinput_path-str-output_path-str-none-css-str-none-str"><code>html_to_pdf(input_path: str, output_path: str = None, css: str = None) -&gt; str</code><a class="headerlink" href="#html_to_pdfinput_path-str-output_path-str-none-css-str-none-str" title="Permanent link">&para;</a></h4>
+<p>Convert an HTML file to PDF using WeasyPrint. Optionally injects additional CSS before rendering.</p>
+<p><strong>Returns:</strong> Path to the generated PDF file.</p>
+<hr />
+<h2 id="decorator">Decorator<a class="headerlink" href="#decorator" title="Permanent link">&para;</a></h2>
+<h3 id="print_throughput-module-scomp_linkmodelscontrastive_text"><code>@print_throughput</code> (Module: <code>scomp_link.models.contrastive_text</code>)<a class="headerlink" href="#print_throughput-module-scomp_linkmodelscontrastive_text" title="Permanent link">&para;</a></h3>
+<p>Decorator that prints processing speed (items/second) for batch operations. Wraps functions that accept a <code>text_series</code> parameter, prints the count of items being processed, measures elapsed time, and reports throughput.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.sections", "navigation.expand", "content.code.copy", "search.highlight"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
