@@ -4,9 +4,13 @@
 
 All dependency management is handled via `pyproject.toml`. The `setup.py` is a minimal shim kept for backward compatibility (editable installs). The `requirements/` directory contains legacy per-version files for manual installation but is **not** the source of truth.
 
-**Supported Python versions**: 3.10, 3.11, 3.12, 3.13
+**Supported Python versions**: 3.10, 3.11, 3.12, 3.13, 3.14
 
-Testing is automated via `tox.ini` across all four versions.
+Testing is automated via `tox.ini` and GitHub Actions CI across all versions.
+
+> **Note**: Python 3.14 support is experimental. TensorFlow and tf-keras are not
+> available on 3.14 yet ([tracking issue](https://github.com/tensorflow/tensorflow/issues/102890)).
+> All other dependencies work on 3.14.
 
 ## Core Dependencies by Python Version
 
@@ -20,6 +24,7 @@ All version ranges are defined in `pyproject.toml` under `[project] dependencies
 | 3.11   | >=1.24.0, <1.27.0 |
 | 3.12   | >=1.26.0, <2.0.0 |
 | 3.13   | >=1.26.0, <3.0.0 |
+| 3.14   | >=2.0.0, <3.0.0 |
 
 ### pandas
 
@@ -29,6 +34,7 @@ All version ranges are defined in `pyproject.toml` under `[project] dependencies
 | 3.11   | >=2.0.0, <2.2.0 |
 | 3.12   | >=2.1.0, <2.3.0 |
 | 3.13   | >=2.1.0, <3.0.0 |
+| 3.14   | >=2.2.0, <3.0.0 |
 
 ### scipy
 
@@ -38,6 +44,7 @@ All version ranges are defined in `pyproject.toml` under `[project] dependencies
 | 3.11   | >=1.10.0, <1.12.0 |
 | 3.12   | >=1.11.0, <1.14.0 |
 | 3.13   | >=1.11.0, <2.0.0 |
+| 3.14   | >=1.14.0, <2.0.0 |
 
 ### scikit-learn
 
@@ -47,6 +54,7 @@ All version ranges are defined in `pyproject.toml` under `[project] dependencies
 | 3.11   | >=1.3.0, <1.5.0 |
 | 3.12   | >=1.3.0, <1.6.0 |
 | 3.13   | >=1.3.0, <2.0.0 |
+| 3.14   | >=1.5.0, <2.0.0 |
 
 ### matplotlib
 
@@ -54,8 +62,9 @@ All version ranges are defined in `pyproject.toml` under `[project] dependencies
 |--------|--------------|
 | 3.10   | >=3.6.0, <3.9.0 |
 | 3.11   | >=3.7.0, <3.9.0 |
-| 3.12   | >=3.8.0, <3.10.0 |
+| 3.12   | >=3.8.0, <3.11.0 |
 | 3.13   | >=3.8.0, <4.0.0 |
+| 3.14   | >=3.9.0, <4.0.0 |
 
 ### plotly
 
@@ -75,16 +84,17 @@ All version ranges are defined in `pyproject.toml` under `[project] dependencies
 
 | Python | Version Range |
 |--------|--------------|
-| 3.10   | >=1.13.0, <2.3.0 |
-| 3.11   | >=2.0.0, <2.4.0 |
-| 3.12   | >=2.0.0, <2.5.0 |
+| 3.10   | >=1.13.0, <2.13.0 |
+| 3.11   | >=2.0.0, <2.13.0 |
+| 3.12   | >=2.0.0, <2.13.0 |
 | 3.13   | >=2.0.0, <3.0.0 |
+| 3.14   | >=2.4.0, <3.0.0 |
 
 ### transformers
 
 | Python | Version Range |
 |--------|--------------|
-| All    | >=4.30.0, <5.0.0 |
+| All    | >=4.30.0, <6.0.0 |
 
 ### spacy
 
@@ -102,7 +112,7 @@ All version ranges are defined in `pyproject.toml` under `[project] dependencies
 
 | Python | Version Range |
 |--------|--------------|
-| All    | >=2.2.0, <3.0.0 |
+| All    | >=2.2.0, <6.0.0 |
 
 ## Computer Vision Dependencies
 
@@ -114,20 +124,22 @@ All version ranges are defined in `pyproject.toml` under `[project] dependencies
 | 3.11   | >=2.12.0, <2.16.0 |
 | 3.12   | >=2.13.0, <2.18.0 |
 | 3.13   | >=2.13.0, <3.0.0 |
+| 3.14   | ⚠️ Not available ([tracking issue](https://github.com/tensorflow/tensorflow/issues/102890)) |
 
 ### pillow
 
 | Python | Version Range |
 |--------|--------------|
 | 3.10–3.11 | >=9.0.0, <11.0.0 |
-| 3.12+     | >=10.0.0, <11.0.0 |
+| 3.12–3.13 | >=10.0.0, <11.0.0 |
+| 3.14      | >=10.0.0, <12.0.0 |
 
 ## Anomaly Detection Dependencies
 
 | Package | Version Range |
 |---------|--------------|
-| pytorch-tabnet | >=4.0.0, <5.0.0 |
-| statsmodels    | >=0.13.0, <1.0.0 |
+| pytorch-tabnet2 | >=4.0.0, <5.0.0 |
+| statsmodels     | >=0.13.0, <1.0.0 |
 
 ## Utility Dependencies
 
@@ -136,7 +148,7 @@ All version ranges are defined in `pyproject.toml` under `[project] dependencies
 | tqdm    | >=4.50.0, <5.0.0 |
 | PyJWT   | >=2.0.0, <3.0.0 |
 | markdown | >=3.3.0, <4.0.0 |
-| weasyprint | >=57.0, <63.0 |
+| weasyprint | >=57.0, <70.0 |
 | playwright | >=1.40.0, <2.0.0 |
 
 ## Installation
