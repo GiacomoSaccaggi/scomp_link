@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "scomp-link"
-version = "1.1.3"
+version = "1.1.5"
 description = "The Astromech arm for your Python data projects — end-to-end ML toolkit"
 readme = "README.md"
 license = {text = "MIT"}
@@ -26,6 +26,7 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
     "Topic :: Scientific/Engineering :: Information Analysis",
     "Topic :: Scientific/Engineering :: Image Recognition",
@@ -75,31 +76,36 @@ dependencies = [
     "numpy>=1.22.0,<1.27.0;   python_version >= '3.10' and python_version < '3.11'",
     "numpy>=1.24.0,<1.27.0;   python_version >= '3.11' and python_version < '3.12'",
     "numpy>=1.26.0,<2.0.0;    python_version >= '3.12' and python_version < '3.13'",
-    "numpy>=1.26.0,<3.0.0;    python_version >= '3.13'",
+    "numpy>=1.26.0,<3.0.0;    python_version >= '3.13' and python_version < '3.14'",
+    "numpy>=2.0.0,<3.0.0;     python_version >= '3.14'",
 
     # --- pandas ---
     "pandas>=1.4.0,<2.2.0;    python_version >= '3.10' and python_version < '3.11'",
     "pandas>=2.0.0,<2.2.0;    python_version >= '3.11' and python_version < '3.12'",
     "pandas>=2.1.0,<2.3.0;    python_version >= '3.12' and python_version < '3.13'",
-    "pandas>=2.1.0,<3.0.0;    python_version >= '3.13'",
+    "pandas>=2.1.0,<3.0.0;    python_version >= '3.13' and python_version < '3.14'",
+    "pandas>=2.2.0,<3.0.0;    python_version >= '3.14'",
 
     # --- scipy ---
     "scipy>=1.8.0,<1.12.0;    python_version >= '3.10' and python_version < '3.11'",
     "scipy>=1.10.0,<1.12.0;   python_version >= '3.11' and python_version < '3.12'",
     "scipy>=1.11.0,<1.14.0;   python_version >= '3.12' and python_version < '3.13'",
-    "scipy>=1.11.0,<2.0.0;    python_version >= '3.13'",
+    "scipy>=1.11.0,<2.0.0;    python_version >= '3.13' and python_version < '3.14'",
+    "scipy>=1.14.0,<2.0.0;    python_version >= '3.14'",
 
     # --- scikit-learn ---
     "scikit-learn>=1.2.0,<1.4.0;   python_version >= '3.10' and python_version < '3.11'",
     "scikit-learn>=1.3.0,<1.5.0;   python_version >= '3.11' and python_version < '3.12'",
     "scikit-learn>=1.3.0,<1.6.0;   python_version >= '3.12' and python_version < '3.13'",
-    "scikit-learn>=1.3.0,<2.0.0;   python_version >= '3.13'",
+    "scikit-learn>=1.3.0,<2.0.0;   python_version >= '3.13' and python_version < '3.14'",
+    "scikit-learn>=1.5.0,<2.0.0;   python_version >= '3.14'",
 
     # --- matplotlib ---
     "matplotlib>=3.6.0,<3.9.0;    python_version >= '3.10' and python_version < '3.11'",
     "matplotlib>=3.7.0,<3.9.0;    python_version >= '3.11' and python_version < '3.12'",
     "matplotlib>=3.8.0,<3.10.0;   python_version >= '3.12' and python_version < '3.13'",
-    "matplotlib>=3.8.0,<4.0.0;    python_version >= '3.13'",
+    "matplotlib>=3.8.0,<4.0.0;    python_version >= '3.13' and python_version < '3.14'",
+    "matplotlib>=3.9.0,<4.0.0;    python_version >= '3.14'",
 
     # --- plotly ---
     "plotly>=5.0.0,<6.0.0",
@@ -111,7 +117,8 @@ dependencies = [
     "torch>=1.13.0,<2.3.0;        python_version >= '3.10' and python_version < '3.11'",
     "torch>=2.0.0,<2.4.0;         python_version >= '3.11' and python_version < '3.12'",
     "torch>=2.0.0,<2.5.0;         python_version >= '3.12' and python_version < '3.13'",
-    "torch>=2.0.0,<3.0.0;         python_version >= '3.13'",
+    "torch>=2.0.0,<3.0.0;         python_version >= '3.13' and python_version < '3.14'",
+    "torch>=2.4.0,<3.0.0;         python_version >= '3.14'",
 
     "transformers>=4.30.0,<5.0.0",
     "spacy>=3.5.0,<4.0.0",
@@ -122,10 +129,12 @@ dependencies = [
     "tensorflow>=2.10.0,<2.16.0;  python_version >= '3.10' and python_version < '3.11'",
     "tensorflow>=2.12.0,<2.16.0;  python_version >= '3.11' and python_version < '3.12'",
     "tensorflow>=2.13.0,<2.18.0;  python_version >= '3.12' and python_version < '3.13'",
-    "tensorflow>=2.13.0,<3.0.0;   python_version >= '3.13'",
+    "tensorflow>=2.13.0,<3.0.0;   python_version >= '3.13' and python_version < '3.14'",
+    "tensorflow>=2.16.0,<3.0.0;   python_version >= '3.14'",
 
     "pillow>=9.0.0,<11.0.0;       python_version >= '3.10' and python_version < '3.12'",
-    "pillow>=10.0.0,<11.0.0;      python_version >= '3.12'",
+    "pillow>=10.0.0,<11.0.0;      python_version >= '3.12' and python_version < '3.14'",
+    "pillow>=10.0.0,<12.0.0;      python_version >= '3.14'",
 
     # --- Anomaly Detection: pytorch-tabnet, statsmodels ---
     "pytorch-tabnet>=4.0.0,<5.0.0",
