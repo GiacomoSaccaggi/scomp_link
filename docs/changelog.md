@@ -1,5 +1,28 @@
 # Changelog
 
+## 1.2.0 (2026-06-24)
+
+### Added
+- **RAWGraphs SVG Charts**: 31 server-side chart functions in `scomp_link.utils.rawgraphs` (alluvial, chord, sankey, treemap, sunburst, etc.)
+- **Centralized Colors**: `scomp_link.utils.colors` — single source of truth for all palettes
+- `add_rawgraphs_to_report()` method on `ScompLinkHTMLReport`
+- `docs/api/visualization.md` documentation page
+- `tests/test_rawgraphs.py` (38 tests)
+- `examples/example_19_rawgraphs.py`
+
+### Changed
+- **Lazy imports (PEP 562)**: `import scomp_link` now takes ~6ms instead of ~5200ms (99.9% faster)
+- All public classes loaded on first access via `__getattr__`, not at import time
+- `model_factory.py`: NLP/CV model imports deferred to inside `get_model()`
+- `data_quality.py`: `save_html()` now uses `ScompLinkHTMLReport` instead of raw HTML
+- All color references in `plotly_utils.py`, `highcharts.py`, `report_html.py`, `pdf_converter.py`, `cli.py` now use `colors.py`
+- Removed all hardcoded hex color values from source files
+
+### Fixed
+- `boxplot()` compatibility with matplotlib 3.9+ (`labels` → `set_xticklabels`)
+
+---
+
 ## 1.1.4 (2026-06-24)
 
 ### Added

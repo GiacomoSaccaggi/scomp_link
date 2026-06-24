@@ -1,32 +1,56 @@
-from .models.regressor_optimizer import RegressorOptimizer
-try:
-    from .models.url_to_app_model import URLToAppNameExtractor
-except ImportError:
-    pass
-from .models.classifier_optimizer import ClassifierOptimizer
-from .models.anomaly_detector import AnomalyDetector
-from .models.ts_anomaly_detector import TimeSeriesAnomalyDetector
-from .core import ScompLinkPipeline
-from .preprocessing.data_processor import Preprocessor
-from .models.model_factory import ModelFactory
-from .validation.model_validator import Validator
+# -*- coding: utf-8 -*-
+"""
+scomp-link: The Astromech Arm for Your Python Projects.
 
-# New modules
-try:
-    from .explainability import ShapExplainer, LimeExplainer
-except ImportError:
-    pass
-try:
-    from .models.advanced_tuning import OptunaOptimizer, HalvingSearchOptimizer, EarlyStoppingCV
-except ImportError:
-    pass
-from .monitoring import DriftDetector
-from .persistence import ScompArtifact
-from .preprocessing.feature_engineer import FeatureEngineer
-from .preprocessing.data_quality import DataQualityReport
-from .models.forecaster import TimeSeriesForecaster
-from .validation.fairness import FairnessMetrics
-
+All public classes are lazily imported via PEP 562 (__getattr__).
+Only the logger is loaded eagerly. Each class loads its dependencies
+on first access, keeping `import scomp_link` near-instant.
+"""
 from .utils.logger import set_verbosity
 
-__version__ = "1.1.5"
+__version__ = "1.2.0"
+
+_LAZY_IMPORTS = {
+    # models
+    "RegressorOptimizer": (".models.regressor_optimizer", "RegressorOptimizer"),
+    "ClassifierOptimizer": (".models.classifier_optimizer", "ClassifierOptimizer"),
+    "ModelFactory": (".models.model_factory", "ModelFactory"),
+    "AnomalyDetector": (".models.anomaly_detector", "AnomalyDetector"),
+    "TimeSeriesAnomalyDetector": (".models.ts_anomaly_detector", "TimeSeriesAnomalyDetector"),
+    "TimeSeriesForecaster": (".models.forecaster", "TimeSeriesForecaster"),
+    # tuning
+    "OptunaOptimizer": (".models.advanced_tuning", "OptunaOptimizer"),
+    "HalvingSearchOptimizer": (".models.advanced_tuning", "HalvingSearchOptimizer"),
+    "EarlyStoppingCV": (".models.advanced_tuning", "EarlyStoppingCV"),
+    # core
+    "ScompLinkPipeline": (".core", "ScompLinkPipeline"),
+    # preprocessing
+    "Preprocessor": (".preprocessing.data_processor", "Preprocessor"),
+    "FeatureEngineer": (".preprocessing.feature_engineer", "FeatureEngineer"),
+    "DataQualityReport": (".preprocessing.data_quality", "DataQualityReport"),
+    # validation
+    "Validator": (".validation.model_validator", "Validator"),
+    "FairnessMetrics": (".validation.fairness", "FairnessMetrics"),
+    # explainability
+    "ShapExplainer": (".explainability", "ShapExplainer"),
+    "LimeExplainer": (".explainability", "LimeExplainer"),
+    # monitoring
+    "DriftDetector": (".monitoring", "DriftDetector"),
+    # persistence
+    "ScompArtifact": (".persistence", "ScompArtifact"),
+}
+
+
+def __getattr__(name):
+    if name in _LAZY_IMPORTS:
+        module_path, attr_name = _LAZY_IMPORTS[name]
+        import importlib
+        module = importlib.import_module(module_path, __package__)
+        obj = getattr(module, attr_name)
+        globals()[name] = obj
+        return obj
+    raise AttributeError(f"module 'scomp_link' has no attribute {name!r}")
+
+
+def __dir__():
+    return list(_LAZY_IMPORTS.keys()) + ["set_verbosity", "__version__"]
