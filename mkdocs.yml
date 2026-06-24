@@ -60,5 +60,6 @@ nav:
     - Monitoring: api/monitoring.md
     - Persistence: api/persistence.md
     - Tuning: api/tuning.md
+    - Visualization: api/visualization.md
   - Examples: examples.md
   - Changelog: changelog.md

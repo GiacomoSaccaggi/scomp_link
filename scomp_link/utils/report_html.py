@@ -27,6 +27,7 @@ import os
 import jwt
 
 from scomp_link.utils.logger import get_logger
+from scomp_link.utils.colors import MAIN, MAIN_LIGHT, MAIN_DARK
 logger = get_logger(__name__)
 
 
@@ -37,13 +38,13 @@ class ScompLinkHTMLReport:
                          url_img_logo='',
                          # optional logo URL (empty for neutral branding)
                          # optional secondary logo URL (empty for neutral branding)
-                         url_background_header='https://giacomosaccaggi.github.io/articoli/sfondo.png',
+                         url_background_header='https://giacomosaccaggi.github.io/deep-dives/sfondo.png',
                          description='Automatic Report',
                          author='scomp-link toolkit',
                          language='en',
-                         main_color='#6E37FA',
-                         light_color='#9682FF',
-                         dark_color='#4614B4'):
+                         main_color=MAIN,
+                         light_color=MAIN_LIGHT,
+                         dark_color=MAIN_DARK):
         cls.dark_color = dark_color
         cls.light_color = light_color
         cls.main_color = main_color
@@ -491,13 +492,13 @@ class ScompLinkHTMLReport:
                 url_img_logo='',
                 # optional logo URL (empty for neutral branding)
                 # optional secondary logo URL (empty for neutral branding)
-                url_background_header='https://giacomosaccaggi.github.io/articoli/sfondo.png',
+                url_background_header='https://giacomosaccaggi.github.io/deep-dives/sfondo.png',
                 description='Automatic Report',
                 author='scomp-link toolkit',
                 language='en',
-                main_color='#6E37FA',
-                light_color='#9682FF',
-                dark_color='#4614B4'):
+                main_color=MAIN,
+                light_color=MAIN_LIGHT,
+                dark_color=MAIN_DARK):
         self.dark_color = dark_color
         self.light_color = light_color
         self.main_color = main_color
@@ -1168,6 +1169,22 @@ class ScompLinkHTMLReport:
         self.html_report += f'<h2>{title}</h2>'
         self.html_report += f'<img src="data:{mime};base64,{img_base64}" style="width:100%;max-width:100%;" alt="{title}">'
         logger.info('Added image to report!')
+
+    def add_rawgraphs_to_report(self, svg_string: str, title: str):
+        """
+        Add a RAWGraphs-style SVG chart to the report.
+
+        :param svg_string: str - SVG markup string returned by rawgraphs functions
+        :param title: str - title displayed above the chart
+
+        ## example
+        from scomp_link.utils.rawgraphs import barchart
+        svg = barchart(['A', 'B', 'C'], [10, 20, 30], 'My Chart')
+        report.add_rawgraphs_to_report(svg, 'Bar Chart Example')
+        """
+        self.html_report += f'<h2>{title}</h2>'
+        self.html_report += f'<div style="width:100%;overflow-x:auto;">{svg_string}</div>'
+        logger.info('Added RAWGraphs SVG to report!')
 
     def add_many_plots_with_selection_box_to_report(self,
                                                     figures_dict: dict,
