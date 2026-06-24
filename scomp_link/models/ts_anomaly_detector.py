@@ -117,7 +117,9 @@ class TimeSeriesAnomalyDetector:
         except ImportError:
             raise ImportError(
                 "TensorFlow/Keras required for autoencoder method. "
-                "Install with: pip install tensorflow"
+                "Install with: pip install tensorflow\n"
+                "⚠️  Note: TensorFlow does not yet support Python 3.14. "
+                "See: https://github.com/tensorflow/tensorflow/issues/102890"
             )
 
         seq_len = input_shape[0]
