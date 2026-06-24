@@ -166,7 +166,7 @@ class AnomalyDetector(BaseEstimator):
         """
         self._log("  [3/4] TabNet Autoencoder...")
         try:
-            from pytorch_tabnet.pretraining import TabNetPretrainer
+            from pytorch_tabnet import TabNetPretrainer
         except ImportError:
             raise ImportError(
                 "pytorch-tabnet required for TabNet anomaly detection. "
