@@ -26,22 +26,8 @@ import numpy as np
 
 from .classifier_optimizer import ClassifierOptimizer
 from .regressor_optimizer import RegressorOptimizer, Boruta
-from .supervised_text import SpacyEmbeddingModel
-from .supervised_img import CNNImg
-from .unsupervised_img import ClusterImg
-
 from scomp_link.utils.logger import get_logger
 logger = get_logger(__name__)
-
-try:
-    from .unsupervised_text import LDAText
-except ImportError:
-    LDAText = None
-
-try:
-    from .contrastive_text import ContrastiveTextClassifier
-except ImportError:
-    ContrastiveTextClassifier = None
 
 class ModelFactory:
     """
@@ -57,26 +43,31 @@ class ModelFactory:
         elif model_type == "RegressorOptimizer":
             return RegressorOptimizer(**kwargs)
         
-        # Text and Img models
+        # Text and Img models (lazy imports — torch/transformers loaded only here)
         if "Contrastive Text" in model_type or "Contrastive Learning" in model_type:
-            if ContrastiveTextClassifier is not None:
+            try:
+                from .contrastive_text import ContrastiveTextClassifier
                 return ContrastiveTextClassifier(**kwargs)
-            else:
+            except ImportError:
                 logger.info("⚠️ ContrastiveTextClassifier requires torch and transformers")
                 return SpacyEmbeddingModel(**kwargs)  # Fallback
         elif "Spacy" in model_type or "Supervised Text" in model_type:
+            from .supervised_text import SpacyEmbeddingModel
             return SpacyEmbeddingModel(**kwargs)
         elif "LDA" in model_type or "Unsupervised Text" in model_type:
-            if LDAText is not None:
+            try:
+                from .unsupervised_text import LDAText
                 return LDAText(**kwargs)
-            else:
+            except ImportError:
                 logger.info("⚠️ LDAText not available")
                 return None
         
         # Image models
         elif "CNN" in model_type or "Supervised Img" in model_type:
+            from .supervised_img import CNNImg
             return CNNImg(**kwargs)
         elif "Cluster Img" in model_type or "Unsupervised Img" in model_type:
+            from .unsupervised_img import ClusterImg
             return ClusterImg(**kwargs)
         
         # Classification
