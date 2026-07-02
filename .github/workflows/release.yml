@@ -73,3 +73,25 @@ jobs:
           api.upload_folder(folder_path='skills/scomp-link', repo_id='Euribor512/scomp-link-skill', repo_type='dataset', commit_message='Release ${GITHUB_REF_NAME}')
           print('✅ HuggingFace skill updated')
           "
+
+  publish-docker:
+    needs: publish-pypi
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/scomp-link:${{ github.ref_name }}
+            ghcr.io/${{ github.repository_owner }}/scomp-link:latest
