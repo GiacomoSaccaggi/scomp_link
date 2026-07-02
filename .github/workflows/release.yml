@@ -1,0 +1,75 @@
+# Automated release workflow: PyPI + GitHub Release + MCP Registry
+# Triggered on new version tags (v*.*.*)
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v3
+      - run: uv sync --all-extras
+      - run: uv run pytest tests/ -q --tb=short
+
+  publish-pypi:
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write  # For trusted publishing
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v3
+      - run: uv build
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+
+  github-release:
+    needs: publish-pypi
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          files: |
+            dist/*.whl
+            dist/*.tar.gz
+
+  publish-mcp-registry:
+    needs: publish-pypi
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate server.json
+        run: python3 -c "import json; d=json.load(open('server.json')); assert 'packages' in d; print('✅ valid')"
+      - name: Publish to MCP Registry
+        uses: modelcontextprotocol/registry-publish-action@v1
+        with:
+          server-json-path: server.json
+
+  publish-hf-skill:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v3
+      - run: uv sync
+      - name: Upload skill to HuggingFace
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          uv run python -c "
+          from huggingface_hub import HfApi
+          api = HfApi(token='$HF_TOKEN')
+          api.create_repo('GiacomoSaccaggi/scomp-link-skill', repo_type='dataset', exist_ok=True)
+          api.upload_folder(folder_path='skills/scomp-link', repo_id='GiacomoSaccaggi/scomp-link-skill', repo_type='dataset', commit_message='Release ${GITHUB_REF_NAME}')
+          print('✅ HuggingFace skill updated')
+          "
