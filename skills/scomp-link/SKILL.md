@@ -118,7 +118,7 @@ scomp-link pipeline --config pipeline.yaml
 
 ## Visualization & Reports
 
-scomp-link has three visualization engines. See [visualization-guide.md](references/visualization-guide.md) for full details.
+scomp-link has three visualization engines. See [visualization-guide.md](https://github.com/GiacomoSaccaggi/scomp_link/blob/main/skills/scomp-link/references/visualization-guide.md) for full details.
 
 ### Quick Reference
 
@@ -221,4 +221,4 @@ scomp-link mcp
 python -m scomp_link.mcp_server
 ```
 
-See [workflow-patterns.md](references/workflow-patterns.md) for complete workflow examples.
+See [workflow-patterns.md](https://github.com/GiacomoSaccaggi/scomp_link/blob/main/skills/scomp-link/references/workflow-patterns.md) for complete workflow examples.
