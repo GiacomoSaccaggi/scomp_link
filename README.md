@@ -10,6 +10,10 @@
 [![License](https://img.shields.io/github/license/GiacomoSaccaggi/scomp_link)](https://github.com/GiacomoSaccaggi/scomp_link/blob/main/LICENSE)
 [![Code style: ruff](https://img.shields.io/badge/code%20style-ruff-000000.svg)](https://github.com/astral-sh/ruff)
 [![Typed](https://img.shields.io/badge/typing-typed-blue)](https://peps.python.org/pep-0561/)
+[![MCP](https://img.shields.io/badge/MCP-15_tools-blue?logo=anthropic)](https://modelcontextprotocol.io)
+[![Claude](https://img.shields.io/badge/Works_with-Claude-blueviolet?logo=anthropic)](AGENT_INTEGRATION.md)
+[![Kiro](https://img.shields.io/badge/Works_with-Kiro-orange)](AGENT_INTEGRATION.md)
+[![Cursor](https://img.shields.io/badge/Works_with-Cursor-green)](AGENT_INTEGRATION.md)
 
 
 <!-- mcp-name: io.github.giacomosaccaggi/scomp-link -->
