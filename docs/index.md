@@ -15,9 +15,12 @@
 
 It provides:
 
-- A **CLI** with 12 commands for zero-code ML workflows
+- A **CLI** with 25 commands for zero-code ML workflows
 - A **Python API** for programmatic use and integration
 - A custom **`.scomp` format** for saving and loading complete pipelines
+- **39 chart types** across 3 visualization engines (Plotly, RAWGraphs, Highcharts)
+- An **MCP server** for AI agent integration (Claude, Kiro, Cursor, VS Code Copilot)
+- A **REST API server** (`scomp-link serve`) for model deployment
 
 ---
 
@@ -26,95 +29,67 @@ It provides:
 | Category | What you get |
 |----------|-------------|
 | 🎯 **Pipeline** | Automated model selection, training, validation, HTML reports |
-| ⌨️ **CLI** | 13 commands: `run`, `predict`, `explain`, `engineer`, `forecast`, `anomaly`, `drift`, `fairness`, `quality`, `report`, `compare`, `info`, `init` |
+| ⌨️ **CLI** | 25 commands: `run`, `predict`, `text`, `cluster`, `tune`, `validate`, `explain`, `engineer`, `forecast`, `anomaly`, `drift`, `fairness`, `quality`, `describe`, `report`, `compare`, `monitor`, `serve`, `export`, `pipeline`, `info`, `init`, `list-models`, `check-deps`, `mcp` |
 | 🔧 **Preprocessing** | Polars-backed cleaning, feature engineering (interactions, log, dates, target encoding, binning), data quality profiling |
-| 🤖 **Models** | Regression, classification, clustering, time series forecasting, anomaly detection, NLP (BERT contrastive), images (CNN) |
-| ⚡ **Tuning** | Optuna (Bayesian), Halving Grid Search, Early Stopping CV |
+| 🤖 **Models** | Regression, classification, clustering, time series, anomaly detection, text (BERT contrastive + TF-IDF), images (CNN) |
+| ⚙️ **Tuning** | Optuna (Bayesian), Halving Grid Search, Early Stopping CV |
 | ✅ **Validation** | K-Fold, LOOCV, Bootstrap, ensemble (voting/stacking) |
-| 🔬 **Explainability** | SHAP values, LIME explanations |
-| 📊 **Monitoring** | Data drift detection (PSI + KS test) |
-| ⚖️ **Fairness** | Demographic parity, disparate impact (4/5 rule), equalized odds |
-| 💾 **Persistence** | Custom `.scomp` format (model + preprocessor + config + metrics + sample data) |
-| 📋 **Reporting** | Interactive HTML reports (Plotly), data quality reports |
+| 🔍 **Explainability** | SHAP values, LIME explanations |
+| 📊 **Monitoring** | Data drift detection (PSI + KS), anomaly detection, fairness metrics, production monitoring |
+| 💾 **Persistence** | Custom `.scomp` format + export to pickle, joblib, ONNX |
+| 📈 **Visualization** | 31 RAWGraphs SVG charts, Plotly interactive charts, Highcharts (streamgraph, heatmap, gantt) |
+| 📝 **Reporting** | Interactive HTML reports with embedded charts, data quality reports, validation reports |
+| 🤝 **Agent Integration** | MCP server (15 tools, 3 resources, 4 prompts) + Agent Skill (SKILL.md) |
+| 🚀 **Deployment** | REST API serving (Flask), YAML-driven pipelines |
 
 ---
 
-## Installation
+## Quick Start
 
 ```bash
 pip install scomp-link
-```
 
-Requires Python 3.10+.
-
----
-
-## Quick Start (CLI)
-
-```bash
-# Scaffold a project
-scomp-link init my_project
-
-# Profile data
-scomp-link quality --data data.csv --output report.html
+# Profile your data
+scomp-link describe --data train.csv
 
 # Train a model
-scomp-link run --data data.csv --target y --task regression --save-artifact model.scomp
+scomp-link run --data train.csv --target price --task regression --save-artifact model.scomp
 
-# Predict
-scomp-link predict --artifact model.scomp --data new_data.csv --output predictions.csv
-```
+# Tune hyperparameters
+scomp-link tune --data train.csv --target price --task regression --method optuna --n-trials 100 --save-artifact best.scomp
 
-See the full [CLI Reference](cli.md) for all 12 commands.
+# Validate
+scomp-link validate --artifact best.scomp --data test.csv --target price --report report.html
 
----
-
-## Quick Start (Python)
-
-```python
-from scomp_link import ScompLinkPipeline, ScompArtifact, set_verbosity
-
-set_verbosity("info")  # "silent" | "warning" | "info" | "debug"
-
-pipe = ScompLinkPipeline("My Project")
-pipe.set_objectives(["Minimize RMSE"])
-pipe.import_and_clean_data(df)
-pipe.select_variables(target_col='target')
-pipe.choose_model("numerical_prediction")
-results = pipe.run_pipeline(task_type="regression")
-
-# Save complete pipeline
-artifact = ScompArtifact()
-artifact.set_model(pipe.model)
-artifact.set_config(task_type='regression', target_col='target')
-artifact.set_metrics(results['metrics'])
-artifact.save('model.scomp')
+# Deploy
+scomp-link serve --artifact best.scomp --port 8080
 ```
 
 ---
 
-## Typical Workflow
+## Documentation
 
-```
-┌─────────┐    ┌──────────┐    ┌─────────┐    ┌──────────┐    ┌─────────┐
-│ Quality │───▶│ Engineer │───▶│  Train  │───▶│ Explain  │───▶│ Deploy  │
-│ Report  │    │ Features │    │  Model  │    │  Model   │    │ Monitor │
-└─────────┘    └──────────┘    └─────────┘    └──────────┘    └─────────┘
-                                                                    │
-                                                               ┌────▼────┐
-                                                               │  Drift  │
-                                                               │  Check  │
-                                                               └─────────┘
-```
-
-Each step is available as both a CLI command and a Python class.
+- [CLI Reference](cli.md) — All 25 commands with examples
+- [Python API](API_REFERENCE.md) — Programmatic usage
+- [Quick Start](quickstart.md) — Getting started guide
+- [Examples](examples.md) — 34 runnable example scripts
+- [Visualization Guide](visualization.md) — 39 chart types and HTML reporting
+- [Agent Integration](agent-integration.md) — MCP server + SKILL.md for AI agents
+- [Changelog](changelog.md) — Version history
 
 ---
 
-## Next Steps
+## Agent Integration
 
-- [Quick Start Guide](quickstart.md) — step-by-step tutorial
-- [CLI Reference](cli.md) — all 12 commands with options and examples
-- [API Reference](api/pipeline.md) — Python class documentation
-- [Examples](examples.md) — 26 standalone runnable examples
-- [Changelog](changelog.md) — version history
+scomp-link works with AI agents out of the box:
+
+```bash
+# Start MCP server for Claude/Kiro/Cursor
+pip install scomp-link[mcp]
+scomp-link mcp
+
+# Or use the Agent Skill (zero deps)
+cp -r skills/scomp-link ~/.kiro/skills/
+```
+
+See [Agent Integration Guide](agent-integration.md) for setup instructions.

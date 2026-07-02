@@ -1,0 +1,45 @@
+# scomp-link Pipeline Configuration Template
+# Run with: scomp-link pipeline --config this_file.yaml
+
+# Required fields
+data: data/train.csv          # Path to training data (CSV, TSV, Parquet)
+target: target_column         # Target column name
+task: regression              # regression | classification
+
+# Optional: pipeline name
+name: my_pipeline
+
+# Optional: Feature Engineering
+# Uncomment to enable
+# engineer:
+#   interactions: true        # Polynomial feature interactions
+#   log_transform: true       # Log1p for skewed distributions
+#   date_features: false      # Extract year/month/dow from date columns
+#   target_encode: false      # Target-encode high-cardinality categoricals
+#   auto_bin: false           # Quantile binning
+
+# Optional: Hyperparameter Tuning
+# Uncomment to enable
+# tune:
+#   method: optuna            # optuna | halving
+#   n_trials: 50              # Number of optimization trials
+
+# Optional: Model Hint (skip auto-selection)
+# model_hint: numerical_prediction  # Force specific model type
+
+# Optional: Ensemble Learning
+# ensemble: voting            # voting | stacking
+
+# Optional: Advanced Cross-Validation
+# advanced_cv: true
+
+# Optional: Test Size
+# test_size: 0.2
+
+# Optional: Validation on separate test data
+# validate:
+#   test_data: data/test.csv  # Path to test data
+#   report: reports/validation_report.html  # HTML report output
+
+# Optional: Save trained model
+# save: models/my_model.scomp

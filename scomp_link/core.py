@@ -46,8 +46,19 @@ class ScompLinkPipeline:
     def import_and_clean_data(self, df: pd.DataFrame):
         """Importation and cleaning of data (P3-P4)."""
         logger.info("Importing and cleaning data...")
-        self.preprocessor = Preprocessor(df)
-        self.df = self.preprocessor.clean_data()
+        # Detect columns containing array-like objects (e.g., image data)
+        # These can't be converted to polars, so skip Preprocessor for them
+        array_cols = [c for c in df.columns if df[c].dtype == object and
+                      len(df) > 0 and isinstance(df[c].iloc[0], np.ndarray)]
+        if array_cols:
+            logger.info(f"Detected array columns (skipping polars conversion): {array_cols}")
+            # Keep raw DataFrame — just do basic dedup on non-array columns
+            non_array_cols = [c for c in df.columns if c not in array_cols]
+            self.df = df.drop_duplicates(subset=non_array_cols).reset_index(drop=True)
+            self.preprocessor = None
+        else:
+            self.preprocessor = Preprocessor(df)
+            self.df = self.preprocessor.clean_data()
         logger.info(f"Data imported. Rows after cleaning: {len(self.df)}")
 
     def select_variables(self, target_col: str, feature_cols: Optional[List[str]] = None):

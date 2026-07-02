@@ -1,0 +1,6 @@
+{
+  "scomp-link": {
+    "command": "scomp-link",
+    "args": ["mcp"]
+  }
+}

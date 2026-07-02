@@ -1,0 +1,73 @@
+{
+  "$schema": "https://ard-spec.org/schema/v1/ai-catalog.json",
+  "version": "1.0",
+  "organization": {
+    "name": "scomp-link",
+    "url": "https://github.com/GiacomoSaccaggi/scomp_link",
+    "description": "End-to-end ML toolkit with 25 CLI commands, 39 chart types, and MCP server for AI agents."
+  },
+  "capabilities": [
+    {
+      "type": "mcp-server",
+      "name": "scomp-link",
+      "description": "ML toolkit MCP server: train models, tune hyperparameters, detect drift, generate reports with 39 chart types, detect anomalies, forecast time series, check fairness, serve models as REST APIs.",
+      "transport": "stdio",
+      "command": "scomp-link mcp",
+      "install": "pip install scomp-link[mcp]",
+      "documentation": "https://github.com/GiacomoSaccaggi/scomp_link/blob/main/AGENT_INTEGRATION.md",
+      "tools": [
+        "describe_data", "train_model", "predict", "validate_model",
+        "detect_drift", "detect_anomalies", "check_fairness", "forecast_series",
+        "engineer_features", "cluster_data", "generate_report", "create_visualization",
+        "compare_models", "export_model"
+      ],
+      "resources": [
+        "scomp://artifact/{path}",
+        "scomp://data/{path}",
+        "scomp://models"
+      ],
+      "prompts": [
+        "ml_workflow", "debug_model", "monitor_production", "create_dashboard"
+      ]
+    },
+    {
+      "type": "cli",
+      "name": "scomp-link",
+      "description": "25 CLI commands for zero-code ML workflows: training, tuning, validation, monitoring, deployment.",
+      "install": "pip install scomp-link",
+      "commands": [
+        "run", "predict", "text", "cluster", "tune", "validate", "explain",
+        "engineer", "forecast", "anomaly", "drift", "fairness", "quality",
+        "describe", "report", "compare", "monitor", "serve", "export",
+        "pipeline", "info", "init", "list-models", "check-deps", "mcp"
+      ]
+    },
+    {
+      "type": "python-library",
+      "name": "scomp_link",
+      "description": "Python API for ML pipelines, model persistence (.scomp), HTML reporting, and 39 visualization types.",
+      "install": "pip install scomp-link",
+      "package": "scomp-link",
+      "pypi": "https://pypi.org/project/scomp-link/",
+      "classes": [
+        "ScompLinkPipeline", "ScompArtifact", "RegressorOptimizer", "ClassifierOptimizer",
+        "AnomalyDetector", "TimeSeriesForecaster", "OptunaOptimizer", "DriftDetector",
+        "FairnessMetrics", "ShapExplainer", "LimeExplainer", "FeatureEngineer",
+        "DataQualityReport", "Validator", "ScompLinkHTMLReport"
+      ]
+    },
+    {
+      "type": "agent-skill",
+      "name": "scomp-link",
+      "description": "Agent skill with decision tree, CLI reference, visualization guide, and workflow patterns.",
+      "path": "skills/scomp-link/SKILL.md",
+      "install_kiro": "cp -r skills/scomp-link ~/.kiro/skills/",
+      "install_claude": "cp -r skills/scomp-link .claude/skills/"
+    }
+  ],
+  "tags": [
+    "machine-learning", "data-science", "automl", "visualization", "html-report",
+    "anomaly-detection", "time-series", "drift-detection", "fairness", "explainability",
+    "model-serving", "hyperparameter-tuning", "mcp", "agent-tool"
+  ]
+}

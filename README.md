@@ -11,6 +11,8 @@
 [![Code style: ruff](https://img.shields.io/badge/code%20style-ruff-000000.svg)](https://github.com/astral-sh/ruff)
 [![Typed](https://img.shields.io/badge/typing-typed-blue)](https://peps.python.org/pep-0561/)
 
+
+<!-- mcp-name: io.github.giacomosaccaggi/scomp-link -->
 ---
 
 ## Overview
@@ -36,7 +38,7 @@ Requires Python 3.10+. Import is near-instant (~6ms) thanks to lazy loading — 
 | Category | Features |
 |----------|----------|
 | **Pipeline** | Automated model selection, training, validation, HTML reports |
-| **CLI** | 13 commands — `run`, `predict`, `explain`, `engineer`, `forecast`, `anomaly`, `drift`, `fairness`, `quality`, `report`, `compare`, `info`, `init` |
+| **CLI** | 24 commands — `run`, `predict`, `text`, `cluster`, `tune`, `validate`, `explain`, `engineer`, `forecast`, `anomaly`, `drift`, `fairness`, `quality`, `describe`, `report`, `compare`, `monitor`, `serve`, `export`, `pipeline`, `info`, `init`, `list-models`, `check-deps` |
 | **Preprocessing** | Data cleaning, feature engineering (interactions, log, dates, target encoding, binning), data quality profiling |
 | **Models** | Regression, classification, clustering, time series forecasting, anomaly detection, text (BERT contrastive), images (CNN) |
 | **Tuning** | Optuna (Bayesian), Halving Grid Search, Early Stopping CV |
@@ -56,7 +58,10 @@ Requires Python 3.10+. Import is near-instant (~6ms) thanks to lazy loading — 
 # Scaffold a new project
 scomp-link init my_project
 
-# Profile your data
+# Quick dataset profiling
+scomp-link describe --data data.csv --format table
+
+# Full data quality report
 scomp-link quality --data data.csv --output report.html
 
 # Feature engineering
@@ -65,32 +70,58 @@ scomp-link engineer --data data.csv --target y --interactions --log-transform --
 # Train a model
 scomp-link run --data features.csv --target y --task regression --save-artifact model.scomp
 
+# Train with text data
+scomp-link text --data tickets.csv --text-col message --target category --method tfidf
+
+# Clustering
+scomp-link cluster --data customers.csv --n-clusters 5 --plot clusters.html
+
+# Hyperparameter tuning
+scomp-link tune --data train.csv --target y --task regression --method optuna --n-trials 100
+
 # Predict
 scomp-link predict --artifact model.scomp --data new_data.csv --output predictions.csv
+
+# Validate on test data
+scomp-link validate --artifact model.scomp --data test.csv --target y --report report.html
 
 # Explain
 scomp-link explain --artifact model.scomp --data test.csv
 
 # Detect drift
-scomp-link drift --reference train.csv --current production.csv
+scomp-link drift --reference train.csv --current production.csv --plot drift.html
+
+# Production monitoring (drift + quality + performance)
+scomp-link monitor --reference train.csv --current prod.csv --artifact model.scomp --target y
 
 # Forecast time series
-scomp-link forecast --data series.csv --column value --horizon 30
+scomp-link forecast --data series.csv --column value --horizon 30 --plot forecast.html
 
 # Anomaly detection
-scomp-link anomaly --data data.csv --methods iforest,lof
+scomp-link anomaly --data data.csv --methods iforest,lof,tabnet,transformer
 
 # Fairness check
 scomp-link fairness --data preds.csv --target y_true --predicted y_pred --sensitive gender
 
 # Compare models
-scomp-link compare --artifacts v1.scomp v2.scomp
+scomp-link compare --artifacts v1.scomp v2.scomp --plot comparison.html
 
-# Generate EDA report
+# Run full pipeline from YAML config
+scomp-link pipeline --config pipeline.yaml
+
+# Serve model as REST API
+scomp-link serve --artifact model.scomp --port 8080
+
+# Export model to standard format
+scomp-link export --artifact model.scomp --format onnx
+
+# Generate reports
 scomp-link report --data data.csv --output eda_report.html
-
-# Generate model evaluation report
 scomp-link report --artifact model.scomp --data test.csv --output model_report.html
+
+# Utilities
+scomp-link list-models
+scomp-link check-deps
 ```
 
 ---
@@ -252,7 +283,7 @@ results = detector.fit_predict(df, features=['col1', 'col2', 'col3'])
 
 ```
 scomp_link/
-├── cli.py                    # CLI (13 commands)
+├── cli.py                    # CLI (24 commands)
 ├── core.py                   # ScompLinkPipeline orchestrator
 ├── preprocessing/
 │   ├── data_processor.py     # Preprocessor (polars backend)
@@ -290,6 +321,44 @@ scomp_link/
 ```
 
 ---
+
+
+---
+
+## AI Agent Integration
+
+scomp-link works natively with AI agents via **MCP (Model Context Protocol)** and **Agent Skills**.
+
+### MCP Server (15 tools for structured agent calls)
+
+```bash
+pip install scomp-link[mcp]
+scomp-link mcp  # Starts MCP server (stdio transport)
+```
+
+**Claude Desktop** (`claude_desktop_config.json`):
+```json
+{"mcpServers": {"scomp-link": {"command": "scomp-link", "args": ["mcp"]}}}
+```
+
+**Kiro** (`.kiro/mcp.json`):
+```json
+{"mcpServers": {"scomp-link": {"command": "scomp-link", "args": ["mcp"]}}}
+```
+
+**Available tools:** `describe_data`, `train_model`, `predict`, `validate_model`, `detect_drift`, `detect_anomalies`, `check_fairness`, `forecast_series`, `engineer_features`, `cluster_data`, `generate_report`, `create_visualization`, `compare_models`, `export_model`
+
+### Agent Skill (zero-dependency documentation)
+
+```bash
+# For Kiro
+cp -r skills/scomp-link ~/.kiro/skills/
+
+# For Claude Code
+cp -r skills/scomp-link .claude/skills/
+```
+
+See [AGENT_INTEGRATION.md](AGENT_INTEGRATION.md) for full setup guide.
 
 ## Testing
 

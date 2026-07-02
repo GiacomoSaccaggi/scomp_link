@@ -1,0 +1,14 @@
+# Smithery MCP Server Configuration
+# https://smithery.ai/docs/build/publish
+
+startCommand:
+  type: stdio
+  configSchema:
+    type: object
+    properties: {}
+  commandFunction: |-
+    (config) => ({ command: "scomp-link", args: ["mcp"] })
+
+build:
+  dockerfile: ""
+  dockerBuildPath: ""
