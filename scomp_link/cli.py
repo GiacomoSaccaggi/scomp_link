@@ -1577,7 +1577,7 @@ Examples:
   scomp-link forecast --data series.csv --column value --horizon 30 --plot forecast.html
 """,
     )
-    parser.add_argument("--version", action="version", version="%(prog)s 1.2.4")
+    parser.add_argument("--version", action="version", version="%(prog)s 1.2.5")
     subparsers = parser.add_subparsers(dest="command", help="Available commands")
 
     # ── run ──
