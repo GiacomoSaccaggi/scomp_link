@@ -27,6 +27,7 @@ jobs:
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           password: ${{ secrets.PYPI_TOKEN }}
+          skip-existing: true
 
   github-release:
     needs: publish-pypi
@@ -49,11 +50,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Validate server.json
-        run: python3 -c "import json; d=json.load(open('server.json')); assert 'packages' in d; print('✅ valid')"
-      - name: Publish to MCP Registry
-        uses: modelcontextprotocol/registry-publish-action@v1
-        with:
-          server-json-path: server.json
+        run: python3 -c "import json; d=json.load(open('server.json')); assert 'packages' in d; print('✅ server.json valid')"
+      - name: Note
+        run: echo "MCP Registry publish requires manual submission at https://registry.modelcontextprotocol.io — server.json is ready in repo root."
 
   publish-hf-skill:
     needs: test
@@ -93,5 +92,5 @@ jobs:
         with:
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/scomp-link:${{ github.ref_name }}
-            ghcr.io/${{ github.repository_owner }}/scomp-link:latest
+            ghcr.io/giacomosaccaggi/scomp-link:${{ github.ref_name }}
+            ghcr.io/giacomosaccaggi/scomp-link:latest
