@@ -8,15 +8,16 @@ Usage:
     python scripts/bump_version.py minor   # 1.2.2 -> 1.3.0
     python scripts/bump_version.py major   # 1.2.2 -> 2.0.0
 """
-import sys
+
 import re
+import sys
 from pathlib import Path
 
 ROOT = Path(__file__).parent.parent
 INIT_FILE = ROOT / "scomp_link" / "__init__.py"
 
 VERSION_FILES = [
-    (ROOT / "pyproject.toml", r'version = "[^"]+"', 'version = "{v}"'),
+    (ROOT / "pyproject.toml", r'^version = "[^"]+"', 'version = "{v}"'),
     (ROOT / "scomp_link" / "__init__.py", r'__version__ = "[^"]+"', '__version__ = "{v}"'),
     (ROOT / "scomp_link" / "cli.py", r'version="%\(prog\)s [^"]+"', 'version="%(prog)s {v}"'),
     (ROOT / "server.json", r'"version": "[^"]+"', '"version": "{v}"'),
@@ -32,7 +33,7 @@ def get_current_version():
 
 
 def bump(current, part):
-    major, minor, patch = map(int, current.split('.'))
+    major, minor, patch = map(int, current.split("."))
     if part == "patch":
         return f"{major}.{minor}.{patch + 1}"
     elif part == "minor":
@@ -48,7 +49,7 @@ def update_files(new_version):
             print(f"  skip  {filepath.relative_to(ROOT)} (not found)")
             continue
         content = filepath.read_text()
-        new_content = re.sub(pattern, replacement.format(v=new_version), content)
+        new_content = re.sub(pattern, replacement.format(v=new_version), content, count=1, flags=re.MULTILINE)
         if content != new_content:
             filepath.write_text(new_content)
             print(f"  done  {filepath.relative_to(ROOT)}")
@@ -67,4 +68,6 @@ if __name__ == "__main__":
 
     print(f"\n  {current} -> {new_version}\n")
     update_files(new_version)
-    print(f"\n  Next: git add -A && git commit -m 'chore: bump to {new_version}' && git tag v{new_version} && git push --follow-tags")
+    print(
+        f"\n  Next: git add -A && git commit -m 'chore: bump to {new_version}' && git tag v{new_version} && git push --follow-tags"
+    )
