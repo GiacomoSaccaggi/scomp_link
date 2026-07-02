@@ -19,14 +19,14 @@ jobs:
   publish-pypi:
     needs: test
     runs-on: ubuntu-latest
-    permissions:
-      id-token: write  # For trusted publishing
     steps:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v3
       - run: uv build
       - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          password: ${{ secrets.PYPI_TOKEN }}
 
   github-release:
     needs: publish-pypi
