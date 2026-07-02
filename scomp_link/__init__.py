@@ -6,9 +6,10 @@ All public classes are lazily imported via PEP 562 (__getattr__).
 Only the logger is loaded eagerly. Each class loads its dependencies
 on first access, keeping `import scomp_link` near-instant.
 """
+
 from .utils.logger import set_verbosity
 
-__version__ = "1.2.2"
+__version__ = "1.2.3"
 
 _LAZY_IMPORTS = {
     # models
@@ -45,6 +46,7 @@ def __getattr__(name):
     if name in _LAZY_IMPORTS:
         module_path, attr_name = _LAZY_IMPORTS[name]
         import importlib
+
         module = importlib.import_module(module_path, __package__)
         obj = getattr(module, attr_name)
         globals()[name] = obj
