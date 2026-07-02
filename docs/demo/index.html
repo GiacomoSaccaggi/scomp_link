@@ -1,706 +1,402 @@
 <!DOCTYPE html>
-                        <html lang="en">
-                            <head>
-                            
-            <meta charset="utf-8">
-            <meta http-equiv="X-UA-Compatible" content="IE=edge">
-            <meta name="viewport" content="width=device-width, initial-scale=1">
-            <meta name="description" content="Automatic Report">
-            <meta name="author" content="scomp-link toolkit">
-            
-                            <title>scomp-link Demo Report</title>
-                            
-            <link rel="shortcut icon" href="" />
-            <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-            <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet"/>
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
-            <script src="https://code.highcharts.com/gantt/highcharts-gantt.js"></script>
-            <script>
-                var HighchartsGantt = Highcharts; // Rinomina Highcharts Gantt per evitare conflitti
-                // Ora puoi utilizzare Highcharts per Highcharts.js e HighchartsGantt per Highcharts Gantt
-            </script>
-            <script src="https://code.highcharts.com/highcharts.js"></script>
-            <script src="https://code.highcharts.com/modules/streamgraph.js"></script>
-            <script src="https://code.highcharts.com/modules/series-label.js"></script>
-            <script src="https://code.highcharts.com/modules/annotations.js"></script>
-            <script src="https://code.highcharts.com/modules/exporting.js"></script>
-            <script src="https://code.highcharts.com/modules/export-data.js"></script>
-            <script src="https://code.highcharts.com/modules/heatmap.js"></script>
-            <script src="https://code.highcharts.com/gantt/modules/exporting.js"></script>
-            <script src="https://code.highcharts.com/gantt/modules/pattern-fill.js"></script>
-            <script src="https://code.highcharts.com/gantt/modules/accessibility.js"></script>
-            <script>const colors = Highcharts.getOptions().colors;</script>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SCOMP-LINK: The Astromech Arm for Your Python Projects</title>
+    
+    <!-- Bootstrap Core CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    
+    <!-- Bootstrap Core JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
-            <style>
-            html,body{font-family:Baloo 2, sans-serif;font-size:15px;line-height:1.5;text-align: justify;text-justify: inter-word;color:#4D577D;}html{overflow-x:hidden}
-            h1{font-size:32px}h2{font-size:25px;color:#32BBB9;}h3{font-size:15px}h4{font-size:12px}h5{font-size:10px}h6{font-size:9px}
-            h1,h2,h3,h4,h5,h6{font-weight:400;margin:10px 0}.w3-wide{letter-spacing:4px}
-            footer{text-align: center;padding-left: 15%;padding-right: 15%;}
-            header{
-              position: relative;
-              background-position: center;
-              background-repeat: no-repeat;
-              background-size: cover;
-              background-image: url(https://giacomosaccaggi.github.io/deep-dives/sfondo.png);
-              height: 50%;
-              width:100%;
-              color: white;
-              text-align: left;
-              padding-top: 5%;
-              padding-left: 15%;
-            }
-            .user-select-none .svg-container {
-              height: 100%;
-              width:100%;
-            }
-            .report {
-                padding-right: 20%;
-                padding-bottom: 5%;
-                padding-left: 20%;
-            }
-            input[type=button], input[type=submit], input[type=reset] {
-              padding: 16px 32px;
-              text-decoration: none;
-              margin: 4px 2px;
-              cursor: pointer;
-              display: inline-block;
-              border-radius: 4px;
-              background-color: white;
-              color:  #4614B4;
-              border: 2px solid  #6E37FA;
-              text-align: center;
-              transition: all 0.5s;
-              cursor: pointer;
-              margin: 5px;
-            }
-           :root {
-              --radius: 2px;
-              --baseFg: dimgray;
-              --baseBg: white;
-              --accentFg: #5528D2;
-              --accentBg:  #6E37FA;
-            }
-            input[type=button]:hover, input[type=submit]:hover, input[type=reset]:hover {
-                  background-color:  #6E37FA;
-                  color: white;
-                }
+    <style>
+        body {
+            margin: 0;
+            background-color: black;
+            overflow-x: hidden;
+        }
 
-            .plotly-graph-div {
-                        width: 100%;
-            }
-             #container {
-                height: 600px;
-            }
-            .highcharts-label-icon {
-                opacity: 0.5;
-            }
-        
-            .highcharts-figure,
-            .highcharts-data-table table {
-                min-width: 310px;
-                max-width: 800px;
-                overflow: auto;
-                margin: 1em auto;
-            }
-        
-            .highcharts-data-table table {
-                font-family: Verdana, sans-serif;
-                border-collapse: collapse;
-                border: 1px solid #ebebeb;
-                margin: 10px auto;
-                text-align: center;
-                width: 100%;
-                height: auto;
-                max-width: 90000px;
-            }
-            
-            .highcharts-figure {width: 100%;
-                height: auto;
-                max-width: 90000px;}
-        
-            .highcharts-data-table caption {
-                padding: 1em 0;
-                font-size: 1.2em;
-                color: #555;
-            }
-        
-            .highcharts-data-table th {
-                font-weight: 600;
-                padding: 0.5em;
-            }
-        
-            .highcharts-data-table td,
-            .highcharts-data-table th,
-            .highcharts-data-table caption {
-                padding: 0.5em;
-            }
-        
-            .highcharts-data-table thead tr,
-            .highcharts-data-table tr:nth-child(even) {
-                background: #f8f8f8;
-            }
-        
-            .highcharts-data-table tr:hover {
-                background: #f1f7ff;
-            }
-            #table-wrapper {
-              position:relative;
-            }
-            #table-scroll {
-              height:500px;
-              overflow:auto;
-              margin-top:20px;
-            }
-            #table-wrapper table {
-              width:100%;
-            
-            }
-            #table-wrapper table * {
-              color:black;
-            }
-            #table-wrapper table thead th .text {
-              position:absolute;
-              top:-20px;
-              z-index:2;
-              height:20px;
-              width:35%;
-              border:1px solid red;
-            }
-            .column_result_save {
-              float: left;
-              width: 50%;
-              padding: 10px;
-            }
-            select {
-              font: 400 12px/1.3 sans-serif;
-              -webkit-appearance: none;
-              appearance: none;
-              color: var(--baseFg);
-              border: 1px solid var(--baseFg);
-              line-height: 1;
-              outline: 0;
-              padding: 0.65em 2.5em 0.55em 0.75em;
-              border-radius: var(--radius);
-              background-color: var(--baseBg);
-              background-image: linear-gradient(var(--baseFg), var(--baseFg)),
-                linear-gradient(-135deg, transparent 50%, var(--accentBg) 50%),
-                linear-gradient(-225deg, transparent 50%, var(--accentBg) 50%),
-                linear-gradient(var(--accentBg) 42%, var(--accentFg) 42%);
-              background-repeat: no-repeat, no-repeat, no-repeat, no-repeat;
-              background-size: 1px 100%, 20px 22px, 20px 22px, 20px 100%;
-              background-position: right 20px center, right bottom, right bottom, right bottom;   
-            }
+        .star {
+            position: fixed;
+            width: 1px;
+            height: 1px;
+            background-color: white;
+            z-index: 0;
+        }
 
-            select:hover {
-              background-image: linear-gradient(var(--accentFg), var(--accentFg)),
-                linear-gradient(-135deg, transparent 50%, var(--accentFg) 50%),
-                linear-gradient(-225deg, transparent 50%, var(--accentFg) 50%),
-                linear-gradient(var(--accentFg) 42%, var(--accentBg) 42%);
-            }
-
-            select:active {
-              background-image: linear-gradient(var(--accentFg), var(--accentFg)),
-                linear-gradient(-135deg, transparent 50%, var(--accentFg) 50%),
-                linear-gradient(-225deg, transparent 50%, var(--accentFg) 50%),
-                linear-gradient(var(--accentFg) 42%, var(--accentBg) 42%);
-              color: var(--accentBg);
-              border-color: var(--accentFg);
-              background-color: var(--accentFg);
-            }
-            .collapsiblemygs {
-                  background-color: #777;
-                  color: white;
-                  cursor: pointer;
-                  padding: 18px;
-                  width: 100%;
-                  border: none;
-                  text-align: left;
-                  outline: none;
-                  font-size: 15px;
-                }
-
-                .active, .collapsiblemygs:hover {
-                  background-color: #555;
-                }
-
-                .content {
-                  padding: 0 18px;
-                  display: block;
-                  overflow: hidden;
-                  background-color: #f1f1f1;
-                }
-            /*rules*/
-            @media only screen and (max-width: 1024px) {
-            .report{padding-right: 5%; padding-left: 5%;}
-            }
-            /* ----------- iPhone 6+, 7+ and 8+ ----------- */
-            /* Portrait */
-            @media only screen and (max-width: 1024px) {
-            h2{font-size:18px}
-            h3{font-size:10px}
-            }
-            @media only screen and (max-width: 835px) {
-            h2{font-size:18px}
-            h3{font-size:8px}
-            }
-            @media only screen and (max-width: 700px) {
-            h2{font-size:15px}
-            h3{font-size:6px}
-            }
-            @media only screen and (max-width: 525px) {
-            h2{font-size:13px}
-            h3{font-size:5px}
-            }
-            @media only screen and (max-width: 370px) {
-            h2{font-size:10px}
-            h3{font-size:3px}
-            }
-            /* --- PDF PRINT STYLES --- */
-            @media print {
-                .collapsiblemygs {
-                    page-break-before: always;
-                    background-color: transparent !important;
-                    color: black !important;
-                    font-size: 24px !important;
-                    font-weight: bold;
-                    border-bottom: 2px solid var(--accentBg);
-                    padding: 0 0 10px 0 !important;
-                    margin-top: 30px !important;
-                }
-                .content {
-                    display: block !important;
-                    background-color: white !important;
-                    padding: 0 !important;
-                }
-                select, input[type="submit"], input[type="button"], label {
-                    display: none !important;
-                }
-                .print-grid-container {
-                    display: flex !important;
-                    flex-wrap: wrap !important;
-                    justify-content: space-between !important;
-                }
-                .print-grid-item {
-                    display: block !important;
-                    width: 48% !important;
-                    page-break-inside: avoid;
-                }
-                body {
-                    -webkit-print-color-adjust: exact;
-                    print-color-adjust: exact;
-                }
-            }
-            </style>
-            <script src="https://cdn.plot.ly/plotly-2.9.0.min.js"></script>
+        /* Navigation override for Star Wars theme */
+        .navbar-custom {
+            background-color: rgba(0, 0, 0, 0.9);
+            border-bottom: 1px solid #FFE81F;
+        }
         
-                            </head>
-                        <body>    
-                            <header>
-                            <h1>scomp-link Demo Report</h1><br><br><br>
-                        </header>
-                            <div class="report" style="background-color:WHITE">
-                                <button class="collapsiblemygs">Dataset Overview</button> <div class="content"><a href="#" onclick="download_table_as_csv('DatasetSummary');">Download as CSV</a>
-            <div id="table-wrapper">
-                <div id="table-scroll">
-                    <table border="0" id="DatasetSummary" class="scomp-table">
-  <thead>
-    <tr style="text-align: left;">
-      <th>Rows</th>
-      <th>Columns</th>
-      <th>Numeric</th>
-      <th>Categorical</th>
-      <th>Missing</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>10000</td>
-      <td>15</td>
-      <td>10</td>
-      <td>3</td>
-      <td>2.1%</td>
-    </tr>
-  </tbody>
-</table>
+        .navbar-custom .navbar-brand,
+        .navbar-custom .nav li a {
+            color: #FFE81F !important;
+        }
+        
+        .navbar-custom .navbar-brand:hover,
+        .navbar-custom .nav li a:hover {
+            color: #FFF !important;
+        }
+
+        /* Hide default header */
+        .intro-header {
+            display: none;
+        }
+
+        /* Star Wars intro animation */
+        .intro {
+            position: fixed;
+            top: 40%;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1;
+            animation: intro 6s ease-out 1s;
+            color: rgb(75, 213, 238);
+            font-weight: 400;
+            font-size: 2em;
+            opacity: 0;
+            text-align: center;
+            width: 80%;
+        }
+
+        @keyframes intro {
+            0% { opacity: 0; }
+            20% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        /* Logo animation */
+        .logo {
+            position: fixed;
+            top: 30%;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1;
+            animation: logo 9s ease-out 9s;
+            opacity: 0;
+        }
+
+        @keyframes logo {
+            0% {
+                transform: translateX(-50%) scale(2.75);
+                opacity: 1;
+            }
+            50% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+                transform: translateX(-50%) scale(0.1);
+            }
+        }
+
+        /* Scrolling text board */
+        #board {
+            font-family: Century Gothic, CenturyGothic, AppleGothic, sans-serif;
+            transform: perspective(300px) rotateX(25deg);
+            transform-origin: 50% 100%;
+            text-align: justify;
+            position: fixed;
+            margin-left: -9em;
+            font-weight: bold;
+            overflow: hidden;
+            font-size: 300%;
+            height: 50em;
+            width: 18em;
+            bottom: 0;
+            left: 50%;
+            z-index: 1;
+        }
+
+        #board:after {
+            position: absolute;
+            content: ' ';
+            bottom: 60%;
+            left: 0;
+            right: 0;
+            top: 0;
+        }
+
+        #content {
+            animation: scroll 100s linear 16s;
+            position: absolute;
+            top: 100%;
+        }
+
+        @keyframes scroll {
+            0% { top: 100%; }
+            100% { top: -170%; }
+        }
+
+        #board p {
+            color: #FFFF82;
+            margin: 0.5em 0;
+        }
+
+        #title, #subtitle {
+            text-align: center;
+            color: #FFE81F;
+        }
+
+        #board a {
+            color: #FFE81F;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+
+        #board a:hover {
+            color: #FFF;
+            text-shadow: 0 0 10px #FFE81F;
+        }
+
+        /* Footer override */
+        footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            border-top: 1px solid #FFE81F;
+            padding: 20px 0;
+            z-index: 10;
+        }
+
+        footer .fa-stack {
+            color: #FFE81F;
+        }
+
+        footer .copyright {
+            color: #FFE81F;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+        <div class="container-fluid">
+            <div class="navbar-header page-scroll">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    Menu <i class="fa fa-bars"></i>
+                </button>
+                <a class="navbar-brand" href="https://giacomosaccaggi.github.io">Home</a>
+            </div>
+
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="https://pypi.org/project/scomp-link/">PyPI</a>
+                    </li>
+                    <li>
+                        <a href="report.html">Interactive Report Demo</a>
+                    </li>
+                    <li>
+                        <a href="terminal.html">CLI Demo</a>
+                    </li>
+                    <li>
+                        <a href="https://github.com/GiacomoSaccaggi/scomp_link">GitHub</a>
+                    </li>
+                    <li>
+                        <a href="https://giacomosaccaggi.github.io/all.html">All projects</a>
+                    </li>
+                    <li>
+                        <a href="https://giacomosaccaggi.github.io/contact.html">Contact</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Star Wars Opening Crawl -->
+    <section class="intro">
+        A long time ago, in a codebase far,<br> far away....
+    </section>
+
+    <section class="logo">
+        <div style="font-size: 4em; font-weight: bold; color: #FFE81F; text-align: center; font-family: 'Arial Black', sans-serif;">
+            SCOMP-LINK
+        </div>
+    </section>
+
+    <div id="board">
+        <div id="content">
+            <p id="title">Episode V</p>
+            <p id="subtitle">THE ASTROMECH ARM STRIKES BACK</p>
+
+            <br>
+
+            <p>In a data galaxy far, far away, scientists and engineers wage an endless war against chaos. Messy pipelines, hyperparameter nightmares, unexplainable models, and the <strong>Dark Side of repetitive coding</strong> threaten to consume their most precious resource: time.</p>
+
+            <p>But the Rebellion has upgraded its arsenal...</p>
+
+            <br>
+
+            <p id="title">SCOMP-LINK</p>
+
+            <p>A legendary toolkit forged in the fires of real-world ML battles. Much like the versatile interface of an astromech droid, SCOMP-LINK plugs directly into your data, taking over the flight controls and automating the entire journey from raw chaos to production-ready predictions. No manual steering required.</p>
+
+            <br>
+
+            <p id="title">THE JEDI POWERS</p>
+
+            <p><strong>TOTAL AUTOPILOT</strong><br>
+            It handles the whole mission: profiling data quality, engineering features, selecting the model, tuning hyperparameters, training, validating, and generating reports. One command. Full pipeline.</p>
+
+            <p><strong>A DROID FOR EVERY TERRAIN</strong><br>
+            Regression, classification, clustering, time series forecasting, anomaly detection, text understanding, image recognition. One tool to master them all.</p>
+
+            <p><strong>HYPERSPACE NAVIGATION</strong><br>
+            The built-in decision engine analyzes your data and automatically chooses the fastest, most accurate model. Or unleash Optuna's Bayesian optimizer to explore the hyperparameter galaxy at warp speed.</p>
+
+            <p><strong>X-RAY VISION</strong><br>
+            SHAP values and LIME explanations reveal exactly why every prediction is made. No more black boxes. Full transparency at the feature level.</p>
+
+            <p><strong>DRIFT RADAR</strong><br>
+            PSI and Kolmogorov-Smirnov tests continuously monitor production data. The moment distributions shift, you know—before your metrics decay silently.</p>
+
+            <p><strong>FAIRNESS TRIBUNAL</strong><br>
+            Demographic parity. Disparate impact. Equalized odds. The 4/5 rule. Built-in bias detection ensures your model treats everyone fairly—or tells you exactly where it doesn't.</p>
+
+            <p><strong>STRENGTH IN NUMBERS</strong><br>
+            Why rely on one pilot? SCOMP-LINK combines multiple models into an Elite Squadron using voting and stacking ensembles for superior performance.</p>
+
+            <p><strong>MISSION DEBRIEFINGS</strong><br>
+            After every run, it generates interactive HTML reports. Data quality profiles. Fairness dashboards. Drift charts. Clear visuals—no guesswork involved.</p>
+
+            <br>
+
+            <p id="title">THE WORKFLOW</p>
+
+            <p><strong>PHASE 1: RECONNAISSANCE</strong><br>
+            Profile your data. Find missing values, constants, duplicates, high correlations. Know your terrain before engaging.</p>
+
+            <p><strong>PHASE 2: ARMAMENT</strong><br>
+            Forge new features. Log transforms, polynomial interactions, target encoding, date extraction. Prepare your weapons.</p>
+
+            <p><strong>PHASE 3: ENGAGEMENT</strong><br>
+            Train, optimize, validate. Ensemble if needed. LOOCV, Bootstrap, Walk-Forward for maximum confidence. Save the .scomp artifact.</p>
+
+            <p><strong>PHASE 4: INTELLIGENCE</strong><br>
+            Understand every decision. SHAP and LIME reveal the Force behind each prediction.</p>
+
+            <p><strong>PHASE 5: DEPLOYMENT</strong><br>
+            Load artifact, predict on new data. One call. Preprocessor + model chained automatically.</p>
+
+            <p><strong>PHASE 6: VIGILANCE</strong><br>
+            Monitor drift and fairness continuously. Catch distribution shifts and bias before they cause damage.</p>
+
+            <br>
+
+            <p id="title">ADVANCED CAPABILITIES</p>
+
+            <p><strong>12 CLI COMMANDS</strong><br>
+            Zero-code ML from the terminal: run, predict, explain, engineer, forecast, anomaly, drift, fairness, quality, compare, info, init. Full power without writing Python.</p>
+
+            <p><strong>THE .SCOMP FORMAT</strong><br>
+            One file captures your entire pipeline: model, preprocessor, config, metrics, feature schema, sample data. Save it, ship it, load it anywhere, predict in one call.</p>
+
+            <p><strong>TEMPORAL MASTERY</strong><br>
+            ARIMA, SARIMA, Exponential Smoothing with auto-seasonality detection. Walk-forward cross-validation. Confidence intervals. Time series done right.</p>
+
+            <br>
+
+            <p id="title">BATTLE-HARDENED DESIGN</p>
+
+            <p>• <strong>Resilient:</strong> 185 combat simulations (tests) passing. Zero tolerance for failure.<br>
+            • <strong>Fast:</strong> Polars-powered preprocessing at lightspeed.<br>
+            • <strong>Modular:</strong> Heavy deps (torch, tensorflow) only loaded when needed.<br>
+            • <strong>Silent:</strong> Configurable logging—disappears into the background on demand.<br>
+            • <strong>Typed:</strong> Full IDE support with py.typed marker.<br>
+            • <strong>Battle-tested:</strong> CI/CD across Python 3.10–3.13. Codecov. Auto-publish to PyPI on tag.</p>
+
+            <br>
+
+            <p id="title">THE FORCE IS STRONG</p>
+
+            <p>SCOMP-LINK brings order to the Machine Learning galaxy. Stop fighting your tools and start fighting your problems. From data profiling to model monitoring—everything is handled.</p>
+
+            <p>No more trial and error. No more repetitive code. Just pure, automated power.</p>
+
+            <br>
+
+            <p id="title">MAY THE CODE BE WITH YOU</p>
+
+            <p>Join the Rebellion against boring workflows. Install SCOMP-LINK today and let intelligent automation guide your journey.</p>
+
+            <p>pip install scomp-link</p>
+
+            <br>
+
+            <p style="text-align: center;"><a href="https://github.com/GiacomoSaccaggi/scomp-link" target="_blank">→ VISIT THE REBEL BASE ON GITHUB ←</a></p>
+
+            <br><br>
+
+            <p style="text-align: center; font-size: 0.8em;">SCOMP-LINK v1.1.0<br>
+            The Astromech Arm for Your Python Projects<br>
+            MIT License • Python 3.10+ • 185 Tests • 12 CLI Commands</p>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                    <ul class="list-inline text-center">
+                        <li>
+                            <a href="https://twitter.com/SaccaggiGiacomo">
+                                <span class="fa-stack fa-lg">
+                                    <i class="fa fa-circle fa-stack-2x"></i>
+                                    <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                                </span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://www.linkedin.com/in/giacomo-saccaggi-782439163/">
+                                <span class="fa-stack fa-lg">
+                                    <i class="fa fa-circle fa-stack-2x"></i>
+                                    <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                                </span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://github.com/GiacomoSaccaggi/">
+                                <span class="fa-stack fa-lg">
+                                    <i class="fa fa-circle fa-stack-2x"></i>
+                                    <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                                </span>
+                            </a>
+                        </li>
+                    </ul>
+                    <p class="copyright text-muted">Copyright &copy; GiacomoSaccaggi</p>
                 </div>
             </div>
-            <style>
-                .scomp-table {
-                    width: 100%;
-                    border-collapse: collapse;
-                    font-size: 13px;
-                    font-family: inherit;
-                }
-                .scomp-table thead tr {
-                    background-color: #6E37FA !important;
-                    color: white !important;
-                    text-align: left;
-                }
-                .scomp-table th {
-                    color: white !important;
-                    background-color: #6E37FA !important;
-                }
-                .scomp-table th, .scomp-table td {
-                    padding: 10px 12px;
-                    border-bottom: 1px solid #e0e0e0;
-                }
-                .scomp-table tbody tr:nth-child(even) {
-                    background-color: #f8f9fa;
-                }
-                .scomp-table tbody tr:hover {
-                    background-color: #9682FF22;
-                }
-            </style><p>Interactive demo report generated by scomp-link. Expand sections below to explore charts.</p></div><button class="collapsiblemygs">Feature Distributions</button> <div class="content">                <h2>Income Distribution</h2>
-                <div id="Income_Distribution" class="plotly-graph-div"></div>
-                <script>
-                        Plotly.newPlot(
+        </div>
+    </footer>
 
-                            "Income_Distribution",
-
-                            [{"legendgroup":"group1","legendgrouptitle":{"text":"Income ($)"},"marker":{"color":"#DCD2FF"},"name":"Histogram","nbinsx":10,"opacity":0.9,"x":[57450.71229516849,47926.03548243223,59715.32807151039,72845.44784612038,46487.69937914996,46487.945645762295,73688.19223261088,61511.52093729363,42957.88421097572,58138.40065378947,43048.734607813065,43014.05369644615,53629.43407349051,21300.79633013303,24126.23251230451,41565.68706138541,34807.53319498364,54713.709988929106,36379.638867181835,28815.44447997063,71984.7315338233,46613.355492701965,51012.92307031886,28628.77720679815,41834.25913212226,51663.83884564799,32735.09633866546,55635.47027518508,40990.419651217926,45624.593753100846,40974.40081655905,77784.17276763407,49797.541628930994,34134.3360656615,62338.173681547836,31687.345250434668,53132.95392507133,20604.948141803365,30077.209266523543,52952.91853803685,61076.99869993116,52570.524217849554,48265.27576417639,45483.444566160666,27822.17014448859,39202.33687407937,43090.41843560319,65856.83339328374,55154.27434352692,23554.39766955899,54861.25954092192,44223.76579375525,39846.169995410615,59175.14433261302,65464.99283743926,63969.20178674298,37411.73715166042,45361.81436223178,54968.95147105346,64633.17690683539,42812.38643232065,47215.115350042746,33404.97538990958,32056.90063878994,62187.88733591297,70343.60042856235,48919.848176294996,65052.99346838036,55424.54037571451,40323.203680923136,55420.934082626205,73070.54849698953,49462.60941335073,73469.6548372101,10703.823438653832,62328.53756562836,51305.706023572566,45514.88974301199,51376.41164803253,20186.46628098661,46704.92168243732,55356.6885726762,72168.41067112274,42225.94672589529,37872.595956602185,42473.64434623195,63731.03176553111,54931.266644895266,42053.59694349442,57699.01149670034,51456.16324022061,64529.674857993334,39469.203591839716,45085.067801033474,44118.377703017635,28047.275778018222,54441.80415596864,53915.82908269834,50076.70184963691,46481.1929993728,28769.438869243786,43690.320158519615,44859.282252098456,37965.84096167571,47580.71432500986,56060.762852218075,78292.78851815795,52618.66719247759,53863.25586084147,48883.311263507494,21218.431770514377,49602.291868261746,50903.4531491154,86948.6316872793,47114.58552828316,54523.210135004185,49479.32345442135,32469.82943570702,67142.34221772531,61278.99549030161,61865.47920564571,36359.18817807891,71041.91466404148,28972.234058115788,58802.85640700405,82856.83438714968,35141.955123039676,41505.53405595842,51494.77047631462,42447.86518825701,26740.04853400801,51028.44462209041,34065.44429410843,57103.88645952773,36208.63648649295,73249.01607526309,38251.20061495644,45169.07725691487,62202.758260545044,31537.03525349067,53411.899019061944,69607.14131423642,25887.75148158159,52769.507877984564,53898.24191372635,61727.34307665966,31445.73933682877,30193.150803735854,57829.12348425346,54454.77009849779,53757.39275518815,55196.72314245463,39799.62917632264,53483.80545741505,54396.08709948022,39284.72872960448,77986.61766717135,57107.49381367681,32130.44754196027,59848.30412950744,35379.77494659018,61806.26905613678,67378.93368511106,37689.76522472434,64450.64193866483,56191.71390404747,62330.90239991735,78451.89473980921,46319.17825995694,38693.95753463766,36657.28355561715,37762.845725518426,48843.47435878844,55117.279622249654,54150.36198995029,62407.74873554036,50195.02837816861,71803.01115735975,46030.147501430656,90802.53749884429,59385.01021647509,37142.63665375576,33936.612529083315,57237.08622864778,46648.05822011224,60710.007411381375,57098.56436860317,48907.56631014691,37298.094228973925,27277.291629712032,43302.275718994686,62845.981914852084,53211.40616195306,31313.91831932018,52597.71388776773,55779.76069593255,36742.138456983004,52305.87658918292,50873.13077669,32855.44553254065,55366.81040522425,58411.76789552352,66245.76864762916,65807.03078052355,29334.959480643633,35932.62440127316,57725.529008129895,57706.78926368313,57725.715294590715,107790.97235982082,58563.35766039751,67033.48460270898,64310.02645239804,59770.868769586974,45270.96133039481,61384.53830739901,38407.621781936425,46447.72089889987,42719.54678256345,51228.112090794835,84719.87850010264,21991.02211112378,60293.9028556177,25809.261932155227,42921.0220131585,66334.25895451049,50964.200286431944,33833.82833106041,39270.444361100475,60193.96623402014,39044.50052424295,53246.878843729624,50683.5775985572,40225.99478591274,82159.16133987988,59508.78533477017,19622.861200135892,52796.814721541414,40073.20302847418,62786.50002194336,38112.188923509486,48278.95337799651,57574.80918470686,62986.327912551824,31995.553894163357,44982.481462385775,42875.82033258566,40200.06151139432,76481.81360421646,56074.725664414334,31086.740684974324,63767.92920582164,81832.3429551895,65486.97890826721,27209.4505106898,42736.48890700623,69003.66723779934,39384.958015718286,56657.291422193426,61619.510801440054,36096.04292632875,49107.119659072996,1380.9898989639114,34634.185379985654,46211.4777291026,31283.252270527257,74486.16955897454,28547.87933059051,43399.332699545244,51961.10865929137,71619.09933599173,28462.06773230841,67447.45628232439,50153.4959152938,35277.37023428074,56931.55211394906,52985.895433602054,40996.74684261808,51047.031274850284,44220.2960470736,51702.76017876872,59931.9601178157,73790.25224218029,31432.767517597265,81995.500619844,20718.68300716247,47723.22357446625,58824.75809726865,54214.87801602549,40659.50720269109,46878.16624464087,42604.985980117504,41159.52864583683,62744.03145531537,55355.23228947571,39606.35607109019,63493.99813149876,54609.49281314914,62192.931782584405,59444.432628854185,37565.07483616892,41597.284397045456,61209.40407684893,59155.55398150197,49686.47609053778,51759.91074963173,69164.97343682637,41126.42916746255,58206.460717550566,46967.110213491585,46734.78195159169,66481.65277980786,62381.245234820446,62202.644540009576,69582.18210731493,50315.05762449138,60229.294569424455,45345.99865109816,54862.49528732663,48047.85418448473,51454.93947489077,58927.3553815537,37726.689751497914,81385.8091352819,34909.73927750447,31787.17080818402,67371.66310250101,61874.94040944404,59361.79725578232,59425.1826389642,49816.29840729628,36541.18442771253,51137.068372905895,39842.574327318325,64626.796001266266,47794.13927746792,37617.54204811233,45179.2123752051,56193.97181413436,41544.13170794038,37666.69406650353,53655.30817237868,53674.49856663084,42395.85236943305,42934.425415725156,53480.74906036454,28278.734877540137,28888.043384351673,39223.33668121346,46798.292724322295,54663.61348397007,72130.34325424329,62864.89434803029,47600.922050548594,49714.75688145967,34962.05953043287,49722.30296011415,45670.120416197926,54840.778405071345,37591.53584671515,57790.197713617585,72991.08369503866,48368.597773147136,56025.67583148412,60352.159875666686,43981.692921712456,53361.38722715625,50188.88601172692,51465.14147823248,38404.853242168,50367.652613884144,57469.974368681746,71767.15411692562,64389.0623912781,82297.73686267334,38489.78655667926,63084.80955081017,52750.130086075274,82847.04399826509,37875.525719672725,37404.17236728836,41009.11031833967,18141.564135352895,42113.674674788585,38613.01007669453,52255.906797143114,55126.339636657394,78142.56258823829,64256.35757279075,41346.44516506395,36523.77992977463,57378.78757259758,30196.501894690366,77471.8814878153,67691.60181081931,42962.365218429426,24302.98206363684,70308.0856124812,48281.902321210735,68567.24467960192,26083.585118084495,41009.374655693406,50078.65549577275,50704.70890647113,43249.01792781134,59342.748985212485,33985.69355926108,47864.3077246806,51804.434475678485,57716.582510881235,60674.223171333346,33130.36862243196,26988.287438965664,69165.15232847763,54984.71017969387,38772.701951651696,73267.27963283785,51735.11951439288,67689.45776095739,51012.777221151635,80911.21887322981,76330.11263664806,46265.5377728139,64573.56426431533,59680.639243777216,70529.47336298523,35526.14809129843,60290.77189997659,65876.36730274382,23618.907703653287,32251.122310013372,19411.51733359849,45958.89748333163,60763.133836939436,72535.35578144042,51111.42170629663,74429.23318356938,29298.47812677663,24449.26340967268,49166.78451655072,55760.98173408961,49509.578778588606,18988.36849940185,48663.19940730817,30432.957492427202,60045.08823245058,55498.973691452724,35901.80320508967,42291.9962399496,34111.79717166573,49059.813540902425,64327.134807518574,35214.10930496684,57560.697732767665,42046.13572441339,38106.907516064835,48394.544600681635,34471.365163709386,41695.26041979227,32031.831611167272,79470.87699374584,50528.95327957593,39504.117380111216,53209.69866101333,48315.07925463755,46685.45600700165,59212.50050065138,61362.61565070957,42042.48278584209,41362.7263903298,45874.22454272534,15471.18252896623,27272.134067021718,70503.11401166787,74674.51570251926,46264.45940665432,58648.35444583649,54668.75231815304,96183.21212682856,66793.62367151865,48081.2361277885,35666.89339099362,25903.30519613641,53051.954538008344,38654.73882073545,28666.19435603489,40301.4067363621,33776.779945784074,75307.12452608848,63224.59635424176,49880.41038025074,72199.16208335038,51160.524614714275,37080.73698007604,72846.86115904486,58083.65065526988,34441.30768510315,47144.91982874588,36865.726199228644,29258.00403553496,63892.66321297462,78641.24960705196,29021.486392712883,58444.538550358564,40240.361463172594,42693.11924352956,41114.09113641696,37040.138454802756,50727.82441917241,37535.748253834434,54056.85238669758,49246.42835826294,46415.77929700386,36386.545069376036,41348.43004147501,61330.86838738634,57513.75781436571,35336.67132802174,51489.98458143839,61270.80685057683,24958.920783179423,58150.402885699026,40060.643615812296,58558.98002889739,38551.11265186225,22926.768490032213,25586.86343175256,50721.27419992073,53895.83752582223,36435.25062343387,59578.88688166061,25077.1990659656,49008.80302029025,31834.75700356315,40222.45838296761,50710.98006974621,37093.799520740715,44231.66683655262,65094.39213821661,41346.62195715277,62535.38168097712,33054.397180135726,57947.06266872924,71623.5293098685,12925.332498090662,38046.57116794285,58656.081907708096,46954.31920935511,55567.188100569634,40940.22219926269,51298.8468120935,47664.84146911881,67516.73092489711,53816.31264951819,55064.039931128034,43821.84550816299,42685.906638912595,43511.627182705684,55916.78213567445,43685.232787696055,54346.62285344619,81131.01197968159,63066.87055147538,45109.647017482384,68018.20883245918,43878.86940467673,19428.13197233219,34878.70533623894,21938.121184612166,44727.297739380374,50276.27568784328,75146.55968412924,54903.910606462436,46713.49206786704,62441.083717752335,16832.970364881723,53534.21837162849,61562.9779083045,27821.206313302377,67156.31064810394,55077.44611241621,43770.681291487985,59491.72799159427,84060.39286706594,52727.99382587743,53723.30879450504,43109.58650689634,37252.33445802813,62455.03724816369,37158.74261136699,51073.49355829089,42835.13829852325,57184.697386195876,55004.931579304226,65563.0991638685,42349.75401717879,45951.87597059943,35318.54426326539,43335.60109885833,55659.50739567279,61354.829249680275,36167.52013733562,63044.088801584905,70334.56788207426,56201.523548355515,78151.937188371,38393.1620134464,31330.179450328746,23319.19626643582,72440.66467233775,59815.484845310864,49166.229936343174,54199.529394797304,33117.66429052435,86686.27969425239,51938.31772962841,51640.92191907339,60886.49935848038,57215.1384760507,53358.26036418697,38142.88316832032,57072.025357039936,78230.3674471255,70181.30069232467,73897.79939959096,42331.76485353222,35155.92769612129,48113.19619850528,50835.87368433042,66412.87277706423,24613.03055427771,72943.2547919092,47629.88152131516,43596.7839507887,34818.434371097486,25177.14992201346,62347.55875942872,51099.76950782606,30650.58650388419,30573.818419045758,44963.229510648074,75035.32287934089,46106.12972954593,27452.855703228408,46313.85403871084,45909.146453784946,9546.700355876426,49185.577002232814,46535.98204686983,60443.095472201276,77734.34142418018,66898.47544321636,45966.669641677545,33402.11136887495,88600.3970487479,50888.27651021732,50208.939378694195,49638.12369334995,52971.271411517824,47834.593821140865,41395.069896796456,41797.115881394115,49508.70094676002,41848.62843299352,39307.313259842536,51596.453415378455,46175.34173868717,72559.89482874033,10235.45287410482,66372.60277883692,68691.27788746444,18899.146513877757,44859.68608879477,44428.38701006313,28887.32457923268,38332.74968613687,33341.36231801257,76284.05665135435,64035.17589721191,69073.32642491237,60825.08096064853,33064.22343174156,42132.196005803395,57340.61841841877,31668.082866620818,60694.97645258582,46395.119027627974,44377.68788675604,60664.39952305237,56663.9496722906,44585.507512713804,67389.94705046373,33784.05008600154,59239.034104163955,58896.51886952575,45356.803410290144,54891.99533363177,31233.296354220456,63860.40528810352,47226.46795335517,42159.154692214404,65735.13838755334,39434.84464185861,28873.080554546606,26650.562397141442,59090.14927018459,30793.559712555754,76321.91272976546,18771.058881744168,75446.84552435057,53165.26200803927,48549.30332194411,41826.21369786575,55987.04171528106,49435.47946362727,66549.52823024782,51713.41472993059,52254.52642192817,44545.81681679216,49145.81564418399,54617.026533380886,24347.474110150615,29777.218668414305,61148.96141034072,52562.981571919125,47240.24995470981,50276.5089959809,55213.72558042507,41903.60479535958,38325.42911896531,52937.67882646522,35324.40833577452,56123.79133571708,24461.245936432395,65437.33455988466,57088.96223619564,53840.44601470813,64740.36475918271,74982.11666693864,65215.55097527196,22386.88653002532,30806.345498964478,40627.72133456482,50391.36575316251,57764.88530703685,39113.84280269802,52801.50146715617,38669.256014700164,40827.23295512078,28900.083547276667,36151.50130833643,29724.730915754997,35361.90120534001,65804.62694911759,35759.01666752085,89485.73097256086,57399.76851321334,52772.54185542311,37124.6332972818,60504.64819113487,41365.43260643339,51830.147219680424,88401.26807403192,48559.10150413025,67239.09989428514,39452.35362311169,49475.17264254557,76562.00953453264,40595.494133183485,77186.72836995393,60616.279031832135,41562.99836158598,59486.116085832815,64588.316744400945,59327.149433257946,26446.629201643154,39092.94236262697,46287.22046672743,48883.498563499306,59310.08146326017,52665.51501399881,29969.83461934848,55702.967765089445,59158.786179257346,58396.856718965595,66211.71088331932,62508.83231823356,56887.70118842655,48947.51432812029,25085.58599726013,56444.273286988784,53115.31530744667,54073.6825579306,30848.77136269536,33784.151893876064,65797.29279999355,49406.672692150176,60222.510460589365,50424.77564195692,50446.34209243618,64074.25708963996,42259.32907673939,51441.811654114754,43065.87066942436,43482.55658851527,45362.41814797041,53332.00657450569,42818.77067504784,68836.34188360281,36580.89046670744,47196.92533757961,43404.034125887374,71704.668265306,52948.32164767362,65477.66809202952,27716.59440444542,54005.75398803888,63344.46193435155,51234.259839131366,65982.20562598026,42240.673248494415,71140.2116027837,84483.47185428876,44557.42159340512,43317.462178988426,71800.7671567655,73693.58218596068,42157.09959270098,43697.19774356214,45773.230867092396,29833.242334485843,36220.22080273703,34937.88849871898,38483.03652343807,49479.72668919828,53513.22098804781,73257.50739221115,35024.68938891814,64764.83597714876,46790.16733661736,49258.044355213504,60122.29238249906,33159.16967656552,55736.14619276076,52496.78312319584,57386.76896012224,54337.52965861727,86829.50209866342,40433.900236230256,42035.04567497274,40652.89210362853,41667.843212596184,40439.19309040223,67835.24796661327,71307.56371984782,41438.805593757854,37514.66640343657,57071.23334579606,41716.65433578543,59493.97726633266,53043.845312769496,27263.838275041522,73212.57801995092,76938.16509643283,40808.16964273421,44184.47660096024,54287.98086087358,55016.851849805375,59878.164090092454,80153.06808149524,47345.79158758926,38025.541331923196,29310.21157978209,39036.04940087121,49503.095406893044,76918.36795276681,42235.830514457426,53356.819274583475,49753.65655890872,67825.89910172127,87903.98638810433,42036.96840619519,42658.40836222667,65662.41315603608,60228.37234439467,77700.6098860405,58758.92277988946,44610.61863819411,58859.82246038464,66630.55370874362,62307.23271796046,57609.11046660947,66000.1203438373,67539.4338566851,70732.38486556291,59730.64831384464,47493.22879524718,52200.705296499844,68097.63449762535,37745.964935191456,55530.099633093516,44099.91781508959,50431.17234402226,69176.77793910948,52866.48602029855,50696.54822234223,29602.15788530121,61193.80349040831,59682.26271711613,82448.8208495819,45383.32647570499,53287.254914959085,53740.75525566133,73661.79919645212,48570.567014195716,54185.32288655509,59118.44764574809,52799.13684734537,43303.49578174208,52911.34989347462,66104.47624789659,34602.270508834095,51994.54511220314,39498.1877759124,67925.69943387264,27152.19642824338,41616.17229092617,55658.17812596781,73482.86043851511,49013.746083905186,41672.00709960202,78217.35604160884,28279.79149375634,17017.910650698774,56600.216750799984,42469.18663471083,34681.5077430393,60625.3467094903,53657.010706567984,41538.820538949076,30795.434019936583,63086.859924202174,59753.017669379915,48512.36204330926,77699.554940715,33948.72850510771,27117.122436128917,39621.378951781335,49316.209754667536,53650.091739840376,46381.459132155054,55280.83094771445,31226.90863714334,71656.46906109889,48767.732324111465,66759.43747382192,55140.88019566556,56851.29828730676,58546.50920348306,56715.628400259724,59640.84139801316,69937.28795198648,52947.817545522055,60635.05636382769,48653.964585691596,71601.75823174209,39854.115469110955,77014.10649366223,49397.63074033485,28538.373468229278,51921.56622366184,39784.22513787678,62609.65323483086,40210.640310464136,43307.248501778304,21656.889035817036,43215.405211263846,13641.81010056565,26241.45764771415,61406.21984216446,61787.00237976248,56381.86342677447,35495.3578530618,49284.3296578703,49945.96191364148,32624.529662111858,72550.97452650726,63160.43435863507,46685.53739255504,50403.28758491796,53125.74211921329,19373.97697363564,46292.339262191046,39770.23628003302,34975.69985157627,45783.495606710676,76965.29790274284,59612.64291900515,41432.31515325805,58588.74172034238],"type":"histogram","xaxis":"x","yaxis":"y"},{"error_x":{"array":[0.0,2772.516,2936.59,3163.61,3020.017,3110.597,2942.689,2713.704,2911.36,0.0],"color":"#5528D2","symmetric":true,"thickness":1.5,"type":"data","width":2},"legendgroup":"group1","marker":{"color":"#6E37FA","size":4},"mode":"markers","name":"Standard deviation","x":[1380.99,13296.898,23943.134,33988.359,43956.049,54401.758,64349.822,74822.785,85091.859,96183.212],"y":[1,8,51,156,252,288,152,71,19,1],"type":"scatter","xaxis":"x","yaxis":"y"},{"legendgroup":"group1","line":{"color":"#6E37FA"},"mode":"lines","name":"Cumulative function","x":[1380.9898989639114,12021.988145049601,22662.98639113529,33303.98463722098,43944.98288330667,54585.98112939236,65226.97937547805,75867.97762156374,86508.97586764942,97149.97411373511],"y":[1.088,7.072,33.184,95.19999999999999,169.184,230.656,258.94399999999996,269.28,271.728,272.0],"type":"scatter","xaxis":"x","yaxis":"y"}],
-
-                            {"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmapgl":[{"type":"heatmapgl","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"}}},"xaxis":{"anchor":"y","domain":[0.0,1.0],"title":{"text":"Income ($)"}},"yaxis":{"anchor":"x","domain":[0.0,1.0],"title":{"text":"y_label"}},"shapes":[{"line":{"color":"#4614B4","dash":"dot","width":2},"type":"line","x0":50289.980837334886,"x1":50289.980837334886,"xref":"x","y0":0,"y1":272,"yref":"y"}],"legend":{"font":{"size":16},"orientation":"h","yanchor":"bottom","y":1.02,"xanchor":"right","x":1},"barmode":"overlay","height":600},
-
-                            {"responsive":true}
-                        )
-                         
-                // Imposta la larghezza al 100%
-                Plotly.update('Income_Distribution', { 'layout.width': window.innerWidth * 0.9 }); // Puoi anche usare '100%' al posto di 'window.innerWidth * 0.9' se preferisci una larghezza fissa
-            
-                // Aggiungi un listener per aggiornare la larghezza quando la finestra viene ridimensionata
-                window.addEventListener('resize', function() {
-                    Plotly.update('Income_Distribution', { 'layout.width': window.innerWidth * 0.9 });
-                });
-                
-                </script>
-                                    <h2>Experience Distribution</h2>
-                <div id="Experience_Distribution" class="plotly-graph-div"></div>
-                <script>
-                        Plotly.newPlot(
-
-                            "Experience_Distribution",
-
-                            [{"legendgroup":"group1","legendgrouptitle":{"text":"Experience (years)"},"marker":{"color":"#DCD2FF"},"name":"Histogram","nbinsx":10,"opacity":0.9,"x":[0.9165056756753848,0.5522440864253784,5.058920573520652,6.1289746975579975,0.16047873368016055,13.760970272244544,0.26685242839504014,3.89675444047811,6.173200020306195,10.238517762273805,6.260337364360131,8.090579362983629,2.073413745732168,8.432272846739616,0.4175322487908133,11.26025159392608,3.9658584143946474,8.499488048327594,3.010304859675232,5.158195008600444,3.736989069793848,6.576189174934603,0.42577449944478085,0.3112501565950754,1.4191357876995818,0.8690574325757503,10.270177785011992,1.2372707909027696,18.620514047170467,2.0541156216571466,1.0051855198942645,7.796065487971737,5.375081026707593,3.4477255436171688,4.052491495578103,6.350594698644832,1.2967997284335335,28.043156160238524,18.403199889450473,5.253765450662784,1.1128588923444667,5.700738976376844,0.37468685917146644,0.1556605826180974,1.4898937656944828,3.1052765093671946,10.135099625954203,6.494514894089445,6.787689523746609,2.7712178970370696,2.122742663447413,2.318428252736485,21.97031945758252,0.20467871021964334,10.088214958778694,4.321758706763312,2.886745405173298,6.459607837444352,3.33417151799607,10.334531706338835,11.548142398101874,2.7384935067701237,1.6205395354257095,4.486735609704546,12.172779697617994,1.1828044947501228,4.877107288497878,4.992390001127717,6.604650075634277,0.7053281485133022,6.29082454563555,11.986266031446224,0.9903228039007228,1.3560479584358098,17.770885194307557,0.9982152737757894,9.63394883878329,3.3891047127677454,1.4199848499718524,10.230030008724246,2.946686627799779,3.6161493455055904,2.2254497958890394,4.494106713425393,0.8927864880881569,2.4803545318173676,17.43579020910572,1.492929402120031,5.346286922585514,1.9666210219446354,7.424458453535825,0.7013338980506838,17.503052272121998,3.023754610823689,1.346267717488601,0.38168861277968535,0.9301897005229697,3.6674917271479073,2.054925399025833,8.827049420610788,2.818385953427962,1.4298461848792552,4.800494582867339,6.134113034796725,0.9138597384292341,0.9173263506538034,0.18680364004741368,6.66665060394917,5.450312625735495,3.2182708481764637,9.294962453380752,8.190991605846756,4.401655068179608,10.135053132645012,1.1523592518528678,0.5934651069514228,1.5718390286405395,0.29390553364981353,3.7875702141697194,13.791906027009833,0.20069208204691116,0.6511693999155838,3.0092162415096544,13.581043269379974,1.900128055283935,3.5386125188567257,0.21230866500525847,0.8028582566820947,21.573755422666892,16.779021539099546,0.024761114869138078,15.163203993394077,5.096048067842505,10.121672834882553,3.0324613454600473,3.624180343488855,3.3554274975442997,5.496026185327917,0.7520872710472859,0.15215990459985634,1.8403404400689043,6.098491737704197,1.1273152721830517,5.595592046659895,17.51815195114605,0.49303196860893483,5.582895419522681,2.9326891987858676,10.130158110967582,0.974905495293219,5.898449381901769,9.104354307988228,14.467161936901364,5.74818117492311,3.437563063057698,4.8096742777547075,10.159164546839555,4.226945460345029,0.15429158866952597,13.364527536495865,5.848287680055751,5.642987719397445,1.2146599900901198,5.377684968340444,2.5032578244792942,5.266755678436183,0.5635653439134802,5.362461592329283,37.20861454852203,0.24706499447150343,18.899315562811143,2.6120284122729864,10.230167305078766,7.625150284671463,4.185275529632762,6.705633929263293,10.539845504791698,2.5887503932435134,1.9802961239550323,5.506981585861535,8.247289214855368,7.1834168441025605,7.992827382238877,2.8598124837094323,8.514190531929316,0.6403548132678573,3.931678141721415,0.02887652758126927,1.9621459547159392,2.2821728131459307,2.5223351759433372,5.944882510155721,2.4596767135570325,2.9773229278196425,1.3560532436598896,2.336052002753381,1.289125487665244,0.3800654412769361,4.624747976592281,5.516307375355344,4.831218650742091,3.113388075084737,2.3884517238994993,9.951063609473774,3.660290274007968,3.261771957576247,0.12988276971007237,2.087039407053988,2.391756824494026,2.5443275709899957,4.3395552743263535,3.8135855217643444,4.681256791374099,7.238365643934406,8.382852007425823,6.3314237191569545,15.563993625021027,0.09200422291350013,1.0893995535625647,0.037958092657078446,5.213164632038758,11.415410050332383,1.3951467213888673,13.088845831118594,0.3107995096936032,13.62364461500059,2.1664123965326922,0.5347023069596843,3.326412744497058,1.4837928153908595,1.6764749629583098,1.835718935806393,8.123415099827117,3.873535690691302,1.8648034787672627,4.712323804772562,6.296558623240507,1.5915587110402303,2.668331669795511,0.6498947976070026,0.9992678386106936,5.714668463130851,1.0010328074182362,3.7239224986605004,6.172954997198428,0.5651544176023522,4.188694362840734,1.4823548004624207,16.47431485903963,3.3038418566340355,8.199293587176795,3.995056249968056,0.22191524639933063,5.0140299178717616,15.121002600623664,4.601642113769123,8.551511073538645,10.779732650770166,1.2943703291825013,1.1915704709007788,4.7206353235476515,2.646887161667886,9.158574910844619,11.51408176856428,2.1803023921175733,1.3516380730422153,7.582596478962244,1.606580613670829,8.647144627595175,2.755966503777051,5.506327516026851,0.5020600864556289,4.888960345326871,3.005280689813925,4.416800520333024,0.9196995746157897,6.675606523742664,9.931471316059389,1.2214516334426968,0.5030510563140048,0.11961229965786996,5.135713440247937,4.67092486661959,3.9559770669178285,1.3194833147064442,2.478913325326026,4.51288023769661,3.4335085749595793,22.02566581690663,0.7334580630766365,5.939587812102318,2.590248004051997,2.794826628258579,6.322114307095265,5.895362876599073,23.69693403932185,0.6870906206829155,0.5496862502032771,6.442913828367711,4.318336252339902,1.6021329622501308,0.41375343673898735,0.44775435531953967,11.230592562327946,1.0651451592998202,1.953164964737904,1.2851591504781665,2.1924961740521036,0.35975680365814916,3.660061610127674,0.35003423188720684,8.05611021079626,1.3309865384210302,3.8827734557429734,10.604614082448709,5.261660202051321,3.8066781628736583,1.9602802124207304,2.024840506119234,5.53554575284868,25.69748337353652,5.421168634826156,4.0797775548399065,6.558727620964056,3.1293646399120445,0.3101342174160877,4.131071300719805,15.806017136476676,0.9636958147035177,5.855993792341289,1.1215567187112898,3.8374971301322325,0.5083724185118045,2.9925582892294034,7.056283292712283,2.1352688074272708,5.466806364380442,7.934713214581751,13.098673463521045,1.3370584385777782,2.548430664572674,0.826826726612014,24.453274810240273,13.086545485792861,3.8821779939956134,9.226854960309858,3.679834776491431,4.885324243108654,0.466744897715109,7.038007175778694,0.6831866761445355,8.745443674676697,7.616945335093326,6.167775345468045,0.1841518402577656,1.8057702002577507,1.5266006958956373,2.232501310097585,0.45861820286188815,13.81975650446037,4.034965093815908,1.8229906097380109,2.5290371555329956,2.963818011213151,4.58888835110396,3.625041260227198,12.590785232588233,3.435462564603948,24.241316326801176,9.533325566641402,1.1691934191971594,13.338997302944271,0.6185638975497147,8.503647870053628,2.395208093335486,10.51761884121618,10.126914595778134,8.197563291787237,7.803963467821306,1.8169093479589338,0.42190664600374733,2.579024823711498,0.9529251168332877,5.93641575488737,2.1240021310655317,18.567951510635414,5.121775572680622,8.643375877049689,0.7108410438327972,9.903032716682254,12.804007243080664,3.3380007027412466,4.660232749124953,7.236803671659189,0.9608815422728965,3.4914627410819725,2.542999078347839,0.7913105552263051,2.2906474122836578,0.35303681352055105,0.13075439984406323,0.7260901616428179,16.499766699885537,3.9873138327906146,16.88088915942053,2.8325539550412495,1.8684961416535204,3.5275348738864984,2.8947344531327417,0.5583725029919596,5.1197460219874635,1.2169748099916533,4.832501422528819,5.2519841966230985,0.8245197577722321,0.3165610447526569,7.587977466119651,3.0790831104569314,0.29961950051907926,26.359659883683328,0.2975854071221184,5.9377950675007565,20.576490388284764,1.3667930847857352,0.7672093061679247,0.6470420301200468,1.806823529705549,0.5326160177578074,5.890897349640917,0.32158231899763545,3.5608562621731843,28.564399433999675,8.409243883383578,4.775410383099368,1.8282441654349264,4.889445714095118,3.743737779397671,2.776355806583479,0.7003946293017256,10.884355299060237,2.987227648963911,1.082220910307068,2.2924259169146763,2.67328467310067,8.787888755452666,6.614051614296391,7.333291630850959,0.05546280010766931,2.690590132204877,3.2825736051908034,0.09689419733223151,1.5042635201091314,7.14162340857189,0.7373385866694464,3.831925226324291,1.2116437803844688,0.0609741512438881,1.3800948092514966,18.62227511571439,8.085765789807736,16.041737750956166,3.34572812055584,0.5811872709759626,3.9699173850084724,3.0291381554346426,9.300954436999046,0.5161615804331191,3.349508678149231,0.8128809185896223,1.9628129750685221,6.684799390123954,3.2314909664580886,2.357129482107963,2.508307700792891,3.075810804584616,7.68597100947232,11.132042581618734,15.5427903151115,7.7300481522784885,1.8946531280202563,5.825919673405102,2.8777374668244695,1.4696452012448886,9.190218630952891,0.19592058371878027,11.601810465201861,3.094629674196398,5.069538156672787,5.384556178581311,11.274584490295103,5.062214460021356,4.758729320554361,0.344886003909527,3.653290209946091,0.8135888687831074,6.686259595713725,3.5894736616271414,5.700731733357541,0.21283059708177177,0.4430196733423927,6.299601899914633,0.3740721481731317,0.3696146343450604,0.06091190004897985,15.675132431098946,6.687680215078304,2.178988178668496,1.7586899061504941,2.1516322533344003,7.450580998658252,5.414245088142517,1.0240357755499983,0.9564644072751095,0.5178974559716975,5.398502050167564,7.2275189961185795,1.5397397477679515,0.10583709225807564,0.42872453728468046,17.188275014186715,1.7509428265181268,7.331520216520101,4.89966252744019,2.405845779146629,1.1513900947795177,0.6470504452855058,4.772728142397403,7.450142791704588,5.162778167818544,3.7783281384323617,0.2142829365455452,17.28705764876777,8.015147244221799,1.732364643188236,19.55270286358609,4.6050290223474,4.366427510224252,6.893083141025072,8.350447669219385,5.342529453740248,0.6853783099019248,2.0644694615775414,13.16125753212103,1.2719819393547196,2.3274055470633983,2.8288461335936548,2.893782704616665,4.745872402761159,14.330176918900978,1.3767436213709323,0.6477046900247617,1.0999332594693239,10.89851540550276,5.189620405381139,1.683708889395092,8.462655938873603,9.879733695998477,9.370740639905378,12.56199771637116,1.453372862073077,7.033341104115277,3.0859285392605713,9.225755435367258,6.518794009673784,7.490543769327964,5.337920953421046,0.9766009881197293,3.937585120961023,20.889632975084726,13.853996940037163,0.22066723058793036,0.9005090057537746,0.7062557007634263,6.472769270301935,8.512848903479231,1.2008850417502643,3.524608069197645,9.184925352389019,6.598818093235882,3.9070207247689748,4.462232522850162,3.55004825034203,1.7658942500081025,4.1622990373407776,5.837968155484062,10.330570375537263,5.057010774374272,7.159001897927629,0.8721933524456189,3.09537259333188,0.046877160822280786,1.4163183367893346,6.481568428056429,24.024177204430693,0.5222385485554638,2.5665962836070966,8.048964094508742,1.1410043063078188,4.049359561738078,6.6038684128406775,4.785374185823828,1.0414270031672503,2.1955068526149537,7.6575668744699374,4.039721675980882,0.02621667917122488,7.156265334138119,0.179749386557771,6.84686730676522,1.1312453432593608,15.859183597798928,2.293860706448017,1.9795417215167819,0.8060580416755946,1.8235659317442863,10.463678060883195,28.04373115354528,2.2967788413439005,2.9765703025518473,6.401946856224549,10.86637839731507,4.495255143393083,2.4840029972796573,2.6604322157516864,5.947361343779222,0.016117266761173126,4.8325195944629264,2.1963480586487476,7.904187440553979,0.48801254494928015,4.436114946889184,3.278995809468057,5.140659982373224,0.3352608925534093,4.337309835440721,4.1218016030144025,4.11240946550342,4.625240663537059,5.64228528911877,8.173496550579964,1.5723259306312465,8.716258444056155,3.4483230812980477,0.40094593731684564,0.30167513037528804,2.0341175418012742,7.683190946985041,6.149546920103921,7.770369982367988,3.6414791660759405,2.900869559489516,0.7976319211344142,1.9889190766618263,2.8459770860961657,0.46386935801280865,1.246231109903065,4.559318902293804,6.652654534548504,32.027364403170715,13.523778022021578,5.144011549014362,2.734406549742989,5.055443978899272,7.700763173715464,0.6297223224301701,2.6373577558486443,9.156732559190154,2.421185851424566,4.241668481050225,4.430861412658695,1.0196236897517545,2.248930472744652,2.0361680204431747,0.13272977607334807,0.12244595635265158,8.909948060695697,1.5946310321501753,3.649872968592603,1.7742799503994653,14.123980180792614,1.5007760910029715,2.807585082092952,10.307232165577965,9.223699354910641,1.0295975634528098,8.113712886243968,3.0641707324122747,3.2982609877689626,0.7163502844895132,0.42017821036661684,6.508650507257196,3.43047207298425,2.8710525207056565,6.5375680065751895,7.251773494836926,0.8652721538019974,4.710930064584235,0.7271759976393737,6.959049439136748,5.349470503079719,15.688163929801622,0.3572545375426614,0.29373513412418734,1.6577314679743202,1.517063656781916,1.4183094814786363,11.835862371081546,1.4353859428180331,1.5869258782709739,7.123061267985805,2.9868204943252854,7.496431991292298,0.3380021938096258,3.342967460518684,0.17095762468974915,0.3235097575531596,11.845625590727419,0.7497289952322251,3.8009314053110494,2.647457109592807,2.133520277972683,11.504599685044134,0.11032524677500764,5.450091904163448,16.537774897341833,4.10681430140426,13.809032264595595,0.2683641914791203,2.7132442614864805,1.5065917327534437,6.561892815365702,19.89538089420841,1.482134737918257,5.309106299150158,1.1038420756713982,4.165843710739791,3.1174758408616094,17.878705654540575,4.689197140188667,2.150118883764553,0.6057322178781008,0.8199343186071815,1.2765063757044115,1.444858927806849,9.506177471315553,4.1188174255839725,3.7052932239272174,0.6095325317064895,9.835555820775436,6.4153380593693035,0.35033346359758155,6.152184503012271,3.9212515030869195,0.42629372734834137,3.065220603033512,3.314994092074675,0.9062578881090823,14.56598463699748,9.484779041173425,5.52852195130109,3.1022311983444286,2.6531483587842204,5.263036671570292,3.9420373715189623,0.32148265013563276,3.592352109670177,8.209898941840661,3.07389747566115,0.26677486754224666,7.715400534056185,1.1242486684293702,1.4962154537418513,0.8998597170870082,2.003993052358571,7.068358739082581,3.6634526676202146,1.1463191739354421,10.51171200632744,10.583925255399171,10.223400900512182,1.364270832034604,3.000464482161465,20.995078624649754,7.392321860913893,0.13771639318440762,0.33713793909555256,3.1174654888553146,11.996592748268405,3.8685529300196024,3.44390869524446,0.5573048725830221,5.346919715654812,8.632757253150999,2.3935673098359214,7.471889591691858,16.68782581026049,1.1393137155670654,3.7046503885106787,1.6923368344452694,7.871667216087371,4.308934204698224,5.033572589166379,7.995313597255331,2.520660979608902,12.330821063064828,3.807439187276906,0.8596080579465919,5.95197892248194,7.881499229619774,1.9045577239785516,9.73082490256681,11.829928230155833,1.6210697978523219,20.528485611408694,0.7582529519025276,1.128331581573379,1.0180825013378585,11.221095570920664,5.310811942673517,0.8249881312515189,2.9019809744493594,4.776431677739809,0.43577012666828674,10.703027201711366,8.13809942226804,3.5180766404091806,17.075459615250438,2.704371135146974,20.71042688225587,5.511896858173445,5.034788547467604,0.9073389785331738,10.682293120440278,2.7886226567511265,0.885078722413422,0.06343834561467812,4.102127208569378,3.7475255732925157,6.35329922373547,11.048118028677141,0.4136840009027475,6.574456468802962,1.0376549707763458,9.765879262842791,8.548046073055023,3.8912791714955026,6.193559716560313,1.8869407530569824,3.185421433947308,8.619669529794812,3.0741315921204126,2.214263980932781,3.4081927704243213,8.80855497633712,2.0414057023216685,0.954359594706478,6.224217408676418,8.742873866424489,0.5303453804904421,1.3713560915406764,0.7655926703041758,2.1381043077802806,2.992376739601061,6.908053472419113,5.2655316276775075,4.850153076744655,2.172216857034855,9.208349225171542,3.1865492202196304,19.341212082974454,5.027551885048863,0.6748892859051263,5.637799722553777,1.965983484598051,5.797024320124432,0.3609245253477216,0.9611409522956076,9.680595255090651,1.2885427165339245,9.07128706056416,1.6374956968937364,5.148443838751175,5.923311842148193,3.5939124064427475,1.8214527509449105,1.195376300823429,0.1687630960528036,1.8116430595060464,5.2944987304611,13.92774722954687,10.247646330481997,7.26355512373689,7.766406717068507,5.467898419608366,1.5074640664863508,11.886275460975453,5.554421087100344,4.109912439431902,0.5882309894213232,2.9624886169196856,3.0842491240149776,9.996265959284822,3.955434494928822,2.3934102822378924,18.818085801761693,0.5867189981337926,2.745653493256675,0.21466629153440706,6.733524748315729,12.50985015581939,1.6427795745700968,9.771686477564147,1.7280973395914967,12.082698923069854,7.011344458060847,8.171388835882192,0.09085323207082231,16.458624862181985,6.485395260823416,1.8174268069886148,8.842011858024538,1.6530953880365957,10.308158987072083,0.597186712405471,6.081677500220933,3.8902418548362765,0.5075866076325476,1.3846591744415069,0.0624080423751401,3.1627818833014096,1.7924204741859722,4.56096425207786,1.7636835997261835,1.7827969781233706,6.797156114135131,0.24670146619977681,11.659811810955894,9.561637658070381,5.51016089756706,4.497433200381701,11.142144452215279,1.0248618804199439,0.4113088016205121,1.3689627001715945,7.91345117931367,0.17642771747663252,4.371029696097835,26.94944054430042,9.679168719178845,3.684927860044089,0.32878116076265756,8.900345771633697,4.568701287718527,0.6104596365140864,0.4927923153723075,12.019038653921694,5.531210553440255,8.838851597612024,10.558951853774708,4.240501685324601,3.6433158815578937,2.8143452104728715,1.9059111005669158,2.851073449415669,7.43343962333363,4.605554539085551,11.15240552814668,2.92936261960972,4.6708681438264446,4.9889622984546325,4.478730653297564,6.063954062764889,1.3553275985830637,3.5909279845120694,0.5503289673916542,2.4266936874952982,3.343903043343766,5.280987154596442,15.032050656159715,4.589598621665501,6.80496413178296,3.5287924442783862,5.027031123587008,0.3678678924806502,1.4677736194256954,2.2459338035474525,3.1979690828360434,0.23361742001170605,0.754254552689986,1.6204462705167058,17.794994496157955,2.01245024322056,3.2892965131437553,1.091387752228215,4.7180536256995795,1.6472671395570604,1.159613492746251,3.634270946622103,0.02760505968654886,0.03846776135200151],"type":"histogram","xaxis":"x","yaxis":"y"},{"error_x":{"array":[0.53,1.074,1.056,0.888,1.184,0.896,1.198,1.054,0.246,0.0],"color":"#5528D2","symmetric":true,"thickness":1.5,"type":"data","width":2},"legendgroup":"group1","marker":{"color":"#6E37FA","size":4},"mode":"markers","name":"Standard deviation","x":[0.861,3.637,7.294,10.754,14.661,18.092,21.699,25.54,28.217,32.027],"y":[310,366,175,75,34,20,10,5,3,1],"type":"scatter","xaxis":"x","yaxis":"y"},{"legendgroup":"group1","line":{"color":"#6E37FA"},"mode":"lines","name":"Cumulative function","x":[0.016117266761173126,3.7353669949372588,7.454616723113345,11.17386645128943,14.893116179465515,18.612365907641603,22.331615635817688,26.050865363993776,29.77011509216986,33.48936482034594],"y":[264.196,398.35,463.628,485.72999999999996,500.122,507.832,510.402,512.972,513.486,514.0],"type":"scatter","xaxis":"x","yaxis":"y"}],
-
-                            {"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmapgl":[{"type":"heatmapgl","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"}}},"xaxis":{"anchor":"y","domain":[0.0,1.0],"title":{"text":"Experience (years)"}},"yaxis":{"anchor":"x","domain":[0.0,1.0],"title":{"text":"y_label"}},"shapes":[{"line":{"color":"#4614B4","dash":"dot","width":2},"type":"line","x0":5.039929668484336,"x1":5.039929668484336,"xref":"x","y0":0,"y1":514,"yref":"y"}],"legend":{"font":{"size":16},"orientation":"h","yanchor":"bottom","y":1.02,"xanchor":"right","x":1},"barmode":"overlay","height":600},
-
-                            {"responsive":true}
-                        )
-                         
-                // Imposta la larghezza al 100%
-                Plotly.update('Experience_Distribution', { 'layout.width': window.innerWidth * 0.9 }); // Puoi anche usare '100%' al posto di 'window.innerWidth * 0.9' se preferisci una larghezza fissa
-            
-                // Aggiungi un listener per aggiornare la larghezza quando la finestra viene ridimensionata
-                window.addEventListener('resize', function() {
-                    Plotly.update('Experience_Distribution', { 'layout.width': window.innerWidth * 0.9 });
-                });
-                
-                </script>
-                    </div><button class="collapsiblemygs">Revenue Trends (Highcharts Streamgraph)</button> <div class="content">
-            
-    <figure class="highcharts-figure">
-        <div id="monthly_revenue_by_product"></div>
-    </figure>
-            
     <script>
-    Highcharts.chart('monthly_revenue_by_product', {
+        // Create starfield
+        const numStars = 100;
+        for (let i = 0; i < numStars; i++) {
+            let star = document.createElement("div");
+            star.className = "star";
+            star.style.top = Math.floor(Math.random() * window.innerHeight) + 'px';
+            star.style.left = Math.floor(Math.random() * window.innerWidth) + 'px';
+            document.body.appendChild(star);
+        }
+    </script>
 
-        chart: {
-            type: 'area',
-            marginBottom: 30,
-            zoomType: 'x'
-        },
-        colors: [Highcharts.color(colors[0]).brighten(0.0).get(), Highcharts.color(colors[6]).brighten(0.3).get(), Highcharts.color(colors[3]).brighten(0.2).get()],
-       title: {
-            floating: true,
-            align: 'left',
-            text: 'Monthly Revenue by Product'
-        },
-        subtitle: {
-            floating: true,
-            align: 'left',
-            y: 30,
-            text: 'area'
-        },
-
-        xAxis: {
-            maxPadding: 0,
-            type: 'category',
-            crosshair: true,
-            categories: [
-    '2024-01', '2024-02', '2024-03', '2024-04', '2024-05', '2024-06', '2024-07', '2024-08', '2024-09', '2024-10', '2024-11', '2024-12'
-               ],
-                       labels: {
-                           align: 'left',
-                           reserveSpace: false,
-                           rotation: 270
-                       },
-                       lineWidth: 0,
-                       margin: 20,
-                       tickWidth: 0
-                   },
-
-                   yAxis: {
-                       visible: true,
-                       startOnTick: true,
-                       endOnTick: true
-                   },
-
-                   legend: {
-                       enabled: false
-                   },
-
-                   annotations: [{labels: [],
-            labelOptions: {
-                backgroundColor: 'rgba(255,255,255,0.5)',
-                borderColor: 'silver'
-            }
-        }],
-
-        plotOptions: {
-            series: {
-                label: {
-                    minFontSize: 5,
-                    maxFontSize: 15,
-                    style: {
-                        color: 'rgba(255,255,255,0.75)'
-                    }
-                },
-                accessibility: {
-                    exposeAsGroupOnly: true
-                }
-            }
-        },
-
-        // Data parsed with olympic-medals.node.js
-        series: [
-    {name:'PRODUCT A', data: [44,43,63,59,75,53,58,71,74,72,78,94]}, {name:'PRODUCT B', data: [32,38,36,32,40,32,41,36,50,38,61,55]}, {name:'PRODUCT C', data: [21,21,23,27,20,17,21,14,18,22,23,22]}
-               ],
-
-               exporting: {
-                   sourceWidth: 800,
-                   sourceHeight: 600
-               }
-
-           });
-
-           </script>
-               
-            </div><button class="collapsiblemygs">Model Performance</button> <div class="content"><a href="#" onclick="download_table_as_csv('BestModel');">Download as CSV</a>
-            <div id="table-wrapper">
-                <div id="table-scroll">
-                    <table border="0" id="BestModel" class="scomp-table">
-  <thead>
-    <tr style="text-align: left;">
-      <th>Model</th>
-      <th>R2</th>
-      <th>RMSE</th>
-      <th>MAE</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>GradientBoosting</td>
-      <td>0.94</td>
-      <td>2341</td>
-      <td>1876</td>
-    </tr>
-  </tbody>
-</table>
-                </div>
-            </div>
-            <style>
-                .scomp-table {
-                    width: 100%;
-                    border-collapse: collapse;
-                    font-size: 13px;
-                    font-family: inherit;
-                }
-                .scomp-table thead tr {
-                    background-color: #6E37FA !important;
-                    color: white !important;
-                    text-align: left;
-                }
-                .scomp-table th {
-                    color: white !important;
-                    background-color: #6E37FA !important;
-                }
-                .scomp-table th, .scomp-table td {
-                    padding: 10px 12px;
-                    border-bottom: 1px solid #e0e0e0;
-                }
-                .scomp-table tbody tr:nth-child(even) {
-                    background-color: #f8f9fa;
-                }
-                .scomp-table tbody tr:hover {
-                    background-color: #9682FF22;
-                }
-            </style>                <h2>SHAP Feature Importance</h2>
-                <div id="SHAP_Feature_Importance" class="plotly-graph-div"></div>
-                <script>
-                        Plotly.newPlot(
-
-                            "SHAP_Feature_Importance",
-
-                            [{"alignmentgroup":"True","hovertemplate":"x=%{x}\u003cbr\u003ey=%{y}\u003cextra\u003e\u003c\u002fextra\u003e","legendgroup":"","marker":{"color":"#636efa","pattern":{"shape":""}},"name":"","offsetgroup":"","orientation":"h","showlegend":false,"textposition":"auto","x":[0.35,0.25,0.18,0.12,0.1],"xaxis":"x","y":["Feature A","Feature B","Feature C","Feature D","Feature E"],"yaxis":"y","type":"bar"}],
-
-                            {"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmapgl":[{"type":"heatmapgl","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"}}},"xaxis":{"anchor":"y","domain":[0.0,1.0],"title":{"text":"Importance"}},"yaxis":{"anchor":"x","domain":[0.0,1.0],"title":{"text":""}},"legend":{"tracegroupgap":0},"title":{"text":"Feature Importance (SHAP)"},"barmode":"relative"},
-
-                            {"responsive":true}
-                        )
-                         
-                // Imposta la larghezza al 100%
-                Plotly.update('SHAP_Feature_Importance', { 'layout.width': window.innerWidth * 0.9 }); // Puoi anche usare '100%' al posto di 'window.innerWidth * 0.9' se preferisci una larghezza fissa
-            
-                // Aggiungi un listener per aggiornare la larghezza quando la finestra viene ridimensionata
-                window.addEventListener('resize', function() {
-                    Plotly.update('SHAP_Feature_Importance', { 'layout.width': window.innerWidth * 0.9 });
-                });
-                
-                </script>
-                    </div>
-                            </div>
-                            
-                        <script>
-                        // Quick and simple export target #table_id into a csv
-                        function download_table_as_csv(table_id, separator = ',') {
-                            // Select rows from table_id
-                            var rows = document.querySelectorAll('table#' + table_id + ' tr');
-                            // Construct csv
-                            var csv = [];
-                            for (var i = 0; i < rows.length; i++) {
-                                var row = [], cols = rows[i].querySelectorAll('td, th');
-                                for (var j = 0; j < cols.length; j++) {
-                                    // Clean innertext to remove multiple spaces and jumpline (break csv)
-                                    var data = cols[j].innerText.replace(/(\r\n|\n|\r)/gm, '').replace(/(\s\s)/gm, ' ')
-                                    // Escape double-quote with double-double-quote (see https://stackoverflow.com/questions/17808511/properly-escape-a-double-quote-in-csv)
-                                    data = data.replace(/"/g, '""');
-                                    // Push escaped string
-                                    row.push('"' + data + '"');
-                                }
-                                csv.push(row.join(separator));
-                            }
-                            var csv_string = csv.join('\n');
-                            // Download it
-                            var filename = 'export_' + table_id + '_' + new Date().toLocaleDateString() + '.csv';
-                            var link = document.createElement('a');
-                            link.style.display = 'none';
-                            link.setAttribute('target', '_blank');
-                            link.setAttribute('href', 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv_string));
-                            link.setAttribute('download', filename);
-                            document.body.appendChild(link);
-                            link.click();
-                            document.body.removeChild(link);
-                        }
-                        var coll = document.getElementsByClassName("collapsiblemygs");
-                        var i;
-
-                        for (i = 0; i < coll.length; i++) {
-                          coll[i].addEventListener("click", function() {
-                            this.classList.toggle("active");
-                            var content = this.nextElementSibling;
-                            if (content.style.display === "block") {
-                              content.style.display = "none";
-                            } else {
-                              content.style.display = "block";
-                            }
-                          });
-                        }
-                        document.addEventListener("DOMContentLoaded", function() {
-                            // Function to resize svg-containers, SVG images and rect elements
-                            function resizeElements() {
-                                // Seleziona tutti gli elementi con la classe 'svg-container'
-                                var svgContainers = document.querySelectorAll('.svg-container');
-                        
-                                // Itera su ogni svg-container e imposta la larghezza al 100%
-                                svgContainers.forEach(function(container) {
-                                    container.style.width = '100%';
-                                });
-                                
-                                 var svgContainers0 = document.querySelectorAll('.user-select-none');
-                        
-                                // Itera su ogni svg-container e imposta la larghezza al 100%
-                                svgContainers0.forEach(function(container) {
-                                    container.style.width = '100%';
-                                });
-                                
-                                
-                                 var cartesianlayer = document.querySelectorAll('.cartesianlayer');
-                        
-                                // Itera su ogni svg-container e imposta la larghezza al 100%
-                                cartesianlayer.forEach(function(container) {
-                                    container.style.width = '100%';
-                                });
-                                
-                                
-                        
-                                 var svgContainers1 = document.querySelectorAll('.js-plotly-plot');
-                        
-                                // Itera su ogni svg-container e imposta la larghezza al 100%
-                                svgContainers1.forEach(function(container) {
-                                    container.style.width = '100%';
-                                });
-                                
-                                
-                                 var svgContainers2 = document.querySelectorAll('.main-svg');
-                        
-                                // Itera su ogni svg-container e imposta la larghezza al 100%
-                                svgContainers2.forEach(function(container) {
-                                    container.style.width = '100%';
-                                });
-                        
-                                 var svgContainers3 = document.querySelectorAll('.plot-container');
-                        
-                                // Itera su ogni svg-container e imposta la larghezza al 100%
-                                svgContainers3.forEach(function(container) {
-                                    container.style.width = '100%';
-                                });
-                        
-                                // Seleziona tutti gli elementi con il tag '.highcharts-container'
-                                var items = document.querySelectorAll('.highcharts-container');
-                        
-                                // Itera su ogni rect e imposta la larghezza al 100%
-                                items.forEach(function(item) {
-                                    item.style.width = '100%';
-                                });
-                                
-                                
-                                // Seleziona tutti gli elementi con il tag 'select'
-                                var selects = document.querySelectorAll('select');
-                        
-                                // Itera su ogni rect e imposta la larghezza al 100%
-                                selects.forEach(function(select) {
-                                    select.style.width = '200px';
-                                });
-                                
-                                 
-                                
-                                // Seleziona tutti gli elementi con il tag 'content'
-                                var contents = document.querySelectorAll('.content');
-                        
-                                contents.forEach(function(content) {
-                                    content.style.display = 'none';
-                                });
-                                
-                            }
-                        
-                            // Call the function when the document is fully loaded
-                            resizeElements();
-                        });
-                        
-                        </script>
-                        </div><hr><br><footer><strong>About scomp-link</strong><br>
-                        scomp-link is a general-purpose data science toolkit for preprocessing, model selection, and validation. It is dataset- and domain-agnostic.
-                        Learn more in the project README and documentation.<br>
-                        <strong>May the code be with you.</strong><br><br>
-                        Copyright &copy; 2026 scomp-link contributors. All rights reserved.<br><br></footer>
-                            
-                            
-                        <script>
-                        $(".js-example-tags").select2({
-                          tags: true
-                        });
-                        </script>
-                        </body>
-                        </html>
-                    
+</body>
+</html>
