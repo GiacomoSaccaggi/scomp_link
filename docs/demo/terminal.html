@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>scomp-link CLI Demo</title>
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/asciinema-player@3.8.0/dist/bundle/asciinema-player.css" />
+<style>
+body { background: #1e1e2e; margin: 0; padding: 2rem; font-family: system-ui; }
+h1 { color: #cdd6f4; text-align: center; }
+p { color: #a6adc8; text-align: center; }
+#player { max-width: 900px; margin: 2rem auto; }
+</style>
+</head>
+<body>
+<h1>scomp-link CLI Demo</h1>
+<p>From CSV to validated model in 30 seconds</p>
+<div id="player"></div>
+<script src="https://cdn.jsdelivr.net/npm/asciinema-player@3.8.0/dist/bundle/asciinema-player.min.js"></script>
+<script>
+AsciinemaPlayer.create('demo.cast', document.getElementById('player'), {
+  theme: 'monokai',
+  cols: 100,
+  rows: 30,
+  autoPlay: true,
+  speed: 1.5,
+});
+</script>
+</body>
+</html>
