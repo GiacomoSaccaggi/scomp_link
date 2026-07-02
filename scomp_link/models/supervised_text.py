@@ -94,126 +94,13 @@ class SpacyEmbeddingModel(object):
                           ' not exist\n\t\t-\tSpacy does not support this language\n\n\t\tView all languages in '
                           'website:\n\t\thttps://spacy.io/usage/models\033[0m\033[0m')
                 return []
-            if lan == 'zh':
-                from spacy.lang.zh.stop_words import STOP_WORDS
-            elif lan == 'da':
-                from spacy.lang.da.stop_words import STOP_WORDS
-            elif lan == 'nl':
-                from spacy.lang.nl.stop_words import STOP_WORDS
-            elif lan == 'en':
-                from spacy.lang.en.stop_words import STOP_WORDS
-            elif lan == 'fr':
-                from spacy.lang.fr.stop_words import STOP_WORDS
-            elif lan == 'de':
-                from spacy.lang.de.stop_words import STOP_WORDS
-            elif lan == 'el':
-                from spacy.lang.el.stop_words import STOP_WORDS
-            elif lan == 'it':
-                from spacy.lang.it.stop_words import STOP_WORDS
-            elif lan == 'ja':
-                from spacy.lang.ja.stop_words import STOP_WORDS
-            elif lan == 'lt':
-                from spacy.lang.lt.stop_words import STOP_WORDS
-            elif lan == 'nb':
-                from spacy.lang.nb.stop_words import STOP_WORDS
-            elif lan == 'pl':
-                from spacy.lang.pl.stop_words import STOP_WORDS
-            elif lan == 'pt':
-                from spacy.lang.pt.stop_words import STOP_WORDS
-            elif lan == 'ro':
-                from spacy.lang.ro.stop_words import STOP_WORDS
-            elif lan == 'ru':
-                from spacy.lang.ru.stop_words import STOP_WORDS
-            elif lan == 'es':
-                from spacy.lang.es.stop_words import STOP_WORDS
-            elif lan == 'af':
-                from spacy.lang.af.stop_words import STOP_WORDS
-            elif lan == 'sq':
-                from spacy.lang.sq.stop_words import STOP_WORDS
-            elif lan == 'ar':
-                from spacy.lang.ar.stop_words import STOP_WORDS
-            elif lan == 'hy':
-                from spacy.lang.hy.stop_words import STOP_WORDS
-            elif lan == 'eu':
-                from spacy.lang.eu.stop_words import STOP_WORDS
-            elif lan == 'bn':
-                from spacy.lang.bn.stop_words import STOP_WORDS
-            elif lan == 'bg':
-                from spacy.lang.bg.stop_words import STOP_WORDS
-            elif lan == 'ca':
-                from spacy.lang.ca.stop_words import STOP_WORDS
-            elif lan == 'hr':
-                from spacy.lang.hr.stop_words import STOP_WORDS
-            elif lan == 'cs':
-                from spacy.lang.cs.stop_words import STOP_WORDS
-            elif lan == 'et':
-                from spacy.lang.et.stop_words import STOP_WORDS
-            elif lan == 'fi':
-                from spacy.lang.fi.stop_words import STOP_WORDS
-            elif lan == 'gu':
-                from spacy.lang.gu.stop_words import STOP_WORDS
-            elif lan == 'he':
-                from spacy.lang.he.stop_words import STOP_WORDS
-            elif lan == 'hi':
-                from spacy.lang.hi.stop_words import STOP_WORDS
-            elif lan == 'hu':
-                from spacy.lang.hu.stop_words import STOP_WORDS
-            elif lan == 'id':
-                from spacy.lang.id.stop_words import STOP_WORDS
-            elif lan == 'ga':
-                from spacy.lang.ga.stop_words import STOP_WORDS
-            elif lan == 'kn':
-                from spacy.lang.kn.stop_words import STOP_WORDS
-            elif lan == 'ko':
-                from spacy.lang.ko.stop_words import STOP_WORDS
-            elif lan == 'lv':
-                from spacy.lang.lv.stop_words import STOP_WORDS
-            elif lan == 'lij':
-                from spacy.lang.lij.stop_words import STOP_WORDS
-            elif lan == 'lb':
-                from spacy.lang.lb.stop_words import STOP_WORDS
-            elif lan == 'mk':
-                from spacy.lang.mk.stop_words import STOP_WORDS
-            elif lan == 'ml':
-                from spacy.lang.ml.stop_words import STOP_WORDS
-            elif lan == 'mr':
-                from spacy.lang.mr.stop_words import STOP_WORDS
-            elif lan == 'ne':
-                from spacy.lang.ne.stop_words import STOP_WORDS
-            elif lan == 'fa':
-                from spacy.lang.fa.stop_words import STOP_WORDS
-            elif lan == 'sa':
-                from spacy.lang.sa.stop_words import STOP_WORDS
-            elif lan == 'sr':
-                from spacy.lang.sr.stop_words import STOP_WORDS
-            elif lan == 'si':
-                from spacy.lang.si.stop_words import STOP_WORDS
-            elif lan == 'sk':
-                from spacy.lang.sk.stop_words import STOP_WORDS
-            elif lan == 'sl':
-                from spacy.lang.sl.stop_words import STOP_WORDS
-            elif lan == 'sv':
-                from spacy.lang.sv.stop_words import STOP_WORDS
-            elif lan == 'tl':
-                from spacy.lang.tl.stop_words import STOP_WORDS
-            elif lan == 'ta':
-                from spacy.lang.ta.stop_words import STOP_WORDS
-            elif lan == 'tt':
-                from spacy.lang.tt.stop_words import STOP_WORDS
-            elif lan == 'te':
-                from spacy.lang.te.stop_words import STOP_WORDS
-            elif lan == 'th':
-                from spacy.lang.th.stop_words import STOP_WORDS
-            elif lan == 'tr':
-                from spacy.lang.tr.stop_words import STOP_WORDS
-            elif lan == 'uk':
-                from spacy.lang.uk.stop_words import STOP_WORDS
-            elif lan == 'ur':
-                from spacy.lang.ur.stop_words import STOP_WORDS
-            elif lan == 'vi':
-                from spacy.lang.vi.stop_words import STOP_WORDS
-            elif lan == 'yo':
-                from spacy.lang.yo.stop_words import STOP_WORDS
+            # Dynamic stop words import for any supported spaCy language
+            import importlib
+            try:
+                lang_module = importlib.import_module(f'spacy.lang.{lan}.stop_words')
+                STOP_WORDS = lang_module.STOP_WORDS
+            except (ImportError, ModuleNotFoundError):
+                STOP_WORDS = set()
 
             return nlp, STOP_WORDS
         else:
@@ -317,9 +204,11 @@ class SpacyEmbeddingModel(object):
                                       patience=20, epoch=100, learn_rate=0.1, dropout=0.2, batch_size=8, b1=0.0,
                                       b2_ratio=0.0, adam_eps=0.0, L2=0.0, grad_norm_clip=1.0, use_tqdm=True):
         """
-        Train CNN text categorizer with embeddings
+        Train CNN text categorizer with embeddings.
+        Compatible with spaCy v3 API.
         """
         from spacy.util import minibatch
+        from spacy.training import Example
         import numpy as np
         import tqdm
         categ = np.asarray(classes)
@@ -330,9 +219,7 @@ class SpacyEmbeddingModel(object):
         y_lab_test = list(y_lab_test)
 
         def __load_textcat_data(texts_, y_lab_, texts_test_, y_lab_test_):
-            """
-            Load and prepare text categorization data
-            """
+            """Load and prepare text categorization data."""
             y_lab2 = [int(np.where(ny == categ)[0]) for ny in y_lab_]
             y_lab2_test = [int(np.where(ny == categ)[0]) for ny in y_lab_test_]
             train_texts_ = [' '.join(self.__extract_words(msg)) for msg in texts_]
@@ -344,26 +231,22 @@ class SpacyEmbeddingModel(object):
                 d = dict()
                 for ncat in range(0, nr_categ):
                     if y == ncat:
-                        d[str(ncat)] = True
+                        d[str(categ[ncat])] = True
                     else:
-                        d[str(ncat)] = False
+                        d[str(categ[ncat])] = False
                 return d
             train_cats_ = [__gen_dict_label(y) for y in train_labels]
             eval_cats_ = [__gen_dict_label(y) for y in eval_labels]
             return (train_texts_, train_cats_), (eval_texts_, eval_cats_)
 
-        opt_params = self.get_opt_params(locals())
-        textcat = self.nlp.create_pipe(
-            "textcat",
-            config={
-                "exclusive_classes": True,
-                "architecture": "simple_cnn",
-            }
-        )
+        # Create a separate blank model for textcat training
+        # (avoids lookup reinit issues with loaded models in spaCy v3)
+        import spacy
+        textcat_nlp = spacy.blank(self.nlp.lang)
+        textcat = textcat_nlp.add_pipe("textcat", last=True)
 
-        self.nlp.add_pipe(textcat, last=True)
         for cl in categ:
-            textcat.add_label(cl)
+            textcat.add_label(str(cl))
 
         (train_texts, train_cats), (dev_texts, dev_cats) = __load_textcat_data(texts, y_lab, texts_test, y_lab_test)
         logger.info(
@@ -371,14 +254,17 @@ class SpacyEmbeddingModel(object):
                 len(train_texts), len(dev_texts)
             )
         )
-        train_data = list(zip(train_texts, [{"cats": cats} for cats in train_cats]))
+
+        # Build Example objects for spaCy v3 training
+        train_examples = []
+        for text, cats in zip(train_texts, train_cats):
+            doc = textcat_nlp.make_doc(text)
+            train_examples.append(Example.from_dict(doc, {"cats": cats}))
+
         best_acc = 0.0
 
         class EarlyStopping(object):
-            """
-            Early stopping callback
-            """
-
+            """Early stopping callback."""
             def __init__(self, metric, patience_):
                 self.metric = metric
                 self.max_patience = patience_
@@ -386,9 +272,7 @@ class SpacyEmbeddingModel(object):
                 self.best = 0.5
 
             def update(self, result):
-                """
-                Update early stopping state
-                """
+                """Update early stopping state."""
                 if result[self.metric] >= self.best:
                     self.best = result[self.metric]
                     self.current_patience = self.max_patience
@@ -399,36 +283,46 @@ class SpacyEmbeddingModel(object):
 
         early_stopping = EarlyStopping("acc", patience)
 
-        other_pipes = [pipe for pipe in self.nlp.pipe_names if pipe != "textcat"]
-        with self.nlp.disable_pipes(*other_pipes):
-            optimizer = self.nlp.begin_training()
-            self.configure_optimizer(optimizer, opt_params)
-            logger.info("Training the model...")
+        # Initialize the pipeline for training (spaCy v3)
+        textcat_nlp.initialize(lambda: train_examples)
+
+        logger.info("Training the model...")
+        if True:  # training block
             logger.info("{:^5}\t{:^5}\t{:^5}\t{:^5}".format("LOSS", "P", "R", "F"))
             for i in range(epoch):
-                losses = {"textcat": 0.0}
+                losses = {}
+                # Shuffle training data each epoch
+                np.random.shuffle(train_examples)
+
                 if use_tqdm:
                     try:
-                        train_data = tqdm.tqdm(train_data, leave=False)
-                    except Exception as e:
-                        logger.info(e)
-                        pass
-                batches = minibatch(train_data, size=batch_size)
-                for batch in batches:
-                    texts, annotations = zip(*batch)
-                    self.nlp.update(
-                        texts, annotations, sgd=optimizer, drop=dropout, losses=losses
-                    )
-                with textcat.model.use_params(optimizer.averages):
-                    scores = self.evaluate_textcat(self.nlp.tokenizer, textcat, dev_texts, dev_cats)
-                    scores1 = self.evaluate_textcat(self.nlp.tokenizer, textcat, train_texts, train_cats)
-                logger.info('Epoca ' + str(i))
+                        batches_iter = tqdm.tqdm(
+                            list(minibatch(train_examples, size=batch_size)), leave=False
+                        )
+                    except Exception:
+                        batches_iter = list(minibatch(train_examples, size=batch_size))
+                else:
+                    batches_iter = list(minibatch(train_examples, size=batch_size))
+
+                for batch in batches_iter:
+                    textcat_nlp.update(batch, drop=dropout, losses=losses)
+
+                # Evaluate on dev set
+                scores = self.evaluate_textcat(textcat_nlp.tokenizer, textcat, dev_texts, dev_cats)
+                scores1 = self.evaluate_textcat(textcat_nlp.tokenizer, textcat, train_texts, train_cats)
+                logger.info('Epoch ' + str(i))
                 logger.info('\nResults Test:\n')
                 best_acc = max(best_acc, scores["acc"])
-                self.report_progress(i, best_acc, losses, scores)
+                self.report_progress(i, best_acc, losses, {"textcat": losses.get("textcat", 0),
+                                                           "textcat_p": scores["textcat_p"],
+                                                           "textcat_r": scores["textcat_r"],
+                                                           "textcat_f": scores["textcat_f"]})
                 logger.info('\nResults Train:\n')
                 best_acc = max(best_acc, scores1["acc"])
-                self.report_progress(i, best_acc, losses, scores1)
+                self.report_progress(i, best_acc, losses, {"textcat": losses.get("textcat", 0),
+                                                           "textcat_p": scores1["textcat_p"],
+                                                           "textcat_r": scores1["textcat_r"],
+                                                           "textcat_f": scores1["textcat_f"]})
                 should_stop = early_stopping.update(scores)
                 if should_stop:
                     logger.info('The model does not learn, try to change CNN architecture')
@@ -437,20 +331,22 @@ class SpacyEmbeddingModel(object):
         logger.info('Predicting values train...')
         ytrain = []
         for ytr in train_cats:
-            ytrain.append(str(categ[np.where([i for prev, i in ytr.items()])[0][0]]))
+            ytrain.append([label for label, val in ytr.items() if val][0])
         ytest = []
         for yte in dev_cats:
-            ytest.append(str(categ[np.where([i for prev, i in yte.items()])[0][0]]))
+            ytest.append([label for label, val in yte.items() if val][0])
 
         logger.info('Predicting values test...')
         fitted_y_test = []
-        for i, val in enumerate(dev_texts):
-            fitted_y_test.append(categ[np.argmax([i for prev, i in self.nlp(val).cats.items()])])
+        for val in dev_texts:
+            doc = textcat_nlp(val)
+            fitted_y_test.append(max(doc.cats, key=doc.cats.get))
         fitted_y_train = []
-        for i, val in enumerate(train_texts):
-            fitted_y_train.append(categ[np.argmax([i for prev, i in self.nlp(val).cats.items()])])
+        for val in train_texts:
+            doc = textcat_nlp(val)
+            fitted_y_train.append(max(doc.cats, key=doc.cats.get))
 
-        logger.info('Last things...')
+        logger.info('Generating reports...')
         from sklearn.metrics import classification_report, confusion_matrix
 
         clasification_report_tr = classification_report(ytrain, fitted_y_train)
@@ -463,4 +359,4 @@ class SpacyEmbeddingModel(object):
                              'classification_report_te': clasification_report_te,
                              'confusion_matrix_te': confusion_matrix_te}
         
-        return self.nlp, previsioni_scores
+        return textcat_nlp, previsioni_scores

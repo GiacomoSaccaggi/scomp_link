@@ -307,3 +307,89 @@ class TestHighcharts:
         from scomp_link.utils.highcharts import calendar_gantt
         # Just verify function exists and is callable
         assert callable(calendar_gantt)
+
+
+# ===================== CORE.PY — choose_model branches =====================
+
+class TestChooseModelBranches:
+    """Exercise all choose_model branches in core.py."""
+
+    @pytest.fixture
+    def pipeline_with_data(self):
+        np.random.seed(42)
+        n = 200
+        df = pd.DataFrame({
+            'x1': np.random.randn(n),
+            'x2': np.random.randn(n),
+            'y': np.random.randn(n),
+        })
+        from scomp_link import ScompLinkPipeline
+        pipe = ScompLinkPipeline("Branch Test")
+        pipe.import_and_clean_data(df)
+        pipe.select_variables(target_col='y')
+        return pipe
+
+    def test_categorical_known_image_pretrained(self, pipeline_with_data):
+        """Lines 71-72: data_type=images, count_per_category < 500."""
+        pipe = pipeline_with_data
+        pipe.choose_model("categorical_known", metadata={"data_type": "images", "count_per_category": 100})
+        assert pipe.model_type == "Pre-trained model"
+
+    def test_categorical_known_image_cnn(self, pipeline_with_data):
+        """Lines 73-74: data_type=images, count_per_category >= 500."""
+        pipe = pipeline_with_data
+        pipe.choose_model("categorical_known", metadata={"data_type": "images", "count_per_category": 1000})
+        assert pipe.model_type == "CNN (ResNet/Inception)"
+
+    def test_categorical_known_psychometric(self, pipeline_with_data):
+        """Lines 76-77: exogenous_type=categorical, num_features < 5."""
+        pipe = pipeline_with_data
+        pipe.choose_model("categorical_known", metadata={"exogenous_type": "categorical", "num_features": 3})
+        assert pipe.model_type == "Theorical Psychometric Model"
+
+    def test_categorical_known_naive_bayes(self, pipeline_with_data):
+        """Lines 78-79: exogenous_type=categorical, num_features >= 5."""
+        pipe = pipeline_with_data
+        pipe.choose_model("categorical_known", metadata={"exogenous_type": "categorical", "num_features": 10})
+        assert pipe.model_type == "Naive Bayes / Classification Tree"
+
+    def test_numerical_study_geospatial(self, pipeline_with_data):
+        """Lines 93-94: numerical_study + geospatial."""
+        pipe = pipeline_with_data
+        pipe.choose_model("numerical_study", metadata={"geospatial": True})
+        assert pipe.model_type == "Geostatistical Model / Kriging"
+
+    def test_numerical_study_time_series(self, pipeline_with_data):
+        """Lines 95-96: numerical_study + time_series."""
+        pipe = pipeline_with_data
+        pipe.choose_model("numerical_study", metadata={"time_series": True})
+        assert pipe.model_type == "UCM State Space"
+
+    def test_numerical_study_pca(self, pipeline_with_data):
+        """Lines 97-98: numerical_study default."""
+        pipe = pipeline_with_data
+        pipe.choose_model("numerical_study", metadata={})
+        assert pipe.model_type == "Randomized PCA / Statistical Tests"
+
+    def test_numerical_prediction_econometric(self):
+        """Line 107: numerical_prediction with < 1000 records."""
+        np.random.seed(42)
+        df = pd.DataFrame({'x': np.random.randn(500), 'y': np.random.randn(500)})
+        from scomp_link import ScompLinkPipeline
+        pipe = ScompLinkPipeline("Small Data")
+        pipe.import_and_clean_data(df)
+        pipe.select_variables(target_col='y')
+        pipe.choose_model("numerical_prediction")
+        assert pipe.model_type == "Econometric Model"
+
+    def test_multi_numerical_prediction_var(self, pipeline_with_data):
+        """Lines 116-117: multi_numerical_prediction + time_series."""
+        pipe = pipeline_with_data
+        pipe.choose_model("multi_numerical_prediction", metadata={"time_series": True})
+        assert pipe.model_type == "VAR / VARMA"
+
+    def test_multi_numerical_prediction_mlp(self, pipeline_with_data):
+        """Lines 118-119: multi_numerical_prediction default."""
+        pipe = pipeline_with_data
+        pipe.choose_model("multi_numerical_prediction", metadata={})
+        assert pipe.model_type == "MLP"

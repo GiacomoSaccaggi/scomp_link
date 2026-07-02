@@ -1,0 +1,33 @@
+# scomp-link
+
+> End-to-end ML toolkit with 25 CLI commands, 39 chart types, and MCP server for AI agent integration.
+
+scomp-link automates the complete ML workflow: data profiling → preprocessing → feature engineering → model selection → training → tuning → validation → explainability → monitoring → deployment. It provides a Python API, a full-featured CLI, and an MCP server for structured agent tool calls.
+
+## Documentation
+
+- [README](https://github.com/GiacomoSaccaggi/scomp_link/blob/main/README.md): Overview, installation, quick start
+- [CLI Reference](https://github.com/GiacomoSaccaggi/scomp_link/blob/main/docs/cli.md): All 25 commands with arguments and examples
+- [Python API](https://github.com/GiacomoSaccaggi/scomp_link/blob/main/docs/API_REFERENCE.md): Programmatic usage (Pipeline, Artifact, Models, Validation)
+- [Visualization Guide](https://github.com/GiacomoSaccaggi/scomp_link/blob/main/docs/visualization.md): 39 chart types (Plotly, RAWGraphs SVG, Highcharts)
+- [Agent Integration](https://github.com/GiacomoSaccaggi/scomp_link/blob/main/AGENT_INTEGRATION.md): MCP server setup + SKILL.md for Claude/Kiro/Cursor
+- [Quick Start](https://github.com/GiacomoSaccaggi/scomp_link/blob/main/docs/quickstart.md): Getting started in 5 minutes
+- [Examples](https://github.com/GiacomoSaccaggi/scomp_link/blob/main/docs/examples.md): 34 runnable example scripts
+
+## API Reference
+
+- [Pipeline](https://github.com/GiacomoSaccaggi/scomp_link/blob/main/docs/api/pipeline.md): ScompLinkPipeline orchestrator
+- [Models](https://github.com/GiacomoSaccaggi/scomp_link/blob/main/docs/api/models.md): RegressorOptimizer, ClassifierOptimizer, AnomalyDetector, Forecaster
+- [Preprocessing](https://github.com/GiacomoSaccaggi/scomp_link/blob/main/docs/api/preprocessing.md): Preprocessor, FeatureEngineer, DataQualityReport
+- [Validation](https://github.com/GiacomoSaccaggi/scomp_link/blob/main/docs/api/validation.md): Validator, AdvancedCV, FairnessMetrics
+- [Monitoring](https://github.com/GiacomoSaccaggi/scomp_link/blob/main/docs/api/monitoring.md): DriftDetector
+- [Explainability](https://github.com/GiacomoSaccaggi/scomp_link/blob/main/docs/api/explainability.md): ShapExplainer, LimeExplainer
+- [Persistence](https://github.com/GiacomoSaccaggi/scomp_link/blob/main/docs/api/persistence.md): ScompArtifact (.scomp format)
+- [Visualization](https://github.com/GiacomoSaccaggi/scomp_link/blob/main/docs/api/visualization.md): ScompLinkHTMLReport, Plotly, RAWGraphs, Highcharts
+- [Tuning](https://github.com/GiacomoSaccaggi/scomp_link/blob/main/docs/api/tuning.md): OptunaOptimizer, HalvingSearchOptimizer
+
+## Optional
+
+- [Changelog](https://github.com/GiacomoSaccaggi/scomp_link/blob/main/docs/changelog.md): Version history
+- [Workflow Patterns](https://github.com/GiacomoSaccaggi/scomp_link/blob/main/skills/scomp-link/references/workflow-patterns.md): Common usage patterns
+- [SKILL.md](https://github.com/GiacomoSaccaggi/scomp_link/blob/main/skills/scomp-link/SKILL.md): Agent skill specification

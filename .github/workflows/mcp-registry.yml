@@ -1,0 +1,30 @@
+# Publish to MCP Registry on new releases
+# Reference: https://modelcontextprotocol.io/registry/github-actions
+name: Publish to MCP Registry
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:  # Allow manual trigger
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate server.json
+        run: |
+          python3 -c "
+          import json
+          with open('server.json') as f:
+              data = json.load(f)
+          assert data['name'] == 'io.github.giacomosaccaggi/scomp-link'
+          assert 'packages' in data
+          print('✅ server.json is valid')
+          "
+
+      - name: Publish to MCP Registry
+        uses: modelcontextprotocol/registry-publish-action@v1
+        with:
+          server-json-path: server.json

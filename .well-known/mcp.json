@@ -1,0 +1,38 @@
+{
+  "name": "scomp-link",
+  "description": "End-to-end ML toolkit with 15 MCP tools for training, tuning, monitoring, visualization, and deployment.",
+  "version": "1.2.1",
+  "transport": "stdio",
+  "install": "pip install scomp-link[mcp]",
+  "command": "scomp-link mcp",
+  "tools": [
+    {"name": "describe_data", "description": "Profile a dataset (columns, types, stats)"},
+    {"name": "train_model", "description": "Train a model with optional tuning and feature engineering"},
+    {"name": "predict", "description": "Generate predictions from a .scomp artifact"},
+    {"name": "validate_model", "description": "Evaluate model on test data with metrics and HTML report"},
+    {"name": "detect_drift", "description": "Check distribution drift between datasets (PSI + KS)"},
+    {"name": "detect_anomalies", "description": "Multi-method consensus anomaly detection"},
+    {"name": "check_fairness", "description": "Compute fairness metrics (demographic parity, disparate impact)"},
+    {"name": "forecast_series", "description": "Time series forecasting (ARIMA, Exp. Smoothing)"},
+    {"name": "engineer_features", "description": "Automated feature engineering (interactions, log, encoding)"},
+    {"name": "cluster_data", "description": "KMeans or MeanShift clustering"},
+    {"name": "generate_report", "description": "Create interactive HTML report with charts"},
+    {"name": "create_visualization", "description": "Generate any of 39 chart types (Plotly, RAWGraphs, Highcharts)"},
+    {"name": "compare_models", "description": "Side-by-side comparison of model artifacts"},
+    {"name": "export_model", "description": "Export .scomp to pickle, joblib, or ONNX"}
+  ],
+  "resources": [
+    {"uri": "scomp://artifact/{path}", "description": "Inspect a .scomp artifact metadata"},
+    {"uri": "scomp://data/{path}", "description": "Get schema and sample rows from a dataset"},
+    {"uri": "scomp://models", "description": "List all available model types"}
+  ],
+  "prompts": [
+    {"name": "ml_workflow", "description": "Template for a complete ML pipeline"},
+    {"name": "debug_model", "description": "Diagnose poor model performance"},
+    {"name": "monitor_production", "description": "Set up production data monitoring"},
+    {"name": "create_dashboard", "description": "Build an analytical HTML dashboard"}
+  ],
+  "repository": "https://github.com/GiacomoSaccaggi/scomp_link",
+  "pypi": "https://pypi.org/project/scomp-link/",
+  "documentation": "https://github.com/GiacomoSaccaggi/scomp_link/blob/main/AGENT_INTEGRATION.md"
+}
