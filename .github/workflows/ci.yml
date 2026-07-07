@@ -109,8 +109,8 @@ jobs:
           tags: |
             ghcr.io/giacomosaccaggi/scomp-link:${{ github.ref_name }}
             ghcr.io/giacomosaccaggi/scomp-link:latest
-            giacomosaccaggi/scomp-link:${{ github.ref_name }}
-            giacomosaccaggi/scomp-link:latest
+            jack15121/scomp-link:${{ github.ref_name }}
+            jack15121/scomp-link:latest
 
   deploy-hf-space:
     needs: publish-pypi
