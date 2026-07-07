@@ -9,3 +9,4 @@ from scomp_link.mcp_server import mcp
 
 if __name__ == "__main__":
     mcp.run(transport="sse")
+# scomp-link MCP
