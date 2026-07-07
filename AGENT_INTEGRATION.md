@@ -157,6 +157,9 @@ scomp-link mcp
 
 # Or run directly
 python -m scomp_link.mcp_server
+
+# Or via Docker
+docker run -i jack15121/scomp-link mcp
 ```
 
 ---
