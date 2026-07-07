@@ -350,9 +350,15 @@ scomp-link mcp  # Starts MCP server (stdio transport)
 {"mcpServers": {"scomp-link": {"command": "scomp-link", "args": ["mcp"]}}}
 ```
 
-**Remote (no install needed)** — connect to the hosted MCP server on [🤗 Hugging Face Space](https://huggingface.co/spaces/Euribor512/scomp-link):
+**Remote (no install needed)** — connect to the hosted MCP server on [🤗 Hugging Face Space](https://huggingface.co/spaces/Euribor512/scomp-link) or [🔧 Smithery](https://smithery.ai/servers/giacomosaccaggi/scomp-link):
 ```json
 {"mcpServers": {"scomp-link": {"url": "https://Euribor512-scomp-link.hf.space/sse"}}}
+```
+
+**Docker:**
+```bash
+docker pull jack15121/scomp-link:latest
+docker run -i jack15121/scomp-link mcp
 ```
 
 **Available tools:** `describe_data`, `train_model`, `predict`, `validate_model`, `detect_drift`, `detect_anomalies`, `check_fairness`, `forecast_series`, `engineer_features`, `cluster_data`, `generate_report`, `create_visualization`, `compare_models`, `export_model`
