@@ -2,10 +2,10 @@
 """
 ██████╗ ███████╗██████╗ ███████╗██╗███████╗████████╗
 ██╔══██╗██╔════╝██╔══██╗██╔════╝██║██╔════╝╚══██╔══╝
-██████╔╝█████╗  ██████╔╝███████╗██║███████╗   ██║   
-██╔═══╝ ██╔══╝  ██╔══██╗╚════██║██║╚════██║   ██║   
-██║     ███████╗██║  ██║███████║██║███████║   ██║   
-╚═╝     ╚══════╝╚═╝  ╚═╝╚══════╝╚═╝╚══════╝   ╚═╝   
+██████╔╝█████╗  ██████╔╝███████╗██║███████╗   ██║
+██╔═══╝ ██╔══╝  ██╔══██╗╚════██║██║╚════██║   ██║
+██║     ███████╗██║  ██║███████║██║███████║   ██║
+╚═╝     ╚══════╝╚═╝  ╚═╝╚══════╝╚═╝╚══════╝   ╚═╝
 
 .scomp format: A self-contained pipeline artifact.
 
@@ -19,21 +19,23 @@ Structure (zip-based):
     ├── feature_schema.json # Column names, types, expected ranges
     └── sample_data.parquet # Optional: small sample of training data (for drift detection)
 """
+
+import io
 import json
 import pickle
-import zipfile
-import io
-import sys
 import platform
+import sys
+import zipfile
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Optional, Dict, Any, Union
+from typing import Any, Dict, Optional, Union
+
 import numpy as np
 import pandas as pd
 
 from scomp_link.utils.logger import get_logger
-logger = get_logger(__name__)
 
+logger = get_logger(__name__)
 
 
 SCOMP_FORMAT_VERSION = "1.0"
@@ -43,7 +45,7 @@ MAGIC_BYTES = b"SCOMP\x01"
 class ScompArtifact:
     """
     Serialize and deserialize complete ML pipelines as .scomp files.
-    
+
     Usage example:
         # Save
         artifact = ScompArtifact()
@@ -53,7 +55,7 @@ class ScompArtifact:
         artifact.set_metrics({'rmse': 0.42, 'r2': 0.91})
         artifact.set_sample_data(X_train.head(100))
         artifact.save('my_pipeline.scomp')
-        
+
         # Load
         loaded = ScompArtifact.load('my_pipeline.scomp')
         model = loaded.model
@@ -190,13 +192,24 @@ class ScompArtifact:
             # Verify magic
             magic = zf.read("__magic__")
             if magic != MAGIC_BYTES:
-                raise ValueError(f"Invalid .scomp file: bad magic bytes")
+                raise ValueError("Invalid .scomp file: bad magic bytes")
 
             manifest = json.loads(zf.read("manifest.json"))
-            artifact.metadata = {k: v for k, v in manifest.items()
-                                 if k not in ("format_version", "has_model", "has_preprocessor",
-                                              "has_sample_data", "packages", "python_version",
-                                              "platform", "created_at")}
+            artifact.metadata = {
+                k: v
+                for k, v in manifest.items()
+                if k
+                not in (
+                    "format_version",
+                    "has_model",
+                    "has_preprocessor",
+                    "has_sample_data",
+                    "packages",
+                    "python_version",
+                    "platform",
+                    "created_at",
+                )
+            }
 
             artifact.config = json.loads(zf.read("config.json"))
             artifact.metrics = json.loads(zf.read("metrics.json"))
@@ -250,21 +263,24 @@ class ScompArtifact:
         return versions
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Sample data
+    import os
+    import tempfile
+
     from sklearn.ensemble import RandomForestRegressor
     from sklearn.model_selection import train_test_split
-    import tempfile
-    import os
 
     np.random.seed(42)
     size_df = 300
-    X = pd.DataFrame({
-        'x1': np.random.randn(size_df),
-        'x2': np.random.randn(size_df),
-        'x3': np.random.randn(size_df),
-    })
-    y = 2 * X['x1'] + 0.5 * X['x2'] + np.random.randn(size_df) * 0.1
+    X = pd.DataFrame(
+        {
+            "x1": np.random.randn(size_df),
+            "x2": np.random.randn(size_df),
+            "x3": np.random.randn(size_df),
+        }
+    )
+    y = 2 * X["x1"] + 0.5 * X["x2"] + np.random.randn(size_df) * 0.1
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
     model = RandomForestRegressor(n_estimators=50, random_state=42)
@@ -274,13 +290,14 @@ if __name__ == '__main__':
     logger.info("🔬 Testing ScompArtifact save...")
     artifact = ScompArtifact()
     artifact.set_model(model)
-    artifact.set_config(task_type='regression', target_col='y', feature_cols=['x1', 'x2', 'x3'])
-    artifact.set_metrics({'r2': 0.95, 'rmse': 0.12})
+    artifact.set_config(task_type="regression", target_col="y", feature_cols=["x1", "x2", "x3"])
+    artifact.set_metrics({"r2": 0.95, "rmse": 0.12})
     artifact.set_feature_schema(X_train)
     artifact.set_sample_data(X_train)
-    artifact.set_metadata(author='test', description='Demo pipeline')
+    artifact.set_metadata(author="test", description="Demo pipeline")
 
-    path = tempfile.mktemp(suffix='.scomp')
+    fd, path = tempfile.mkstemp(suffix=".scomp")
+    os.close(fd)
     artifact.save(path)
 
     # Test load

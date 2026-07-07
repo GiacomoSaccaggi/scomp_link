@@ -13,26 +13,30 @@ Requirements:
   pip install scomp-link
 """
 
+import os
+import tempfile
+
 import numpy as np
 import pandas as pd
-import tempfile
-import os
 from sklearn.ensemble import GradientBoostingRegressor
-from sklearn.preprocessing import StandardScaler
-from sklearn.pipeline import Pipeline
 from sklearn.model_selection import train_test_split
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler
+
 from scomp_link import ScompArtifact
 
 # --- Generate synthetic data ---
 np.random.seed(42)
 N = 1000
-X = pd.DataFrame({
-    'temperature': np.random.normal(25, 5, N),
-    'humidity': np.random.normal(60, 15, N),
-    'pressure': np.random.normal(1013, 10, N),
-    'wind_speed': np.random.exponential(5, N),
-})
-y = 0.5 * X['temperature'] - 0.3 * X['humidity'] + 0.1 * X['pressure'] + np.random.randn(N) * 2
+X = pd.DataFrame(
+    {
+        "temperature": np.random.normal(25, 5, N),
+        "humidity": np.random.normal(60, 15, N),
+        "pressure": np.random.normal(1013, 10, N),
+        "wind_speed": np.random.exponential(5, N),
+    }
+)
+y = 0.5 * X["temperature"] - 0.3 * X["humidity"] + 0.1 * X["pressure"] + np.random.randn(N) * 2
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
@@ -57,22 +61,23 @@ artifact = ScompArtifact()
 artifact.set_model(model)
 artifact.set_preprocessor(preprocessor)
 artifact.set_config(
-    task_type='regression',
-    target_col='energy_output',
-    feature_cols=['temperature', 'humidity', 'pressure', 'wind_speed'],
-    model_params={'n_estimators': 100, 'max_depth': 4},
+    task_type="regression",
+    target_col="energy_output",
+    feature_cols=["temperature", "humidity", "pressure", "wind_speed"],
+    model_params={"n_estimators": 100, "max_depth": 4},
 )
-artifact.set_metrics({'r2': round(r2, 4), 'rmse': 1.98, 'mae': 1.55})
+artifact.set_metrics({"r2": round(r2, 4), "rmse": 1.98, "mae": 1.55})
 artifact.set_feature_schema(X_train)
 artifact.set_sample_data(X_train, max_rows=200)
 artifact.set_metadata(
-    author='data_science_team',
-    description='Energy output prediction from weather features',
-    experiment_id='exp_042',
-    version='1.0.0',
+    author="data_science_team",
+    description="Energy output prediction from weather features",
+    experiment_id="exp_042",
+    version="1.0.0",
 )
 
-save_path = tempfile.mktemp(suffix='.scomp')
+fd, save_path = tempfile.mkstemp(suffix=".scomp")
+os.close(fd)
 artifact.save(save_path)
 
 # === LOAD and predict ===
@@ -93,7 +98,7 @@ for key, val in info.items():
 # === FEATURE SCHEMA ===
 print("\n--- Feature schema ---")
 for feat, schema in loaded.feature_schema.items():
-    if 'min' in schema:
+    if "min" in schema:
         print(f"  {feat}: [{schema['min']:.2f}, {schema['max']:.2f}] (mean={schema['mean']:.2f})")
 
 # === SAMPLE DATA for drift detection ===
@@ -101,7 +106,7 @@ print(f"\n--- Sample data: {loaded.sample_data.shape} ---")
 print(loaded.sample_data.head(3).to_string())
 
 # === Verify .scomp file ===
-print(f"\n--- File validation ---")
+print("\n--- File validation ---")
 print(f"Is valid .scomp: {ScompArtifact.is_scomp_file(save_path)}")
 print(f"File size: {os.path.getsize(save_path) / 1024:.1f} KB")
 

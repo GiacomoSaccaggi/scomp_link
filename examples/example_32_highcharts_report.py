@@ -18,15 +18,16 @@ Requirements:
 
 import os
 import tempfile
-import numpy as np
 from datetime import datetime, timedelta
 
-from scomp_link.utils.report_html import ScompLinkHTMLReport
-from scomp_link.utils.highcharts import streamgraphs, calendar_heatmap, calendar_gantt
-from scomp_link.utils.decorators import timer, memory_usage
+import numpy as np
 
+from scomp_link.utils.decorators import memory_usage, timer
+from scomp_link.utils.highcharts import calendar_gantt, calendar_heatmap, streamgraphs
+from scomp_link.utils.report_html import ScompLinkHTMLReport
 
 # --- Data generation functions with decorators ---
+
 
 @memory_usage
 def generate_streamgraph_data():
@@ -35,15 +36,15 @@ def generate_streamgraph_data():
 
     # Monthly dates for 2 years
     start = datetime(2024, 1, 1)
-    dates = [(start + timedelta(days=30 * i)).strftime('%Y-%m') for i in range(24)]
+    dates = [(start + timedelta(days=30 * i)).strftime("%Y-%m") for i in range(24)]
 
     # 5 product categories with seasonal patterns
     categories = {
-        'Electronics': np.random.poisson(50, 24) + np.array([10 * (i % 12 > 9) for i in range(24)]),
-        'Clothing': np.random.poisson(40, 24) + np.array([15 * (3 < i % 12 < 8) for i in range(24)]),
-        'Food': np.random.poisson(80, 24) + np.random.randint(-5, 5, 24),
-        'Books': np.random.poisson(25, 24) + np.array([8 * (i % 12 < 3) for i in range(24)]),
-        'Sports': np.random.poisson(30, 24) + np.array([20 * (4 < i % 12 < 9) for i in range(24)]),
+        "Electronics": np.random.poisson(50, 24) + np.array([10 * (i % 12 > 9) for i in range(24)]),
+        "Clothing": np.random.poisson(40, 24) + np.array([15 * (3 < i % 12 < 8) for i in range(24)]),
+        "Food": np.random.poisson(80, 24) + np.random.randint(-5, 5, 24),
+        "Books": np.random.poisson(25, 24) + np.array([8 * (i % 12 < 3) for i in range(24)]),
+        "Sports": np.random.poisson(30, 24) + np.array([20 * (4 < i % 12 < 9) for i in range(24)]),
     }
 
     # Convert to list of ints (as required by the function)
@@ -51,8 +52,8 @@ def generate_streamgraph_data():
 
     # Annotations for key events
     annotations = {
-        'Black Friday': 10,   # November 2024
-        'Summer Sale': 18,    # July 2025
+        "Black Friday": 10,  # November 2024
+        "Summer Sale": 18,  # July 2025
     }
 
     return dates, series_dict, annotations
@@ -67,7 +68,7 @@ def generate_heatmap_data():
     start = datetime(2025, 3, 1)
     series_dict = {}
     for i in range(35):
-        date = (start + timedelta(days=i)).strftime('%Y-%m-%d')
+        date = (start + timedelta(days=i)).strftime("%Y-%m-%d")
         # Simulate daily completion percentage with weekday bias
         weekday = (start + timedelta(days=i)).weekday()
         base = 60 if weekday < 5 else 30  # lower on weekends
@@ -88,68 +89,68 @@ def generate_gantt_data():
 
     series_dict = [
         {
-            'name': 'Development',
-            'data': [
+            "name": "Development",
+            "data": [
                 {
-                    'name': 'Requirements',
-                    'id': 'req',
-                    'start': to_ms(base),
-                    'end': to_ms(base + timedelta(days=7)),
-                    'completed': "{ amount: 1.0 }",
+                    "name": "Requirements",
+                    "id": "req",
+                    "start": to_ms(base),
+                    "end": to_ms(base + timedelta(days=7)),
+                    "completed": "{ amount: 1.0 }",
                 },
                 {
-                    'name': 'Design',
-                    'id': 'design',
-                    'start': to_ms(base + timedelta(days=7)),
-                    'end': to_ms(base + timedelta(days=14)),
-                    'completed': "{ amount: 0.8 }",
+                    "name": "Design",
+                    "id": "design",
+                    "start": to_ms(base + timedelta(days=7)),
+                    "end": to_ms(base + timedelta(days=14)),
+                    "completed": "{ amount: 0.8 }",
                 },
                 {
-                    'name': 'Implementation',
-                    'id': 'impl',
-                    'start': to_ms(base + timedelta(days=14)),
-                    'end': to_ms(base + timedelta(days=35)),
-                    'completed': "{ amount: 0.4 }",
+                    "name": "Implementation",
+                    "id": "impl",
+                    "start": to_ms(base + timedelta(days=14)),
+                    "end": to_ms(base + timedelta(days=35)),
+                    "completed": "{ amount: 0.4 }",
                 },
                 {
-                    'name': 'Code Freeze',
-                    'id': 'freeze',
-                    'start': to_ms(base + timedelta(days=35)),
-                    'end': to_ms(base + timedelta(days=35)),
-                    'milestone': 'true',
+                    "name": "Code Freeze",
+                    "id": "freeze",
+                    "start": to_ms(base + timedelta(days=35)),
+                    "end": to_ms(base + timedelta(days=35)),
+                    "milestone": "true",
                 },
             ],
         },
         {
-            'name': 'Testing',
-            'data': [
+            "name": "Testing",
+            "data": [
                 {
-                    'name': 'Unit Tests',
-                    'id': 'unit',
-                    'start': to_ms(base + timedelta(days=21)),
-                    'end': to_ms(base + timedelta(days=35)),
-                    'completed': "{ amount: 0.6 }",
+                    "name": "Unit Tests",
+                    "id": "unit",
+                    "start": to_ms(base + timedelta(days=21)),
+                    "end": to_ms(base + timedelta(days=35)),
+                    "completed": "{ amount: 0.6 }",
                 },
                 {
-                    'name': 'Integration Tests',
-                    'id': 'integ',
-                    'start': to_ms(base + timedelta(days=35)),
-                    'end': to_ms(base + timedelta(days=42)),
-                    'completed': "{ amount: 0.2 }",
+                    "name": "Integration Tests",
+                    "id": "integ",
+                    "start": to_ms(base + timedelta(days=35)),
+                    "end": to_ms(base + timedelta(days=42)),
+                    "completed": "{ amount: 0.2 }",
                 },
                 {
-                    'name': 'Release',
-                    'id': 'release',
-                    'start': to_ms(base + timedelta(days=45)),
-                    'end': to_ms(base + timedelta(days=45)),
-                    'milestone': 'true',
+                    "name": "Release",
+                    "id": "release",
+                    "start": to_ms(base + timedelta(days=45)),
+                    "end": to_ms(base + timedelta(days=45)),
+                    "milestone": "true",
                 },
             ],
         },
     ]
 
-    min_date = base.strftime('%Y-%m-%d')
-    max_date = (base + timedelta(days=50)).strftime('%Y-%m-%d')
+    min_date = base.strftime("%Y-%m-%d")
+    max_date = (base + timedelta(days=50)).strftime("%Y-%m-%d")
 
     return series_dict, min_date, max_date
 
@@ -157,7 +158,7 @@ def generate_gantt_data():
 @timer
 def build_report():
     """Build the complete HTML report with all Highcharts visualizations."""
-    report = ScompLinkHTMLReport(title='Highcharts Visualization Gallery')
+    report = ScompLinkHTMLReport(title="Highcharts Visualization Gallery")
 
     # === Section 1: Streamgraph (Area mode) ===
     print("\n  📊 Generating Streamgraph (Area mode)...")
@@ -189,15 +190,14 @@ def build_report():
     )
     report.html_report += html_stream
     report.close_section()
-    print(f"    ✅ Streamgraph: symmetric layout")
+    print("    ✅ Streamgraph: symmetric layout")
 
     # === Section 3: Calendar Heatmap ===
     print("  📊 Generating Calendar Heatmap...")
     heatmap_data = generate_heatmap_data()
 
     report.open_section("Calendar Heatmap — Daily Completion Rate")
-    report.add_text("Daily task completion percentage over 5 weeks. "
-                    "Color scale: blue (low) → orange (high).")
+    report.add_text("Daily task completion percentage over 5 weeks. " "Color scale: blue (low) → orange (high).")
     html_heatmap = calendar_heatmap(
         title="Daily Task Completion (%)",
         series_dict=heatmap_data,
@@ -213,8 +213,10 @@ def build_report():
     gantt_data, min_date, max_date = generate_gantt_data()
 
     report.open_section("Gantt Chart — Project Timeline")
-    report.add_text("Project management timeline with phases, tasks, and milestones. "
-                    "Includes completion percentages and weekend shading.")
+    report.add_text(
+        "Project management timeline with phases, tasks, and milestones. "
+        "Includes completion percentages and weekend shading."
+    )
     html_gantt = calendar_gantt(
         title="Project Alpha — Development Timeline",
         series_dict=gantt_data,
@@ -223,15 +225,14 @@ def build_report():
     )
     report.html_report += html_gantt
     report.close_section()
-    print(f"    ✅ Gantt: {sum(len(s['data']) for s in gantt_data)} tasks, "
-          f"range {min_date} → {max_date}")
+    print(f"    ✅ Gantt: {sum(len(s['data']) for s in gantt_data)} tasks, " f"range {min_date} → {max_date}")
 
     return report
 
 
 # --- Main execution ---
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     print("=" * 70)
     print("HIGHCHARTS VISUALIZATIONS IN HTML REPORT")
     print("=" * 70)
@@ -241,7 +242,8 @@ if __name__ == '__main__':
 
     # Save to temp file
     print("\n--- Saving HTML Report ---")
-    output_path = tempfile.mktemp(suffix='.html')
+    fd, output_path = tempfile.mkstemp(suffix=".html")
+    os.close(fd)
     report.save_html(output_path)
 
     file_size = os.path.getsize(output_path) / 1024
@@ -249,17 +251,17 @@ if __name__ == '__main__':
     print(f"  📏 File size: {file_size:.1f} KB")
 
     # Verify content includes all chart types
-    with open(output_path, 'r', encoding='utf-8') as f:
+    with open(output_path, "r", encoding="utf-8") as f:
         content = f.read()
 
     checks = {
-        'Highcharts.chart': 'Highcharts core charts',
-        'HighchartsGantt.ganttChart': 'Gantt chart',
-        'type: \'heatmap\'': 'Heatmap chart',
-        'streamgraph': 'Streamgraph reference',
+        "Highcharts.chart": "Highcharts core charts",
+        "HighchartsGantt.ganttChart": "Gantt chart",
+        "type: 'heatmap'": "Heatmap chart",
+        "streamgraph": "Streamgraph reference",
     }
 
-    print(f"\n  --- Content Verification ---")
+    print("\n  --- Content Verification ---")
     for pattern, label in checks.items():
         found = pattern in content
         status = "✅" if found else "❌"
@@ -267,7 +269,7 @@ if __name__ == '__main__':
 
     # Cleanup
     os.unlink(output_path)
-    print(f"\n  (temp file cleaned up)")
+    print("\n  (temp file cleaned up)")
 
     # === Summary ===
     print("\n" + "=" * 70)
