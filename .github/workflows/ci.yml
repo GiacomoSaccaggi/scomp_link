@@ -1,38 +1,187 @@
-name: CI
+name: CI/CD
 
 on:
   push:
     branches: [main]
+    tags: ["v*.*.*"]
   pull_request:
     branches: [main]
+  schedule:
+    - cron: '0 6 * * 1'  # Weekly CodeQL scan
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+  security-events: write
+  packages: write
 
 jobs:
+  # ═══════════════════════════════════════════════════════════════
+  # TEST — runs on every push/PR
+  # ═══════════════════════════════════════════════════════════════
   test:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         python-version: ["3.10", "3.11", "3.12", "3.13", "3.14"]
-
     steps:
       - uses: actions/checkout@v4
-
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
+      - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-
-      - name: Install dependencies
-        run: |
-          pip install --upgrade pip
-          pip install -e ".[dev]"
-
-      - name: Run tests with coverage
-        run: |
-          pytest tests/ -v --tb=short --cov=scomp_link --cov-report=xml --cov-report=term
-
-      - name: Upload coverage to Codecov
+      - run: pip install --upgrade pip && pip install -e ".[dev]"
+      - run: pytest tests/ -v --tb=short --cov=scomp_link --cov-report=xml --cov-report=term
+      - name: Upload coverage
         if: matrix.python-version == '3.12'
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
+
+  # ═══════════════════════════════════════════════════════════════
+  # CODEQL — security scan (push + weekly schedule)
+  # ═══════════════════════════════════════════════════════════════
+  codeql:
+    runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: github/codeql-action/init@v3
+        with:
+          languages: python
+      - uses: github/codeql-action/analyze@v3
+
+  # ═══════════════════════════════════════════════════════════════
+  # PAGES — deploy docs (only on push to main, not tags/PRs)
+  # ═══════════════════════════════════════════════════════════════
+  pages:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: docs/demo
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+  # ═══════════════════════════════════════════════════════════════
+  # RELEASE — everything below runs ONLY on version tags
+  # ═══════════════════════════════════════════════════════════════
+  publish-pypi:
+    needs: test
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v7
+      - run: uv build
+      - uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          password: ${{ secrets.PYPI_TOKEN }}
+          skip-existing: true
+
+  publish-docker:
+    needs: publish-pypi
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/login-action@v4
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - uses: docker/build-push-action@v7
+        with:
+          push: true
+          tags: |
+            ghcr.io/giacomosaccaggi/scomp-link:${{ github.ref_name }}
+            ghcr.io/giacomosaccaggi/scomp-link:latest
+            giacomosaccaggi/scomp-link:${{ github.ref_name }}
+            giacomosaccaggi/scomp-link:latest
+
+  deploy-hf-space:
+    needs: publish-pypi
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+    steps:
+      - uses: actions/checkout@v4
+      - name: Push to Hugging Face Space
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          cd hf-space
+          git init -b main
+          git config user.email "giacomo.saccaggi@gmail.com"
+          git config user.name "GiacomoSaccaggi"
+          git remote add hf https://Euribor512:${HF_TOKEN}@huggingface.co/spaces/Euribor512/scomp-link
+          git add .
+          git commit -m "Deploy scomp-link MCP server ${{ github.ref_name }}"
+          git push hf main --force
+
+  publish-smithery:
+    needs: deploy-hf-space
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+    steps:
+      - name: Wait for HF Space to build
+        run: |
+          echo "Waiting 180s for Docker build..."
+          sleep 180
+          for i in $(seq 1 10); do
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://Euribor512-scomp-link.hf.space/sse)
+            echo "Attempt $i: HTTP $STATUS"
+            if [ "$STATUS" != "503" ] && [ "$STATUS" != "000" ]; then
+              echo "Space is up!"
+              exit 0
+            fi
+            sleep 30
+          done
+          echo "Warning: Space may not be ready, attempting publish anyway"
+      - name: Publish to Smithery
+        env:
+          SMITHERY_API_KEY: ${{ secrets.SMITHERY_API_KEY }}
+        run: |
+          npx @smithery/cli mcp publish https://Euribor512-scomp-link.hf.space/sse -n giacomosaccaggi/scomp-link
+
+  publish-hf-skill:
+    needs: test
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v7
+      - run: uv sync
+      - name: Upload skill to HuggingFace
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          uv run python -c "
+          from huggingface_hub import HfApi
+          api = HfApi(token='$HF_TOKEN')
+          api.create_repo('Euribor512/scomp-link-skill', repo_type='dataset', exist_ok=True)
+          api.upload_folder(folder_path='skills/scomp-link', repo_id='Euribor512/scomp-link-skill', repo_type='dataset', commit_message='Release ${GITHUB_REF_NAME}')
+          print('✅ HuggingFace skill updated')
+          "
+
+  github-release:
+    needs: [publish-pypi, publish-docker]
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+    steps:
+      - uses: actions/checkout@v4
+      - uses: softprops/action-gh-release@v3
+        with:
+          generate_release_notes: true
