@@ -22,7 +22,7 @@ jobs:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
           cd hf-space
-          git init
+          git init -b main
           git config user.email "giacomo.saccaggi@gmail.com"
           git config user.name "GiacomoSaccaggi"
           git remote add hf https://Euribor512:${HF_TOKEN}@huggingface.co/spaces/Euribor512/scomp-link
