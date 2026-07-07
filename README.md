@@ -345,6 +345,10 @@ scomp-link mcp  # Starts MCP server (stdio transport)
 {"mcpServers": {"scomp-link": {"command": "scomp-link", "args": ["mcp"]}}}
 ```
 
+**Cursor** (plugin — one click):
+
+[![Add to Cursor](https://img.shields.io/badge/Add_to-Cursor-green?logo=cursor)](https://cursor.com/marketplace/scomp-link)
+
 **Kiro** (`.kiro/mcp.json`):
 ```json
 {"mcpServers": {"scomp-link": {"command": "scomp-link", "args": ["mcp"]}}}

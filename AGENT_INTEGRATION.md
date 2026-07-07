@@ -87,13 +87,27 @@ Add to `.kiro/mcp.json` in your project root:
 
 ### Setup for Cursor
 
-Add to Cursor Settings → MCP Servers:
+**Option 1 — Marketplace plugin** (installs MCP + skill in one click):
+
+Visit [cursor.com/marketplace/scomp-link](https://cursor.com/marketplace/scomp-link) and click "Add to Cursor".
+
+**Option 2 — Manual MCP config** (Cursor Settings → MCP Servers):
 
 ```json
 {
   "scomp-link": {
     "command": "scomp-link",
     "args": ["mcp"]
+  }
+}
+```
+
+**Option 3 — Remote (no install):**
+
+```json
+{
+  "scomp-link": {
+    "url": "https://Euribor512-scomp-link.hf.space/sse"
   }
 }
 ```
@@ -205,13 +219,37 @@ docker run -i jack15121/scomp-link mcp
 
 ## Which Integration to Choose?
 
-| Criterion | SKILL.md | MCP Server |
-|-----------|----------|------------|
-| Setup complexity | Copy one folder | Install + config MCP |
-| Dependencies | None (uses CLI) | `mcp` package |
-| Reliability | Agent interprets instructions | Deterministic function calls |
-| Speed | CLI subprocess overhead | Direct function calls |
-| Flexibility | Agent can adapt creatively | Fixed tool signatures |
-| Best for | Quick setup, any agent | Production workflows, structured outputs |
+| Criterion | Remote MCP | Local MCP | Cursor Plugin | SKILL.md |
+|-----------|------------|-----------|---------------|----------|
+| Setup | Zero (just URL) | `pip install` + config | One-click | Copy folder |
+| Dependencies | Internet only | `mcp` package | Cursor | None |
+| How it works | Remote function calls | Local function calls | Bundled MCP + skill | Agent reads docs |
+| Best for | Quick start, demos | Production, speed | Cursor users | Flexibility |
 
-**Recommendation**: Start with SKILL.md for immediate use. Add MCP server when you need deterministic, structured tool calls in production agent workflows.
+**Recommendation**: Use the Cursor Plugin if you use Cursor. Otherwise, start with Remote MCP for zero setup, switch to Local MCP for production. Add SKILL.md for extra context.
+
+---
+
+## Server Discovery
+
+scomp-link supports the emerging `.well-known/mcp/server-card.json` standard (SEP-1649) for automatic server discovery. AI clients can probe the hosted endpoint to auto-detect capabilities:
+
+```
+GET https://Euribor512-scomp-link.hf.space/.well-known/mcp/server-card.json
+```
+
+The server card advertises all 15 tools, transport type, and connection URL — enabling auto-configuration without manual setup.
+
+---
+
+## Available On
+
+| Platform | Link |
+|----------|------|
+| 📦 PyPI | [pypi.org/project/scomp-link](https://pypi.org/project/scomp-link/) |
+| 🐙 GitHub | [github.com/GiacomoSaccaggi/scomp_link](https://github.com/GiacomoSaccaggi/scomp_link) |
+| 🐳 Docker Hub | [hub.docker.com/r/jack15121/scomp-link](https://hub.docker.com/r/jack15121/scomp-link) |
+| 📦 GHCR | [ghcr.io/giacomosaccaggi/scomp-link](https://github.com/GiacomoSaccaggi/scomp_link/pkgs/container/scomp-link) |
+| 🤗 HF Space | [huggingface.co/spaces/Euribor512/scomp-link](https://huggingface.co/spaces/Euribor512/scomp-link) |
+| 🔧 Smithery | [smithery.ai/servers/giacomosaccaggi/scomp-link](https://smithery.ai/servers/giacomosaccaggi/scomp-link) |
+| 🖱️ Cursor | [cursor.com/marketplace/scomp-link](https://cursor.com/marketplace/scomp-link) |
