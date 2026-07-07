@@ -3,10 +3,6 @@
 name: Deploy HF Space
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'hf-space/**'
   release:
     types: [published]
   workflow_dispatch:
