@@ -113,6 +113,42 @@ Add to `.vscode/mcp.json`:
 }
 ```
 
+### Remote MCP Server (no local install needed)
+
+scomp-link is available as a hosted MCP server on Hugging Face Spaces. No local installation required — connect directly from any MCP client:
+
+**🔗 Live endpoint:** `https://Euribor512-scomp-link.hf.space/sse`
+
+**🌐 Space page:** https://huggingface.co/spaces/Euribor512/scomp-link
+
+#### Claude Desktop / Kiro / Cursor (remote)
+
+```json
+{
+  "mcpServers": {
+    "scomp-link": {
+      "url": "https://Euribor512-scomp-link.hf.space/sse"
+    }
+  }
+}
+```
+
+#### VS Code (remote)
+
+```json
+{
+  "servers": {
+    "scomp-link": {
+      "url": "https://Euribor512-scomp-link.hf.space/sse"
+    }
+  }
+}
+```
+
+> **Note:** The remote server runs on HF Spaces free tier. For heavy workloads or low-latency needs, use the local MCP server instead (`pip install scomp-link[mcp]`).
+
+---
+
 ### Running Standalone (for testing)
 
 ```bash
