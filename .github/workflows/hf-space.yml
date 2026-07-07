@@ -1,0 +1,27 @@
+# Sync hf-space/ directory to Hugging Face Space
+# Triggers on push to main when hf-space/ files change, or on release
+name: Deploy HF Space
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'hf-space/**'
+  release:
+    types: [published]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Push to Hugging Face Space
+        uses: huggingface/hub-sync@v1
+        with:
+          github_path: hf-space/
+          hf_path: .
+          repo_id: Euribor512/scomp-link
+          repo_type: space
+          token: ${{ secrets.HF_TOKEN }}
