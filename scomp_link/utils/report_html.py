@@ -3,55 +3,60 @@
 
 ██████╗ ███████╗██████╗  █████╗ ██████╗ ████████╗
 ██╔══██╗██╔════╝██╔══██╗██╔══██╗██╔══██╗╚══██╔══╝
-██████╔╝█████╗  ██████╔╝██║  ██║██████╔╝   ██║   
-██╔══██╗██╔══╝  ██╔═══╝ ██║  ██║██╔══██╗   ██║   
-██║  ██║███████╗██║     ╚█████╔╝██║  ██║   ██║   
-╚═╝  ╚═╝╚══════╝╚═╝      ╚════╝ ╚═╝  ╚═╝   ╚═╝   
+██████╔╝█████╗  ██████╔╝██║  ██║██████╔╝   ██║
+██╔══██╗██╔══╝  ██╔═══╝ ██║  ██║██╔══██╗   ██║
+██║  ██║███████╗██║     ╚█████╔╝██║  ██║   ██║
+╚═╝  ╚═╝╚══════╝╚═╝      ╚════╝ ╚═╝  ╚═╝   ╚═╝
 
-██╗  ██╗████████╗███╗   ███╗██╗     
-██║  ██║╚══██╔══╝████╗ ████║██║     
-███████║   ██║   ██╔████╔██║██║     
-██╔══██║   ██║   ██║╚██╔╝██║██║     
+██╗  ██╗████████╗███╗   ███╗██╗
+██║  ██║╚══██╔══╝████╗ ████║██║
+███████║   ██║   ██╔████╔██║██║
+██╔══██║   ██║   ██║╚██╔╝██║██║
 ██║  ██║   ██║   ██║ ╚═╝ ██║███████╗
 ╚═╝  ╚═╝   ╚═╝   ╚═╝     ╚═╝╚══════╝
 """
 
-import pandas as pd
-import plotly
-import json
 import base64
 import io
-from plotly.io.json import to_json_plotly
+import json
+
 # Read constants from encrypted file
 import os
-import jwt
 
+import jwt
+import pandas as pd
+import plotly
+from plotly.io.json import to_json_plotly
+
+from scomp_link.utils.colors import MAIN, MAIN_DARK, MAIN_LIGHT
 from scomp_link.utils.logger import get_logger
-from scomp_link.utils.colors import MAIN, MAIN_LIGHT, MAIN_DARK
+
 logger = get_logger(__name__)
 
 
-
 class ScompLinkHTMLReport:
-    def __init_subclass__(cls, title,
-                         font_family='Baloo 2',
-                         url_img_logo='',
-                         # optional logo URL (empty for neutral branding)
-                         # optional secondary logo URL (empty for neutral branding)
-                         url_background_header='https://giacomosaccaggi.github.io/deep-dives/sfondo.png',
-                         description='Automatic Report',
-                         author='scomp-link toolkit',
-                         language='en',
-                         main_color=MAIN,
-                         light_color=MAIN_LIGHT,
-                         dark_color=MAIN_DARK):
+    def __init_subclass__(
+        cls,
+        title,
+        font_family="Baloo 2",
+        url_img_logo="",
+        # optional logo URL (empty for neutral branding)
+        # optional secondary logo URL (empty for neutral branding)
+        url_background_header="https://giacomosaccaggi.github.io/deep-dives/sfondo.png",
+        description="Automatic Report",
+        author="scomp-link toolkit",
+        language="en",
+        main_color=MAIN,
+        light_color=MAIN_LIGHT,
+        dark_color=MAIN_DARK,
+    ):
         cls.dark_color = dark_color
         cls.light_color = light_color
         cls.main_color = main_color
-        cls.html_title = f'<title>{title}</title>'
-        cls.header = f'''<header>
+        cls.html_title = f"<title>{title}</title>"
+        cls.header = f"""<header>
                                     <h1>{title}</h1><br><br><br>
-                                </header>'''
+                                </header>"""
         cls.html_meta_info = f"""
                     <meta charset="utf-8">
                     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -59,7 +64,8 @@ class ScompLinkHTMLReport:
                     <meta name="description" content="{description}">
                     <meta name="author" content="{author}">
                     """
-        cls.html_layout = """
+        cls.html_layout = (
+            """
             <link rel="shortcut icon" href="{url_img_logo}" />
             <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
             <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet"/>
@@ -341,13 +347,14 @@ class ScompLinkHTMLReport:
             }
             </style>
             <script src="https://cdn.plot.ly/plotly-2.9.0.min.js"></script>
-        """.replace('{font_family}', font_family) \
-            .replace('{url_img_logo}', url_img_logo) \
-            .replace('{url_background_header}', url_background_header) \
-            .replace('{main_color}', cls.main_color) \
-            .replace('{dark_color}', cls.dark_color) \
-            .replace('{light_color}', cls.light_color)
-        cls.footer = '''
+        """.replace("{font_family}", font_family)
+            .replace("{url_img_logo}", url_img_logo)
+            .replace("{url_background_header}", url_background_header)
+            .replace("{main_color}", cls.main_color)
+            .replace("{dark_color}", cls.dark_color)
+            .replace("{light_color}", cls.light_color)
+        )
+        cls.footer = """
         
         
                         <script>
@@ -482,30 +489,33 @@ class ScompLinkHTMLReport:
                         scomp-link is a general-purpose data science toolkit for preprocessing, model selection, and validation. It is dataset- and domain-agnostic.
                         Learn more in the project README and documentation.<br>
                         <strong>May the code be with you.</strong><br><br>
-                        Copyright &copy; 2026 scomp-link contributors. All rights reserved.<br><br></footer>'''
-        cls.html_report = ''
+                        Copyright &copy; 2026 scomp-link contributors. All rights reserved.<br><br></footer>"""
+        cls.html_report = ""
         cls.section_just_open = False
         cls.lan = language
 
-    def __init__(self, title,
-                font_family='Baloo 2',
-                url_img_logo='',
-                # optional logo URL (empty for neutral branding)
-                # optional secondary logo URL (empty for neutral branding)
-                url_background_header='https://giacomosaccaggi.github.io/deep-dives/sfondo.png',
-                description='Automatic Report',
-                author='scomp-link toolkit',
-                language='en',
-                main_color=MAIN,
-                light_color=MAIN_LIGHT,
-                dark_color=MAIN_DARK):
+    def __init__(
+        self,
+        title,
+        font_family="Baloo 2",
+        url_img_logo="",
+        # optional logo URL (empty for neutral branding)
+        # optional secondary logo URL (empty for neutral branding)
+        url_background_header="https://giacomosaccaggi.github.io/deep-dives/sfondo.png",
+        description="Automatic Report",
+        author="scomp-link toolkit",
+        language="en",
+        main_color=MAIN,
+        light_color=MAIN_LIGHT,
+        dark_color=MAIN_DARK,
+    ):
         self.dark_color = dark_color
         self.light_color = light_color
         self.main_color = main_color
-        self.html_title = f'<title>{title}</title>'
-        self.header = f'''<header>
+        self.html_title = f"<title>{title}</title>"
+        self.header = f"""<header>
                             <h1>{title}</h1><br><br><br>
-                        </header>'''
+                        </header>"""
         self.html_meta_info = f"""
             <meta charset="utf-8">
             <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -513,7 +523,8 @@ class ScompLinkHTMLReport:
             <meta name="description" content="{description}">
             <meta name="author" content="{author}">
             """
-        self.html_layout = """
+        self.html_layout = (
+            """
             <link rel="shortcut icon" href="{url_img_logo}" />
             <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
             <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet"/>
@@ -796,13 +807,14 @@ class ScompLinkHTMLReport:
             }
             </style>
             <script src="https://cdn.plot.ly/plotly-2.9.0.min.js"></script>
-        """.replace('{font_family}', font_family) \
-            .replace('{url_img_logo}', url_img_logo) \
-            .replace('{url_background_header}', url_background_header) \
-            .replace('{main_color}', self.main_color) \
-            .replace('{dark_color}', self.dark_color) \
-            .replace('{light_color}', self.light_color)
-        self.footer = '''
+        """.replace("{font_family}", font_family)
+            .replace("{url_img_logo}", url_img_logo)
+            .replace("{url_background_header}", url_background_header)
+            .replace("{main_color}", self.main_color)
+            .replace("{dark_color}", self.dark_color)
+            .replace("{light_color}", self.light_color)
+        )
+        self.footer = """
                         <script>
                         // Quick and simple export target #table_id into a csv
                         function download_table_as_csv(table_id, separator = ',') {
@@ -935,16 +947,14 @@ class ScompLinkHTMLReport:
                         scomp-link is a general-purpose data science toolkit for preprocessing, model selection, and validation. It is dataset- and domain-agnostic.
                         Learn more in the project README and documentation.<br>
                         <strong>May the code be with you.</strong><br><br>
-                        Copyright &copy; 2026 scomp-link contributors. All rights reserved.<br><br></footer>'''
-        self.html_report = ''
+                        Copyright &copy; 2026 scomp-link contributors. All rights reserved.<br><br></footer>"""
+        self.html_report = ""
         self.section_just_open = False
         self.lan = language
 
-    def single_plotly(self,
-                      fig: 'plotly.graph_objs._figure.Figure',
-                      title: str,
-                      plotdivid: str = None
-                      ) -> 'html plotly code':
+    def single_plotly(
+        self, fig: "plotly.graph_objs._figure.Figure", title: str, plotdivid: str = None
+    ) -> "html plotly code":
         """
         This function it is usefull to create a single plot in html
         :type plotdivid: object
@@ -952,21 +962,27 @@ class ScompLinkHTMLReport:
         fig_dict = json.loads(to_json_plotly(fig))
         jdata = to_json_plotly(fig_dict.get("data", []))
         jlayout = to_json_plotly(fig_dict.get("layout", {}))
-        jconfig = to_json_plotly({'responsive': True})
+        jconfig = to_json_plotly({"responsive": True})
         if plotdivid is None:
-            plotdivid = title.replace(' ', '_')
-            for p in '!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~':
-                plotdivid = plotdivid.replace(p, '_')
+            plotdivid = title.replace(" ", "_")
+            for p in "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~":
+                plotdivid = plotdivid.replace(p, "_")
 
-        options = """ 
+        options = (
+            """ 
                 // Imposta la larghezza al 100%
-                Plotly.update('"""+plotdivid+"""', { 'layout.width': window.innerWidth * 0.9 }); // Puoi anche usare '100%' al posto di 'window.innerWidth * 0.9' se preferisci una larghezza fissa
+                Plotly.update('"""
+            + plotdivid
+            + """', { 'layout.width': window.innerWidth * 0.9 }); // Puoi anche usare '100%' al posto di 'window.innerWidth * 0.9' se preferisci una larghezza fissa
             
                 // Aggiungi un listener per aggiornare la larghezza quando la finestra viene ridimensionata
                 window.addEventListener('resize', function() {
-                    Plotly.update('"""+plotdivid+"""', { 'layout.width': window.innerWidth * 0.9 });
+                    Plotly.update('"""
+            + plotdivid
+            + """', { 'layout.width': window.innerWidth * 0.9 });
                 });
                 """
+        )
         script = """\
                 <h2>{title}</h2>
                 <div id="{id}" class="plotly-graph-div"></div>
@@ -979,80 +995,76 @@ class ScompLinkHTMLReport:
                         )
                         {options}
                 </script>
-                    """.format(
-            title=title,
-            id=plotdivid,
-            data=jdata,
-            layout=jlayout,
-            config=jconfig,
-            options=options
-        )
+                    """.format(title=title, id=plotdivid, data=jdata, layout=jlayout, config=jconfig, options=options)
 
         return script
 
-    def select_plotly(self,
-                      figures_dict: dict,
-                      title: str,
-                      labels='Choose a label'
-                      ) -> 'html plotly code':
+    def select_plotly(self, figures_dict: dict, title: str, labels="Choose a label") -> "html plotly code":
         """
 
         :type figures_dict: object
         """
         import random
+
         option_val = []
-        hide_element = ''
-        script = ''
+        hide_element = ""
+        script = ""
         multiple = type(list(figures_dict.keys())[0]) == tuple
         n_filters = len(list(figures_dict.keys())[0]) if multiple else 1
-        if labels != 'Choose a label' and len(labels) == n_filters:
+        if labels != "Choose a label" and len(labels) == n_filters:
             labels_ord = list(labels)
         else:
-            labels_ord = ['Choose a label'] * n_filters
-        title_ = title.replace(' ', '_')
-        for p in '!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~':
-            title_ = title_.replace(p, '_')
+            labels_ord = ["Choose a label"] * n_filters
+        title_ = title.replace(" ", "_")
+        for p in "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~":
+            title_ = title_.replace(p, "_")
         if multiple:
-            idhide_ = [f'{i}_{title_}' for i in range(n_filters)]
+            idhide_ = [f"{i}_{title_}" for i in range(n_filters)]
         else:
-            idhide_ = [f'1_{title_}']
+            idhide_ = [f"1_{title_}"]
         i = 0
         for single_title, fig in figures_dict.items():
             fig_dict = json.loads(to_json_plotly(fig))
             jdata = to_json_plotly(fig_dict.get("data", []))
             jlayout = to_json_plotly(fig_dict.get("layout", {}))
-            jconfig = to_json_plotly({'responsive': True})
-            plotdivid = ''.join(single_title).replace(' ', '_')
-            for p in '!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~':
-                plotdivid = plotdivid.replace(p, '_')
-            idhide = f'{title_}_{plotdivid}'
+            jconfig = to_json_plotly({"responsive": True})
+            plotdivid = "".join(single_title).replace(" ", "_")
+            for p in "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~":
+                plotdivid = plotdivid.replace(p, "_")
+            idhide = f"{title_}_{plotdivid}"
             hide_element += f'document.getElementById("{idhide}").style.display = "none"; '
-            display = 'block' if i == 0 else 'none'
+            display = "block" if i == 0 else "none"
             i += 1
             # option_val.append([f'<option value="{idhide}">{single_title}</option>'])
             if multiple:
                 option_val_tmp = []
                 for k_part in single_title:
                     k_part_tmp = k_part.replace(" ", "_")
-                    for p in '!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~':
-                        k_part_tmp = k_part_tmp.replace(p, '_')
+                    for p in "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~":
+                        k_part_tmp = k_part_tmp.replace(p, "_")
                     option_val_tmp.append(f'<option value="{k_part_tmp}">{k_part}</option>')
                 option_val.append(option_val_tmp)
             else:
                 single_title_tmp = single_title.replace(" ", "_")
-                for p in '!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~':
-                    single_title_tmp = single_title_tmp.replace(p, '_')
+                for p in "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~":
+                    single_title_tmp = single_title_tmp.replace(p, "_")
                 option_val.append([f'<option value="{single_title_tmp}">{single_title}</option>'])
-            id_plotdiv = f'plotdivid_{random.randint(1000, 9999)}'
-            options = """ 
+            id_plotdiv = f"plotdivid_{random.randint(1000, 9999)}"
+            options = (
+                """ 
                            // Imposta la larghezza al 100%
-                           Plotly.update('""" + id_plotdiv + """', { 'layout.width': window.innerWidth * 0.9 }); // Puoi anche usare '100%' al posto di 'window.innerWidth * 0.9' se preferisci una larghezza fissa
+                           Plotly.update('"""
+                + id_plotdiv
+                + """', { 'layout.width': window.innerWidth * 0.9 }); // Puoi anche usare '100%' al posto di 'window.innerWidth * 0.9' se preferisci una larghezza fissa
 
                            // Aggiungi un listener per aggiornare la larghezza quando la finestra viene ridimensionata
                            window.addEventListener('resize', function() {
-                               Plotly.update('""" + id_plotdiv + """', { 'layout.width': window.innerWidth * 0.9 });
+                               Plotly.update('"""
+                + id_plotdiv
+                + """', { 'layout.width': window.innerWidth * 0.9 });
                            });
                            """
+            )
             script += """\
                     <div id="{idhide}" class="print-grid-item" style="display:{display}">
                         <h3 class="print-grid-title">{grid_title}</h3>
@@ -1070,26 +1082,37 @@ class ScompLinkHTMLReport:
                         """.format(
                 idhide=idhide,
                 display=display,
-                grid_title=' - '.join(single_title) if isinstance(single_title, tuple) else single_title,
+                grid_title=" - ".join(single_title) if isinstance(single_title, tuple) else single_title,
                 id=id_plotdiv,
                 data=jdata,
                 layout=jlayout,
                 config=jconfig,
-                options=options
+                options=options,
             )
 
-        documentget = f"'{title_}_'+" + '+'.join(
-            [f'document.getElementById("labels{idhidepart}").value' for idhidepart in idhide_]).replace(' ', '_')
-        script = f'<h2>{title}</h2>\n' + ''.join([f"""
+        documentget = f"'{title_}_'+" + "+".join(
+            [f'document.getElementById("labels{idhidepart}").value' for idhidepart in idhide_]
+        ).replace(" ", "_")
+        script = (
+            f"<h2>{title}</h2>\n"
+            + "".join(
+                [
+                    f"""
                            <label for="labels{idhidepart}">{lab}:</label>
                              <select name="labels{idhidepart}" id="labels{idhidepart}"  class="form-control js-example-tags">
                                {''.join(list(set([option_tmp[n] for option_tmp in option_val])))}
                              </select>
-                         <br><br>""" for n, [idhidepart, lab] in enumerate(zip(idhide_, labels_ord))]) \
-                 + \
-                 f"""
+                         <br><br>"""
+                    for n, [idhidepart, lab] in enumerate(zip(idhide_, labels_ord))
+                ]
+            )
+            + f"""
                          <input type="submit"  onclick="SelectFunction{title_}()">
-                   """ + '<div class="print-grid-container">' + script + '</div>' + """
+                   """
+            + '<div class="print-grid-container">'
+            + script
+            + "</div>"
+            + """
                         <script>
                             function SelectFunction{idhide_}() {start_fun}
                                 {hide_element}
@@ -1098,16 +1121,12 @@ class ScompLinkHTMLReport:
                             {end_fun}
                         </script>
                    """.format(
-            idhide_=title_,
-            documentget=documentget,
-            hide_element=hide_element,
-            start_fun='{',
-            end_fun='}')
+                idhide_=title_, documentget=documentget, hide_element=hide_element, start_fun="{", end_fun="}"
+            )
+        )
         return script
 
-    def add_graph_to_report(self,
-                            fig: 'plotly.graph_objs._figure.Figure',
-                            title: str):
+    def add_graph_to_report(self, fig: "plotly.graph_objs._figure.Figure", title: str):
         """
         Add graph to report
         :param fig: plotly.graph_objs._figure.Figure
@@ -1121,13 +1140,11 @@ class ScompLinkHTMLReport:
         demo_report.add_graph_to_report(fig, 'My first Graph')
         """
         self.html_report += self.single_plotly(fig, title)
-        logger.info('Added graph to report!')
+        logger.info("Added graph to report!")
 
-    def add_matplotlib_graph_to_report(self,
-                                       fig: 'matplotlib.figure.Figure',
-                                       title: str,
-                                       dpi: int = 150,
-                                       img_format: str = 'png'):
+    def add_matplotlib_graph_to_report(
+        self, fig: "matplotlib.figure.Figure", title: str, dpi: int = 150, img_format: str = "png"
+    ):
         """
         Add a matplotlib figure to the report as a base64-encoded image.
 
@@ -1143,14 +1160,16 @@ class ScompLinkHTMLReport:
         report.add_matplotlib_graph_to_report(fig, 'My Matplotlib Graph')
         """
         buf = io.BytesIO()
-        fig.savefig(buf, format=img_format, dpi=dpi, bbox_inches='tight')
+        fig.savefig(buf, format=img_format, dpi=dpi, bbox_inches="tight")
         buf.seek(0)
-        img_base64 = base64.b64encode(buf.read()).decode('utf-8')
+        img_base64 = base64.b64encode(buf.read()).decode("utf-8")
         buf.close()
-        mime = 'image/svg+xml' if img_format == 'svg' else f'image/{img_format}'
-        self.html_report += f'<h2>{title}</h2>'
-        self.html_report += f'<img src="data:{mime};base64,{img_base64}" style="width:100%;max-width:100%;" alt="{title}">'
-        logger.info('Added matplotlib graph to report!')
+        mime = "image/svg+xml" if img_format == "svg" else f"image/{img_format}"
+        self.html_report += f"<h2>{title}</h2>"
+        self.html_report += (
+            f'<img src="data:{mime};base64,{img_base64}" style="width:100%;max-width:100%;" alt="{title}">'
+        )
+        logger.info("Added matplotlib graph to report!")
 
     def add_image_to_report(self, image_path: str, title: str):
         """
@@ -1162,13 +1181,15 @@ class ScompLinkHTMLReport:
         ## example
         report.add_image_to_report('/path/to/image.png', 'My Image')
         """
-        ext = os.path.splitext(image_path)[1].lower().lstrip('.')
-        mime = 'image/svg+xml' if ext == 'svg' else f'image/{ext}'
-        with open(image_path, 'rb') as f:
-            img_base64 = base64.b64encode(f.read()).decode('utf-8')
-        self.html_report += f'<h2>{title}</h2>'
-        self.html_report += f'<img src="data:{mime};base64,{img_base64}" style="width:100%;max-width:100%;" alt="{title}">'
-        logger.info('Added image to report!')
+        ext = os.path.splitext(image_path)[1].lower().lstrip(".")
+        mime = "image/svg+xml" if ext == "svg" else f"image/{ext}"
+        with open(image_path, "rb") as f:
+            img_base64 = base64.b64encode(f.read()).decode("utf-8")
+        self.html_report += f"<h2>{title}</h2>"
+        self.html_report += (
+            f'<img src="data:{mime};base64,{img_base64}" style="width:100%;max-width:100%;" alt="{title}">'
+        )
+        logger.info("Added image to report!")
 
     def add_rawgraphs_to_report(self, svg_string: str, title: str):
         """
@@ -1182,13 +1203,11 @@ class ScompLinkHTMLReport:
         svg = barchart(['A', 'B', 'C'], [10, 20, 30], 'My Chart')
         report.add_rawgraphs_to_report(svg, 'Bar Chart Example')
         """
-        self.html_report += f'<h2>{title}</h2>'
+        self.html_report += f"<h2>{title}</h2>"
         self.html_report += f'<div style="width:100%;overflow-x:auto;">{svg_string}</div>'
-        logger.info('Added RAWGraphs SVG to report!')
+        logger.info("Added RAWGraphs SVG to report!")
 
-    def add_many_plots_with_selection_box_to_report(self,
-                                                    figures_dict: dict,
-                                                    title: str, **kwargs):
+    def add_many_plots_with_selection_box_to_report(self, figures_dict: dict, title: str, **kwargs):
         """
         Add many graphs to report
         :param figures_dict: plotly.graph_objs._figure.Figure
@@ -1206,43 +1225,45 @@ class ScompLinkHTMLReport:
                         }
         demo_report.add_many_plots_with_selection_box_to_report(figures_dict, 'My first Graph')
         """
-        labels = kwargs.get('labels', 'Choose a label')
+        labels = kwargs.get("labels", "Choose a label")
         self.html_report += self.select_plotly(figures_dict, title, labels=labels)
-        logger.info('Added graph to report!')
+        logger.info("Added graph to report!")
 
-    def open_section(self,
-                     section_title: str, ingore_multi_section=False
-                     ) -> 'html plotly code':
+    def open_section(self, section_title: str, ingore_multi_section=False) -> "html plotly code":
         if not self.section_just_open or ingore_multi_section:
             self.html_report += f'<button class="collapsiblemygs">{section_title}</button> <div class="content">'
             self.section_just_open = True
-            logger.info('Open section to report!')
+            logger.info("Open section to report!")
         else:
-            logger.info('Warning you already have an open section')
+            logger.info("Warning you already have an open section")
 
-    def close_section(self, ingore_multi_section=False) -> 'html plotly code':
+    def close_section(self, ingore_multi_section=False) -> "html plotly code":
         if self.section_just_open or ingore_multi_section:
-            self.html_report += f'</div>'
+            self.html_report += "</div>"
             self.section_just_open = False
-            logger.info('Close section to report!')
+            logger.info("Close section to report!")
         else:
-            logger.info('Warning you did not open section yet')
+            logger.info("Warning you did not open section yet")
 
-    def add_title(self, title: str) -> 'html plotly code':
-        self.html_report += f'<h2>{title}</h2>'
-        logger.info('Added title to report!')
+    def add_title(self, title: str) -> "html plotly code":
+        self.html_report += f"<h2>{title}</h2>"
+        logger.info("Added title to report!")
 
-    def add_text(self, text: str) -> 'html plotly code':
-        self.html_report += f'<p>{text}</p>'
-        logger.info('Added text to report!')
+    def add_text(self, text: str) -> "html plotly code":
+        self.html_report += f"<p>{text}</p>"
+        logger.info("Added text to report!")
 
-    def add_dataframe(self, df: pd.DataFrame, title: str, limit_max=2000) -> 'html plotly code':
+    def add_dataframe(self, df: pd.DataFrame, title: str, limit_max=2000) -> "html plotly code":
         if len(df) < limit_max:
-            self.html_report += f'<a href="#" onclick="download_table_as_csv('+f"'{title.replace(' ', '')}'"+');">Download as CSV</a>'
-            tab = df.to_html(index=False, classes='scomp-table').replace('border="1"', 'border="0"')
+            self.html_report += (
+                '<a href="#" onclick="download_table_as_csv('
+                + f"'{title.replace(' ', '')}'"
+                + ');">Download as CSV</a>'
+            )
+            tab = df.to_html(index=False, classes="scomp-table").replace('border="1"', 'border="0"')
             tab = tab.replace('class="dataframe scomp-table"', f'id="{title.replace(" ", "")}" class="scomp-table"')
             tab = tab.replace('style="text-align: right;"', 'style="text-align: left;"')
-            self.html_report += f'''
+            self.html_report += f"""
             <div id="table-wrapper">
                 <div id="table-scroll">
                     {tab}
@@ -1274,12 +1295,12 @@ class ScompLinkHTMLReport:
                 .scomp-table tbody tr:hover {{
                     background-color: {self.light_color}22;
                 }}
-            </style>'''
-            logger.info('Added table to report!')
+            </style>"""
+            logger.info("Added table to report!")
         else:
-            logger.info('The DataFrame is to big!')
+            logger.info("The DataFrame is to big!")
 
-    def save_pdf(self, file_name='export.pdf'):
+    def save_pdf(self, file_name="export.pdf"):
         """
         Saves the report as a PDF by rendering the HTML in a headless browser.
         This ensures all JavaScript (Plotly/Highcharts) is executed and visible.
@@ -1290,8 +1311,9 @@ class ScompLinkHTMLReport:
         ## example
         report.save_pdf('my_report.pdf')
         """
-        import tempfile
         import subprocess
+        import tempfile
+
         from playwright.sync_api import sync_playwright
 
         # Auto-install Chromium if not present
@@ -1302,10 +1324,11 @@ class ScompLinkHTMLReport:
             logger.info("Chromium not found. Installing automatically...")
             subprocess.run(["playwright", "install", "chromium"], check=True)
 
-        temp_html_path = tempfile.mktemp(suffix=".html")
+        fd, temp_html_path = tempfile.mkstemp(suffix=".html")
+        os.close(fd)
         self.save_html(temp_html_path)
 
-        logger.info(f"Starting PDF generation... Loading graphs.")
+        logger.info("Starting PDF generation... Loading graphs.")
 
         try:
             with sync_playwright() as p:
@@ -1362,7 +1385,7 @@ class ScompLinkHTMLReport:
                         report.style.paddingRight = '5%';
                     }
                 }""")
-                
+
                 # Resize Plotly graphs to fit their containers
                 page.wait_for_timeout(500)
                 page.evaluate("""() => {
@@ -1387,7 +1410,7 @@ class ScompLinkHTMLReport:
                     format="A4",
                     print_background=True,
                     scale=0.5,
-                    margin={"top": "20px", "bottom": "20px", "left": "20px", "right": "20px"}
+                    margin={"top": "20px", "bottom": "20px", "left": "20px", "right": "20px"},
                 )
                 browser.close()
                 logger.info(f"PDF successfully saved as {file_name}!")
@@ -1397,7 +1420,7 @@ class ScompLinkHTMLReport:
             if os.path.exists(temp_html_path):
                 os.remove(temp_html_path)
 
-    def save_html(self, file_name='export.html'):
+    def save_html(self, file_name="export.html"):
         js = """
                         <script>
                         $(".js-example-tags").select2({
@@ -1422,6 +1445,6 @@ class ScompLinkHTMLReport:
                         </body>
                         </html>
                     """
-        with open(file_name, 'w', encoding="utf-8") as f:
+        with open(file_name, "w", encoding="utf-8") as f:
             f.write(html_txt)
-        logger.info('Saved!')
+        logger.info("Saved!")

@@ -16,29 +16,32 @@ Requirements:
 
 import os
 import tempfile
+
 import numpy as np
 import pandas as pd
 from sklearn.ensemble import GradientBoostingRegressor, RandomForestClassifier
 from sklearn.model_selection import train_test_split
 
 from scomp_link import Validator
+from scomp_link.utils.decorators import memory_usage, timer
 from scomp_link.validation.advanced_cv import AdvancedCV
-from scomp_link.utils.decorators import timer, memory_usage
-
 
 # --- Helper functions with decorators ---
+
 
 @memory_usage
 def prepare_regression_data(n: int = 500):
     """Generate regression data, train model, return all components."""
     np.random.seed(42)
-    X = pd.DataFrame({
-        'feature_a': np.random.randn(n),
-        'feature_b': np.random.randn(n) * 2,
-        'feature_c': np.random.exponential(1, n),
-        'feature_d': np.random.uniform(-3, 3, n),
-    })
-    y = 3 * X['feature_a'] - 2 * X['feature_b'] + 0.5 * X['feature_c'] + np.random.randn(n) * 0.5
+    X = pd.DataFrame(
+        {
+            "feature_a": np.random.randn(n),
+            "feature_b": np.random.randn(n) * 2,
+            "feature_c": np.random.exponential(1, n),
+            "feature_d": np.random.uniform(-3, 3, n),
+        }
+    )
+    y = 3 * X["feature_a"] - 2 * X["feature_b"] + 0.5 * X["feature_c"] + np.random.randn(n) * 0.5
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
@@ -53,7 +56,9 @@ def prepare_regression_data(n: int = 500):
 def run_advanced_cv(model, X, y, include_loocv: bool = False):
     """Run AdvancedCV.evaluate_all with configurable methods."""
     results = AdvancedCV.evaluate_all(
-        model, X, y,
+        model,
+        X,
+        y,
         include_loocv=include_loocv,
         include_bootstrap=True,
         bootstrap_iterations=200,
@@ -63,7 +68,7 @@ def run_advanced_cv(model, X, y, include_loocv: bool = False):
 
 # --- Main execution ---
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     print("=" * 70)
     print("VALIDATOR + ADVANCED CV — DETAILED USAGE")
     print("=" * 70)
@@ -109,24 +114,26 @@ if __name__ == '__main__':
 
     # === 5. Generate HTML validation report ===
     print("\n--- 5. Generating HTML validation report ---")
-    report_path = tempfile.mktemp(suffix='.html')
+    fd, report_path = tempfile.mkstemp(suffix=".html")
+    os.close(fd)
     validator.generate_validation_report(
-        y_test, y_pred,
+        y_test,
+        y_pred,
         task_type="regression",
         report_name=report_path,
     )
     size_kb = os.path.getsize(report_path) / 1024
     print(f"  ✅ Report saved: {size_kb:.1f} KB")
     os.unlink(report_path)
-    print(f"  (cleaned up temp file)")
+    print("  (cleaned up temp file)")
 
     # === 6. AdvancedCV — Bootstrap + K-Fold ===
     print("\n--- 6. AdvancedCV.evaluate_all() — Bootstrap + K-Fold ---")
     advanced_results = run_advanced_cv(model, X, y, include_loocv=False)
-    print(f"\n  Results:")
+    print("\n  Results:")
     for key, result in advanced_results.items():
         print(f"    {result['method']}: mean={result['mean_score']:.4f} (±{result['std_score']:.4f})")
-        if 'ci_lower' in result:
+        if "ci_lower" in result:
             print(f"      95% CI: [{result['ci_lower']:.4f}, {result['ci_upper']:.4f}]")
 
     # ═══════════════════════════════════════════════════════
@@ -141,12 +148,14 @@ if __name__ == '__main__':
     print("\n--- 7. Preparing classification model ---")
     np.random.seed(42)
     n_cls = 400
-    X_cls = pd.DataFrame({
-        'f1': np.random.randn(n_cls),
-        'f2': np.random.randn(n_cls),
-        'f3': np.random.randn(n_cls),
-    })
-    y_cls = ((X_cls['f1'] + 0.5 * X_cls['f2']) > 0).astype(int)
+    X_cls = pd.DataFrame(
+        {
+            "f1": np.random.randn(n_cls),
+            "f2": np.random.randn(n_cls),
+            "f3": np.random.randn(n_cls),
+        }
+    )
+    y_cls = ((X_cls["f1"] + 0.5 * X_cls["f2"]) > 0).astype(int)
 
     X_tr, X_te, y_tr, y_te = train_test_split(X_cls, y_cls, test_size=0.25, random_state=42)
     clf = RandomForestClassifier(n_estimators=50, random_state=42)
@@ -167,9 +176,11 @@ if __name__ == '__main__':
 
     # === 9. Classification validation report ===
     print("\n--- 9. Classification validation report ---")
-    report_path_cls = tempfile.mktemp(suffix='.html')
+    fd, report_path_cls = tempfile.mkstemp(suffix=".html")
+    os.close(fd)
     val_cls.generate_validation_report(
-        y_te, y_pred_cls,
+        y_te,
+        y_pred_cls,
         task_type="classification",
         y_proba=y_proba_cls,
         report_name=report_path_cls,
@@ -181,7 +192,9 @@ if __name__ == '__main__':
     # === 10. AdvancedCV on classifier ===
     print("\n--- 10. AdvancedCV on classifier (K-Fold + Bootstrap) ---")
     adv_cls = AdvancedCV.evaluate_all(
-        clf, X_cls, y_cls,
+        clf,
+        X_cls,
+        y_cls,
         include_loocv=False,
         include_bootstrap=True,
         bootstrap_iterations=150,
@@ -191,7 +204,7 @@ if __name__ == '__main__':
 
     # === 11. PDF Conversion ===
     print("\n--- 11. PDF Conversion ---")
-    from scomp_link.utils.pdf_converter import HAS_WEASYPRINT, HAS_MARKDOWN, _wrap_html
+    from scomp_link.utils.pdf_converter import HAS_MARKDOWN, HAS_WEASYPRINT, _wrap_html
 
     # Exercise _wrap_html regardless of weasyprint availability
     wrapped = _wrap_html("<h1>Test</h1><p>Coverage test content</p>")
@@ -204,11 +217,13 @@ if __name__ == '__main__':
         from scomp_link.utils.pdf_converter import html_to_pdf, markdown_to_pdf
 
         # Generate a fresh HTML report for PDF conversion
-        html_path = tempfile.mktemp(suffix='.html')
+        fd, html_path = tempfile.mkstemp(suffix=".html")
+        os.close(fd)
         validator.generate_validation_report(y_test, y_pred, task_type="regression", report_name=html_path)
 
         # Convert HTML → PDF
-        pdf_path = tempfile.mktemp(suffix='.pdf')
+        fd, pdf_path = tempfile.mkstemp(suffix=".pdf")
+        os.close(fd)
         result_path = html_to_pdf(html_path, output_path=pdf_path)
         pdf_size = os.path.getsize(result_path) / 1024
         print(f"  ✅ HTML→PDF (WeasyPrint): {pdf_size:.1f} KB")
@@ -216,15 +231,17 @@ if __name__ == '__main__':
         os.unlink(pdf_path)
 
         # Convert Markdown → PDF
-        md_path = tempfile.mktemp(suffix='.md')
-        with open(md_path, 'w') as f:
+        fd, md_path = tempfile.mkstemp(suffix=".md")
+        os.close(fd)
+        with open(md_path, "w") as f:
             f.write("# Validation Summary\n\n")
             f.write("| Metric | Value |\n|--------|-------|\n")
             for k, v in metrics.items():
                 f.write(f"| {k} | {v:.4f} |\n")
             f.write("\n## Conclusion\n\nModel performance is acceptable.\n")
 
-        pdf_md_path = tempfile.mktemp(suffix='.pdf')
+        fd, pdf_md_path = tempfile.mkstemp(suffix=".pdf")
+        os.close(fd)
         result_md = markdown_to_pdf(md_path, output_path=pdf_md_path)
         pdf_md_size = os.path.getsize(result_md) / 1024
         print(f"  ✅ Markdown→PDF (WeasyPrint): {pdf_md_size:.1f} KB")
@@ -234,6 +251,7 @@ if __name__ == '__main__':
         print("  ⚠️  WeasyPrint not available, testing Playwright PDF path...")
         # Test that html_to_pdf / markdown_to_pdf raise ImportError properly
         from scomp_link.utils.pdf_converter import html_to_pdf, markdown_to_pdf
+
         try:
             html_to_pdf("/tmp/nonexistent.html")
         except ImportError as e:
@@ -246,15 +264,18 @@ if __name__ == '__main__':
 
         # Fallback: Playwright-based PDF via ScompLinkHTMLReport
         from scomp_link.utils.report_html import ScompLinkHTMLReport
-        report_pdf = ScompLinkHTMLReport(title='PDF Test Report')
+
+        report_pdf = ScompLinkHTMLReport(title="PDF Test Report")
         report_pdf.add_title("Validation Metrics")
         import pandas as pd_local
+
         metrics_df = pd_local.DataFrame([metrics])
         report_pdf.add_dataframe(metrics_df, "Metrics Table")
 
-        html_path = tempfile.mktemp(suffix='.html')
+        fd, html_path = tempfile.mkstemp(suffix=".html")
+        os.close(fd)
         report_pdf.save_html(html_path)
-        pdf_path = html_path.replace('.html', '.pdf')
+        pdf_path = html_path.replace(".html", ".pdf")
         try:
             report_pdf.save_pdf(pdf_path)
             pdf_size = os.path.getsize(pdf_path) / 1024
