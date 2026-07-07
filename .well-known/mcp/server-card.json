@@ -1,0 +1,39 @@
+{
+  "$schema": "https://modelcontextprotocol.io/schemas/server-card/v1.0",
+  "version": "1.0",
+  "protocolVersion": "2025-06-18",
+  "serverInfo": {
+    "name": "scomp-link",
+    "version": "1.2.7",
+    "description": "End-to-end ML toolkit: train models, tune hyperparameters, detect drift, generate HTML reports with 39 chart types, detect anomalies, forecast time series, check fairness, and serve models as REST APIs. 15 MCP tools for zero-code machine learning.",
+    "homepage": "https://github.com/GiacomoSaccaggi/scomp_link",
+    "repository": "https://github.com/GiacomoSaccaggi/scomp_link",
+    "documentation": "https://giacomosaccaggi.github.io/scomp_link/"
+  },
+  "transport": {
+    "type": "streamable-http",
+    "url": "https://Euribor512-scomp-link.hf.space/sse"
+  },
+  "capabilities": {
+    "tools": true,
+    "resources": true,
+    "prompts": true
+  },
+  "tools": [
+    {"name": "describe_data", "description": "Profile a dataset (columns, dtypes, missing%, stats)"},
+    {"name": "train_model", "description": "Train a model (regression/classification) with optional tuning"},
+    {"name": "predict", "description": "Generate predictions from a .scomp artifact"},
+    {"name": "validate_model", "description": "Evaluate model on test data with metrics + HTML report"},
+    {"name": "detect_drift", "description": "Check distribution drift between datasets (PSI + KS test)"},
+    {"name": "detect_anomalies", "description": "Multi-method anomaly detection (IForest, LOF, TabNet, Transformer)"},
+    {"name": "check_fairness", "description": "Fairness metrics (demographic parity, disparate impact, equalized odds)"},
+    {"name": "forecast_series", "description": "Time series forecasting (ARIMA, Exponential Smoothing)"},
+    {"name": "engineer_features", "description": "Automated feature engineering (interactions, log, dates, target encoding)"},
+    {"name": "cluster_data", "description": "Clustering (KMeans, MeanShift, DBSCAN)"},
+    {"name": "generate_report", "description": "Create interactive HTML EDA or model report"},
+    {"name": "create_visualization", "description": "Generate a chart (39 types: RAWGraphs SVG, Plotly, Highcharts)"},
+    {"name": "compare_models", "description": "Side-by-side comparison of multiple .scomp artifacts"},
+    {"name": "export_model", "description": "Export .scomp to pickle/joblib/ONNX/PMML"},
+    {"name": "tune_model", "description": "Hyperparameter optimization (Optuna, Halving Grid Search)"}
+  ]
+}

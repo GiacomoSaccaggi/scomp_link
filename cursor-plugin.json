@@ -1,0 +1,24 @@
+{
+  "name": "scomp-link",
+  "displayName": "scomp-link — ML Toolkit",
+  "description": "End-to-end machine learning toolkit with 15 MCP tools. Train models, tune hyperparameters, detect drift, generate HTML reports, detect anomalies, forecast time series, check fairness, and serve models — all from your editor.",
+  "version": "1.2.7",
+  "author": "Giacomo Saccaggi",
+  "homepage": "https://github.com/GiacomoSaccaggi/scomp_link",
+  "repository": "https://github.com/GiacomoSaccaggi/scomp_link",
+  "license": "MIT",
+  "categories": ["data-science", "machine-learning", "analytics"],
+  "mcp": {
+    "command": "uvx",
+    "args": ["--python", "3.12", "--from", "scomp-link[mcp]", "scomp-link", "mcp"],
+    "remote": {
+      "url": "https://Euribor512-scomp-link.hf.space/sse"
+    }
+  },
+  "skills": [
+    {
+      "path": "skills/scomp-link/SKILL.md",
+      "description": "Complete ML workflow guidance with CLI reference and visualization guide"
+    }
+  ]
+}
