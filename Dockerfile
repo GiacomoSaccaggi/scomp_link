@@ -3,7 +3,7 @@ FROM python:3.12-slim
 LABEL org.opencontainers.image.title="scomp-link"
 LABEL org.opencontainers.image.description="End-to-end ML toolkit with 25 CLI commands and MCP server"
 LABEL org.opencontainers.image.source="https://github.com/GiacomoSaccaggi/scomp_link"
-LABEL org.opencontainers.image.version="1.2.2"
+LABEL org.opencontainers.image.version="1.2.8"
 
 WORKDIR /app
 

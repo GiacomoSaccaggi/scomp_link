@@ -17,7 +17,7 @@ SERVER_CARD = {
     "protocolVersion": "2025-06-18",
     "serverInfo": {
         "name": "scomp-link",
-        "version": "1.2.7",
+        "version": "1.2.8",
         "description": "End-to-end ML toolkit: 15 MCP tools for zero-code machine learning.",
         "homepage": "https://github.com/GiacomoSaccaggi/scomp_link",
     },
