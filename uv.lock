@@ -4774,7 +4774,7 @@ wheels = [
 
 [[package]]
 name = "scomp-link"
-version = "1.2.4"
+version = "1.2.8"
 source = { editable = "." }
 dependencies = [
     { name = "faiss-cpu" },
@@ -4858,9 +4858,8 @@ requires-dist = [
     { name = "pandas", marker = "python_full_version == '3.12.*'", specifier = ">=2.1.0,<2.3.0" },
     { name = "pandas", marker = "python_full_version == '3.13.*'", specifier = ">=2.1.0,<3.0.0" },
     { name = "pandas", marker = "python_full_version >= '3.14'", specifier = ">=2.2.0,<3.0.0" },
-    { name = "pillow", marker = "python_full_version >= '3.10' and python_full_version < '3.12'", specifier = ">=9.0.0,<11.0.0" },
-    { name = "pillow", marker = "python_full_version >= '3.12' and python_full_version < '3.14'", specifier = ">=10.0.0,<11.0.0" },
-    { name = "pillow", marker = "python_full_version >= '3.14'", specifier = ">=10.0.0,<13.0.0" },
+    { name = "pillow", marker = "python_full_version >= '3.10' and python_full_version < '3.12'", specifier = ">=9.0.0,<13.0.0" },
+    { name = "pillow", marker = "python_full_version >= '3.12'", specifier = ">=10.0.0,<13.0.0" },
     { name = "playwright", specifier = ">=1.40.0,<2.0.0" },
     { name = "plotly", specifier = ">=5.0.0,<6.0.0" },
     { name = "polars", specifier = ">=0.20.0,<2.0.0" },
