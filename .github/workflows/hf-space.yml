@@ -29,3 +29,24 @@ jobs:
           git add .
           git commit -m "Deploy scomp-link MCP server"
           git push hf main --force
+
+      - name: Wait for HF Space to be ready
+        run: |
+          echo "Waiting 180s for HF Space Docker build..."
+          sleep 180
+          for i in $(seq 1 10); do
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://Euribor512-scomp-link.hf.space/sse)
+            echo "Attempt $i: HTTP $STATUS"
+            if [ "$STATUS" != "503" ] && [ "$STATUS" != "000" ]; then
+              echo "Space is up!"
+              exit 0
+            fi
+            sleep 30
+          done
+          echo "Warning: Space may not be ready yet, attempting Smithery publish anyway"
+
+      - name: Publish to Smithery
+        env:
+          SMITHERY_API_KEY: ${{ secrets.SMITHERY_API_KEY }}
+        run: |
+          npx @smithery/cli mcp publish https://Euribor512-scomp-link.hf.space/sse -n giacomosaccaggi/scomp-link
