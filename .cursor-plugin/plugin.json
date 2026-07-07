@@ -1,0 +1,25 @@
+{
+  "name": "scomp-link",
+  "displayName": "scomp-link — ML Toolkit",
+  "version": "1.2.7",
+  "description": "End-to-end machine learning toolkit with 15 MCP tools. Train models, tune hyperparameters, detect drift, generate HTML reports with 39 chart types, detect anomalies, forecast time series, check fairness, and serve models.",
+  "author": {
+    "name": "Giacomo Saccaggi",
+    "email": "giacomo.saccaggi@gmail.com"
+  },
+  "license": "MIT",
+  "keywords": [
+    "machine-learning",
+    "data-science",
+    "automl",
+    "mcp",
+    "regression",
+    "classification",
+    "anomaly-detection",
+    "time-series",
+    "drift-detection",
+    "fairness",
+    "html-report",
+    "feature-engineering"
+  ]
+}

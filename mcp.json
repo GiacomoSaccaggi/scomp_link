@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "scomp-link": {
+      "command": "uvx",
+      "args": ["--python", "3.12", "--from", "scomp-link[mcp]", "scomp-link", "mcp"]
+    }
+  }
+}
