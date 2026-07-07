@@ -1,0 +1,2945 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="The Astromech Arm for Your Python Projects — End-to-End ML Toolkit">
+      
+      
+      
+        <link rel="canonical" href="https://giacomosaccaggi.github.io/scomp-link/api/models/">
+      
+      
+        <link rel="prev" href="../preprocessing/">
+      
+      
+        <link rel="next" href="../validation/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Models - scomp-link</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="deep-purple" data-md-color-accent="cyan">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#models" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="scomp-link" class="md-header__button md-logo" aria-label="scomp-link" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            scomp-link
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Models
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="deep-purple" data-md-color-accent="cyan"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="cyan"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/GiacomoSaccaggi/scomp-link" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GiacomoSaccaggi/scomp-link
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="scomp-link" class="md-nav__button md-logo" aria-label="scomp-link" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    scomp-link
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/GiacomoSaccaggi/scomp-link" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GiacomoSaccaggi/scomp-link
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../quickstart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quick Start
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CLI Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    API Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pipeline/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pipeline
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../preprocessing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Preprocessing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Models
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Models
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#model-factory" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Model Factory
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.models.model_factory.ModelFactory" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ModelFactory
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#regressor-optimizer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Regressor Optimizer
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.models.regressor_optimizer.RegressorOptimizer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        RegressorOptimizer
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="RegressorOptimizer">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#scomp_link.models.regressor_optimizer.RegressorOptimizer.select_features" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        select_features
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scomp_link.models.regressor_optimizer.RegressorOptimizer.estimate_optimization_time" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        estimate_optimization_time
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scomp_link.models.regressor_optimizer.RegressorOptimizer.select_hyperparameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        select_hyperparameters
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scomp_link.models.regressor_optimizer.RegressorOptimizer.test_models_regression" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        test_models_regression
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scomp_link.models.regressor_optimizer.RegressorOptimizer.grafico_fit_con_errore" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        grafico_fit_con_errore
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#classifier-optimizer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Classifier Optimizer
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.models.classifier_optimizer.ClassifierOptimizer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ClassifierOptimizer
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#anomaly-detector" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Anomaly Detector
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.models.anomaly_detector.AnomalyDetector" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AnomalyDetector
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="AnomalyDetector">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#scomp_link.models.anomaly_detector.AnomalyDetector--parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Parameters
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scomp_link.models.anomaly_detector.AnomalyDetector--example" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scomp_link.models.anomaly_detector.AnomalyDetector.fit_predict" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        fit_predict
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="fit_predict">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#scomp_link.models.anomaly_detector.AnomalyDetector.fit_predict--parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Parameters
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scomp_link.models.anomaly_detector.AnomalyDetector.fit_predict--returns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Returns
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scomp_link.models.anomaly_detector.AnomalyDetector.report" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        report
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="report">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#scomp_link.models.anomaly_detector.AnomalyDetector.report--parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Parameters
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scomp_link.models.anomaly_detector.AnomalyDetector.report--returns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Returns
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#time-series-anomaly-detector" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Time Series Anomaly Detector
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.models.ts_anomaly_detector.TimeSeriesAnomalyDetector" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TimeSeriesAnomalyDetector
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="TimeSeriesAnomalyDetector">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#scomp_link.models.ts_anomaly_detector.TimeSeriesAnomalyDetector--parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Parameters
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scomp_link.models.ts_anomaly_detector.TimeSeriesAnomalyDetector--example" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scomp_link.models.ts_anomaly_detector.TimeSeriesAnomalyDetector--df_train-normal-time-series-df_test-time-series-with-anomalies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        df_train: normal time series, df_test: time series with anomalies
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scomp_link.models.ts_anomaly_detector.TimeSeriesAnomalyDetector.fit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        fit
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="fit">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#scomp_link.models.ts_anomaly_detector.TimeSeriesAnomalyDetector.fit--parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Parameters
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scomp_link.models.ts_anomaly_detector.TimeSeriesAnomalyDetector.detect" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        detect
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="detect">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#scomp_link.models.ts_anomaly_detector.TimeSeriesAnomalyDetector.detect--parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Parameters
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scomp_link.models.ts_anomaly_detector.TimeSeriesAnomalyDetector.detect--returns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Returns
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#time-series-forecaster" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Time Series Forecaster
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.models.forecaster.TimeSeriesForecaster" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TimeSeriesForecaster
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="TimeSeriesForecaster">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#scomp_link.models.forecaster.TimeSeriesForecaster.fit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        fit
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scomp_link.models.forecaster.TimeSeriesForecaster.predict" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        predict
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scomp_link.models.forecaster.TimeSeriesForecaster.predict_with_ci" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        predict_with_ci
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scomp_link.models.forecaster.TimeSeriesForecaster.walk_forward_cv" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        walk_forward_cv
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scomp_link.models.forecaster.TimeSeriesForecaster.plot_forecast" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        plot_forecast
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ensemble-optimizer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ensemble Optimizer
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.models.ensemble_optimizer.EnsembleOptimizer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        EnsembleOptimizer
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="EnsembleOptimizer">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#scomp_link.models.ensemble_optimizer.EnsembleOptimizer.create_ensemble" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        create_ensemble
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scomp_link.models.ensemble_optimizer.EnsembleOptimizer.fit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        fit
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scomp_link.models.ensemble_optimizer.EnsembleOptimizer.predict" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        predict
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scomp_link.models.ensemble_optimizer.EnsembleOptimizer.evaluate_ensemble" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        evaluate_ensemble
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../validation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Validation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../explainability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Explainability
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../monitoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Monitoring
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../persistence/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Persistence
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tuning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tuning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../visualization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Visualization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../examples/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Examples
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../changelog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Changelog
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#model-factory" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Model Factory
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.models.model_factory.ModelFactory" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ModelFactory
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#regressor-optimizer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Regressor Optimizer
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.models.regressor_optimizer.RegressorOptimizer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        RegressorOptimizer
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="RegressorOptimizer">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#scomp_link.models.regressor_optimizer.RegressorOptimizer.select_features" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        select_features
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scomp_link.models.regressor_optimizer.RegressorOptimizer.estimate_optimization_time" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        estimate_optimization_time
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scomp_link.models.regressor_optimizer.RegressorOptimizer.select_hyperparameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        select_hyperparameters
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scomp_link.models.regressor_optimizer.RegressorOptimizer.test_models_regression" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        test_models_regression
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scomp_link.models.regressor_optimizer.RegressorOptimizer.grafico_fit_con_errore" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        grafico_fit_con_errore
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#classifier-optimizer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Classifier Optimizer
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.models.classifier_optimizer.ClassifierOptimizer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ClassifierOptimizer
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#anomaly-detector" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Anomaly Detector
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.models.anomaly_detector.AnomalyDetector" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AnomalyDetector
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="AnomalyDetector">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#scomp_link.models.anomaly_detector.AnomalyDetector--parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Parameters
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scomp_link.models.anomaly_detector.AnomalyDetector--example" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scomp_link.models.anomaly_detector.AnomalyDetector.fit_predict" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        fit_predict
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="fit_predict">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#scomp_link.models.anomaly_detector.AnomalyDetector.fit_predict--parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Parameters
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scomp_link.models.anomaly_detector.AnomalyDetector.fit_predict--returns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Returns
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scomp_link.models.anomaly_detector.AnomalyDetector.report" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        report
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="report">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#scomp_link.models.anomaly_detector.AnomalyDetector.report--parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Parameters
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scomp_link.models.anomaly_detector.AnomalyDetector.report--returns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Returns
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#time-series-anomaly-detector" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Time Series Anomaly Detector
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.models.ts_anomaly_detector.TimeSeriesAnomalyDetector" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TimeSeriesAnomalyDetector
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="TimeSeriesAnomalyDetector">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#scomp_link.models.ts_anomaly_detector.TimeSeriesAnomalyDetector--parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Parameters
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scomp_link.models.ts_anomaly_detector.TimeSeriesAnomalyDetector--example" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scomp_link.models.ts_anomaly_detector.TimeSeriesAnomalyDetector--df_train-normal-time-series-df_test-time-series-with-anomalies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        df_train: normal time series, df_test: time series with anomalies
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scomp_link.models.ts_anomaly_detector.TimeSeriesAnomalyDetector.fit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        fit
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="fit">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#scomp_link.models.ts_anomaly_detector.TimeSeriesAnomalyDetector.fit--parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Parameters
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scomp_link.models.ts_anomaly_detector.TimeSeriesAnomalyDetector.detect" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        detect
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="detect">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#scomp_link.models.ts_anomaly_detector.TimeSeriesAnomalyDetector.detect--parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Parameters
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scomp_link.models.ts_anomaly_detector.TimeSeriesAnomalyDetector.detect--returns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Returns
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#time-series-forecaster" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Time Series Forecaster
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.models.forecaster.TimeSeriesForecaster" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TimeSeriesForecaster
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="TimeSeriesForecaster">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#scomp_link.models.forecaster.TimeSeriesForecaster.fit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        fit
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scomp_link.models.forecaster.TimeSeriesForecaster.predict" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        predict
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scomp_link.models.forecaster.TimeSeriesForecaster.predict_with_ci" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        predict_with_ci
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scomp_link.models.forecaster.TimeSeriesForecaster.walk_forward_cv" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        walk_forward_cv
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scomp_link.models.forecaster.TimeSeriesForecaster.plot_forecast" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        plot_forecast
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ensemble-optimizer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ensemble Optimizer
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.models.ensemble_optimizer.EnsembleOptimizer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        EnsembleOptimizer
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="EnsembleOptimizer">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#scomp_link.models.ensemble_optimizer.EnsembleOptimizer.create_ensemble" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        create_ensemble
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scomp_link.models.ensemble_optimizer.EnsembleOptimizer.fit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        fit
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scomp_link.models.ensemble_optimizer.EnsembleOptimizer.predict" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        predict
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scomp_link.models.ensemble_optimizer.EnsembleOptimizer.evaluate_ensemble" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        evaluate_ensemble
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="models">Models<a class="headerlink" href="#models" title="Permanent link">&para;</a></h1>
+<h2 id="model-factory">Model Factory<a class="headerlink" href="#model-factory" title="Permanent link">&para;</a></h2>
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="scomp_link.models.model_factory.ModelFactory" class="doc doc-heading">
+            <code>scomp_link.models.model_factory.ModelFactory</code>
+
+
+<a href="#scomp_link.models.model_factory.ModelFactory" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents first">
+
+
+
+        <p>Factory to create models based on the scomp-link decision tree.</p>
+
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+</div><h2 id="regressor-optimizer">Regressor Optimizer<a class="headerlink" href="#regressor-optimizer" title="Permanent link">&para;</a></h2>
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="scomp_link.models.regressor_optimizer.RegressorOptimizer" class="doc doc-heading">
+            <code>scomp_link.models.regressor_optimizer.RegressorOptimizer</code>
+
+
+<a href="#scomp_link.models.regressor_optimizer.RegressorOptimizer" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents first">
+
+
+
+        <p>RegressorOptimizer is a class designed to optimize regression models by performing feature selection,
+hyperparameter tuning, and evaluating multiple regression algorithms.</p>
+<p>Dependencies:
+- numpy
+- pandas
+- Boruta
+- sklearn.ensemble.RandomForestRegressor
+- sklearn.preprocessing.OneHotEncoder
+- sklearn.model_selection.GridSearchCV
+- sklearn.pipeline.Pipeline
+- matplotlib.pyplot
+- scipy.optimize.curve_fit</p>
+<p>Parameters:
+- df: DataFrame containing the data
+- y_col: Name of the target column
+- x_cols: List of predictive columns
+- x_complexity_col: Column indicating the complexity of the predictor
+- select_features: Flag to determine whether to perform feature selection (default=True)</p>
+<p>Methods:
+- <strong>init</strong>: Initializes the RegressorOptimizer object
+- select_features: Preprocesses data and selects significant features using Boruta algorithm
+- estimate_optimization_time: Estimates the time required for optimizing models with given hyperparameters
+- select_hyperparameters: Performs grid search to find the best hyperparameters for a given regressor
+- test_models_regression: Tests various regression models using optimized hyperparameters
+- grafico_fit_con_errore: Generates a graph displaying observed versus predicted values and residuals for a specific model</p>
+
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="scomp_link.models.regressor_optimizer.RegressorOptimizer.select_features" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">select_features</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">y_col</span><span class="p">,</span> <span class="n">x_cols</span><span class="p">)</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-staticmethod"><code>staticmethod</code></small>
+  </span>
+
+<a href="#scomp_link.models.regressor_optimizer.RegressorOptimizer.select_features" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+        <div class="highlight"><pre><span></span><code>    Description:
+    This function preprocesses the dataset, creates dummies for categorical and binary variables, uses a Random Forest to evaluate
+    feature importance and applies the Boruta algorithm to select the most significant variables relative to the target.
+
+    L&#39;algoritmo Boruta è un metodo wrapper per la selezione delle feature che si basa sull&#39;utilizzo di un classificatore
+    (in this case, a Random Forest regressor) to identify the most important variables. It uses iterations and comparisons
+    between &#39;real&#39; features and randomly generated &#39;shadow&#39; features to determine variable importance and select those
+    rilevanti per il modello.
+
+    Dependencies:
+    numpy, pandas,  Boruta, sklearn.ensemble.RandomForestRegressor, sklearn.preprocessing.OneHotEncoder
+
+    PARAMETERS:
+     1. df: DataFrame contenente i dati
+     2. y_col: Nome della colonna target
+     3. x_cols: Lista delle colonne predittive
+
+    Usage example:
+
+    df = ...  # Carica il DataFrame
+    y_column = &#39;target_column&#39;
+    X_columns = [&#39;feature_1&#39;, &#39;feature_2&#39;, ...]
+
+    Final_X, Y = RegressorOptimizer.select_features(df, y_column, X_columns)
+</code></pre></div>
+<p>[100mBest Practice: always include a function description so you can always understand its purpose[0m</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="scomp_link.models.regressor_optimizer.RegressorOptimizer.estimate_optimization_time" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">estimate_optimization_time</span><span class="p">(</span><span class="n">time_per_combination</span><span class="p">)</span></code>
+
+<a href="#scomp_link.models.regressor_optimizer.RegressorOptimizer.estimate_optimization_time" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+        <div class="highlight"><pre><span></span><code>    Description:
+    This function estimates the total time required to optimize regression models using a hyperparameter grid.
+
+    Dependencies:
+    Nessun pacchetto esterno.
+
+    PARAMETERS:
+    1. time_per_combination: Tempo stimato per valutare una singola combinazione di iperparametri
+
+    Usage example:
+
+    optimizer = RegressorOptimizer(...)
+    optimizer.estimate_optimization_time(5)  # Stima il tempo con 5 secondi per combinazione
+</code></pre></div>
+<p>[100mBest Practice: always include a function description so you can always understand its purpose[0m</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="scomp_link.models.regressor_optimizer.RegressorOptimizer.select_hyperparameters" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">select_hyperparameters</span><span class="p">(</span><span class="n">regressor</span><span class="p">,</span> <span class="n">params_grid</span><span class="p">)</span></code>
+
+<a href="#scomp_link.models.regressor_optimizer.RegressorOptimizer.select_hyperparameters" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+        <div class="highlight"><pre><span></span><code>    Description:
+    This function performs a search for the best hyperparameters for the regressor using Grid Search with Cross-Validation.
+
+    Dependencies:
+    sklearn.pipeline.Pipeline, sklearn.model_selection.GridSearchCV
+
+    PARAMETERS:
+     1. regressor: Il regressore per il quale si vogliono ottimizzare gli iperparametri
+     2. params_grid: Dizionario contenente la griglia degli iperparametri da testare
+
+    Usage example:
+
+    regressor_to_optimize = RandomForestRegressor()
+    parameters_to_test = {&#39;n_estimators&#39;: [100, 200], &#39;max_depth&#39;: [5, 10]}
+
+    optimizer = RegressorOptimizer(...)
+    best_regressor, best_params = optimizer.select_hyperparameters(regressor_to_optimize, parameters_to_test)
+</code></pre></div>
+<p>[100mBest Practice: always include a function description so you can always understand its purpose[0m</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="scomp_link.models.regressor_optimizer.RegressorOptimizer.test_models_regression" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">test_models_regression</span><span class="p">()</span></code>
+
+<a href="#scomp_link.models.regressor_optimizer.RegressorOptimizer.test_models_regression" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+        <div class="highlight"><pre><span></span><code>    Description:
+    This function tests multiple regression models with optimized hyperparameters and evaluates performance
+    su un set di dati di test.
+
+    Dependencies:
+    Nessun pacchetto esterno.
+
+    PARAMETERS:
+    Nessun parametro esplicito, ma utilizza gli attributi della classe `RegressorOptimizer`
+
+    Usage example:
+
+    optimizer = RegressorOptimizer(...)
+    optimizer.test_models_regression()
+</code></pre></div>
+<p>[100mBest Practice: always include a function description so you can always understand its purpose[0m</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="scomp_link.models.regressor_optimizer.RegressorOptimizer.grafico_fit_con_errore" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">grafico_fit_con_errore</span><span class="p">(</span><span class="n">model_name</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="mi">9</span><span class="p">)</span></code>
+
+<a href="#scomp_link.models.regressor_optimizer.RegressorOptimizer.grafico_fit_con_errore" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+        <div class="highlight"><pre><span></span><code>    Description:
+    This function returns fit plots for a given regressor.
+
+    Dependencies:
+    numpy, matplotlib.pyplot, scipy.optimize.curve_fit
+
+    PARAMETERS:
+     1. x: regressore
+     2. y: valori osservati
+     3. fitted: valori previsti
+     4. h: altezza dell&#39;immagine finale
+     5. w: larghezza dell&#39;immagine finale
+
+    Usage example:
+
+    epon = lambda x, a, b, c: a*np.exp(b*x)+c
+    a, b, c = [0.4, 0.3, 0.2]
+    x = np.linspace(1, 20, 2000)
+    p = [1.36, 1.21]
+    noise = np.random.randn(2000)
+    y = epon(x, a, b, c) + noise * 0.4 * x
+    popt, pcov = curve_fit(epon, x, y)
+    fitted = epon(x, popt[0], popt[1], popt[2])
+
+    grafico_fit_con_errore(x, y, fitted, 8, 6)
+</code></pre></div>
+<p>[100mBest Practice: always include a function description so you can always understand its purpose[0m</p>
+
+
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div><h2 id="classifier-optimizer">Classifier Optimizer<a class="headerlink" href="#classifier-optimizer" title="Permanent link">&para;</a></h2>
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="scomp_link.models.classifier_optimizer.ClassifierOptimizer" class="doc doc-heading">
+            <code>scomp_link.models.classifier_optimizer.ClassifierOptimizer</code>
+
+
+<a href="#scomp_link.models.classifier_optimizer.ClassifierOptimizer" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents first">
+
+
+
+        <p>ClassifierOptimizer is a class designed to optimize classification models by performing feature selection,
+hyperparameter tuning, and evaluating multiple classification algorithms.</p>
+
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+</div><h2 id="anomaly-detector">Anomaly Detector<a class="headerlink" href="#anomaly-detector" title="Permanent link">&para;</a></h2>
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="scomp_link.models.anomaly_detector.AnomalyDetector" class="doc doc-heading">
+            <code>scomp_link.models.anomaly_detector.AnomalyDetector</code>
+
+
+<a href="#scomp_link.models.anomaly_detector.AnomalyDetector" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents first">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="sklearn.base.BaseEstimator">BaseEstimator</span></code></p>
+
+
+
+        <p>Multi-method anomaly detection for tabular data.</p>
+
+
+<details class="implements-4-complementary-approaches" open>
+  <summary>Implements 4 complementary approaches</summary>
+  <ol>
+<li>Isolation Forest — tree-based, non-parametric</li>
+<li>Local Outlier Factor — density-based, local neighborhoods</li>
+<li>TabNet Autoencoder — neural attention on tabular features (pytorch-tabnet)</li>
+<li>Transformer Autoencoder — self-attention across features as tokens</li>
+</ol>
+</details>        <p>Uses consensus voting (majority rule) to produce robust anomaly labels.</p>
+<h4 id="scomp_link.models.anomaly_detector.AnomalyDetector--parameters">Parameters<a class="headerlink" href="#scomp_link.models.anomaly_detector.AnomalyDetector--parameters" title="Permanent link">&para;</a></h4>
+<p>contamination : float, default=0.05
+    Expected proportion of anomalies in the dataset.
+methods : list of str, optional
+    Which methods to run. Default: all four.
+    Options: 'iforest', 'lof', 'tabnet', 'transformer'
+lof_neighbors : int, default=20
+    Number of neighbors for LOF.
+tabnet_epochs : int, default=50
+    Max training epochs for TabNet pretrainer.
+transformer_epochs : int, default=80
+    Training epochs for Transformer autoencoder.
+transformer_d_model : int, default=32
+    Embedding dimension for Transformer.
+transformer_nhead : int, default=4
+    Number of attention heads.
+transformer_num_layers : int, default=2
+    Number of Transformer encoder layers.
+consensus_threshold : int, default=2
+    Minimum number of methods that must agree to flag an anomaly.
+random_state : int, default=42
+    Random seed for reproducibility.
+verbose : bool, default=True
+    Print progress messages.</p>
+<h4 id="scomp_link.models.anomaly_detector.AnomalyDetector--example">Example<a class="headerlink" href="#scomp_link.models.anomaly_detector.AnomalyDetector--example" title="Permanent link">&para;</a></h4>
+<blockquote>
+<blockquote>
+<blockquote>
+<p>from scomp_link.models.anomaly_detector import AnomalyDetector
+import pandas as pd</p>
+<p>df = pd.read_csv("data.csv")
+detector = AnomalyDetector(contamination=0.05)
+results = detector.fit_predict(df, features=['col1', 'col2', 'col3'])
+print(results['comparison'])
+anomalies = results['data'][results['data']['is_anomaly']]</p>
+</blockquote>
+</blockquote>
+</blockquote>
+
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="scomp_link.models.anomaly_detector.AnomalyDetector.fit_predict" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">fit_predict</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">features</span><span class="p">)</span></code>
+
+<a href="#scomp_link.models.anomaly_detector.AnomalyDetector.fit_predict" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Run all configured anomaly detection methods and produce consensus.</p>
+<h5 id="scomp_link.models.anomaly_detector.AnomalyDetector.fit_predict--parameters">Parameters<a class="headerlink" href="#scomp_link.models.anomaly_detector.AnomalyDetector.fit_predict--parameters" title="Permanent link">&para;</a></h5>
+<p>df : pd.DataFrame
+    Input dataframe.
+features : list of str
+    Numeric columns to use for detection.</p>
+<h5 id="scomp_link.models.anomaly_detector.AnomalyDetector.fit_predict--returns">Returns<a class="headerlink" href="#scomp_link.models.anomaly_detector.AnomalyDetector.fit_predict--returns" title="Permanent link">&para;</a></h5>
+<p>dict with keys:
+    - 'data': DataFrame with anomaly columns added
+    - 'comparison': DataFrame summarizing each method
+    - 'consensus_threshold': int</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="scomp_link.models.anomaly_detector.AnomalyDetector.report" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">report</span><span class="p">(</span><span class="n">group_by</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+<a href="#scomp_link.models.anomaly_detector.AnomalyDetector.report" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Generate a summary report of detected anomalies.</p>
+<h5 id="scomp_link.models.anomaly_detector.AnomalyDetector.report--parameters">Parameters<a class="headerlink" href="#scomp_link.models.anomaly_detector.AnomalyDetector.report--parameters" title="Permanent link">&para;</a></h5>
+<p>group_by : list of str, optional
+    Columns to group anomalies by. If None, returns raw anomalies.</p>
+<h5 id="scomp_link.models.anomaly_detector.AnomalyDetector.report--returns">Returns<a class="headerlink" href="#scomp_link.models.anomaly_detector.AnomalyDetector.report--returns" title="Permanent link">&para;</a></h5>
+<p>pd.DataFrame</p>
+
+
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div><h2 id="time-series-anomaly-detector">Time Series Anomaly Detector<a class="headerlink" href="#time-series-anomaly-detector" title="Permanent link">&para;</a></h2>
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="scomp_link.models.ts_anomaly_detector.TimeSeriesAnomalyDetector" class="doc doc-heading">
+            <code>scomp_link.models.ts_anomaly_detector.TimeSeriesAnomalyDetector</code>
+
+
+<a href="#scomp_link.models.ts_anomaly_detector.TimeSeriesAnomalyDetector" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents first">
+
+
+
+        <p>Multi-method anomaly detection for univariate time series.</p>
+<h4 id="scomp_link.models.ts_anomaly_detector.TimeSeriesAnomalyDetector--parameters">Parameters<a class="headerlink" href="#scomp_link.models.ts_anomaly_detector.TimeSeriesAnomalyDetector--parameters" title="Permanent link">&para;</a></h4>
+<p>methods : list of str, optional
+    Methods to use. Default: all available.
+    Options: 'autoencoder', 'moving_avg', 'moving_median', 'arima'
+time_steps : int, default=288
+    Sequence length for autoencoder (e.g., 288 = one day at 5-min intervals).
+ae_epochs : int, default=50
+    Training epochs for autoencoder.
+ae_batch_size : int, default=128
+    Batch size for autoencoder training.
+window_size : int, default=48
+    Window size for moving average/median methods.
+n_sigma : float, default=3.0
+    Number of standard deviations for threshold in statistical methods.
+arima_order : tuple, default=(5, 1, 0)
+    ARIMA (p, d, q) order.
+threshold_percentile : float, default=95.0
+    Percentile for autoencoder reconstruction error threshold.
+verbose : bool, default=True
+    Print progress.</p>
+<h4 id="scomp_link.models.ts_anomaly_detector.TimeSeriesAnomalyDetector--example">Example<a class="headerlink" href="#scomp_link.models.ts_anomaly_detector.TimeSeriesAnomalyDetector--example" title="Permanent link">&para;</a></h4>
+<blockquote>
+<blockquote>
+<blockquote>
+<p>from scomp_link.models.ts_anomaly_detector import TimeSeriesAnomalyDetector
+import pandas as pd</p>
+<h3 id="scomp_link.models.ts_anomaly_detector.TimeSeriesAnomalyDetector--df_train-normal-time-series-df_test-time-series-with-anomalies">df_train: normal time series, df_test: time series with anomalies<a class="headerlink" href="#scomp_link.models.ts_anomaly_detector.TimeSeriesAnomalyDetector--df_train-normal-time-series-df_test-time-series-with-anomalies" title="Permanent link">&para;</a></h3>
+<p>detector = TimeSeriesAnomalyDetector(methods=['autoencoder', 'moving_avg'])
+detector.fit(df_train['value'].values)
+results = detector.detect(df_test['value'].values)
+print(results['anomalies'])</p>
+</blockquote>
+</blockquote>
+</blockquote>
+
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="scomp_link.models.ts_anomaly_detector.TimeSeriesAnomalyDetector.fit" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">fit</span><span class="p">(</span><span class="n">values</span><span class="p">)</span></code>
+
+<a href="#scomp_link.models.ts_anomaly_detector.TimeSeriesAnomalyDetector.fit" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Fit the detector on normal (non-anomalous) training data.
+Only needed for autoencoder method.</p>
+<h5 id="scomp_link.models.ts_anomaly_detector.TimeSeriesAnomalyDetector.fit--parameters">Parameters<a class="headerlink" href="#scomp_link.models.ts_anomaly_detector.TimeSeriesAnomalyDetector.fit--parameters" title="Permanent link">&para;</a></h5>
+<p>values : np.ndarray
+    1D array of normal time series values.</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="scomp_link.models.ts_anomaly_detector.TimeSeriesAnomalyDetector.detect" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">detect</span><span class="p">(</span><span class="n">values</span><span class="p">)</span></code>
+
+<a href="#scomp_link.models.ts_anomaly_detector.TimeSeriesAnomalyDetector.detect" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Detect anomalies in a time series.</p>
+<h5 id="scomp_link.models.ts_anomaly_detector.TimeSeriesAnomalyDetector.detect--parameters">Parameters<a class="headerlink" href="#scomp_link.models.ts_anomaly_detector.TimeSeriesAnomalyDetector.detect--parameters" title="Permanent link">&para;</a></h5>
+<p>values : np.ndarray
+    1D array of time series values to check for anomalies.</p>
+<h5 id="scomp_link.models.ts_anomaly_detector.TimeSeriesAnomalyDetector.detect--returns">Returns<a class="headerlink" href="#scomp_link.models.ts_anomaly_detector.TimeSeriesAnomalyDetector.detect--returns" title="Permanent link">&para;</a></h5>
+<p>dict with keys:
+    - 'anomalies': boolean array (True = anomaly)
+    - 'methods': dict of per-method boolean arrays
+    - 'consensus_score': int array (how many methods flagged each point)</p>
+
+
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div><h2 id="time-series-forecaster">Time Series Forecaster<a class="headerlink" href="#time-series-forecaster" title="Permanent link">&para;</a></h2>
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="scomp_link.models.forecaster.TimeSeriesForecaster" class="doc doc-heading">
+            <code>scomp_link.models.forecaster.TimeSeriesForecaster</code>
+
+
+<a href="#scomp_link.models.forecaster.TimeSeriesForecaster" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents first">
+
+
+
+        <p>Unified time series forecasting with multiple methods and walk-forward validation.</p>
+<p>Dependencies: statsmodels, numpy, pandas, plotly</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>1. method</code>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>forecasting method ('arima', 'sarima', 'exp_smoothing', 'auto')</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>2. horizon</code>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>number of steps to forecast (default 10)</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>3. seasonal_period</code>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>seasonality period for SARIMA/ETS (default None = auto-detect)</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>4. order</code>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>ARIMA order (p,d,q) — if None, auto-selected</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>5. seasonal_order</code>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>SARIMA seasonal order (P,D,Q,s) — if None, auto-selected</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+<details class="usage-example" open>
+  <summary>Usage example</summary>
+  <p>forecaster = TimeSeriesForecaster(method='arima', horizon=30)
+forecaster.fit(train_series)
+forecast = forecaster.predict()
+metrics = forecaster.walk_forward_cv(full_series, n_splits=5)</p>
+</details>
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="scomp_link.models.forecaster.TimeSeriesForecaster.fit" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">fit</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></code>
+
+<a href="#scomp_link.models.forecaster.TimeSeriesForecaster.fit" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Fit the forecasting model on a time series.</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="scomp_link.models.forecaster.TimeSeriesForecaster.predict" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">predict</span><span class="p">(</span><span class="n">steps</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+<a href="#scomp_link.models.forecaster.TimeSeriesForecaster.predict" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Forecast future values.</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="scomp_link.models.forecaster.TimeSeriesForecaster.predict_with_ci" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">predict_with_ci</span><span class="p">(</span><span class="n">steps</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">)</span></code>
+
+<a href="#scomp_link.models.forecaster.TimeSeriesForecaster.predict_with_ci" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Forecast with confidence intervals.</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="scomp_link.models.forecaster.TimeSeriesForecaster.walk_forward_cv" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">walk_forward_cv</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="n">n_splits</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">horizon</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+<a href="#scomp_link.models.forecaster.TimeSeriesForecaster.walk_forward_cv" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Walk-forward cross-validation (expanding window).
+Returns dict with per-fold and aggregate metrics.</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="scomp_link.models.forecaster.TimeSeriesForecaster.plot_forecast" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">plot_forecast</span><span class="p">(</span><span class="n">forecast</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ci</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+<a href="#scomp_link.models.forecaster.TimeSeriesForecaster.plot_forecast" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Plot historical data + forecast with optional confidence interval.</p>
+
+
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div><h2 id="ensemble-optimizer">Ensemble Optimizer<a class="headerlink" href="#ensemble-optimizer" title="Permanent link">&para;</a></h2>
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="scomp_link.models.ensemble_optimizer.EnsembleOptimizer" class="doc doc-heading">
+            <code>scomp_link.models.ensemble_optimizer.EnsembleOptimizer</code>
+
+
+<a href="#scomp_link.models.ensemble_optimizer.EnsembleOptimizer" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents first">
+
+
+
+        <p>EnsembleOptimizer combines multiple trained models using voting or stacking strategies.</p>
+<p>Dependencies:
+- numpy
+- sklearn.ensemble</p>
+<p>Parameters:
+- base_models: List of tuples (name, model) with trained models
+- task_type: 'classification' or 'regression'
+- strategy: 'voting' or 'stacking'</p>
+<p>Methods:
+- create_ensemble: Creates ensemble model
+- evaluate_ensemble: Evaluates ensemble performance</p>
+
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="scomp_link.models.ensemble_optimizer.EnsembleOptimizer.create_ensemble" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">create_ensemble</span><span class="p">(</span><span class="n">meta_model</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+<a href="#scomp_link.models.ensemble_optimizer.EnsembleOptimizer.create_ensemble" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Create ensemble model using voting or stacking</p>
+<p>Parameters:
+- meta_model: Meta-learner for stacking (optional)</p>
+<p>Returns:
+- ensemble_model: Fitted ensemble model</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="scomp_link.models.ensemble_optimizer.EnsembleOptimizer.fit" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span></code>
+
+<a href="#scomp_link.models.ensemble_optimizer.EnsembleOptimizer.fit" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Fit ensemble model</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="scomp_link.models.ensemble_optimizer.EnsembleOptimizer.predict" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">)</span></code>
+
+<a href="#scomp_link.models.ensemble_optimizer.EnsembleOptimizer.predict" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Make predictions with ensemble</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="scomp_link.models.ensemble_optimizer.EnsembleOptimizer.evaluate_ensemble" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">evaluate_ensemble</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span></code>
+
+<a href="#scomp_link.models.ensemble_optimizer.EnsembleOptimizer.evaluate_ensemble" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Evaluate ensemble using cross-validation</p>
+<p>Parameters:
+- X: Features
+- y: Target
+- cv: Number of folds</p>
+<p>Returns:
+- scores: Cross-validation scores</p>
+
+
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.sections", "navigation.expand", "content.code.copy", "search.highlight"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

@@ -1,0 +1,3486 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="The Astromech Arm for Your Python Projects — End-to-End ML Toolkit">
+      
+      
+      
+        <link rel="canonical" href="https://giacomosaccaggi.github.io/scomp-link/api/visualization/">
+      
+      
+        <link rel="prev" href="../tuning/">
+      
+      
+        <link rel="next" href="../../examples/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Visualization - scomp-link</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="deep-purple" data-md-color-accent="cyan">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#visualization" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="scomp-link" class="md-header__button md-logo" aria-label="scomp-link" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            scomp-link
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Visualization
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="deep-purple" data-md-color-accent="cyan"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="cyan"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/GiacomoSaccaggi/scomp-link" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GiacomoSaccaggi/scomp-link
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="scomp-link" class="md-nav__button md-logo" aria-label="scomp-link" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    scomp-link
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/GiacomoSaccaggi/scomp-link" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GiacomoSaccaggi/scomp-link
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../quickstart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quick Start
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CLI Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    API Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pipeline/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pipeline
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../preprocessing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Preprocessing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../models/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Models
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../validation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Validation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../explainability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Explainability
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../monitoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Monitoring
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../persistence/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Persistence
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tuning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tuning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Visualization
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Visualization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#color-palette-colorspy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Color Palette (colors.py)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Color Palette (colors.py)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#palettes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Palettes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#theme-constants" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Theme Constants
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#rawgraphs-charts-rawgraphs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        RAWGraphs Charts (rawgraphs/)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="RAWGraphs Charts (rawgraphs/)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#comparisons" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Comparisons
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.rawgraphs.comparisons" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        comparisons
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.rawgraphs.comparisons.barchart" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        barchart
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.rawgraphs.comparisons.barchartmultiset" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        barchartmultiset
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.rawgraphs.comparisons.barchartstacked" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        barchartstacked
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.rawgraphs.comparisons.piechart" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        piechart
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.rawgraphs.comparisons.radarchart" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        radarchart
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.rawgraphs.comparisons.voronoidiagram" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        voronoidiagram
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="voronoidiagram">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#distributions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Distributions
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.rawgraphs.distributions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        distributions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.rawgraphs.distributions.beeswarm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        beeswarm
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.rawgraphs.distributions.boxplot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        boxplot
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.rawgraphs.distributions.violinplot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        violinplot
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="violinplot">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#time-series" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Time Series
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.rawgraphs.time_series" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        time_series
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.rawgraphs.time_series.bumpchart" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        bumpchart
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.rawgraphs.time_series.gantt_chart" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        gantt_chart
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.rawgraphs.time_series.horizongraph" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        horizongraph
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.rawgraphs.time_series.linechart" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        linechart
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.rawgraphs.time_series.slopechart" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        slopechart
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.rawgraphs.time_series.streamgraph" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        streamgraph
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="streamgraph">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#correlations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Correlations
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.rawgraphs.correlations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        correlations
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.rawgraphs.correlations.bubblechart" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        bubblechart
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.rawgraphs.correlations.contour_plot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        contour_plot
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.rawgraphs.correlations.convex_hull" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        convex_hull
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.rawgraphs.correlations.hexagonal_binning" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        hexagonal_binning
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.rawgraphs.correlations.matrixplot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        matrixplot
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.rawgraphs.correlations.parallelcoordinates" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        parallelcoordinates
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="parallelcoordinates">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#hierarchies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hierarchies
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.rawgraphs.hierarchies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        hierarchies
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.rawgraphs.hierarchies.circlepacking" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        circlepacking
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.rawgraphs.hierarchies.circular_dendrogram" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        circular_dendrogram
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.rawgraphs.hierarchies.dendrogram" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        dendrogram
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.rawgraphs.hierarchies.sunburst" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sunburst
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.rawgraphs.hierarchies.treemap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        treemap
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.rawgraphs.hierarchies.voronoi_treemap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        voronoi_treemap
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="voronoi_treemap">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#networks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Networks
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.rawgraphs.networks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        networks
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.rawgraphs.networks.alluvial_diagram" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        alluvial_diagram
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.rawgraphs.networks.arc_diagram" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        arc_diagram
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.rawgraphs.networks.chord_diagram" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        chord_diagram
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.rawgraphs.networks.sankey_diagram" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sankey_diagram
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#plotly-charts-plotly_utilspy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Plotly Charts (plotly_utils.py)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.plotly_utils" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        plotly_utils
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.plotly_utils.multiple_histograms" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        multiple_histograms
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.plotly_utils.histogram" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        histogram
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.plotly_utils.barchart" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        barchart
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.plotly_utils.linechart" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        linechart
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.plotly_utils.area_chart" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        area_chart
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#highcharts-highchartspy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Highcharts (highcharts.py)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.highcharts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        highcharts
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.highcharts.streamgraphs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        streamgraphs
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.highcharts.calendar_heatmap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        calendar_heatmap
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.highcharts.calendar_gantt" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        calendar_gantt
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../examples/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Examples
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../changelog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Changelog
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#color-palette-colorspy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Color Palette (colors.py)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Color Palette (colors.py)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#palettes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Palettes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#theme-constants" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Theme Constants
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#rawgraphs-charts-rawgraphs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        RAWGraphs Charts (rawgraphs/)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="RAWGraphs Charts (rawgraphs/)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#comparisons" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Comparisons
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.rawgraphs.comparisons" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        comparisons
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.rawgraphs.comparisons.barchart" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        barchart
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.rawgraphs.comparisons.barchartmultiset" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        barchartmultiset
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.rawgraphs.comparisons.barchartstacked" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        barchartstacked
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.rawgraphs.comparisons.piechart" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        piechart
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.rawgraphs.comparisons.radarchart" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        radarchart
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.rawgraphs.comparisons.voronoidiagram" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        voronoidiagram
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="voronoidiagram">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#distributions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Distributions
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.rawgraphs.distributions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        distributions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.rawgraphs.distributions.beeswarm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        beeswarm
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.rawgraphs.distributions.boxplot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        boxplot
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.rawgraphs.distributions.violinplot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        violinplot
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="violinplot">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#time-series" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Time Series
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.rawgraphs.time_series" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        time_series
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.rawgraphs.time_series.bumpchart" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        bumpchart
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.rawgraphs.time_series.gantt_chart" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        gantt_chart
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.rawgraphs.time_series.horizongraph" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        horizongraph
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.rawgraphs.time_series.linechart" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        linechart
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.rawgraphs.time_series.slopechart" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        slopechart
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.rawgraphs.time_series.streamgraph" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        streamgraph
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="streamgraph">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#correlations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Correlations
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.rawgraphs.correlations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        correlations
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.rawgraphs.correlations.bubblechart" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        bubblechart
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.rawgraphs.correlations.contour_plot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        contour_plot
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.rawgraphs.correlations.convex_hull" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        convex_hull
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.rawgraphs.correlations.hexagonal_binning" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        hexagonal_binning
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.rawgraphs.correlations.matrixplot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        matrixplot
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.rawgraphs.correlations.parallelcoordinates" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        parallelcoordinates
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="parallelcoordinates">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#hierarchies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hierarchies
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.rawgraphs.hierarchies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        hierarchies
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.rawgraphs.hierarchies.circlepacking" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        circlepacking
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.rawgraphs.hierarchies.circular_dendrogram" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        circular_dendrogram
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.rawgraphs.hierarchies.dendrogram" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        dendrogram
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.rawgraphs.hierarchies.sunburst" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sunburst
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.rawgraphs.hierarchies.treemap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        treemap
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.rawgraphs.hierarchies.voronoi_treemap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        voronoi_treemap
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="voronoi_treemap">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#networks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Networks
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.rawgraphs.networks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        networks
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.rawgraphs.networks.alluvial_diagram" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        alluvial_diagram
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.rawgraphs.networks.arc_diagram" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        arc_diagram
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.rawgraphs.networks.chord_diagram" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        chord_diagram
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.rawgraphs.networks.sankey_diagram" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sankey_diagram
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#plotly-charts-plotly_utilspy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Plotly Charts (plotly_utils.py)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.plotly_utils" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        plotly_utils
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.plotly_utils.multiple_histograms" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        multiple_histograms
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.plotly_utils.histogram" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        histogram
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.plotly_utils.barchart" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        barchart
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.plotly_utils.linechart" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        linechart
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.plotly_utils.area_chart" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        area_chart
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#highcharts-highchartspy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Highcharts (highcharts.py)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.highcharts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        highcharts
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.highcharts.streamgraphs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        streamgraphs
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.highcharts.calendar_heatmap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        calendar_heatmap
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scomp_link.utils.highcharts.calendar_gantt" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        calendar_gantt
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="visualization">Visualization<a class="headerlink" href="#visualization" title="Permanent link">&para;</a></h1>
+<p>scomp-link provides three chart libraries and a centralized color system, all accessible through <code>scomp_link.utils</code>.</p>
+<hr />
+<h2 id="color-palette-colorspy">Color Palette (<code>colors.py</code>)<a class="headerlink" href="#color-palette-colorspy" title="Permanent link">&para;</a></h2>
+<p>All color constants are defined in a single module. Import colors from here — never hardcode hex values.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">scomp_link.utils.colors</span><span class="w"> </span><span class="kn">import</span> <span class="n">PRIMARY</span><span class="p">,</span> <span class="n">DARK</span><span class="p">,</span> <span class="n">MAIN</span>
+</code></pre></div>
+<h3 id="palettes">Palettes<a class="headerlink" href="#palettes" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+<th>Use Case</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PRIMARY</code></td>
+<td>10 vivid categorical colors</td>
+<td>Default palette for all charts</td>
+</tr>
+<tr>
+<td><code>LIGHT</code></td>
+<td>Lightest variants</td>
+<td>Backgrounds, hover states</td>
+</tr>
+<tr>
+<td><code>MEDIUM_LIGHT</code></td>
+<td>Medium-light</td>
+<td>Secondary fills</td>
+</tr>
+<tr>
+<td><code>MEDIUM</code></td>
+<td>Medium intensity</td>
+<td>Accent elements</td>
+</tr>
+<tr>
+<td><code>MEDIUM_DARK</code></td>
+<td>Medium-dark</td>
+<td>Text on light backgrounds</td>
+</tr>
+<tr>
+<td><code>DARK</code></td>
+<td>Dark variants</td>
+<td>Borders, axis lines</td>
+</tr>
+<tr>
+<td><code>DARKEST</code></td>
+<td>Darkest variants</td>
+<td>Headers, strong contrast</td>
+</tr>
+</tbody>
+</table>
+<h3 id="theme-constants">Theme Constants<a class="headerlink" href="#theme-constants" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>MAIN</code></td>
+<td><code>#6E37FA</code></td>
+<td>Primary brand color</td>
+</tr>
+<tr>
+<td><code>MAIN_LIGHT</code></td>
+<td><code>#9682FF</code></td>
+<td>Light variant</td>
+</tr>
+<tr>
+<td><code>MAIN_DARK</code></td>
+<td><code>#4614B4</code></td>
+<td>Dark variant</td>
+</tr>
+<tr>
+<td><code>PRIMARY_JSON</code></td>
+<td>JSON string</td>
+<td>For Highcharts embedding</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="rawgraphs-charts-rawgraphs">RAWGraphs Charts (<code>rawgraphs/</code>)<a class="headerlink" href="#rawgraphs-charts-rawgraphs" title="Permanent link">&para;</a></h2>
+<p>Server-side SVG generation for 31 chart types. Each function returns an embeddable SVG string.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">scomp_link.utils.rawgraphs</span><span class="w"> </span><span class="kn">import</span> <span class="n">barchart</span><span class="p">,</span> <span class="n">chord_diagram</span><span class="p">,</span> <span class="n">treemap</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">scomp_link.utils.report_html</span><span class="w"> </span><span class="kn">import</span> <span class="n">ScompLinkHTMLReport</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="n">svg</span> <span class="o">=</span> <span class="n">barchart</span><span class="p">([</span><span class="s1">&#39;Q1&#39;</span><span class="p">,</span> <span class="s1">&#39;Q2&#39;</span><span class="p">,</span> <span class="s1">&#39;Q3&#39;</span><span class="p">],</span> <span class="p">[</span><span class="mi">100</span><span class="p">,</span> <span class="mi">150</span><span class="p">,</span> <span class="mi">200</span><span class="p">],</span> <span class="s1">&#39;Revenue&#39;</span><span class="p">)</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="n">report</span> <span class="o">=</span> <span class="n">ScompLinkHTMLReport</span><span class="p">(</span><span class="s1">&#39;Report&#39;</span><span class="p">)</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="n">report</span><span class="o">.</span><span class="n">add_rawgraphs_to_report</span><span class="p">(</span><span class="n">svg</span><span class="p">,</span> <span class="s1">&#39;Revenue by Quarter&#39;</span><span class="p">)</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="n">report</span><span class="o">.</span><span class="n">save_html</span><span class="p">(</span><span class="s1">&#39;output.html&#39;</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="comparisons">Comparisons<a class="headerlink" href="#comparisons" title="Permanent link">&para;</a></h3>
+
+
+<div class="doc doc-object doc-module">
+
+
+
+<a id="scomp_link.utils.rawgraphs.comparisons"></a>
+    <div class="doc doc-contents first">
+
+        <p>██████╗  █████╗ ██╗    ██╗ ██████╗ ██████╗  █████╗ ██████╗ ██╗  ██╗███████╗
+██╔══██╗██╔══██╗██║    ██║██╔════╝ ██╔══██╗██╔══██╗██╔══██╗██║  ██║██╔════╝
+██████╔╝███████║██║ █╗ ██║██║  ███╗██████╔╝███████║██████╔╝███████║███████╗
+██╔══██╗██╔══██║██║███╗██║██║   ██║██╔══██╗██╔══██║██╔═══╝ ██╔══██║╚════██║
+██║  ██║██║  ██║╚███╔███╔╝╚██████╔╝██║  ██║██║  ██║██║     ██║  ██║███████║
+╚═╝  ╚═╝╚═╝  ╚═╝ ╚══╝╚══╝  ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝     ╚═╝  ╚═╝╚══════╝</p>
+<p>RAWGraphs-style comparison chart functions for scomp-link.
+Generates SVG charts server-side using matplotlib.</p>
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="scomp_link.utils.rawgraphs.comparisons.barchart" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">barchart</span><span class="p">(</span><span class="n">categories</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">800</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+<a href="#scomp_link.utils.rawgraphs.comparisons.barchart" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Simple vertical bar chart. Each bar colored cycling through the palette.</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="scomp_link.utils.rawgraphs.comparisons.barchartmultiset" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">barchartmultiset</span><span class="p">(</span><span class="n">categories</span><span class="p">,</span> <span class="n">groups</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">800</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+<a href="#scomp_link.utils.rawgraphs.comparisons.barchartmultiset" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Grouped/multi-set bar chart with bars side by side per category.</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="scomp_link.utils.rawgraphs.comparisons.barchartstacked" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">barchartstacked</span><span class="p">(</span><span class="n">categories</span><span class="p">,</span> <span class="n">groups</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">800</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+<a href="#scomp_link.utils.rawgraphs.comparisons.barchartstacked" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Stacked bar chart.</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="scomp_link.utils.rawgraphs.comparisons.piechart" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">piechart</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">600</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">600</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+<a href="#scomp_link.utils.rawgraphs.comparisons.piechart" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Pie chart with labels.</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="scomp_link.utils.rawgraphs.comparisons.radarchart" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">radarchart</span><span class="p">(</span><span class="n">categories</span><span class="p">,</span> <span class="n">series</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">600</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">600</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+<a href="#scomp_link.utils.rawgraphs.comparisons.radarchart" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Radar/spider chart using polar projection.</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="scomp_link.utils.rawgraphs.comparisons.voronoidiagram" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">voronoidiagram</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">800</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">600</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+<a href="#scomp_link.utils.rawgraphs.comparisons.voronoidiagram" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Voronoi tessellation from 2D points, each region colored.</p>
+
+
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div><h3 id="distributions">Distributions<a class="headerlink" href="#distributions" title="Permanent link">&para;</a></h3>
+
+
+<div class="doc doc-object doc-module">
+
+
+
+<a id="scomp_link.utils.rawgraphs.distributions"></a>
+    <div class="doc doc-contents first">
+
+        <p>██████╗  █████╗ ██╗    ██╗ ██████╗ ██████╗  █████╗ ██████╗ ██╗  ██╗███████╗
+██╔══██╗██╔══██╗██║    ██║██╔════╝ ██╔══██╗██╔══██╗██╔══██╗██║  ██║██╔════╝
+██████╔╝███████║██║ █╗ ██║██║  ███╗██████╔╝███████║██████╔╝███████║███████╗
+██╔══██╗██╔══██║██║███╗██║██║   ██║██╔══██╗██╔══██║██╔═══╝ ██╔══██║╚════██║
+██║  ██║██║  ██║╚███╔███╔╝╚██████╔╝██║  ██║██║  ██║██║     ██║  ██║███████║
+╚═╝  ╚═╝╚═╝  ╚═╝ ╚══╝╚══╝  ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝     ╚═╝  ╚═╝╚══════╝</p>
+<p>RAWGraphs-style distribution chart functions for scomp-link.
+Generates SVG charts server-side using matplotlib.</p>
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="scomp_link.utils.rawgraphs.distributions.beeswarm" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">beeswarm</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">groups</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">800</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+<a href="#scomp_link.utils.rawgraphs.distributions.beeswarm" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Beeswarm (jittered strip) plot showing individual data points.</p>
+<p>:param data: list of numeric values
+:param groups: list of group labels (same length as data), None for single group
+:param title: chart title
+:param width: SVG width in pixels
+:param height: SVG height in pixels
+:param colors: custom color palette
+:return: SVG string</p>
+
+
+<details class="example" open>
+  <summary>Example</summary>
+  <p>svg = beeswarm([1,2,3,4,5,6], ['A','A','A','B','B','B'], 'My Beeswarm')</p>
+</details>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="scomp_link.utils.rawgraphs.distributions.boxplot" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">boxplot</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">800</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+<a href="#scomp_link.utils.rawgraphs.distributions.boxplot" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Box-and-whisker plot.</p>
+<p>:param data: list of lists (each inner list is a distribution for one group)
+:param labels: group labels
+:param title: chart title
+:param width: SVG width in pixels
+:param height: SVG height in pixels
+:param colors: custom color palette
+:return: SVG string</p>
+
+
+<details class="example" open>
+  <summary>Example</summary>
+  <p>svg = boxplot([[1,2,3,4], [2,3,4,5]], ['Group A', 'Group B'], 'Boxplot')</p>
+</details>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="scomp_link.utils.rawgraphs.distributions.violinplot" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">violinplot</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">800</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+<a href="#scomp_link.utils.rawgraphs.distributions.violinplot" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Violin plot showing density distribution.</p>
+<p>:param data: list of lists (each inner list is a distribution for one group)
+:param labels: group labels
+:param title: chart title
+:param width: SVG width in pixels
+:param height: SVG height in pixels
+:param colors: custom color palette
+:return: SVG string</p>
+
+
+<details class="example" open>
+  <summary>Example</summary>
+  <p>svg = violinplot([[1,2,3,4,5], [3,4,5,6,7]], ['A', 'B'], 'Violin')</p>
+</details>
+
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div><h3 id="time-series">Time Series<a class="headerlink" href="#time-series" title="Permanent link">&para;</a></h3>
+
+
+<div class="doc doc-object doc-module">
+
+
+
+<a id="scomp_link.utils.rawgraphs.time_series"></a>
+    <div class="doc doc-contents first">
+
+        <p>██████╗  █████╗ ██╗    ██╗ ██████╗ ██████╗  █████╗ ██████╗ ██╗  ██╗███████╗
+██╔══██╗██╔══██╗██║    ██║██╔════╝ ██╔══██╗██╔══██╗██╔══██╗██║  ██║██╔════╝
+██████╔╝███████║██║ █╗ ██║██║  ███╗██████╔╝███████║██████╔╝███████║███████╗
+██╔══██╗██╔══██║██║███╗██║██║   ██║██╔══██╗██╔══██║██╔═══╝ ██╔══██║╚════██║
+██║  ██║██║  ██║╚███╔███╔╝╚██████╔╝██║  ██║██║  ██║██║     ██║  ██║███████║
+╚═╝  ╚═╝╚═╝  ╚═╝ ╚══╝╚══╝  ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝     ╚═╝  ╚═╝╚══════╝</p>
+<p>RAWGraphs-style time series chart functions for scomp-link.
+Generates SVG charts server-side using matplotlib.</p>
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="scomp_link.utils.rawgraphs.time_series.bumpchart" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">bumpchart</span><span class="p">(</span><span class="n">ranks</span><span class="p">,</span> <span class="n">periods</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">800</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+<a href="#scomp_link.utils.rawgraphs.time_series.bumpchart" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Bump chart showing ranking changes over time. Y-axis inverted (rank 1 at top).</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="scomp_link.utils.rawgraphs.time_series.gantt_chart" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">gantt_chart</span><span class="p">(</span><span class="n">tasks</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">900</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+<a href="#scomp_link.utils.rawgraphs.time_series.gantt_chart" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Gantt chart for project timelines using broken_barh.</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="scomp_link.utils.rawgraphs.time_series.horizongraph" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">horizongraph</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="n">x_values</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">800</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">bands</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span></code>
+
+<a href="#scomp_link.utils.rawgraphs.time_series.horizongraph" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Horizon graph: layered bands showing positive/negative values with increasing opacity.</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="scomp_link.utils.rawgraphs.time_series.linechart" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">linechart</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="n">x_values</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">800</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+<a href="#scomp_link.utils.rawgraphs.time_series.linechart" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Multi-line chart.</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="scomp_link.utils.rawgraphs.time_series.slopechart" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">slopechart</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">period_labels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">600</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+<a href="#scomp_link.utils.rawgraphs.time_series.slopechart" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Slope chart comparing values between two points (before/after).</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="scomp_link.utils.rawgraphs.time_series.streamgraph" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">streamgraph</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="n">x_values</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">800</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+<a href="#scomp_link.utils.rawgraphs.time_series.streamgraph" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Stacked area chart centered on baseline (streamgraph).</p>
+
+
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div><h3 id="correlations">Correlations<a class="headerlink" href="#correlations" title="Permanent link">&para;</a></h3>
+
+
+<div class="doc doc-object doc-module">
+
+
+
+<a id="scomp_link.utils.rawgraphs.correlations"></a>
+    <div class="doc doc-contents first">
+
+        <p>██████╗  █████╗ ██╗    ██╗ ██████╗ ██████╗  █████╗ ██████╗ ██╗  ██╗███████╗
+██╔══██╗██╔══██╗██║    ██║██╔════╝ ██╔══██╗██╔══██╗██╔══██╗██║  ██║██╔════╝
+██████╔╝███████║██║ █╗ ██║██║  ███╗██████╔╝███████║██████╔╝███████║███████╗
+██╔══██╗██╔══██║██║███╗██║██║   ██║██╔══██╗██╔══██║██╔═══╝ ██╔══██║╚════██║
+██║  ██║██║  ██║╚███╔███╔╝╚██████╔╝██║  ██║██║  ██║██║     ██║  ██║███████║
+╚═╝  ╚═╝╚═╝  ╚═╝ ╚══╝╚══╝  ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝     ╚═╝  ╚═╝╚══════╝</p>
+<p>RAWGraphs-style correlation chart functions for scomp-link.
+Generates SVG charts server-side using matplotlib.</p>
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="scomp_link.utils.rawgraphs.correlations.bubblechart" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">bubblechart</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">800</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">600</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+<a href="#scomp_link.utils.rawgraphs.correlations.bubblechart" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Scatter plot with sized bubbles, colored by index cycling through palette.</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="scomp_link.utils.rawgraphs.correlations.contour_plot" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">contour_plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">800</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">600</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">levels</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span></code>
+
+<a href="#scomp_link.utils.rawgraphs.correlations.contour_plot" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>2D kernel density contour plot using scipy gaussian_kde.</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="scomp_link.utils.rawgraphs.correlations.convex_hull" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">convex_hull</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">groups</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">800</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">600</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+<a href="#scomp_link.utils.rawgraphs.correlations.convex_hull" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Scatter plot with convex hull drawn around each group.</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="scomp_link.utils.rawgraphs.correlations.hexagonal_binning" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">hexagonal_binning</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">800</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">600</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">gridsize</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span></code>
+
+<a href="#scomp_link.utils.rawgraphs.correlations.hexagonal_binning" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Hexagonal bin density plot.</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="scomp_link.utils.rawgraphs.correlations.matrixplot" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">matrixplot</span><span class="p">(</span><span class="n">matrix</span><span class="p">,</span> <span class="n">row_labels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">col_labels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">700</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">700</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+<a href="#scomp_link.utils.rawgraphs.correlations.matrixplot" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Heatmap matrix with colorbar.</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="scomp_link.utils.rawgraphs.correlations.parallelcoordinates" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">parallelcoordinates</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">class_column</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">800</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+<a href="#scomp_link.utils.rawgraphs.correlations.parallelcoordinates" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Parallel coordinates plot. Each row is a line connecting normalized values across axes.</p>
+
+
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div><h3 id="hierarchies">Hierarchies<a class="headerlink" href="#hierarchies" title="Permanent link">&para;</a></h3>
+
+
+<div class="doc doc-object doc-module">
+
+
+
+<a id="scomp_link.utils.rawgraphs.hierarchies"></a>
+    <div class="doc doc-contents first">
+
+        <p>██████╗  █████╗ ██╗    ██╗ ██████╗ ██████╗  █████╗ ██████╗ ██╗  ██╗███████╗
+██╔══██╗██╔══██╗██║    ██║██╔════╝ ██╔══██╗██╔══██╗██╔══██╗██║  ██║██╔════╝
+██████╔╝███████║██║ █╗ ██║██║  ███╗██████╔╝███████║██████╔╝███████║███████╗
+██╔══██╗██╔══██║██║███╗██║██║   ██║██╔══██╗██╔══██║██╔═══╝ ██╔══██║╚════██║
+██║  ██║██║  ██║╚███╔███╔╝╚██████╔╝██║  ██║██║  ██║██║     ██║  ██║███████║
+╚═╝  ╚═╝╚═╝  ╚═╝ ╚══╝╚══╝  ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝     ╚═╝  ╚═╝╚══════╝</p>
+<p>RAWGraphs-style hierarchy chart functions for scomp-link.
+Generates SVG charts server-side using matplotlib and scipy.</p>
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="scomp_link.utils.rawgraphs.hierarchies.circlepacking" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">circlepacking</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">700</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">700</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+<a href="#scomp_link.utils.rawgraphs.hierarchies.circlepacking" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Circle packing visualization for hierarchical data.</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="scomp_link.utils.rawgraphs.hierarchies.circular_dendrogram" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">circular_dendrogram</span><span class="p">(</span><span class="n">linkage_matrix</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">700</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">700</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+<a href="#scomp_link.utils.rawgraphs.hierarchies.circular_dendrogram" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Dendrogram in polar/circular layout.</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="scomp_link.utils.rawgraphs.hierarchies.dendrogram" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">dendrogram</span><span class="p">(</span><span class="n">linkage_matrix</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">800</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+<a href="#scomp_link.utils.rawgraphs.hierarchies.dendrogram" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Standard linear dendrogram.</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="scomp_link.utils.rawgraphs.hierarchies.sunburst" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">sunburst</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">700</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">700</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+<a href="#scomp_link.utils.rawgraphs.hierarchies.sunburst" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Sunburst chart (nested rings).</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="scomp_link.utils.rawgraphs.hierarchies.treemap" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">treemap</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">800</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">600</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+<a href="#scomp_link.utils.rawgraphs.hierarchies.treemap" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Treemap with area-proportional rectangles.</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="scomp_link.utils.rawgraphs.hierarchies.voronoi_treemap" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">voronoi_treemap</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">700</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">700</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+<a href="#scomp_link.utils.rawgraphs.hierarchies.voronoi_treemap" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Weighted Voronoi treemap using Lloyd's relaxation.</p>
+
+
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div><h3 id="networks">Networks<a class="headerlink" href="#networks" title="Permanent link">&para;</a></h3>
+
+
+<div class="doc doc-object doc-module">
+
+
+
+<a id="scomp_link.utils.rawgraphs.networks"></a>
+    <div class="doc doc-contents first">
+
+        <p>██████╗  █████╗ ██╗    ██╗ ██████╗ ██████╗  █████╗ ██████╗ ██╗  ██╗███████╗
+██╔══██╗██╔══██╗██║    ██║██╔════╝ ██╔══██╗██╔══██╗██╔══██╗██║  ██║██╔════╝
+██████╔╝███████║██║ █╗ ██║██║  ███╗██████╔╝███████║██████╔╝███████║███████╗
+██╔══██╗██╔══██║██║███╗██║██║   ██║██╔══██╗██╔══██║██╔═══╝ ██╔══██║╚════██║
+██║  ██║██║  ██║╚███╔███╔╝╚██████╔╝██║  ██║██║  ██║██║     ██║  ██║███████║
+╚═╝  ╚═╝╚═╝  ╚═╝ ╚══╝╚══╝  ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝     ╚═╝  ╚═╝╚══════╝</p>
+<p>RAWGraphs-style network/flow chart functions for scomp-link.
+Generates SVG charts programmatically using numpy for geometry.</p>
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="scomp_link.utils.rawgraphs.networks.alluvial_diagram" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">alluvial_diagram</span><span class="p">(</span><span class="n">flows</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">900</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+<a href="#scomp_link.utils.rawgraphs.networks.alluvial_diagram" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Alluvial/flow diagram showing connections between categories across stages.</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="scomp_link.utils.rawgraphs.networks.arc_diagram" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">arc_diagram</span><span class="p">(</span><span class="n">nodes</span><span class="p">,</span> <span class="n">links</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">900</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+<a href="#scomp_link.utils.rawgraphs.networks.arc_diagram" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Arc diagram: nodes on a horizontal line, connections as arcs above.</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="scomp_link.utils.rawgraphs.networks.chord_diagram" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">chord_diagram</span><span class="p">(</span><span class="n">matrix</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">700</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">700</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+<a href="#scomp_link.utils.rawgraphs.networks.chord_diagram" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Chord diagram showing flows between groups arranged in a circle.</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="scomp_link.utils.rawgraphs.networks.sankey_diagram" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">sankey_diagram</span><span class="p">(</span><span class="n">nodes</span><span class="p">,</span> <span class="n">links</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">900</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+<a href="#scomp_link.utils.rawgraphs.networks.sankey_diagram" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Sankey flow diagram with nodes arranged in columns by x-position.</p>
+
+
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div><hr />
+<h2 id="plotly-charts-plotly_utilspy">Plotly Charts (<code>plotly_utils.py</code>)<a class="headerlink" href="#plotly-charts-plotly_utilspy" title="Permanent link">&para;</a></h2>
+<p>Interactive Plotly figures for embedding in HTML reports.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">scomp_link.utils.plotly_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">histogram</span><span class="p">,</span> <span class="n">barchart</span><span class="p">,</span> <span class="n">linechart</span><span class="p">,</span> <span class="n">area_chart</span>
+</code></pre></div>
+
+
+<div class="doc doc-object doc-module">
+
+
+
+<a id="scomp_link.utils.plotly_utils"></a>
+    <div class="doc doc-contents first">
+
+        <p>██████╗ ██╗      ██████╗ ████████╗██╗  ██╗   ██╗
+██╔══██╗██║     ██╔═══██╗╚══██╔══╝██║  ╚██╗ ██╔╝
+██████╔╝██║     ██║   ██║   ██║   ██║   ╚████╔╝
+██╔═══╝ ██║     ██║   ██║   ██║   ██║    ╚██╔╝
+██║     ███████╗╚██████╔╝   ██║   ███████╗██║
+╚═╝     ╚══════╝ ╚═════╝    ╚═╝   ╚══════╝╚═╝</p>
+<p>Plotly visualization utilities for scomp-link.
+Provides histogram, bar chart, line chart, and area chart functions
+with consistent styling and color palettes.</p>
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="scomp_link.utils.plotly_utils.multiple_histograms" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">multiple_histograms</span><span class="p">(</span><span class="n">variable_float_for_distribution</span><span class="p">,</span> <span class="n">category_variable</span><span class="p">,</span> <span class="n">category_name</span><span class="o">=</span><span class="s1">&#39;x_label&#39;</span><span class="p">,</span> <span class="n">y_label</span><span class="o">=</span><span class="s1">&#39;y_label&#39;</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span></code>
+
+<a href="#scomp_link.utils.plotly_utils.multiple_histograms" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+        <div class="highlight"><pre><span></span><code>[95m
+</code></pre></div>
+<p>Function description:
+This function returns graphs on the distribution of a variable divided into several graphs based on a categorical variable</p>
+<p>Packages on which the function depends are:</p>
+<div class="highlight"><pre><span></span><code>import numpy as np
+
+import plotly.graph_objects as go
+
+PARAMETERS:
+
+ 1.           variable_float_for_distribution: a numeric variable cleaned of missing values and None.
+
+ 2.           category_variable: for each value of which the variable above expresses a category.
+
+ 3.           category_name: name from of the characteristic expressed in the categories.
+
+ 4.           h: size of the final image
+[0m
+
+[96m
+Example:
+
+from scomp_link.utils.plotly_utils import multiple_histograms
+x1 = np.random.normal(85, 3, 1000)
+x2 = [[&#39;Group A&#39;, &#39;Group B&#39;, &#39;Group C&#39;][i] for i in np.random.randint(0, 3, 1000)]
+fig = multiple_histograms(x1, x2, &#39;Distribution Comparison&#39;)
+fig.show()
+[0m
+</code></pre></div>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="scomp_link.utils.plotly_utils.histogram" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">histogram</span><span class="p">(</span><span class="n">variable_float_for_distribution</span><span class="p">,</span> <span class="n">name_of_the_column</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="mi">600</span><span class="p">)</span></code>
+
+<a href="#scomp_link.utils.plotly_utils.histogram" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+        <div class="highlight"><pre><span></span><code>[95m
+</code></pre></div>
+<p>Function description:
+This function returns graphs on the distribution of a variable divided into several graphs based on a categorical variable</p>
+<p>Packages on which the function depends are:</p>
+<div class="highlight"><pre><span></span><code>import numpy as np
+
+import plotly.graph_objects as go
+
+PARAMETERS:
+
+ 1.           variable_float_for_distribution: a numeric variable cleaned of missing values and None.
+
+ 2.           category_name: name from of the characteristic expressed in the categories.
+
+ 3.           h: size of the final image
+[0m
+
+[96m
+Example:
+
+from scomp_link.utils.plotly_utils import histogram
+x1 = np.random.normal(45, 3, 1000)
+fig = histogram(x1, &#39;Sample age&#39;)
+fig.show()
+[0m
+</code></pre></div>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="scomp_link.utils.plotly_utils.barchart" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">barchart</span><span class="p">(</span><span class="n">categories</span><span class="p">,</span> <span class="n">metric_values_list</span><span class="p">,</span> <span class="n">x_axis_title</span><span class="o">=</span><span class="s1">&#39;Category&#39;</span><span class="p">,</span> <span class="n">y_axis_titles</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="s1">&#39;asc&#39;</span><span class="p">,</span> <span class="n">categorysorted</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">metric_values_line_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">y_line_axis_titles</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">percentage_y</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></code>
+
+<a href="#scomp_link.utils.plotly_utils.barchart" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="scomp_link.utils.plotly_utils.linechart" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">linechart</span><span class="p">(</span><span class="n">date_list</span><span class="p">,</span> <span class="n">lines</span><span class="p">,</span> <span class="n">title_text</span><span class="o">=</span><span class="s1">&#39;Trend analysis&#39;</span><span class="p">,</span> <span class="n">x_label</span><span class="o">=</span><span class="s1">&#39;date&#39;</span><span class="p">,</span> <span class="n">y_labels</span><span class="o">=</span><span class="s1">&#39;value&#39;</span><span class="p">,</span> <span class="n">format_date</span><span class="o">=</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">yaxis_ticksuffix</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span></code>
+
+<a href="#scomp_link.utils.plotly_utils.linechart" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="scomp_link.utils.plotly_utils.area_chart" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">area_chart</span><span class="p">(</span><span class="n">date_list</span><span class="p">,</span> <span class="n">lines</span><span class="p">,</span> <span class="n">title_text</span><span class="o">=</span><span class="s1">&#39;Trend analysis&#39;</span><span class="p">,</span> <span class="n">x_label</span><span class="o">=</span><span class="s1">&#39;date&#39;</span><span class="p">,</span> <span class="n">y_labels</span><span class="o">=</span><span class="s1">&#39;value&#39;</span><span class="p">,</span> <span class="n">format_date</span><span class="o">=</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">yaxis_ticksuffix</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span></code>
+
+<a href="#scomp_link.utils.plotly_utils.area_chart" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div><hr />
+<h2 id="highcharts-highchartspy">Highcharts (<code>highcharts.py</code>)<a class="headerlink" href="#highcharts-highchartspy" title="Permanent link">&para;</a></h2>
+<p>JavaScript-rendered charts returned as HTML strings.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">scomp_link.utils.highcharts</span><span class="w"> </span><span class="kn">import</span> <span class="n">streamgraphs</span><span class="p">,</span> <span class="n">calendar_heatmap</span><span class="p">,</span> <span class="n">calendar_gantt</span>
+</code></pre></div>
+
+
+<div class="doc doc-object doc-module">
+
+
+
+<a id="scomp_link.utils.highcharts"></a>
+    <div class="doc doc-contents first">
+
+        <p>██╗  ██╗ ██████╗██╗  ██╗ ██████╗██╗  ██╗ █████╗ ██████╗ ████████╗ ██████╗
+██║  ██║██╔════╝██║  ██║██╔════╝██║  ██║██╔══██╗██╔══██╗╚══██╔══╝██╔════╝
+███████║██║     ███████║██║     ███████║███████║██████╔╝   ██║   ╚██████╗
+██╔══██║██║     ██╔══██║██║     ██╔══██║██╔══██║██╔═══╝    ██║    ╚════██║
+██║  ██║╚██████╗██║  ██║╚██████╗██║  ██║██║  ██║██║        ██║   ██████╔╝
+╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝        ╚═╝   ╚═════╝</p>
+<p>Highcharts visualization utilities for scomp-link.
+Provides streamgraph, calendar heatmap, and Gantt chart functions
+for embedding in HTML reports.</p>
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="scomp_link.utils.highcharts.streamgraphs" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">streamgraphs</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">dates</span><span class="p">,</span> <span class="n">series_dict</span><span class="p">,</span> <span class="n">annotation</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">area</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></code>
+
+<a href="#scomp_link.utils.highcharts.streamgraphs" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="scomp_link.utils.highcharts.calendar_heatmap" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">calendar_heatmap</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">series_dict</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></code>
+
+<a href="#scomp_link.utils.highcharts.calendar_heatmap" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="scomp_link.utils.highcharts.calendar_gantt" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">calendar_gantt</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">series_dict</span><span class="p">,</span> <span class="n">min_date</span><span class="p">,</span> <span class="n">max_date</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+<a href="#scomp_link.utils.highcharts.calendar_gantt" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.sections", "navigation.expand", "content.code.copy", "search.highlight"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

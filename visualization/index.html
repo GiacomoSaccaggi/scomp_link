@@ -1,0 +1,1313 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="The Astromech Arm for Your Python Projects — End-to-End ML Toolkit">
+      
+      
+      
+        <link rel="canonical" href="https://giacomosaccaggi.github.io/scomp-link/visualization/">
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Visualization Guide - scomp-link</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="deep-purple" data-md-color-accent="cyan">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#visualization-guide" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="scomp-link" class="md-header__button md-logo" aria-label="scomp-link" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            scomp-link
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Visualization Guide
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="deep-purple" data-md-color-accent="cyan"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="cyan"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/GiacomoSaccaggi/scomp-link" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GiacomoSaccaggi/scomp-link
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="scomp-link" class="md-nav__button md-logo" aria-label="scomp-link" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    scomp-link
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/GiacomoSaccaggi/scomp-link" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GiacomoSaccaggi/scomp-link
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../quickstart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quick Start
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CLI Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    API Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/pipeline/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pipeline
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/preprocessing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Preprocessing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/models/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Models
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/validation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Validation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/explainability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Explainability
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/monitoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Monitoring
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/persistence/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Persistence
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/tuning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tuning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/visualization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Visualization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../examples/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Examples
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../changelog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Changelog
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#html-report-builder-pattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        HTML Report Builder Pattern
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#plotly-utils-5-functions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Plotly Utils (5 functions)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Plotly Utils (5 functions)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#histogramvalues-name-h600" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        histogram(values, name, h=600)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multiple_histogramsvariable_float_for_distribution" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        multiple_histograms(variable_float_for_distribution, ...)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#barchartcategories-metric_values_list-x_axis_title-y_axis_titlesnone-orderasc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        barchart(categories, metric_values_list, x_axis_title, y_axis_titles=None, order='asc', ...)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#linechartdate_list-lines-title_text-x_label-y_labels-format_datey-m-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        linechart(date_list, lines, title_text, x_label, y_labels, format_date="%Y-%m-%d")
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#area_chartdate_list-lines-title_text-x_label-y_labels-format_datey-m-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        area_chart(date_list, lines, title_text, x_label, y_labels, format_date="%Y-%m-%d")
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#highcharts-3-functions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Highcharts (3 functions)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Highcharts (3 functions)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#streamgraphstitle-dates-series_dict-annotationnone-areatrue" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        streamgraphs(title, dates, series_dict, annotation=None, area=True)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#calendar_heatmaptitle-series_dict-min0-max1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        calendar_heatmap(title, series_dict, min=0, max=1)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#calendar_gantttitle-series_dict-min_date-max_date-colorsnone" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        calendar_gantt(title, series_dict, min_date, max_date, colors=None)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#rawgraphs-svg-charts-31-functions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        RAWGraphs SVG Charts (31 functions)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="RAWGraphs SVG Charts (31 functions)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#comparisons" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Comparisons
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#distributions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Distributions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#time-series" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Time Series
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#correlations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Correlations
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hierarchies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hierarchies
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#networks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Networks
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#chart-selection-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Chart Selection Guide
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#color-system" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Color System
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="visualization-guide">Visualization Guide<a class="headerlink" href="#visualization-guide" title="Permanent link">&para;</a></h1>
+<p>scomp-link provides 39 chart types across three engines plus an HTML report builder.</p>
+<h2 id="html-report-builder-pattern">HTML Report Builder Pattern<a class="headerlink" href="#html-report-builder-pattern" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">scomp_link.utils.report_html</span><span class="w"> </span><span class="kn">import</span> <span class="n">ScompLinkHTMLReport</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="c1"># Initialize (Highcharts/Plotly JS included automatically)</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="n">report</span> <span class="o">=</span> <span class="n">ScompLinkHTMLReport</span><span class="p">(</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Report Title&#39;</span><span class="p">,</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="n">main_color</span><span class="o">=</span><span class="s1">&#39;#6E37FA&#39;</span><span class="p">,</span>    <span class="c1"># Optional: primary theme color</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="n">light_color</span><span class="o">=</span><span class="s1">&#39;#9682FF&#39;</span><span class="p">,</span>   <span class="c1"># Optional: light variant</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="n">dark_color</span><span class="o">=</span><span class="s1">&#39;#4614B4&#39;</span><span class="p">,</span>    <span class="c1"># Optional: dark variant</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="p">)</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="c1"># Build content</span>
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="n">report</span><span class="o">.</span><span class="n">open_section</span><span class="p">(</span><span class="s2">&quot;Section Name&quot;</span><span class="p">)</span>       <span class="c1"># Collapsible section start</span>
+<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="n">report</span><span class="o">.</span><span class="n">add_title</span><span class="p">(</span><span class="s2">&quot;Heading&quot;</span><span class="p">)</span>               <span class="c1"># &lt;h2&gt; heading</span>
+<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="n">report</span><span class="o">.</span><span class="n">add_text</span><span class="p">(</span><span class="s2">&quot;Paragraph text&quot;</span><span class="p">)</span>         <span class="c1"># &lt;p&gt; paragraph</span>
+<a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="n">report</span><span class="o">.</span><span class="n">add_dataframe</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="s2">&quot;Table Name&quot;</span><span class="p">)</span>    <span class="c1"># Styled HTML table with CSV download</span>
+<a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a><span class="n">report</span><span class="o">.</span><span class="n">add_graph_to_report</span><span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="s2">&quot;Title&quot;</span><span class="p">)</span>  <span class="c1"># Plotly figure (interactive)</span>
+<a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a><span class="n">report</span><span class="o">.</span><span class="n">add_matplotlib_graph_to_report</span><span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="s2">&quot;Title&quot;</span><span class="p">)</span>  <span class="c1"># Matplotlib (static image)</span>
+<a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a><span class="n">report</span><span class="o">.</span><span class="n">add_rawgraphs_to_report</span><span class="p">(</span><span class="n">svg</span><span class="p">,</span> <span class="s2">&quot;Title&quot;</span><span class="p">)</span>  <span class="c1"># RAWGraphs SVG chart</span>
+<a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a><span class="n">report</span><span class="o">.</span><span class="n">add_image_to_report</span><span class="p">(</span><span class="s2">&quot;path.png&quot;</span><span class="p">,</span> <span class="s2">&quot;Title&quot;</span><span class="p">)</span>  <span class="c1"># Local image</span>
+<a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a><span class="n">report</span><span class="o">.</span><span class="n">add_many_plots_with_selection_box_to_report</span><span class="p">(</span><span class="n">figs_dict</span><span class="p">,</span> <span class="s2">&quot;Title&quot;</span><span class="p">)</span>  <span class="c1"># Combobox selector</span>
+<a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a><span class="n">report</span><span class="o">.</span><span class="n">html_report</span> <span class="o">+=</span> <span class="n">html_string</span>         <span class="c1"># Direct HTML append (for Highcharts)</span>
+<a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a><span class="n">report</span><span class="o">.</span><span class="n">close_section</span><span class="p">()</span>                    <span class="c1"># Collapsible section end</span>
+<a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a>
+<a id="__codelineno-0-24" name="__codelineno-0-24" href="#__codelineno-0-24"></a><span class="c1"># Save</span>
+<a id="__codelineno-0-25" name="__codelineno-0-25" href="#__codelineno-0-25"></a><span class="n">report</span><span class="o">.</span><span class="n">save_html</span><span class="p">(</span><span class="s1">&#39;output.html&#39;</span><span class="p">)</span>           <span class="c1"># Self-contained HTML file</span>
+<a id="__codelineno-0-26" name="__codelineno-0-26" href="#__codelineno-0-26"></a><span class="n">report</span><span class="o">.</span><span class="n">save_pdf</span><span class="p">(</span><span class="s1">&#39;output.pdf&#39;</span><span class="p">)</span>             <span class="c1"># PDF via Playwright (headless Chrome)</span>
+</code></pre></div>
+<h2 id="plotly-utils-5-functions">Plotly Utils (5 functions)<a class="headerlink" href="#plotly-utils-5-functions" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">scomp_link.utils.plotly_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">histogram</span><span class="p">,</span> <span class="n">multiple_histograms</span><span class="p">,</span> <span class="n">barchart</span><span class="p">,</span> <span class="n">linechart</span><span class="p">,</span> <span class="n">area_chart</span>
+</code></pre></div>
+<h3 id="histogramvalues-name-h600"><code>histogram(values, name, h=600)</code><a class="headerlink" href="#histogramvalues-name-h600" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>values</code>: array-like of floats</li>
+<li><code>name</code>: str — title/axis label</li>
+<li><code>h</code>: int — height in pixels</li>
+<li>Returns: plotly.graph_objects.Figure</li>
+</ul>
+<h3 id="multiple_histogramsvariable_float_for_distribution"><code>multiple_histograms(variable_float_for_distribution, ...)</code><a class="headerlink" href="#multiple_histogramsvariable_float_for_distribution" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Multiple distributions overlaid</li>
+</ul>
+<h3 id="barchartcategories-metric_values_list-x_axis_title-y_axis_titlesnone-orderasc"><code>barchart(categories, metric_values_list, x_axis_title, y_axis_titles=None, order='asc', ...)</code><a class="headerlink" href="#barchartcategories-metric_values_list-x_axis_title-y_axis_titlesnone-orderasc" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>categories</code>: list of str — x-axis labels</li>
+<li><code>metric_values_list</code>: list of float — bar heights</li>
+<li><code>order</code>: 'asc' | 'desc' | None</li>
+<li><code>metric_values_line_list</code>: optional secondary y-axis (line overlay)</li>
+<li><code>percentage_y</code>: bool — format y as percentage</li>
+<li>Returns: plotly.graph_objects.Figure</li>
+</ul>
+<h3 id="linechartdate_list-lines-title_text-x_label-y_labels-format_datey-m-d"><code>linechart(date_list, lines, title_text, x_label, y_labels, format_date="%Y-%m-%d")</code><a class="headerlink" href="#linechartdate_list-lines-title_text-x_label-y_labels-format_datey-m-d" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>date_list</code>: list of date strings</li>
+<li><code>lines</code>: dict <code>{series_name: [values]}</code></li>
+<li>Returns: plotly.graph_objects.Figure</li>
+</ul>
+<h3 id="area_chartdate_list-lines-title_text-x_label-y_labels-format_datey-m-d"><code>area_chart(date_list, lines, title_text, x_label, y_labels, format_date="%Y-%m-%d")</code><a class="headerlink" href="#area_chartdate_list-lines-title_text-x_label-y_labels-format_datey-m-d" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Same as linechart but filled area</li>
+<li>Returns: plotly.graph_objects.Figure</li>
+</ul>
+<h2 id="highcharts-3-functions">Highcharts (3 functions)<a class="headerlink" href="#highcharts-3-functions" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">scomp_link.utils.highcharts</span><span class="w"> </span><span class="kn">import</span> <span class="n">streamgraphs</span><span class="p">,</span> <span class="n">calendar_heatmap</span><span class="p">,</span> <span class="n">calendar_gantt</span>
+</code></pre></div>
+<h3 id="streamgraphstitle-dates-series_dict-annotationnone-areatrue"><code>streamgraphs(title, dates, series_dict, annotation=None, area=True)</code><a class="headerlink" href="#streamgraphstitle-dates-series_dict-annotationnone-areatrue" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>title</code>: str</li>
+<li><code>dates</code>: list of str (x-axis categories, e.g. ['2024-01', '2024-02', ...])</li>
+<li><code>series_dict</code>: dict <code>{series_name: [int_values]}</code> — each value list same length as dates</li>
+<li><code>annotation</code>: dict <code>{label: int_index}</code> — annotations at specific x positions (optional)</li>
+<li><code>area</code>: bool — True=stacked area, False=symmetric streamgraph</li>
+<li>Returns: HTML string (append to <code>report.html_report</code>)</li>
+</ul>
+<h3 id="calendar_heatmaptitle-series_dict-min0-max1"><code>calendar_heatmap(title, series_dict, min=0, max=1)</code><a class="headerlink" href="#calendar_heatmaptitle-series_dict-min0-max1" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>title</code>: str</li>
+<li><code>series_dict</code>: dict <code>{"yyyy-mm-dd": float_value}</code> — daily values (typically 28-42 days)</li>
+<li><code>min</code>: float — color scale minimum</li>
+<li><code>max</code>: float — color scale maximum</li>
+<li>Returns: HTML string</li>
+</ul>
+<h3 id="calendar_gantttitle-series_dict-min_date-max_date-colorsnone"><code>calendar_gantt(title, series_dict, min_date, max_date, colors=None)</code><a class="headerlink" href="#calendar_gantttitle-series_dict-min_date-max_date-colorsnone" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>title</code>: str</li>
+<li><code>series_dict</code>: list of dicts with structure:
+  <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="p">[</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>    <span class="p">{</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>        <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Phase Name&#39;</span><span class="p">,</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>        <span class="s1">&#39;data&#39;</span><span class="p">:</span> <span class="p">[</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>            <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Task&#39;</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="s1">&#39;task1&#39;</span><span class="p">,</span>
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>             <span class="s1">&#39;start&#39;</span><span class="p">:</span> <span class="s2">&quot;Date.UTC(2025, 5, 1)&quot;</span><span class="p">,</span>  <span class="c1"># JS Date.UTC format</span>
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>             <span class="s1">&#39;end&#39;</span><span class="p">:</span> <span class="s2">&quot;Date.UTC(2025, 5, 14)&quot;</span><span class="p">,</span>
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>             <span class="s1">&#39;completed&#39;</span><span class="p">:</span> <span class="s2">&quot;{ amount: 0.8 }&quot;</span><span class="p">},</span>  <span class="c1"># Optional progress</span>
+<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>            <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Milestone&#39;</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="s1">&#39;ms1&#39;</span><span class="p">,</span>
+<a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>             <span class="s1">&#39;start&#39;</span><span class="p">:</span> <span class="s2">&quot;Date.UTC(2025, 5, 14)&quot;</span><span class="p">,</span>
+<a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>             <span class="s1">&#39;end&#39;</span><span class="p">:</span> <span class="s2">&quot;Date.UTC(2025, 5, 14)&quot;</span><span class="p">,</span>
+<a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>             <span class="s1">&#39;milestone&#39;</span><span class="p">:</span> <span class="s1">&#39;true&#39;</span><span class="p">},</span>
+<a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a>        <span class="p">]</span>
+<a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a>    <span class="p">}</span>
+<a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a><span class="p">]</span>
+</code></pre></div></li>
+<li><code>min_date</code>: str "yyyy-mm-dd"</li>
+<li><code>max_date</code>: str "yyyy-mm-dd"</li>
+<li>Returns: HTML string</li>
+</ul>
+<h2 id="rawgraphs-svg-charts-31-functions">RAWGraphs SVG Charts (31 functions)<a class="headerlink" href="#rawgraphs-svg-charts-31-functions" title="Permanent link">&para;</a></h2>
+<p>All RAWGraphs functions return SVG strings. Embed with <code>report.add_rawgraphs_to_report(svg, title)</code>.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">scomp_link.utils.rawgraphs</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>    <span class="c1"># Comparisons</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>    <span class="n">barchart</span><span class="p">,</span> <span class="n">barchartmultiset</span><span class="p">,</span> <span class="n">barchartstacked</span><span class="p">,</span> <span class="n">piechart</span><span class="p">,</span> <span class="n">radarchart</span><span class="p">,</span> <span class="n">voronoidiagram</span><span class="p">,</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>    <span class="c1"># Distributions</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>    <span class="n">beeswarm</span><span class="p">,</span> <span class="n">boxplot</span><span class="p">,</span> <span class="n">violinplot</span><span class="p">,</span>
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>    <span class="c1"># Time Series</span>
+<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>    <span class="n">bumpchart</span><span class="p">,</span> <span class="n">gantt_chart</span><span class="p">,</span> <span class="n">horizongraph</span><span class="p">,</span> <span class="n">linechart</span><span class="p">,</span> <span class="n">slopechart</span><span class="p">,</span> <span class="n">streamgraph</span><span class="p">,</span>
+<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>    <span class="c1"># Correlations</span>
+<a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>    <span class="n">bubblechart</span><span class="p">,</span> <span class="n">contour_plot</span><span class="p">,</span> <span class="n">convex_hull</span><span class="p">,</span> <span class="n">hexagonal_binning</span><span class="p">,</span> <span class="n">matrixplot</span><span class="p">,</span> <span class="n">parallelcoordinates</span><span class="p">,</span>
+<a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>    <span class="c1"># Hierarchies</span>
+<a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>    <span class="n">circlepacking</span><span class="p">,</span> <span class="n">circular_dendrogram</span><span class="p">,</span> <span class="n">dendrogram</span><span class="p">,</span> <span class="n">sunburst</span><span class="p">,</span> <span class="n">treemap</span><span class="p">,</span> <span class="n">voronoi_treemap</span><span class="p">,</span>
+<a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a>    <span class="c1"># Networks</span>
+<a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a>    <span class="n">alluvial_diagram</span><span class="p">,</span> <span class="n">arc_diagram</span><span class="p">,</span> <span class="n">chord_diagram</span><span class="p">,</span> <span class="n">sankey_diagram</span><span class="p">,</span>
+<a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a><span class="p">)</span>
+</code></pre></div>
+<h3 id="comparisons">Comparisons<a class="headerlink" href="#comparisons" title="Permanent link">&para;</a></h3>
+<p><strong><code>barchart(categories, values, title, width=800, height=500)</code></strong>
+- <code>categories</code>: list[str]
+- <code>values</code>: list[float]</p>
+<p><strong><code>barchartmultiset(categories, series_dict, title, width=800, height=500)</code></strong>
+- <code>series_dict</code>: dict <code>{series_name: [values]}</code></p>
+<p><strong><code>barchartstacked(categories, series_dict, title, width=800, height=500)</code></strong>
+- Same as multiset but stacked</p>
+<p><strong><code>piechart(categories, values, title, width=500, height=500)</code></strong></p>
+<p><strong><code>radarchart(categories, series_dict, title, width=600, height=600)</code></strong>
+- <code>series_dict</code>: dict <code>{series_name: [values]}</code> — values on same scale per category</p>
+<p><strong><code>voronoidiagram(points, labels, title, width=800, height=600)</code></strong>
+- <code>points</code>: list of (x, y) tuples
+- <code>labels</code>: list[str]</p>
+<h3 id="distributions">Distributions<a class="headerlink" href="#distributions" title="Permanent link">&para;</a></h3>
+<p><strong><code>beeswarm(groups, values, title, width=800, height=400)</code></strong>
+- <code>groups</code>: list[str] — group per point
+- <code>values</code>: list[float] — value per point</p>
+<p><strong><code>boxplot(groups_dict, title, width=800, height=400)</code></strong>
+- <code>groups_dict</code>: dict <code>{group_name: [values]}</code></p>
+<p><strong><code>violinplot(groups_dict, title, width=800, height=400)</code></strong>
+- Same as boxplot</p>
+<h3 id="time-series">Time Series<a class="headerlink" href="#time-series" title="Permanent link">&para;</a></h3>
+<p><strong><code>bumpchart(time_points, rankings_dict, title, width=900, height=500)</code></strong>
+- <code>time_points</code>: list[str] — x-axis labels
+- <code>rankings_dict</code>: dict <code>{entity: [rank_per_timepoint]}</code></p>
+<p><strong><code>gantt_chart(tasks, title, width=900, height=400)</code></strong>
+- <code>tasks</code>: list of <code>{'name': str, 'start': float, 'end': float, 'group': str}</code></p>
+<p><strong><code>horizongraph(dates, series_dict, title, width=900, height=300)</code></strong>
+- <code>series_dict</code>: dict <code>{series_name: [values]}</code></p>
+<p><strong><code>linechart(dates, series_dict, title, width=900, height=400)</code></strong>
+- <code>dates</code>: list[str]
+- <code>series_dict</code>: dict <code>{series_name: [values]}</code></p>
+<p><strong><code>slopechart(labels, start_values, end_values, title, start_label, end_label, width=600, height=500)</code></strong></p>
+<p><strong><code>streamgraph(dates, series_dict, title, width=900, height=400)</code></strong></p>
+<h3 id="correlations">Correlations<a class="headerlink" href="#correlations" title="Permanent link">&para;</a></h3>
+<p><strong><code>bubblechart(x, y, sizes, labels, title, width=800, height=600)</code></strong>
+- <code>x</code>, <code>y</code>: list[float]
+- <code>sizes</code>: list[float] — bubble radius
+- <code>labels</code>: list[str]</p>
+<p><strong><code>contour_plot(x, y, title, width=800, height=600, n_levels=10)</code></strong></p>
+<p><strong><code>convex_hull(groups_dict, title, width=800, height=600)</code></strong>
+- <code>groups_dict</code>: dict <code>{group: [(x,y), ...]}</code></p>
+<p><strong><code>hexagonal_binning(x, y, title, width=800, height=600, gridsize=20)</code></strong></p>
+<p><strong><code>matrixplot(matrix, row_labels, col_labels, title, width=700, height=700)</code></strong>
+- <code>matrix</code>: 2D list or numpy array</p>
+<p><strong><code>parallelcoordinates(df, group_col, title, width=900, height=400)</code></strong>
+- <code>df</code>: pandas DataFrame
+- <code>group_col</code>: str — column to color by</p>
+<h3 id="hierarchies">Hierarchies<a class="headerlink" href="#hierarchies" title="Permanent link">&para;</a></h3>
+<p><strong><code>circlepacking(labels, parents, values, title, width=700, height=700)</code></strong>
+- <code>labels</code>: list[str] — node names
+- <code>parents</code>: list[str] — parent of each node ("" for root)
+- <code>values</code>: list[float] — size of each node</p>
+<p><strong><code>circular_dendrogram(labels, parents, title, width=700, height=700)</code></strong></p>
+<p><strong><code>dendrogram(labels, parents, title, width=900, height=500)</code></strong></p>
+<p><strong><code>sunburst(labels, parents, values, title, width=700, height=700)</code></strong></p>
+<p><strong><code>treemap(labels, parents, values, title, width=900, height=600)</code></strong></p>
+<p><strong><code>voronoi_treemap(labels, parents, values, title, width=700, height=700)</code></strong></p>
+<h3 id="networks">Networks<a class="headerlink" href="#networks" title="Permanent link">&para;</a></h3>
+<p><strong><code>alluvial_diagram(flows, title, width=900, height=500)</code></strong>
+- <code>flows</code>: list of <code>{'source': str, 'target': str, 'value': float}</code></p>
+<p><strong><code>arc_diagram(nodes, links, title, width=900, height=400)</code></strong>
+- <code>nodes</code>: list[str]
+- <code>links</code>: list of <code>{'source': int, 'target': int, 'value': float}</code></p>
+<p><strong><code>chord_diagram(matrix, labels, title, width=700, height=700)</code></strong>
+- <code>matrix</code>: square 2D array (flow between nodes)
+- <code>labels</code>: list[str]</p>
+<p><strong><code>sankey_diagram(nodes, links, title, width=900, height=500)</code></strong>
+- <code>nodes</code>: list[str]
+- <code>links</code>: list of <code>{'source': int, 'target': int, 'value': float}</code></p>
+<h2 id="chart-selection-guide">Chart Selection Guide<a class="headerlink" href="#chart-selection-guide" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>I have...</th>
+<th>Use this chart</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Categories + values</td>
+<td><code>barchart</code>, <code>piechart</code></td>
+</tr>
+<tr>
+<td>Categories + multiple series</td>
+<td><code>barchartmultiset</code>, <code>barchartstacked</code>, <code>radarchart</code></td>
+</tr>
+<tr>
+<td>Numeric distribution</td>
+<td><code>histogram</code> (Plotly), <code>boxplot</code>, <code>violinplot</code>, <code>beeswarm</code></td>
+</tr>
+<tr>
+<td>Time series (single)</td>
+<td><code>linechart</code>, <code>area_chart</code> (Plotly)</td>
+</tr>
+<tr>
+<td>Time series (multi-series)</td>
+<td><code>streamgraphs</code> (Highcharts), <code>streamgraph</code> (RAWGraphs)</td>
+</tr>
+<tr>
+<td>Rankings over time</td>
+<td><code>bumpchart</code>, <code>slopechart</code></td>
+</tr>
+<tr>
+<td>Project timeline</td>
+<td><code>calendar_gantt</code> (Highcharts), <code>gantt_chart</code> (RAWGraphs)</td>
+</tr>
+<tr>
+<td>Daily values (calendar)</td>
+<td><code>calendar_heatmap</code> (Highcharts)</td>
+</tr>
+<tr>
+<td>Two numeric variables</td>
+<td><code>bubblechart</code>, <code>contour_plot</code>, <code>hexagonal_binning</code></td>
+</tr>
+<tr>
+<td>Correlation matrix</td>
+<td><code>matrixplot</code></td>
+</tr>
+<tr>
+<td>Multi-dimensional</td>
+<td><code>parallelcoordinates</code></td>
+</tr>
+<tr>
+<td>Hierarchical data</td>
+<td><code>treemap</code>, <code>sunburst</code>, <code>circlepacking</code>, <code>dendrogram</code></td>
+</tr>
+<tr>
+<td>Flow/connections</td>
+<td><code>sankey_diagram</code>, <code>alluvial_diagram</code>, <code>chord_diagram</code>, <code>arc_diagram</code></td>
+</tr>
+<tr>
+<td>Grouped points</td>
+<td><code>convex_hull</code>, <code>voronoidiagram</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="color-system">Color System<a class="headerlink" href="#color-system" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">scomp_link.utils.colors</span><span class="w"> </span><span class="kn">import</span> <span class="n">PRIMARY</span><span class="p">,</span> <span class="n">LIGHT</span><span class="p">,</span> <span class="n">MEDIUM</span><span class="p">,</span> <span class="n">DARK</span><span class="p">,</span> <span class="n">MAIN</span><span class="p">,</span> <span class="n">MAIN_LIGHT</span><span class="p">,</span> <span class="n">MAIN_DARK</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="c1"># PRIMARY = 10 distinct colors for categorical data</span>
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="c1"># [&quot;#6E37FA&quot;, &quot;#32BBB9&quot;, &quot;#FF9408&quot;, &quot;#F40953&quot;, &quot;#FA32A0&quot;,</span>
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="c1">#  &quot;#B30095&quot;, &quot;#FFD500&quot;, &quot;#AAF564&quot;, &quot;#50E6AA&quot;, &quot;#2765F0&quot;]</span>
+</code></pre></div>
+<p>Use these when creating custom Plotly figures for visual consistency with scomp-link reports.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.sections", "navigation.expand", "content.code.copy", "search.highlight"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
