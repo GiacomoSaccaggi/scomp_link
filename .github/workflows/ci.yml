@@ -6,6 +6,12 @@ on:
     tags: ["v*.*.*"]
   pull_request:
     branches: [main]
+  workflow_dispatch:
+    inputs:
+      deploy_hf_space:
+        description: 'Deploy HF Space'
+        type: boolean
+        default: true
   schedule:
     - cron: '0 6 * * 1'  # Weekly CodeQL scan
 
@@ -32,7 +38,13 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - run: pip install --upgrade pip && pip install -e ".[dev]"
-      - run: pytest tests/ -v --tb=short --cov=scomp_link --cov-report=xml --cov-report=term
+      - run: |
+          coverage run --source=scomp_link -m pytest tests/ -v --tb=short
+          for f in examples/example_*.py; do
+            coverage run --append --source=scomp_link "$f" || true
+          done
+          coverage xml
+          coverage report
       - name: Upload coverage
         if: matrix.python-version == '3.12'
         uses: codecov/codecov-action@v5
@@ -113,8 +125,8 @@ jobs:
             jack15121/scomp-link:latest
 
   deploy-hf-space:
-    needs: publish-pypi
     runs-on: ubuntu-latest
+    needs: publish-pypi
     if: startsWith(github.ref, 'refs/tags/v')
     steps:
       - uses: actions/checkout@v4
@@ -129,6 +141,25 @@ jobs:
           git remote add hf https://Euribor512:${HF_TOKEN}@huggingface.co/spaces/Euribor512/scomp-link
           git add .
           git commit -m "Deploy scomp-link MCP server ${{ github.ref_name }}"
+          git push hf main --force
+
+  # Manual HF Space deploy (workflow_dispatch only)
+  deploy-hf-space-manual:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Push to Hugging Face Space
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          cd hf-space
+          git init -b main
+          git config user.email "giacomo.saccaggi@gmail.com"
+          git config user.name "GiacomoSaccaggi"
+          git remote add hf https://Euribor512:${HF_TOKEN}@huggingface.co/spaces/Euribor512/scomp-link
+          git add .
+          git commit -m "Deploy scomp-link MCP server (manual)"
           git push hf main --force
 
   publish-smithery:
