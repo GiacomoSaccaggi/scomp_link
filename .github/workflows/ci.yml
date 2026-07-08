@@ -71,7 +71,7 @@ jobs:
         with:
           python-version: "3.12"
       - run: pip install --upgrade pip && pip install -e ".[dev,mcp,serve]" pyright
-      - run: pyright scomp_link/ --level basic
+      - run: pyright scomp_link/
 
   # ═══════════════════════════════════════════════════════════════
   # CODEQL — security scan (push + weekly schedule)
