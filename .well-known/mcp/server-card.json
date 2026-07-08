@@ -4,7 +4,7 @@
   "protocolVersion": "2025-06-18",
   "serverInfo": {
     "name": "scomp-link",
-    "version": "1.2.7",
+    "version": "1.2.10",
     "description": "End-to-end ML toolkit: train models, tune hyperparameters, detect drift, generate HTML reports with 39 chart types, detect anomalies, forecast time series, check fairness, and serve models as REST APIs. 15 MCP tools for zero-code machine learning.",
     "homepage": "https://github.com/GiacomoSaccaggi/scomp_link",
     "repository": "https://github.com/GiacomoSaccaggi/scomp_link",

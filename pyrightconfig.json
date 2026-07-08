@@ -1,0 +1,12 @@
+{
+  "include": ["scomp_link"],
+  "exclude": ["**/__pycache__", ".tox", ".venv", "develop", "staging"],
+  "typeCheckingMode": "basic",
+  "reportMissingImports": "warning",
+  "reportMissingTypeStubs": false,
+  "reportUnknownMemberType": false,
+  "reportUnknownArgumentType": false,
+  "reportUnknownVariableType": false,
+  "reportGeneralClassIssues": false,
+  "pythonVersion": "3.10"
+}

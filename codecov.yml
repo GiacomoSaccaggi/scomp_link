@@ -1,0 +1,21 @@
+coverage:
+  status:
+    project:
+      default:
+        target: 50%
+        threshold: 2%
+    patch:
+      default:
+        target: 80%
+  precision: 1
+
+ignore:
+  - "tests/"
+  - "examples/"
+  - "develop/"
+  - "staging/"
+
+comment:
+  layout: "reach,diff,flags,files"
+  behavior: default
+  require_changes: false

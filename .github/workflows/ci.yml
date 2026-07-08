@@ -37,7 +37,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-      - run: pip install --upgrade pip && pip install -e ".[dev,mcp]"
+      - run: pip install --upgrade pip && pip install -e ".[dev,mcp,serve]"
       - run: |
           coverage run --source=scomp_link -m pytest tests/ -v --tb=short
           # Skip BERT/contrastive examples in CI — they download bert-base-uncased
@@ -59,6 +59,19 @@ jobs:
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
+
+  # ═══════════════════════════════════════════════════════════════
+  # TYPE CHECK — pyright on core modules
+  # ═══════════════════════════════════════════════════════════════
+  typecheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install --upgrade pip && pip install -e ".[dev,mcp,serve]" pyright
+      - run: pyright scomp_link/ --level basic
 
   # ═══════════════════════════════════════════════════════════════
   # CODEQL — security scan (push + weekly schedule)
