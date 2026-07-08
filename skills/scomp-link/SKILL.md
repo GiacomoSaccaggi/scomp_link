@@ -5,7 +5,7 @@ license: "MIT"
 compatibility: "Python 3.10+. Core: numpy, pandas, scikit-learn, plotly. Optional: torch, transformers, spacy (NLP), tensorflow (images), optuna (tuning), shap/lime (explainability), flask (serving)."
 metadata:
   author: "Giacomo Saccaggi"
-  version: "1.2.11"
+  version: "1.2.12"
   repository: "https://github.com/GiacomoSaccaggi/scomp_link"
   pypi: "https://pypi.org/project/scomp-link/"
 allowed-tools: "Bash(scomp-link:*) Bash(python:*) Python(scomp_link:*)"

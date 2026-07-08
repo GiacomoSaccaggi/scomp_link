@@ -1,7 +1,7 @@
 {
   "name": "scomp-link",
   "displayName": "scomp-link — ML Toolkit",
-  "version": "1.2.11",
+  "version": "1.2.12",
   "description": "End-to-end machine learning toolkit with 15 MCP tools. Train models, tune hyperparameters, detect drift, generate HTML reports with 39 chart types, detect anomalies, forecast time series, check fairness, and serve models.",
   "author": {
     "name": "Giacomo Saccaggi",
