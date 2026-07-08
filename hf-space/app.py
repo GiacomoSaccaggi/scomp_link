@@ -13,7 +13,7 @@ from scomp_link.mcp_server import mcp
 
 SERVER_CARD = {
     "$schema": "https://modelcontextprotocol.io/schemas/server-card/v1.0",
-    "version": "1.0",
+    "version": "1.2.9",
     "protocolVersion": "2025-06-18",
     "serverInfo": {
         "name": "scomp-link",

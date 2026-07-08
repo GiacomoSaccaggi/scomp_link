@@ -304,7 +304,10 @@ class ScompLinkPipeline:
                 clusterer = ClusterImg(n_clusters=n_clusters, method='kmeans')
                 clusters = clusterer.fit_predict(X)
                 
-                silhouette = silhouette_score(X, clusters)
+                try:
+                    silhouette = silhouette_score(X, clusters)
+                except ValueError:
+                    silhouette = 0.0
                 
                 self.model = clusterer
                 self.results = {

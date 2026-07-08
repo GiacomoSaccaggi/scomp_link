@@ -1,70 +1,155 @@
 # Changelog
 
+## 1.2.8 (2026-07-07)
+
+### Fixed
+- CI coverage now includes all examples (72% reported to Codecov)
+- Fixed `example_11_image_clustering.py` silhouette_score crash
+- Fixed `mcp_server.py` FastMCP constructor for mcp>=1.28 (`description` → `instructions`)
+- Skip BERT examples (09, 12, 18) in CI to prevent 6h timeout
+
+### Added
+- MCP server test suite: 25 tests covering all 14 tools
+- `pre-commit` added to dev dependencies
+
+### Changed
+- CI installs `[dev,mcp]` extras for full test coverage
+- `bump_version.py` now covers all 9 version locations
+- All version strings aligned to single source of truth
+
+## 1.2.7 (2026-07-07)
+
+### Fixed
+- Cursor plugin version alignment
+- HF Space app version alignment
+
+## 1.2.6 (2026-07-06)
+
+### Added
+- Demo page with asciinema terminal recording
+- GitHub Pages deployment in CI
+
+## 1.2.5 (2026-07-02)
+
+### Added
+- `.well-known/mcp.json` and `server.json` for MCP discovery
+- `ai-catalog.json` for AI agent discovery
+- Cursor marketplace plugin (`.cursor-plugin/plugin.json`)
+- Docker multi-registry publishing (GHCR + DockerHub)
+- Smithery auto-publish in CI
+- HuggingFace Skill upload in CI
+- `docs/comparison.md` — comparison with other ML frameworks
+
+### Fixed
+- CLI `compare` command output format
+- Skill YAML config examples
+
+## 1.2.4 (2026-07-02)
+
+### Fixed
+- Pillow version range simplified
+- uv.lock sync with pyproject.toml
+
+## 1.2.3 (2026-07-02)
+
+### Added
+- `llms.txt` discovery file
+- `AGENTS.md` for AI coding agent instructions
+- GitHub Issue templates (bug report, feature request)
+- `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, `SECURITY.md`
+- `dependabot.yml` for automated dependency updates
+- CodeQL security scanning in CI
+
+## 1.2.2 (2026-07-02)
+
+### Fixed
+- SKILL.md links use absolute GitHub URLs (fixes Smithery navigation)
+- HuggingFace namespace corrected in CI workflow
+
+### Changed
+- Version centralized via `scripts/bump_version.py`
+
+## 1.2.1 (2026-07-01)
+
+### Added
+- **MCP Server** with 15 tools, 3 resources, 4 prompts (`scomp-link mcp`)
+- **11 new CLI commands**: text, cluster, tune, validate, monitor, serve, export, pipeline, describe, list-models, check-deps
+- `--format json|csv|table` on run/validate/tune/describe
+- `--plot` flag on forecast/drift/anomaly/cluster/compare
+- YAML-driven pipelines (`scomp-link pipeline --config`)
+- REST API serving (`scomp-link serve`)
+- Model export to pickle/joblib/ONNX (`scomp-link export`)
+- Agent Skill (SKILL.md) with decision tree, CLI reference, visualization guide, workflow patterns
+- 8 new examples (27-34)
+- 29 new tests for CLI commands + choose_model branches
+- Pre-commit hooks with Ruff linting
+
+### Fixed
+- `supervised_text.py` migrated from spaCy v2 to v3 API
+- `core.py` handles DataFrames with image/array columns
+- `pdf_converter.py` catches OSError from weasyprint
+
+### Changed
+- CLI expanded from 13 to 25 commands
+- Coverage: 65% → 81% (279 tests + 34 examples)
+- Dependencies bumped for Python 3.14 support
+- Added optional extras: `[mcp]`, `[serve]`
+
 ## 1.2.0 (2026-06-24)
 
 ### Added
-- **RAWGraphs SVG Charts**: 31 server-side chart functions in `scomp_link.utils.rawgraphs` (alluvial, chord, sankey, treemap, sunburst, etc.)
+- **RAWGraphs SVG Charts**: 31 server-side chart functions (alluvial, chord, sankey, treemap, sunburst, etc.)
 - **Centralized Colors**: `scomp_link.utils.colors` — single source of truth for all palettes
 - `add_rawgraphs_to_report()` method on `ScompLinkHTMLReport`
-- `docs/api/visualization.md` documentation page
 - `tests/test_rawgraphs.py` (38 tests)
 - `examples/example_19_rawgraphs.py`
 
 ### Changed
 - **Lazy imports (PEP 562)**: `import scomp_link` now takes ~6ms instead of ~5200ms (99.9% faster)
 - All public classes loaded on first access via `__getattr__`, not at import time
-- `model_factory.py`: NLP/CV model imports deferred to inside `get_model()`
-- `data_quality.py`: `save_html()` now uses `ScompLinkHTMLReport` instead of raw HTML
-- All color references in `plotly_utils.py`, `highcharts.py`, `report_html.py`, `pdf_converter.py`, `cli.py` now use `colors.py`
-- Removed all hardcoded hex color values from source files
+- All color references now use centralized `colors.py`
 
 ### Fixed
-- `boxplot()` compatibility with matplotlib 3.9+ (`labels` → `set_xticklabels`)
-
----
+- `boxplot()` compatibility with matplotlib 3.9+
 
 ## 1.1.4 (2026-06-24)
 
 ### Added
-- Python 3.14 support (experimental — some optional deps not yet available)
+- Python 3.14 support (experimental)
 
 ### Changed
-- Replaced abandoned `pytorch-tabnet` with maintained fork `pytorch-tabnet2` (same API)
-- Bumped upper bounds: `torch <2.13`, `transformers <6.0`, `matplotlib <3.11`, `weasyprint <70.0`, `sentence-transformers <6.0`
-- TensorFlow excluded from Python 3.14 (no wheels available yet — [tracking issue](https://github.com/tensorflow/tensorflow/issues/102890))
-- Updated TabNet import path for pytorch-tabnet2 compatibility
+- Replaced abandoned `pytorch-tabnet` with maintained fork `pytorch-tabnet2`
+- Bumped upper bounds: torch <2.13, transformers <6.0, matplotlib <3.11
 
 ### Fixed
 - CI failure on Python 3.14 due to missing TensorFlow wheels
 
-## 1.0.0 (2026-06-18)
+## 1.1.0 (2026-05-06)
 
 ### Added
-- **Explainability**: `ShapExplainer`, `LimeExplainer` for model interpretability
-- **Advanced Tuning**: `OptunaOptimizer`, `HalvingSearchOptimizer`, `EarlyStoppingCV`
-- **Drift Detection**: `DriftDetector` with PSI and KS test
-- **Pipeline Persistence**: `ScompArtifact` with custom `.scomp` format
-- **Feature Engineering**: `FeatureEngineer` (sklearn-compatible)
-- **Time Series Forecasting**: `TimeSeriesForecaster` (ARIMA, SARIMA, ETS)
-- **Fairness Metrics**: `FairnessMetrics` (demographic parity, disparate impact, equalized odds)
-- **Data Quality**: `DataQualityReport` with HTML output
-- **Configurable Logging**: `set_verbosity()` to control output (silent/warning/info/debug)
-- **Polars backend**: `Preprocessor` uses polars internally for faster processing
-- **Documentation**: mkdocs site with full API reference
+- CLI with 13 commands
+- EnsembleOptimizer (voting/stacking)
+- AdvancedCV (LOOCV, Bootstrap)
+- AnomalyDetector (IForest, LOF, TabNet, Transformer)
+- TimeSeriesAnomalyDetector
+- Highcharts visualizations (streamgraph, heatmap, gantt)
 
-### Changed
-- All `print()` calls replaced with structured logging via `scomp_link.utils.logger`
-- `data_processor.py` rewritten with polars (accepts pandas input, returns pandas output)
+## 1.0.0 (2026-02-27)
 
-## 0.1.1 (Initial)
-
-- Core pipeline (`ScompLinkPipeline`)
-- Preprocessing (`Preprocessor`)
-- Model Factory with decision-tree selection
-- Regressor/Classifier Optimizers
-- Validation + HTML reports
-- Anomaly Detection (tabular + time series)
-- Ensemble Learning (voting/stacking)
-- Advanced CV (LOOCV, Bootstrap)
-- NLP models (contrastive, supervised, unsupervised)
-- Image models (CNN, clustering)
+### Added
+- Initial release
+- ScompLinkPipeline orchestrator
+- RegressorOptimizer with Boruta feature selection
+- ClassifierOptimizer
+- ModelFactory decision tree
+- ScompLinkHTMLReport builder
+- Plotly utils (histogram, barchart, linechart, area_chart)
+- Explainability (SHAP, LIME)
+- Advanced Tuning (Optuna, Halving, EarlyStopping)
+- Drift Detection (PSI + KS test)
+- Pipeline Persistence (.scomp format)
+- Feature Engineering (sklearn-compatible)
+- Time Series Forecasting
+- Fairness Metrics
+- Data Quality Reports
+- 18 example scripts

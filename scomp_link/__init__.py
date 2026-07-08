@@ -9,7 +9,7 @@ on first access, keeping `import scomp_link` near-instant.
 
 from .utils.logger import set_verbosity
 
-__version__ = "1.2.8"
+__version__ = "1.2.9"
 
 _LAZY_IMPORTS = {
     # models

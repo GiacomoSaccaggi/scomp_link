@@ -35,9 +35,9 @@ try:
     
     pipe = ScompLinkPipeline("Image Clustering")
     pipe.set_objectives(["Discover Image Groups", "Unsupervised Learning"])
-    pipe.import_and_clean_data(df)
-    df['cluster'] = 0
-    pipe.select_variables(target_col='cluster')
+    # Skip standard cleaning for image data (lists get deduplicated incorrectly)
+    pipe.df = df
+    pipe.select_variables(target_col='true_cluster')
     pipe.choose_model("categorical_unknown", metadata={"categories_known": True, "n_clusters": 4})
     
     results = pipe.run_pipeline(task_type="image_clustering", image_col='image_data', n_clusters=4)
