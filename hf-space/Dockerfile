@@ -8,7 +8,7 @@ ENV GRADIO_SERVER_PORT=7860
 WORKDIR /app
 
 # Install scomp-link with MCP support
-RUN pip install --no-cache-dir "scomp-link[mcp]>=1.2.10" "mcp>=1.6.0"
+RUN pip install --no-cache-dir "scomp-link[mcp]>=1.2.11" "mcp>=1.6.0"
 
 # Copy the SSE entrypoint
 COPY app.py .

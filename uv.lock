@@ -4848,7 +4848,7 @@ wheels = [
 
 [[package]]
 name = "scomp-link"
-version = "1.2.10"
+version = "1.2.11"
 source = { editable = "." }
 dependencies = [
     { name = "faiss-cpu" },
