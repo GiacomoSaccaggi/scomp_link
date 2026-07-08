@@ -9,7 +9,31 @@ on first access, keeping `import scomp_link` near-instant.
 
 from .utils.logger import set_verbosity
 
-__version__ = "1.2.9"
+__version__ = "1.2.10"
+
+__all__ = [
+    "set_verbosity",
+    "__version__",
+    "ScompLinkPipeline",
+    "Preprocessor",
+    "FeatureEngineer",
+    "DataQualityReport",
+    "ModelFactory",
+    "RegressorOptimizer",
+    "ClassifierOptimizer",
+    "AnomalyDetector",
+    "TimeSeriesAnomalyDetector",
+    "TimeSeriesForecaster",
+    "OptunaOptimizer",
+    "HalvingSearchOptimizer",
+    "EarlyStoppingCV",
+    "Validator",
+    "FairnessMetrics",
+    "ShapExplainer",
+    "LimeExplainer",
+    "DriftDetector",
+    "ScompArtifact",
+]
 
 _LAZY_IMPORTS = {
     # models
