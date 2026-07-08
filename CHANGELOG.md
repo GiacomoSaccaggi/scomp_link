@@ -3,6 +3,69 @@
 All notable changes to scomp-link are documented here.
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
+## [1.2.8] - 2026-07-07
+
+### Fixed
+- CI coverage now includes all examples (72% reported to Codecov)
+- Fixed `example_11_image_clustering.py` silhouette_score crash
+- Fixed `mcp_server.py` FastMCP constructor for mcp>=1.28 (`description` → `instructions`)
+- Skip BERT examples (09, 12, 18) in CI to prevent 6h timeout
+
+### Added
+- MCP server test suite: 25 tests covering all 14 tools
+- `pre-commit` added to dev dependencies
+
+### Changed
+- CI installs `[dev,mcp]` extras for full test coverage
+- `bump_version.py` now covers all 9 version locations
+- All version strings aligned to single source of truth
+
+## [1.2.7] - 2026-07-07
+
+### Fixed
+- Cursor plugin version alignment
+- HF Space app version alignment
+
+## [1.2.6] - 2026-07-06
+
+### Added
+- Demo page with asciinema terminal recording
+- GitHub Pages deployment in CI
+
+### Changed
+- Demo report and terminal embedded in `docs/demo/`
+
+## [1.2.5] - 2026-07-02
+
+### Added
+- `.well-known/mcp.json` and `server.json` for MCP discovery
+- `ai-catalog.json` for AI agent discovery
+- Cursor marketplace plugin (`.cursor-plugin/plugin.json`)
+- Docker multi-registry publishing (GHCR + DockerHub)
+- Smithery auto-publish in CI
+- HuggingFace Skill upload in CI
+- `docs/comparison.md` — comparison with other ML frameworks
+
+### Fixed
+- CLI `compare` command output format
+- Skill YAML config examples
+
+## [1.2.4] - 2026-07-02
+
+### Fixed
+- Pillow version range simplified (>=9.0/<13.0 for all Python versions)
+- uv.lock sync with pyproject.toml
+
+## [1.2.3] - 2026-07-02
+
+### Added
+- `llms.txt` discovery file
+- `AGENTS.md` for AI coding agent instructions
+- GitHub Issue templates (bug report, feature request)
+- `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, `SECURITY.md`
+- `dependabot.yml` for automated dependency updates
+- CodeQL security scanning in CI
+
 ## [1.2.2] - 2026-07-02
 
 ### Fixed

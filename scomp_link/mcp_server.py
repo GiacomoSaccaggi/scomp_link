@@ -23,9 +23,9 @@ import os
 
 mcp = FastMCP(
     "scomp-link",
-    description="End-to-end ML toolkit: train models, tune hyperparameters, detect drift, "
-                "generate HTML reports with 39 chart types, detect anomalies, forecast time series, "
-                "check fairness, and serve models as REST APIs."
+    instructions="End-to-end ML toolkit: train models, tune hyperparameters, detect drift, "
+                 "generate HTML reports with 39 chart types, detect anomalies, forecast time series, "
+                 "check fairness, and serve models as REST APIs."
 )
 
 

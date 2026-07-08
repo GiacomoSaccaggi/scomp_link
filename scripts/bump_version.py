@@ -22,7 +22,10 @@ VERSION_FILES = [
     (ROOT / "scomp_link" / "cli.py", r'version="%\(prog\)s [^"]+"', 'version="%(prog)s {v}"'),
     (ROOT / "server.json", r'"version": "[^"]+"', '"version": "{v}"'),
     (ROOT / ".well-known" / "mcp.json", r'"version": "[^"]+"', '"version": "{v}"'),
-    (ROOT / "skills" / "scomp-link" / "SKILL.md", r'version: "[^"]+"', 'version: "{v}"'),
+    (ROOT / ".cursor-plugin" / "plugin.json", r'"version": "[^"]+"', '"version": "{v}"'),
+    (ROOT / "hf-space" / "app.py", r'"version": "[^"]+"', '"version": "{v}"'),
+    (ROOT / "Dockerfile", r'org\.opencontainers\.image\.version="[^"]+"', 'org.opencontainers.image.version="{v}"'),
+    (ROOT / "hf-space" / "Dockerfile", r'scomp-link\[mcp\]>=[^"]+', 'scomp-link[mcp]>={v}'),
 ]
 
 
