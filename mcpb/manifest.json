@@ -1,0 +1,103 @@
+{
+  "manifest_version": "0.3",
+  "name": "scomp-link",
+  "display_name": "scomp-link — ML Toolkit",
+  "version": "1.2.13",
+  "description": "End-to-end ML toolkit: 15 MCP tools for zero-code machine learning. Train models, tune hyperparameters, detect drift, generate reports, forecast time series, detect anomalies, and check fairness.",
+  "long_description": "scomp-link is an end-to-end machine learning toolkit that automates the complete ML workflow — from data profiling and preprocessing to model selection, training, validation, explainability, monitoring, and deployment. It exposes 15 MCP tools for structured agent calls, enabling AI assistants to perform ML tasks without writing boilerplate code.\n\nFeatures:\n- Automated model selection and training (regression, classification, clustering, text, time series)\n- Hyperparameter tuning with Optuna\n- Data drift detection (PSI + KS test)\n- Multi-method anomaly detection (Isolation Forest, LOF, TabNet, Transformer)\n- Fairness metrics (demographic parity, disparate impact, equalized odds)\n- Time series forecasting (ARIMA, exponential smoothing)\n- Feature engineering (interactions, log transforms, date extraction)\n- Interactive HTML reports with 39 chart types\n- Model persistence (.scomp format) and export (pickle, joblib, ONNX)",
+  "author": {
+    "name": "Giacomo Saccaggi",
+    "url": "https://github.com/GiacomoSaccaggi"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/GiacomoSaccaggi/scomp_link.git"
+  },
+  "homepage": "https://giacomosaccaggi.github.io/scomp_link/",
+  "documentation": "https://giacomosaccaggi.github.io/scomp_link/",
+  "support": "https://github.com/GiacomoSaccaggi/scomp_link/issues",
+  "license": "MIT",
+  "keywords": ["machine-learning", "ml", "data-science", "model-training", "drift-detection", "anomaly-detection", "fairness", "forecasting", "visualization", "reports"],
+  "server": {
+    "type": "uv",
+    "entry_point": "server/main.py"
+  },
+  "tools": [
+    {
+      "name": "describe_data",
+      "description": "Profile a dataset. Returns column-level stats: dtype, missing%, unique count, min, max, mean, std."
+    },
+    {
+      "name": "train_model",
+      "description": "Train an ML model. Supports regression, classification, text, clustering. Set engineer=true for automatic feature engineering. Set tune=true for Optuna hyperparameter optimization."
+    },
+    {
+      "name": "predict",
+      "description": "Generate predictions from a .scomp artifact on new data. Returns predictions array. Optionally saves to CSV."
+    },
+    {
+      "name": "validate_model",
+      "description": "Evaluate a saved model on test data. Returns metrics (regression: r2, rmse, mae; classification: accuracy, f1, precision, recall). Optionally generates an HTML validation report."
+    },
+    {
+      "name": "detect_drift",
+      "description": "Detect distribution drift between reference (training) and current (production) data. Returns PSI per feature and which features drifted."
+    },
+    {
+      "name": "detect_anomalies",
+      "description": "Detect anomalies using multi-method consensus (Isolation Forest, LOF, TabNet, Transformer). Returns number of anomalies and per-method comparison."
+    },
+    {
+      "name": "check_fairness",
+      "description": "Compute fairness metrics: demographic parity, disparate impact (4/5 rule), equalized odds. Returns whether the model is fair and detailed group-level metrics."
+    },
+    {
+      "name": "forecast_series",
+      "description": "Forecast future values of a time series column. Methods: auto, arima, exp_smoothing. Returns predicted values and optional plot."
+    },
+    {
+      "name": "engineer_features",
+      "description": "Apply automated feature engineering: polynomial interactions, log transforms for skewed features, date extraction, target encoding. Returns output path and new shape."
+    },
+    {
+      "name": "cluster_data",
+      "description": "Cluster data using KMeans or MeanShift. Returns cluster labels and silhouette score. Optionally saves result with cluster column."
+    },
+    {
+      "name": "generate_report",
+      "description": "Generate an interactive HTML report. If only data is provided, creates an EDA report. If artifact is also provided, creates a model evaluation report with predictions and SHAP."
+    },
+    {
+      "name": "create_visualization",
+      "description": "Create a single visualization. chart_type can be any of the 39 available charts. Categories: plotly (histogram, barchart, linechart, area_chart), rawgraphs (treemap, sankey, sunburst, etc.), highcharts (streamgraphs, calendar_heatmap, calendar_gantt)."
+    },
+    {
+      "name": "compare_models",
+      "description": "Compare multiple .scomp artifacts side by side. Returns a comparison table of metrics."
+    },
+    {
+      "name": "export_model",
+      "description": "Export a .scomp model to standard format: pickle, joblib, onnx. Returns the output file path and size."
+    }
+  ],
+  "tools_generated": false,
+  "prompts": [
+    {
+      "name": "ml_workflow",
+      "description": "Template for a complete ML workflow from data to deployed model.",
+      "arguments": ["data_path", "target", "task"]
+    },
+    {
+      "name": "debug_model",
+      "description": "Template for diagnosing and fixing model performance issues.",
+      "arguments": ["artifact_path", "issue"]
+    }
+  ],
+  "prompts_generated": false,
+  "compatibility": {
+    "platforms": ["darwin", "win32", "linux"],
+    "runtimes": {
+      "python": ">=3.10"
+    }
+  }
+}
