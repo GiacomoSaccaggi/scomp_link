@@ -196,6 +196,8 @@ class ScompLinkPipeline:
             try:
                 if use_contrastive:
                     from .models.contrastive_text import ContrastiveTextClassifier
+                    from sklearn.model_selection import train_test_split
+                    from sklearn.metrics import accuracy_score, f1_score
                     
                     classifier = ContrastiveTextClassifier(
                         model_name=text_model,
@@ -203,21 +205,60 @@ class ScompLinkPipeline:
                         use_faiss=True
                     )
                     
+                    # Split data for evaluation
+                    train_df, test_df = train_test_split(
+                        self.df, test_size=test_size, random_state=42,
+                        stratify=self.df[self.target_col]
+                    )
+                    
+                    # Train contrastive embeddings
                     logger.info(f"Training contrastive text classifier for {epochs} epochs...")
                     classifier.train_contrastive(
-                        self.df,
+                        train_df,
                         text_col=text_col,
                         label_col=self.target_col,
                         epochs=epochs,
                         batch_size=batch_size,
-                        validation_split=test_size
+                        validation_split=0.1
                     )
+                    
+                    # Fit head classifier on training embeddings
+                    logger.info("Fitting head classifier on embeddings...")
+                    head_results = classifier.fit_head(
+                        train_df, text_col=text_col,
+                        label_col=self.target_col, head='auto'
+                    )
+                    
+                    # Evaluate on test set
+                    test_preds_df = classifier.predict_batch(test_df[text_col])
+                    y_true = test_df[self.target_col].tolist()
+                    y_pred = test_preds_df['prediction'].tolist()
+                    
+                    acc = accuracy_score(y_true, y_pred)
+                    f1 = f1_score(y_true, y_pred, average='weighted', zero_division=0)
+                    
+                    # Generate HTML report
+                    report_path = "Contrastive_Text_Report.html"
+                    try:
+                        test_embeddings = classifier.embed(test_df[text_col].tolist())
+                        classifier.generate_report(y_true, y_pred,
+                                                   report_path=report_path,
+                                                   embeddings=test_embeddings)
+                    except Exception as e:
+                        logger.info(f"⚠️ Report generation failed: {e}")
+                        report_path = None
                     
                     self.model = classifier
                     self.results = {
                         "status": "success",
                         "model_type": "Contrastive Text Classifier",
-                        "metrics": {"trained": True, "epochs": epochs}
+                        "metrics": {
+                            "accuracy": acc,
+                            "f1_weighted": f1,
+                            "head_type": head_results.get('head_type'),
+                            "head_cv_accuracy": head_results.get('cv_accuracy'),
+                        },
+                        "report_path": report_path,
                     }
                 else:
                     from sklearn.model_selection import train_test_split

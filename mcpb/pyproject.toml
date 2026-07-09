@@ -1,8 +1,8 @@
 [project]
 name = "scomp-link-mcpb"
-version = "1.2.13"
+version = "1.2.15"
 description = "MCPB bundle for scomp-link MCP server"
 requires-python = ">=3.10"
 dependencies = [
-    "scomp-link[mcp]>=1.2.13",
+    "scomp-link[mcp]>=1.2.15",
 ]

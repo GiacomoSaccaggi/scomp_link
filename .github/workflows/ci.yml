@@ -38,19 +38,12 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - run: pip install --upgrade pip && pip install -e ".[dev,mcp,serve]"
+      - run: python -m spacy download en_core_web_sm && python -m spacy download en_core_web_md
       - run: |
           coverage run --source=scomp_link -m pytest tests/ -v --tb=short
-          # Skip BERT/contrastive examples in CI — they download bert-base-uncased
-          # and train for hours, causing 6h timeout
-          SKIP_EXAMPLES="example_09 example_12 example_18"
           for f in examples/example_*.py; do
-            skip=false
-            for s in $SKIP_EXAMPLES; do
-              if echo "$f" | grep -q "$s"; then skip=true; break; fi
-            done
-            if [ "$skip" = "false" ]; then
-              coverage run --append --source=scomp_link "$f" || true
-            fi
+            echo "▶ Running $f"
+            coverage run --append --source=scomp_link "$f" || true
           done
           coverage xml
           coverage report
@@ -185,30 +178,7 @@ jobs:
           git commit -m "Deploy scomp-link MCP server (manual)"
           git push hf main --force
 
-  publish-smithery:
-    needs: deploy-hf-space
-    runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/tags/v')
-    steps:
-      - name: Wait for HF Space to build
-        run: |
-          echo "Waiting 180s for Docker build..."
-          sleep 180
-          for i in $(seq 1 10); do
-            STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://Euribor512-scomp-link.hf.space/sse)
-            echo "Attempt $i: HTTP $STATUS"
-            if [ "$STATUS" != "503" ] && [ "$STATUS" != "000" ]; then
-              echo "Space is up!"
-              exit 0
-            fi
-            sleep 30
-          done
-          echo "Warning: Space may not be ready, attempting publish anyway"
-      - name: Publish to Smithery
-        env:
-          SMITHERY_API_KEY: ${{ secrets.SMITHERY_API_KEY }}
-        run: |
-          npx @smithery/cli mcp publish https://Euribor512-scomp-link.hf.space/sse -n giacomosaccaggi/scomp-link
+  # Smithery publishing is handled by .github/workflows/smithery-publish.yml
 
   publish-hf-skill:
     needs: test

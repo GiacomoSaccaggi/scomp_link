@@ -13,11 +13,11 @@ from scomp_link.mcp_server import mcp
 
 SERVER_CARD = {
     "$schema": "https://modelcontextprotocol.io/schemas/server-card/v1.0",
-    "version": "1.2.13",
+    "version": "1.2.15",
     "protocolVersion": "2025-06-18",
     "serverInfo": {
         "name": "scomp-link",
-        "version": "1.2.13",
+        "version": "1.2.15",
         "description": "End-to-end ML toolkit: 15 MCP tools for zero-code machine learning.",
         "homepage": "https://github.com/GiacomoSaccaggi/scomp_link",
     },

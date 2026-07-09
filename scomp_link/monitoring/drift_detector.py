@@ -11,17 +11,53 @@ import numpy as np
 import pandas as pd
 from typing import Optional, List, Dict
 from scipy import stats
+from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
+import os
 
 from scomp_link.utils.logger import get_logger
 logger = get_logger(__name__)
 from scomp_link.utils.decorators import timer, validate_args
 
 
+def _compute_psi_worker(args: tuple) -> Dict:
+    """Standalone PSI + KS computation for parallel execution."""
+    col, ref_vals, curr_vals, psi_bins, ks_alpha, psi_threshold = args
+    eps = 1e-4
+
+    # PSI
+    breakpoints = np.linspace(0, 100, psi_bins + 1)
+    edges = np.percentile(ref_vals, breakpoints)
+    edges = np.unique(edges)
+    if len(edges) < 2:
+        psi = 0.0
+    else:
+        edges[0] = min(edges[0], curr_vals.min()) - 1
+        edges[-1] = max(edges[-1], curr_vals.max()) + 1
+        ref_counts = np.histogram(ref_vals, bins=edges)[0].astype(float)
+        curr_counts = np.histogram(curr_vals, bins=edges)[0].astype(float)
+        ref_pct = ref_counts / ref_counts.sum() + eps
+        curr_pct = curr_counts / curr_counts.sum() + eps
+        psi = float(np.sum((curr_pct - ref_pct) * np.log(curr_pct / ref_pct)))
+
+    # KS test
+    ks_stat, p_value = stats.ks_2samp(ref_vals, curr_vals)
+
+    return {
+        "feature": col,
+        "psi": psi,
+        "psi_drifted": psi > psi_threshold,
+        "ks_statistic": float(ks_stat),
+        "p_value": float(p_value),
+        "ks_drifted": p_value < ks_alpha,
+        "drifted": psi > psi_threshold or p_value < ks_alpha,
+    }
+
 
 class DriftDetector:
     """
     Detect data drift between a reference (training) dataset and a production dataset.
     Uses KS test for numerical features and PSI for all features.
+    Parallelized across features using concurrent.futures.
     
     Dependencies: scipy, numpy, pandas, plotly
     
@@ -30,6 +66,7 @@ class DriftDetector:
      2. psi_bins: number of bins for PSI calculation (default 10)
      3. ks_alpha: significance level for KS test (default 0.05)
      4. psi_threshold: PSI > threshold means significant drift (default 0.2)
+     5. n_jobs: number of parallel workers (-1 = all cores, default -1)
     
     Usage example:
         detector = DriftDetector(X_train)
@@ -38,31 +75,30 @@ class DriftDetector:
     """
 
     def __init__(self, reference: pd.DataFrame, psi_bins: int = 10,
-                 ks_alpha: float = 0.05, psi_threshold: float = 0.2):
+                 ks_alpha: float = 0.05, psi_threshold: float = 0.2,
+                 n_jobs: int = -1):
         self.reference = reference
         self.psi_bins = psi_bins
         self.ks_alpha = ks_alpha
         self.psi_threshold = psi_threshold
+        self.n_jobs = n_jobs if n_jobs > 0 else os.cpu_count()
         self.numeric_cols = reference.select_dtypes(include=[np.number]).columns.tolist()
 
     def _compute_psi(self, ref_col: np.ndarray, curr_col: np.ndarray) -> float:
         """Population Stability Index between two distributions."""
         eps = 1e-4
-        # Use reference quantiles as bin edges for consistency
         breakpoints = np.linspace(0, 100, self.psi_bins + 1)
         edges = np.percentile(ref_col, breakpoints)
-        edges = np.unique(edges)  # handle constant features
+        edges = np.unique(edges)
         if len(edges) < 2:
             return 0.0
 
-        # Extend edges to capture current data outside reference range
         edges[0] = min(edges[0], curr_col.min()) - 1
         edges[-1] = max(edges[-1], curr_col.max()) + 1
 
         ref_counts = np.histogram(ref_col, bins=edges)[0].astype(float)
         curr_counts = np.histogram(curr_col, bins=edges)[0].astype(float)
 
-        # Normalize to proportions
         ref_pct = ref_counts / ref_counts.sum() + eps
         curr_pct = curr_counts / curr_counts.sum() + eps
 
@@ -78,30 +114,33 @@ class DriftDetector:
     @timer
     def detect(self, current: pd.DataFrame, features: Optional[List[str]] = None) -> pd.DataFrame:
         """
-        Detect drift for each feature.
+        Detect drift for each feature (parallelized).
         Returns DataFrame with columns: feature, psi, ks_statistic, p_value, drifted.
         """
         cols = features or self.numeric_cols
         cols = [c for c in cols if c in current.columns and c in self.reference.columns]
 
-        results = []
+        # Prepare work items
+        work_items = []
         for col in cols:
             ref_vals = self.reference[col].dropna().values
             curr_vals = current[col].dropna().values
             if len(ref_vals) < 2 or len(curr_vals) < 2:
                 continue
+            work_items.append((col, ref_vals, curr_vals,
+                               self.psi_bins, self.ks_alpha, self.psi_threshold))
 
-            psi = self._compute_psi(ref_vals, curr_vals)
-            ks = self._compute_ks(ref_vals, curr_vals)
-            results.append({
-                "feature": col,
-                "psi": psi,
-                "psi_drifted": psi > self.psi_threshold,
-                "ks_statistic": ks["ks_statistic"],
-                "p_value": ks["p_value"],
-                "ks_drifted": ks["drifted"],
-                "drifted": psi > self.psi_threshold or ks["drifted"]
-            })
+        if not work_items:
+            return pd.DataFrame()
+
+        # Parallelize: use threads for numpy-heavy work (releases GIL)
+        # For < 4 features, sequential is faster due to overhead
+        if len(work_items) < 4:
+            results = [_compute_psi_worker(item) for item in work_items]
+        else:
+            n_workers = min(self.n_jobs, len(work_items))
+            with ThreadPoolExecutor(max_workers=n_workers) as executor:
+                results = list(executor.map(_compute_psi_worker, work_items))
 
         return pd.DataFrame(results)
 
@@ -145,21 +184,18 @@ if __name__ == '__main__':
     np.random.seed(42)
     size_df = 500
 
-    # Reference (training) data
     reference = pd.DataFrame({
         'feature_a': np.random.randn(size_df),
         'feature_b': np.random.randn(size_df) * 2,
         'feature_c': np.random.exponential(1, size_df),
     })
 
-    # Current (production) data — with drift injected on feature_a
     current = pd.DataFrame({
         'feature_a': np.random.randn(size_df) + 3,  # injected drift
         'feature_b': np.random.randn(size_df) * 2,
         'feature_c': np.random.exponential(1, size_df),
     })
 
-    # Test DriftDetector
     logger.info("🔬 Testing DriftDetector...")
     detector = DriftDetector(reference)
     report = detector.detect(current)

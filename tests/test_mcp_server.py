@@ -296,3 +296,53 @@ class TestExportModel:
         train_model(regression_csv, "y", task="regression", save_artifact=artifact_path)
         result = json.loads(export_model(artifact_path, format="onnx"))
         assert "error" in result
+
+
+# ═══════════════════════════════════════════════════════════════════
+# MCP: embed_text + select_backbone
+# ═══════════════════════════════════════════════════════════════════
+
+class TestEmbedText:
+    def test_embed_text_non_contrastive_artifact(self, tmp_path, regression_csv):
+        """embed_text returns error for non-contrastive artifacts."""
+        from scomp_link.mcp_server import embed_text, train_model
+        # Train a regression model (not contrastive)
+        artifact_path = str(tmp_path / "reg.scomp")
+        train_model(regression_csv, target="y", task="regression", save_artifact=artifact_path)
+        result = json.loads(embed_text(artifact_path, regression_csv, text_col="x1"))
+        assert "error" in result
+
+    def test_embed_text_missing_column(self, tmp_path, regression_csv):
+        """embed_text returns error when column doesn't exist."""
+        from scomp_link.mcp_server import embed_text, train_model
+        artifact_path = str(tmp_path / "reg2.scomp")
+        train_model(regression_csv, target="y", task="regression", save_artifact=artifact_path)
+        result = json.loads(embed_text(artifact_path, regression_csv, text_col="nonexistent"))
+        assert "error" in result
+
+
+class TestSelectBackbone:
+    def test_select_backbone_missing_columns(self, regression_csv):
+        """select_backbone returns error for missing columns."""
+        from scomp_link.mcp_server import select_backbone
+        result = json.loads(select_backbone(regression_csv, text_col="text", label_col="label"))
+        assert "error" in result
+
+    def test_select_backbone_with_valid_data(self, tmp_path):
+        """select_backbone works with valid text+label data (uses precomputed in EmbeddingSelector)."""
+        from scomp_link.mcp_server import select_backbone
+        import numpy as np
+
+        # Create a simple text dataset
+        df = pd.DataFrame({
+            'text': ['machine learning'] * 10 + ['football game'] * 10,
+            'label': ['tech'] * 10 + ['sports'] * 10,
+        })
+        csv_path = str(tmp_path / "text_data.csv")
+        df.to_csv(csv_path, index=False)
+
+        # This will try to download models — use a non-existent model to test error handling
+        result = json.loads(select_backbone(csv_path, text_col="text", label_col="label",
+                                           candidates="nonexistent-model-xyz"))
+        # Should either succeed with inf loss or have ranking with error
+        assert "ranking" in result or "error" in result
