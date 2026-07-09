@@ -12,7 +12,7 @@ echo "════════════════════════�
 # Check smithery CLI is installed
 if ! command -v smithery &>/dev/null; then
     echo "Installing Smithery CLI..."
-    npm install -g @anthropic-ai/smithery
+    npm install -g @smithery/cli
 fi
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"

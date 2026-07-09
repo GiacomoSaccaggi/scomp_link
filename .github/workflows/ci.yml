@@ -189,7 +189,7 @@ jobs:
           node-version: "20"
 
       - name: Install Smithery CLI
-        run: npm install -g @anthropic-ai/smithery
+        run: npm install -g @smithery/cli
 
       - name: Publish to Smithery (stdio via smithery.yaml)
         env:
