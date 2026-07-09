@@ -220,8 +220,8 @@ class SpacyEmbeddingModel(object):
 
         def __load_textcat_data(texts_, y_lab_, texts_test_, y_lab_test_):
             """Load and prepare text categorization data."""
-            y_lab2 = [int(np.where(ny == categ)[0]) for ny in y_lab_]
-            y_lab2_test = [int(np.where(ny == categ)[0]) for ny in y_lab_test_]
+            y_lab2 = [int(np.where(ny == categ)[0][0]) for ny in y_lab_]
+            y_lab2_test = [int(np.where(ny == categ)[0][0]) for ny in y_lab_test_]
             train_texts_ = [' '.join(self.__extract_words(msg)) for msg in texts_]
             eval_texts_ = [' '.join(self.__extract_words(msg)) for msg in texts_test_]
             train_labels = y_lab2
