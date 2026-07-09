@@ -746,6 +746,18 @@ def cmd_text(args):
     pipe.choose_model("categorical_known")
 
     use_contrastive = args.method == "contrastive"
+
+    # Backbone selection: --select-backbone or --backbone override
+    text_model = args.model_name
+    if use_contrastive and getattr(args, 'select_backbone', False):
+        from scomp_link.models.contrastive_text import EmbeddingSelector
+        selector = EmbeddingSelector()
+        sel_results = selector.find_best_backbone(df, text_col=args.text_col, label_col=args.target)
+        text_model = sel_results.iloc[0]['model']
+        print(f"Selected backbone: {text_model} (loss={sel_results.iloc[0]['loss']:.4f})")
+    elif getattr(args, 'backbone', None):
+        text_model = args.backbone
+
     results = pipe.run_pipeline(
         task_type="text",
         text_col=args.text_col,
@@ -753,7 +765,7 @@ def cmd_text(args):
         epochs=args.epochs,
         batch_size=args.batch_size,
         test_size=args.test_size,
-        text_model=args.model_name,
+        text_model=text_model,
     )
 
     output = {
@@ -775,6 +787,37 @@ def cmd_text(args):
         artifact.set_metrics(results.get("metrics", {}))
         artifact.save(args.save_artifact)
         print(f"Artifact saved to: {args.save_artifact}")
+
+
+def cmd_embed(args):
+    """Generate embeddings from a trained contrastive text model."""
+    import scomp_link
+    import numpy as np
+
+    if args.silent:
+        scomp_link.set_verbosity("silent")
+
+    loaded = scomp_link.ScompArtifact.load(args.artifact)
+    if not hasattr(loaded.model, 'embed'):
+        sys.exit("Error: artifact is not a contrastive text model (no embed method)")
+
+    df = _load_data(args.data)
+    if args.text_col not in df.columns:
+        sys.exit(f"Error: text column '{args.text_col}' not found. Available: {list(df.columns)}")
+
+    texts = df[args.text_col].tolist()
+    embeddings = loaded.model.embed(texts, batch_size=args.batch_size)
+
+    output = args.output or args.data.replace(".csv", "_embeddings.npy")
+    if output.endswith(".npy"):
+        np.save(output, embeddings)
+    elif output.endswith(".csv"):
+        import pandas as pd
+        pd.DataFrame(embeddings).to_csv(output, index=False)
+    else:
+        np.save(output, embeddings)
+
+    print(f"✅ Embeddings saved: {output} (shape: {embeddings.shape})")
 
 
 def cmd_cluster(args):
@@ -1577,7 +1620,7 @@ Examples:
   scomp-link forecast --data series.csv --column value --horizon 30 --plot forecast.html
 """,
     )
-    parser.add_argument("--version", action="version", version="%(prog)s 1.2.12")
+    parser.add_argument("--version", action="version", version="%(prog)s 1.2.15")
     subparsers = parser.add_subparsers(dest="command", help="Available commands")
 
     # ── run ──
@@ -1787,7 +1830,26 @@ Examples:
     p_text.add_argument("--output", "-o", default=None, help="Output path for results JSON")
     p_text.add_argument("--save-artifact", default=None, help="Save as .scomp artifact")
     p_text.add_argument("--silent", action="store_true", help="Suppress output")
+    p_text.add_argument(
+        "--head", choices=["auto", "logreg", "svm", "rf", "lgbm", "xgb"], default="auto",
+        help="Weak learner head for contrastive method (default: auto)"
+    )
+    p_text.add_argument("--backbone", default=None, help="Override backbone model name for EmbeddingSelector")
+    p_text.add_argument("--select-backbone", action="store_true", help="Auto-select best pretrained backbone before training")
     p_text.set_defaults(func=cmd_text)
+
+    # -- embed --
+    p_embed = subparsers.add_parser(
+        "embed", help="Generate embeddings from a contrastive model",
+        description="Extract text embeddings from a trained .scomp contrastive artifact."
+    )
+    p_embed.add_argument("--data", required=True, help="Path to input data (CSV)")
+    p_embed.add_argument("--text-col", required=True, help="Column containing text data")
+    p_embed.add_argument("--artifact", required=True, help="Path to .scomp contrastive model")
+    p_embed.add_argument("--output", "-o", default=None, help="Output path (.npy or .csv)")
+    p_embed.add_argument("--batch-size", type=int, default=512, help="Encoding batch size (default: 512)")
+    p_embed.add_argument("--silent", action="store_true", help="Suppress output")
+    p_embed.set_defaults(func=cmd_embed)
 
     # -- cluster --
     p_clust = subparsers.add_parser(

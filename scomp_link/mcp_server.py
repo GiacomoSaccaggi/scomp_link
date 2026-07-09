@@ -488,6 +488,64 @@ def export_model(artifact: str, format: str = "pickle", output: Optional[str] = 
     return json.dumps({"output_path": out_path, "format": format, "size_kb": round(size_kb, 1)})
 
 
+@mcp.tool()
+def embed_text(artifact: str, data: str, text_col: str = "text",
+               output: Optional[str] = None) -> str:
+    """Generate embeddings from a trained contrastive text model (.scomp artifact).
+    Returns embedding shape and optionally saves to .npy file.
+    Use this to extract text representations for downstream analysis."""
+    import scomp_link
+    import numpy as np
+    scomp_link.set_verbosity("silent")
+
+    loaded = scomp_link.ScompArtifact.load(artifact)
+    if not hasattr(loaded.model, 'embed'):
+        return json.dumps({"error": "Artifact is not a contrastive text model"})
+
+    df = _load_df(data)
+    if text_col not in df.columns:
+        return json.dumps({"error": f"Column '{text_col}' not found"})
+
+    texts = df[text_col].tolist()
+    embeddings = loaded.model.embed(texts)
+
+    result = {"shape": list(embeddings.shape), "dtype": str(embeddings.dtype)}
+    if output:
+        if output.endswith(".npy"):
+            np.save(output, embeddings)
+        else:
+            import pandas as pd
+            pd.DataFrame(embeddings).to_csv(output, index=False)
+        result["output_path"] = output
+
+    return json.dumps(result, indent=2)
+
+
+@mcp.tool()
+def select_backbone(data: str, text_col: str = "text", label_col: str = "label",
+                    candidates: Optional[str] = None, sample_size: int = 500) -> str:
+    """Find the best pretrained embedding backbone for a dataset.
+    Evaluates multiple sentence-transformer models by computing contrastive loss
+    on a sample. Returns ranked list of models with loss scores.
+    Use this before training to choose the optimal starting point."""
+    from scomp_link.models.contrastive_text import EmbeddingSelector
+
+    df = _load_df(data)
+    if text_col not in df.columns or label_col not in df.columns:
+        return json.dumps({"error": f"Columns not found. Available: {list(df.columns)}"})
+
+    candidate_list = candidates.split(",") if candidates else None
+    selector = EmbeddingSelector(candidates=candidate_list)
+    results = selector.find_best_backbone(df, text_col=text_col, label_col=label_col,
+                                           sample_size=sample_size)
+
+    return json.dumps({
+        "best_model": results.iloc[0]["model"],
+        "best_loss": float(results.iloc[0]["loss"]),
+        "ranking": results.to_dict("records"),
+    }, indent=2, default=str)
+
+
 # ═══════════════════════════════════════════════════════════════════
 # RESOURCES
 # ═══════════════════════════════════════════════════════════════════

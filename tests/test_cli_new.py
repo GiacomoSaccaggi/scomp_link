@@ -571,3 +571,68 @@ class TestNewCLICommands:
                                   '--task', 'regression', '--format', 'csv', '--output', out, '--silent'])
         args.func(args)
         assert Path(out).exists()
+
+
+# ═══════════════════════════════════════════════════════════════════
+# CLI: text --head, --backbone, --select-backbone + embed command
+# ═══════════════════════════════════════════════════════════════════
+
+class TestTextNewArgs:
+    """Test new CLI args for text command."""
+
+    @pytest.fixture
+    def text_csv(self, tmp_path):
+        df = pd.DataFrame({
+            'msg': ['hello world'] * 20 + ['foo bar'] * 20,
+            'cat': ['a'] * 20 + ['b'] * 20,
+        })
+        p = str(tmp_path / "text.csv")
+        df.to_csv(p, index=False)
+        return p
+
+    def test_text_parser_accepts_head(self, text_csv):
+        """--head arg is parsed correctly."""
+        from scomp_link.cli import build_parser
+        parser = build_parser()
+        args = parser.parse_args(['text', '--data', text_csv, '--text-col', 'msg',
+                                  '--target', 'cat', '--method', 'tfidf', '--head', 'logreg', '--silent'])
+        assert args.head == 'logreg'
+
+    def test_text_parser_accepts_backbone(self, text_csv):
+        """--backbone arg is parsed correctly."""
+        from scomp_link.cli import build_parser
+        parser = build_parser()
+        args = parser.parse_args(['text', '--data', text_csv, '--text-col', 'msg',
+                                  '--target', 'cat', '--backbone', 'all-MiniLM-L6-v2', '--silent'])
+        assert args.backbone == 'all-MiniLM-L6-v2'
+
+    def test_text_parser_select_backbone_flag(self, text_csv):
+        """--select-backbone flag is parsed correctly."""
+        from scomp_link.cli import build_parser
+        parser = build_parser()
+        args = parser.parse_args(['text', '--data', text_csv, '--text-col', 'msg',
+                                  '--target', 'cat', '--select-backbone', '--silent'])
+        assert args.select_backbone is True
+
+
+class TestEmbedCommand:
+    """Test the new embed CLI command."""
+
+    def test_embed_parser_exists(self):
+        """embed command is registered in the parser."""
+        from scomp_link.cli import build_parser
+        parser = build_parser()
+        args = parser.parse_args(['embed', '--data', 'test.csv', '--text-col', 'text',
+                                  '--artifact', 'model.scomp'])
+        assert args.func.__name__ == 'cmd_embed'
+        assert args.text_col == 'text'
+        assert args.artifact == 'model.scomp'
+
+    def test_embed_parser_defaults(self):
+        """embed command has correct defaults."""
+        from scomp_link.cli import build_parser
+        parser = build_parser()
+        args = parser.parse_args(['embed', '--data', 'x.csv', '--text-col', 't', '--artifact', 'm.scomp'])
+        assert args.batch_size == 512
+        assert args.output is None
+        assert args.silent is False

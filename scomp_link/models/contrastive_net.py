@@ -1,11 +1,27 @@
 # -*- coding: utf-8 -*-
 """
-Contrastive Network components for Siamese text classification.
+ ██████╗ ██████╗ ███╗   ██╗████████╗██████╗  █████╗ ███████╗████████╗██╗██╗   ██╗███████╗
+██╔════╝██╔═══██╗████╗  ██║╚══██╔══╝██╔══██╗██╔══██╗██╔════╝╚══██╔══╝██║██║   ██║██╔════╝
+██║     ██║   ██║██╔██╗ ██║   ██║   ██████╔╝███████║███████╗   ██║   ██║╚██╗ ██╔╝█████╗  
+██║     ██║   ██║██║╚████║   ██║   ██╔══██╗██╔══██║╚════██║   ██║   ██║ ╚████╔╝ ██╔══╝  
+╚██████╗╚██████╔╝██║ ╚███║   ██║   ██║  ██║██║  ██║███████║   ██║   ██║  ╚██╔╝  ███████╗
+ ╚═════╝ ╚═════╝ ╚═╝  ╚══╝   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝   ╚═╝   ╚═╝   ╚═╝   ╚══════╝
+
+███╗   ██╗███████╗████████╗
+████╗  ██║██╔════╝╚══██╔══╝
+██╔██╗ ██║█████╗     ██║   
+██║╚████║██╔══╝     ██║   
+██║ ╚███║███████╗   ██║   
+╚═╝  ╚══╝╚══════╝   ╚═╝   
+
+Contrastive Network components for text classification.
 
 Provides:
 - ContrastiveSiameseModel: BERT + projection layer for contrastive embeddings
 - ContrastiveLoss: Contrastive loss function with margin
-- SiameseDataset: PyTorch Dataset for generating contrastive pairs
+- InfoNCELoss: Temperature-scaled cross-entropy (NT-Xent) for many-class scenarios
+- SiameseDataset: PyTorch Dataset for generating contrastive pairs (legacy, url/app_name columns)
+- ContrastiveDataset: Generic contrastive pair dataset (configurable column names)
 - EarlyStopping: Training early stopping callback
 """
 
@@ -53,7 +69,7 @@ class ContrastiveSiameseModel(nn.Module):
 
 class ContrastiveLoss(nn.Module):
     """
-    Contrastive loss function.
+    Contrastive loss function (margin-based).
     
     For positive pairs (label=1): minimizes distance.
     For negative pairs (label=0): pushes apart beyond margin.
@@ -69,9 +85,9 @@ class ContrastiveLoss(nn.Module):
     def forward(self, emb1, emb2, labels):
         """
         Args:
-            emb1: First embedding batch
-            emb2: Second embedding batch
-            labels: 1 for positive pair, 0 for negative pair
+            emb1: First embedding batch [B, D]
+            emb2: Second embedding batch [B, D]
+            labels: 1 for positive pair, 0 for negative pair [B]
         """
         distances = F.pairwise_distance(emb1, emb2)
         labels = labels.float()
@@ -80,9 +96,69 @@ class ContrastiveLoss(nn.Module):
         return loss.mean()
 
 
+class InfoNCELoss(nn.Module):
+    """
+    InfoNCE / NT-Xent loss for contrastive learning.
+    
+    More stable than margin-based loss for many classes.
+    Uses in-batch negatives: each positive pair is contrasted against
+    all other samples in the batch as negatives.
+    
+    L = -log( exp(sim(z_i, z_j) / τ) / Σ_k exp(sim(z_i, z_k) / τ) )
+    
+    Args:
+        temperature: Scaling temperature τ (lower = sharper distribution)
+    """
+
+    def __init__(self, temperature=0.07):
+        super().__init__()
+        self.temperature = temperature
+
+    def forward(self, emb1, emb2, labels=None):
+        """
+        Compute InfoNCE loss using in-batch negatives.
+        
+        Args:
+            emb1: Anchor embeddings [B, D] (normalized)
+            emb2: Positive embeddings [B, D] (normalized)
+            labels: Optional — if provided, uses supervised contrastive
+                    (same-label pairs are positives). If None, treats
+                    (emb1[i], emb2[i]) as the only positive pair.
+        
+        Returns:
+            Scalar loss
+        """
+        batch_size = emb1.shape[0]
+        
+        # Cosine similarity matrix [B, B]
+        sim_matrix = torch.mm(emb1, emb2.T) / self.temperature
+        
+        if labels is None:
+            # Standard InfoNCE: diagonal = positive pairs
+            targets = torch.arange(batch_size, device=emb1.device)
+            loss = F.cross_entropy(sim_matrix, targets)
+        else:
+            # Supervised contrastive: same-label pairs are positives
+            labels = labels.view(-1)
+            # Mask: 1 where labels match (positive pairs)
+            mask = (labels.unsqueeze(0) == labels.unsqueeze(1)).float()
+            # Remove self-contrast from diagonal
+            mask.fill_diagonal_(0)
+            
+            # Log-softmax for numerical stability
+            log_prob = sim_matrix - torch.logsumexp(sim_matrix, dim=1, keepdim=True)
+            
+            # Mean log-prob over positive pairs
+            n_positives = mask.sum(dim=1).clamp(min=1)
+            loss = -(mask * log_prob).sum(dim=1) / n_positives
+            loss = loss.mean()
+        
+        return loss
+
+
 class SiameseDataset(Dataset):
     """
-    Dataset for generating contrastive pairs from text data.
+    Dataset for generating contrastive pairs from text data (legacy).
     
     Expects DataFrame with 'url' (text) and 'app_name' (label) columns.
     Generates positive pairs (same label) and negative pairs (different label).
@@ -160,6 +236,97 @@ class SiameseDataset(Dataset):
         """Calculate sample weights for balanced sampling."""
         label_counts = df['app_name'].value_counts()
         weights = 1.0 / label_counts[df['app_name']].values
+        return weights / weights.sum() * len(weights)
+
+
+class ContrastiveDataset(Dataset):
+    """
+    Generic contrastive pair dataset with configurable column names.
+    
+    Generates positive pairs (same label) and negative pairs (different label).
+    More flexible than SiameseDataset — accepts any text/label column names.
+    
+    Args:
+        df: DataFrame with text and label columns
+        tokenizer: HuggingFace tokenizer
+        text_col: Name of the text column
+        label_col: Name of the label column
+        max_length: Max token length for tokenizer
+        augment_prob: Probability of text augmentation
+    """
+
+    def __init__(self, df, tokenizer, text_col='text', label_col='label',
+                 max_length=128, augment_prob=0.3):
+        self.df = df.reset_index(drop=True)
+        self.tokenizer = tokenizer
+        self.text_col = text_col
+        self.label_col = label_col
+        self.max_length = max_length
+        self.augment_prob = augment_prob
+        
+        self.texts = df[text_col].tolist()
+        self.labels = df[label_col].tolist()
+        self.unique_labels = list(set(self.labels))
+        
+        # Group indices by label for efficient pair generation
+        self._label_to_indices = {}
+        for idx, label in enumerate(self.labels):
+            self._label_to_indices.setdefault(label, []).append(idx)
+
+    def __len__(self):
+        return len(self.df)
+
+    def __getitem__(self, idx):
+        text = self.texts[idx]
+        label = self.labels[idx]
+
+        # 50% positive pairs, 50% negative pairs
+        if random.random() > 0.5:
+            # Positive pair: another text with same label
+            same_indices = self._label_to_indices[label]
+            pair_idx = random.choice(same_indices)
+            pair_text = self.texts[pair_idx]
+            target = torch.tensor(1, dtype=torch.float32)
+        else:
+            # Negative pair: text with different label
+            neg_label = random.choice(self.unique_labels)
+            while neg_label == label:
+                neg_label = random.choice(self.unique_labels)
+            neg_indices = self._label_to_indices[neg_label]
+            pair_idx = random.choice(neg_indices)
+            pair_text = self.texts[pair_idx]
+            target = torch.tensor(0, dtype=torch.float32)
+
+        # Optional augmentation
+        if self.augment_prob > 0 and random.random() < self.augment_prob:
+            text = self._augment(text)
+
+        # Tokenize both texts
+        text_enc = self.tokenizer(str(text), return_tensors='pt', truncation=True,
+                                  padding='max_length', max_length=self.max_length)
+        pair_enc = self.tokenizer(str(pair_text), return_tensors='pt', truncation=True,
+                                  padding='max_length', max_length=self.max_length)
+
+        return (text_enc['input_ids'].squeeze(0),
+                text_enc['attention_mask'].squeeze(0),
+                pair_enc['input_ids'].squeeze(0),
+                pair_enc['attention_mask'].squeeze(0),
+                target)
+
+    def _augment(self, text):
+        """Simple text augmentation: random word dropout."""
+        words = str(text).split()
+        if len(words) <= 2:
+            return text
+        n_drop = max(1, int(len(words) * 0.1))
+        indices = random.sample(range(len(words)), min(n_drop, len(words) - 1))
+        return ' '.join(w for i, w in enumerate(words) if i not in indices)
+
+    @staticmethod
+    def get_sample_weights(df, label_col='label'):
+        """Calculate sample weights for balanced sampling."""
+        label_counts = df[label_col].value_counts()
+        weights = 1.0 / label_counts[df[label_col]].values
         return weights / weights.sum() * len(weights)
 
 

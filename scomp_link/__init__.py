@@ -9,7 +9,7 @@ on first access, keeping `import scomp_link` near-instant.
 
 from .utils.logger import set_verbosity
 
-__version__ = "1.2.13"
+__version__ = "1.2.15"
 
 __all__ = [
     "set_verbosity",

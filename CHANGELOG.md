@@ -3,6 +3,37 @@
 All notable changes to scomp-link are documented here.
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
+## [1.2.15] - 2026-07-09
+
+### Added
+- **Contrastive Embedding System**: `EmbeddingSelector` class for auto-selecting the best pretrained backbone
+- **Weak Learner Head**: `ContrastiveTextClassifier.fit_head()` — fits LogReg/SVM/RF/LightGBM/XGBoost on frozen embeddings
+- **InfoNCELoss**: Temperature-scaled NT-Xent loss for many-class contrastive learning
+- **ContrastiveDataset**: Generic contrastive pair dataset (configurable column names)
+- **`embed()` method**: Public API for extracting text embeddings from trained models
+- **`generate_report()`**: HTML validation report with confusion matrix, per-class F1, t-SNE, backbone comparison
+- **CLI: `embed` command**: `scomp-link embed --data file.csv --text-col text --artifact model.scomp --output embeddings.npy`
+- **CLI: `text` new args**: `--head` (weak learner selection), `--backbone` (model override), `--select-backbone` (auto-select)
+- **MCP: `embed_text` tool**: Generate embeddings from contrastive artifacts
+- **MCP: `select_backbone` tool**: Find best pretrained embedding backbone for a dataset
+- **Smithery deployment**: MCPB bundle + external URL publishing workflow
+- 29 new contrastive tests, 9 new CLI/MCP tests, 8 new supervised_text tests
+
+### Changed
+- **FeatureEngineer**: Migrated to Polars backend (single-pass expressions, 3-10x faster on large datasets)
+- **DriftDetector**: Parallelized with ThreadPoolExecutor (`n_jobs` parameter), 2-4x speedup on 50+ features
+- **DataQualityReport**: Parallelized with ThreadPoolExecutor (7 analyses run concurrently)
+- **core.py text path**: Now trains contrastive → fits head (auto) → evaluates → generates HTML report
+- **CI**: Runs ALL examples (removed BERT skip), installs spaCy models, 81% coverage
+- **MCP server**: 16 tools (was 14)
+
+### Fixed
+- HF Space: bind on `0.0.0.0:7860` + disable DNS rebinding protection (was `127.0.0.1:8000`)
+- MCPB manifest: `server.type` → `python`, added required `mcp_config` and prompt `text` fields
+- Removed stuck `publish-smithery` job from ci.yml (infinite sleep loop)
+- `FeatureEngineer`: handles both `np.ndarray` and `pd.Series` as y target
+
+
 ## [1.2.8] - 2026-07-07
 
 ### Fixed

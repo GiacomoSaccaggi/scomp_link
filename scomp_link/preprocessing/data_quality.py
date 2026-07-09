@@ -10,6 +10,7 @@
 import numpy as np
 import pandas as pd
 from typing import Optional, Dict, List
+from concurrent.futures import ThreadPoolExecutor
 
 from scomp_link.utils.logger import get_logger
 logger = get_logger(__name__)
@@ -20,6 +21,7 @@ from scomp_link.utils.decorators import timer
 class DataQualityReport:
     """
     Comprehensive data quality profiling and reporting.
+    Parallelized across analysis dimensions using ThreadPoolExecutor.
 
     Dependencies: numpy, pandas, scipy
 
@@ -40,16 +42,27 @@ class DataQualityReport:
 
     @timer
     def generate(self) -> Dict:
-        """Run full data quality analysis."""
+        """Run full data quality analysis (parallelized)."""
         logger.info("🔬 DataQualityReport: profiling...")
+
+        # Run independent analyses in parallel
+        with ThreadPoolExecutor(max_workers=4) as executor:
+            f_overview = executor.submit(self._overview)
+            f_missing = executor.submit(self._missing_analysis)
+            f_types = executor.submit(self._type_inference)
+            f_cardinality = executor.submit(self._cardinality_analysis)
+            f_constants = executor.submit(self._constant_features)
+            f_duplicates = executor.submit(self._duplicate_analysis)
+            f_correlations = executor.submit(self._high_correlations)
+
         self._report = {
-            "overview": self._overview(),
-            "missing": self._missing_analysis(),
-            "types": self._type_inference(),
-            "cardinality": self._cardinality_analysis(),
-            "constants": self._constant_features(),
-            "duplicates": self._duplicate_analysis(),
-            "correlations": self._high_correlations(),
+            "overview": f_overview.result(),
+            "missing": f_missing.result(),
+            "types": f_types.result(),
+            "cardinality": f_cardinality.result(),
+            "constants": f_constants.result(),
+            "duplicates": f_duplicates.result(),
+            "correlations": f_correlations.result(),
         }
         logger.info(f"  ✅ Profiling complete: {self.df.shape[0]} rows × {self.df.shape[1]} cols")
         return self._report
@@ -178,14 +191,11 @@ if __name__ == '__main__':
         'income': np.random.lognormal(10, 0.5, n),
         'score': np.random.normal(700, 50, n),
         'category': np.random.choice(['A', 'B', 'C'], n),
-        'constant_col': 'same_value',
-        'mostly_null': np.where(np.random.rand(n) > 0.1, np.nan, 1.0),
+        'constant_col': 'X',
     })
-    # Add some duplicates
-    df = pd.concat([df, df.head(20)], ignore_index=True)
 
     dqr = DataQualityReport(df)
     report = dqr.generate()
-    logger.info(f"\n🎯 Overview: {report['overview']}")
-    logger.info(f"🎯 Duplicates: {report['duplicates']}")
-    logger.info(f"🎯 Constants: {report['constants']}")
+    logger.info(f"✅ Overview: {report['overview']}")
+    logger.info(f"   Constants: {report['constants']}")
+    logger.info(f"   High correlations: {len(report['correlations'])} pairs")
