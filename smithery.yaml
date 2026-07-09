@@ -1,14 +1,14 @@
 # Smithery MCP Server Configuration
 # https://smithery.ai/docs/build/publish
+#
+# scomp-link: End-to-end ML toolkit with 15 MCP tools
+# Install: pip install scomp-link[mcp]  |  uvx scomp-link mcp
 
 startCommand:
   type: stdio
   configSchema:
     type: object
     properties: {}
+    required: []
   commandFunction: |-
-    (config) => ({ command: "scomp-link", args: ["mcp"] })
-
-build:
-  dockerfile: ""
-  dockerBuildPath: ""
+    (config) => ({ command: "uvx", args: ["scomp-link[mcp]", "mcp"] })
