@@ -178,7 +178,25 @@ jobs:
           git commit -m "Deploy scomp-link MCP server (manual)"
           git push hf main --force
 
-  # Smithery publishing is handled by .github/workflows/smithery-publish.yml
+  publish-smithery:
+    needs: [test, deploy-hf-space]
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install Smithery CLI
+        run: npm install -g @anthropic-ai/smithery
+
+      - name: Publish to Smithery (stdio via smithery.yaml)
+        env:
+          SMITHERY_API_KEY: ${{ secrets.SMITHERY_API_KEY }}
+        run: |
+          smithery mcp publish . -n giacomosaccaggi/scomp-link --yes || echo "::warning::Smithery publish failed (non-blocking)"
+
 
   publish-hf-skill:
     needs: test
