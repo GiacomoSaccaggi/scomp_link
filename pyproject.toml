@@ -110,7 +110,7 @@ dependencies = [
     "matplotlib>=3.8.0,<4.0.0;    python_version >= '3.13' and python_version < '3.14'",
     "matplotlib>=3.9.0,<4.0.0;    python_version >= '3.14'",
     # --- plotly ---
-    "plotly>=5.0.0,<6.0.0",
+    "plotly>=5.0.0,<7.0.0",
     # --- seaborn ---
     "seaborn>=0.11.0,<0.14.0",
     # --- NLP: torch, transformers, spacy, faiss, sentence-transformers ---
