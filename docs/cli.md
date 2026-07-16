@@ -1,6 +1,6 @@
 # Command-Line Interface
 
-scomp-link provides a full-featured CLI with **25 commands** for zero-code ML workflows. After installation (`pip install scomp-link`), the `scomp-link` command is available globally.
+scomp-link provides a full-featured CLI with **26 commands** for zero-code ML workflows. After installation (`pip install scomp-link`), the `scomp-link` command is available globally.
 
 ```bash
 scomp-link --help
@@ -59,6 +59,7 @@ scomp-link --help
 | [`list-models`](#list-models) | Show available model types |
 | [`check-deps`](#check-deps) | Check installed dependencies |
 | [`mcp`](#mcp) | Start MCP server for AI agents |
+| [`init-config`](#init-config) | Create/reset configuration file for branding defaults |
 
 ---
 
@@ -327,4 +328,36 @@ Start the MCP (Model Context Protocol) server for AI agent integration.
 scomp-link mcp
 ```
 
-Compatible with Claude Desktop, Kiro, Cursor, VS Code Copilot. Exposes 15 tools, 3 resources, and 4 prompts. See [Agent Integration](agent-integration.md) for setup.
+Compatible with Claude Desktop, Kiro, Cursor, VS Code Copilot. Exposes 22 tools, 3 resources, and 4 prompts. See [Agent Integration](agent-integration.md) for setup.
+
+### `init-config`
+
+Create or reset the scomp-link configuration file for persistent branding defaults (colors, logos, footer, company name). Configuration is automatically applied to all reports generated via MCP tools or the Python API.
+
+```bash
+# Create global config (~/.scomp-link/config.yaml)
+scomp-link init-config
+
+# Create project-level config (.scomp-link.yaml in current directory)
+scomp-link init-config --local
+```
+
+**Arguments:**
+
+| Argument | Type | Default | Description |
+|----------|------|---------|-------------|
+| `--local` | flag | - | Create `.scomp-link.yaml` in current directory instead of global config |
+
+**Configuration precedence:** `.scomp-link.yaml` (local) > `~/.scomp-link/config.yaml` (global) > built-in defaults
+
+**Example config:**
+
+```yaml
+# ~/.scomp-link/config.yaml
+branding:
+  company_name: "Pirelli"
+  logo_url: "https://example.com/pirelli-logo.png"
+  primary_color: "#FFD700"
+  secondary_color: "#1A1A1A"
+  footer_html: "<p>© 2026 Pirelli S.p.A. — Confidential</p>"
+```

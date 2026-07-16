@@ -749,13 +749,14 @@ def cmd_text(args):
 
     # Backbone selection: --select-backbone or --backbone override
     text_model = args.model_name
-    if use_contrastive and getattr(args, 'select_backbone', False):
+    if use_contrastive and getattr(args, "select_backbone", False):
         from scomp_link.models.contrastive_text import EmbeddingSelector
+
         selector = EmbeddingSelector()
         sel_results = selector.find_best_backbone(df, text_col=args.text_col, label_col=args.target)
-        text_model = sel_results.iloc[0]['model']
+        text_model = sel_results.iloc[0]["model"]
         print(f"Selected backbone: {text_model} (loss={sel_results.iloc[0]['loss']:.4f})")
-    elif getattr(args, 'backbone', None):
+    elif getattr(args, "backbone", None):
         text_model = args.backbone
 
     results = pipe.run_pipeline(
@@ -791,14 +792,15 @@ def cmd_text(args):
 
 def cmd_embed(args):
     """Generate embeddings from a trained contrastive text model."""
-    import scomp_link
     import numpy as np
+
+    import scomp_link
 
     if args.silent:
         scomp_link.set_verbosity("silent")
 
     loaded = scomp_link.ScompArtifact.load(args.artifact)
-    if not hasattr(loaded.model, 'embed'):
+    if not hasattr(loaded.model, "embed"):
         sys.exit("Error: artifact is not a contrastive text model (no embed method)")
 
     df = _load_data(args.data)
@@ -813,6 +815,7 @@ def cmd_embed(args):
         np.save(output, embeddings)
     elif output.endswith(".csv"):
         import pandas as pd
+
         pd.DataFrame(embeddings).to_csv(output, index=False)
     else:
         np.save(output, embeddings)
@@ -1549,6 +1552,21 @@ def cmd_export(args):
         sys.exit(f"Error: unsupported export format '{args.format}'. Use: pickle, onnx, pmml, joblib")
 
 
+def cmd_init_config(args):
+    """Create a scomp-link configuration file with default template."""
+    from scomp_link.config import _GLOBAL_CONFIG_PATH, init_config
+
+    path = ".scomp-link.yaml" if args.local else None
+    target = path or str(_GLOBAL_CONFIG_PATH)
+
+    try:
+        created = init_config(path=path, force=args.force)
+        print(f"✅ Configuration file created: {created}")
+        print("   Edit this file to set your default report branding (logo, colors, footer).")
+    except FileExistsError:
+        sys.exit(f"Error: {target} already exists. Use --force to overwrite.")
+
+
 def cmd_mcp(args):
     """Start the MCP (Model Context Protocol) server for agent integration."""
     try:
@@ -1620,7 +1638,7 @@ Examples:
   scomp-link forecast --data series.csv --column value --horizon 30 --plot forecast.html
 """,
     )
-    parser.add_argument("--version", action="version", version="%(prog)s 1.2.15")
+    parser.add_argument("--version", action="version", version="%(prog)s 1.3.0")
     subparsers = parser.add_subparsers(dest="command", help="Available commands")
 
     # ── run ──
@@ -1831,17 +1849,22 @@ Examples:
     p_text.add_argument("--save-artifact", default=None, help="Save as .scomp artifact")
     p_text.add_argument("--silent", action="store_true", help="Suppress output")
     p_text.add_argument(
-        "--head", choices=["auto", "logreg", "svm", "rf", "lgbm", "xgb"], default="auto",
-        help="Weak learner head for contrastive method (default: auto)"
+        "--head",
+        choices=["auto", "logreg", "svm", "rf", "lgbm", "xgb"],
+        default="auto",
+        help="Weak learner head for contrastive method (default: auto)",
     )
     p_text.add_argument("--backbone", default=None, help="Override backbone model name for EmbeddingSelector")
-    p_text.add_argument("--select-backbone", action="store_true", help="Auto-select best pretrained backbone before training")
+    p_text.add_argument(
+        "--select-backbone", action="store_true", help="Auto-select best pretrained backbone before training"
+    )
     p_text.set_defaults(func=cmd_text)
 
     # -- embed --
     p_embed = subparsers.add_parser(
-        "embed", help="Generate embeddings from a contrastive model",
-        description="Extract text embeddings from a trained .scomp contrastive artifact."
+        "embed",
+        help="Generate embeddings from a contrastive model",
+        description="Extract text embeddings from a trained .scomp contrastive artifact.",
     )
     p_embed.add_argument("--data", required=True, help="Path to input data (CSV)")
     p_embed.add_argument("--text-col", required=True, help="Column containing text data")
@@ -1936,6 +1959,20 @@ Examples:
         "3 data resources, and 4 workflow prompts.",
     )
     p_mcp.set_defaults(func=cmd_mcp)
+
+    # -- init-config --
+    p_initcfg = subparsers.add_parser(
+        "init-config",
+        help="Create a scomp-link config file for report branding defaults",
+        description="Generate a config file with default report settings (colors, logo, footer). "
+        "Global: ~/.scomp-link/config.yaml. Local: .scomp-link.yaml (overrides global). "
+        "MCP tools and Python API use these as defaults.",
+    )
+    p_initcfg.add_argument(
+        "--local", action="store_true", help="Create .scomp-link.yaml in current directory (project-level)"
+    )
+    p_initcfg.add_argument("--force", action="store_true", help="Overwrite existing config file")
+    p_initcfg.set_defaults(func=cmd_init_config)
 
     # -- serve --
     p_serve = subparsers.add_parser(

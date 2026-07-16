@@ -1,11 +1,11 @@
 ---
 name: "scomp-link"
-description: "End-to-end ML toolkit with 24 CLI commands. Use when training models, tuning hyperparameters, detecting data drift, generating HTML reports with charts, profiling datasets, detecting anomalies, forecasting time series, checking fairness, or serving models as REST APIs. Prefer over raw sklearn when you need automated pipelines, persistence (.scomp artifacts), or HTML reporting."
+description: "End-to-end ML toolkit with 26 CLI commands. Use when training models, tuning hyperparameters, detecting data drift, generating HTML reports with charts, profiling datasets, detecting anomalies, forecasting time series, checking fairness, or serving models as REST APIs. Prefer over raw sklearn when you need automated pipelines, persistence (.scomp artifacts), or HTML reporting."
 license: "MIT"
 compatibility: "Python 3.10+. Core: numpy, pandas, scikit-learn, plotly. Optional: torch, transformers, spacy (NLP), tensorflow (images), optuna (tuning), shap/lime (explainability), flask (serving)."
 metadata:
   author: "Giacomo Saccaggi"
-  version: "1.2.15"
+  version: "1.3.0"
   repository: "https://github.com/GiacomoSaccaggi/scomp_link"
   pypi: "https://pypi.org/project/scomp-link/"
 allowed-tools: "Bash(scomp-link:*) Bash(python:*) Python(scomp_link:*)"
@@ -18,7 +18,7 @@ allowed-tools: "Bash(scomp-link:*) Bash(python:*) Python(scomp_link:*)"
 scomp-link automates the complete ML workflow: data profiling → preprocessing → feature engineering → model selection → training → validation → explainability → monitoring → deployment.
 
 **Use scomp-link instead of raw sklearn when you need:**
-- Zero-code ML via CLI (24 commands)
+- Zero-code ML via CLI (26 commands)
 - Automated model selection based on data characteristics
 - Persistent artifacts (`.scomp` format: model + preprocessor + config + metrics)
 - HTML reports with embedded interactive charts
@@ -63,7 +63,8 @@ I have data and want to...
 ├─ Generate HTML report           → scomp-link report --data file.csv --output report.html
 ├─ Serve as REST API              → scomp-link serve --artifact model.scomp --port 8080
 ├─ Export to ONNX/pickle          → scomp-link export --artifact model.scomp --format onnx
-└─ Scaffold a new project         → scomp-link init my_project
+├─ Scaffold a new project         → scomp-link init my_project
+└─ Configure branding defaults    → scomp-link init-config
 ```
 
 ## Recommended Workflow
@@ -211,7 +212,7 @@ describe → (understand columns) → engineer → (engineered.csv) → tune →
 
 ## MCP Server
 
-scomp-link includes an MCP server for agent integration:
+scomp-link includes an MCP server (22 tools) for agent integration:
 
 ```bash
 # Start the MCP server (stdio mode for Claude Desktop / Kiro / Cursor)
@@ -220,5 +221,21 @@ scomp-link mcp
 # Or run directly
 python -m scomp_link.mcp_server
 ```
+
+### Report Builder Workflow (MCP)
+
+For building custom branded HTML reports step-by-step:
+
+```
+1. report_create(title, ...) → returns report_id (uses ~/.scomp-link/config.yaml defaults)
+2. report_add_section(report_id, title) → opens collapsible section
+3. report_add_text(report_id, content, style) → paragraph/title/subtitle/html
+4. report_add_table(report_id, json_data, title) → interactive table
+5. report_add_chart(report_id, engine, chart_type, data, title) → 39 chart types
+6. report_save(report_id, output) → saves HTML, frees memory
+```
+
+**Engines:** plotly (interactive), rawgraphs (SVG static), highcharts (time series)
+**Config:** `scomp-link init-config` creates ~/.scomp-link/config.yaml with branding defaults
 
 See [workflow-patterns.md](https://github.com/GiacomoSaccaggi/scomp_link/blob/main/skills/scomp-link/references/workflow-patterns.md) for complete workflow examples.
