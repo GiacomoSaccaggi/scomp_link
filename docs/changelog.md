@@ -1,5 +1,20 @@
 # Changelog
 
+## 1.3.0 (2026-07-16)
+
+### Added
+- **Report Builder MCP tools**: `report_create`, `report_add_section`, `report_add_text`, `report_add_table`, `report_add_chart`, `report_save` — build custom branded HTML reports step-by-step via MCP
+- **Configuration system**: `scomp-link init-config` CLI command + persistent config files (`~/.scomp-link/config.yaml` global, `.scomp-link.yaml` local) for corporate branding defaults
+- **Footer parametrization**: `footer_html` parameter in `ScompLinkHTMLReport` for custom report footers
+- `report_add_chart` supports all 39 chart types across 3 engines (plotly, rawgraphs, highcharts)
+- `build_custom_report` MCP prompt for guided report building
+- Quick Setup Prompt for AI Agents in README
+
+### Changed
+- MCP server now exposes 22 tools (was 16)
+- CLI now has 26 commands (was 25)
+- `generate_report` MCP tool now accepts `footer_html` parameter
+
 ## 1.2.8 (2026-07-07)
 
 ### Fixed

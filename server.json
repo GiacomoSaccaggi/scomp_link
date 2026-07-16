@@ -3,12 +3,12 @@
   "name": "io.github.giacomosaccaggi/scomp-link",
   "title": "scomp-link",
   "description": "End-to-end ML toolkit: train models, tune hyperparameters, detect drift, generate HTML reports with 39 chart types, detect anomalies, forecast time series, check fairness, and serve models as REST APIs.",
-  "version": "1.2.15",
+  "version": "1.3.0",
   "packages": [
     {
       "registryType": "pypi",
       "identifier": "scomp-link",
-      "version": "1.2.15",
+      "version": "1.3.0",
       "transport": {
         "type": "stdio"
       }

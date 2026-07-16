@@ -44,7 +44,7 @@ cp -r /path/to/scomp_link/skills/scomp-link .github/copilot/skills/
 
 ## 2. MCP Server — Model Context Protocol (Structured Tools)
 
-The MCP server exposes 15 tools, 3 resources, and 4 prompts over the standard MCP protocol. Any MCP-compatible client can discover and call them with typed inputs.
+The MCP server exposes 22 tools, 3 resources, and 4 prompts over the standard MCP protocol. Any MCP-compatible client can discover and call them with typed inputs.
 
 ### Install
 
@@ -144,6 +144,12 @@ python -m scomp_link.mcp_server
 | `compare_models` | Side-by-side model comparison |
 | `export_model` | Convert .scomp to pickle/joblib/ONNX |
 | `tune_model` | Hyperparameter optimization (via train_model with tune=true) |
+| `report_create` | Create a new report session with optional branding config |
+| `report_add_section` | Add a collapsible section to the report |
+| `report_add_text` | Add text content (paragraph, title, subtitle, raw HTML) |
+| `report_add_table` | Add an interactive data table from JSON |
+| `report_add_chart` | Add a chart (39 types across plotly/rawgraphs/highcharts engines) |
+| `report_save` | Save the report to HTML file and free memory |
 
 ## Available MCP Resources
 
@@ -176,3 +182,82 @@ python -m scomp_link.mcp_server
 | Best for | Quick setup, any agent | Production workflows, structured outputs |
 
 **Recommendation**: Start with SKILL.md for immediate use. Add MCP server when you need deterministic, structured tool calls in production agent workflows.
+
+---
+
+## 3. Report Builder (MCP Tools)
+
+The report builder is a set of 6 stateful MCP tools that let AI agents construct branded HTML reports step-by-step. Each report session maintains state server-side until saved.
+
+### Workflow
+
+```
+1. report_create(title, ...) → returns report_id
+2. report_add_section(report_id, title) → opens collapsible section
+3. report_add_text(report_id, content, style) → paragraph/title/subtitle/html
+4. report_add_table(report_id, json_data, title) → interactive table
+5. report_add_chart(report_id, engine, chart_type, data, title) → 39 chart types
+6. report_save(report_id, output) → saves HTML file, frees memory
+```
+
+### Chart Engines
+
+| Engine | Chart Types | Output |
+|--------|-------------|--------|
+| `plotly` | histogram, barchart, linechart, area_chart, scatter | Interactive HTML |
+| `rawgraphs` | treemap, sankey, sunburst, chord, alluvial, + 26 more | Static SVG |
+| `highcharts` | streamgraphs, calendar_heatmap, calendar_gantt | Interactive HTML |
+
+### Example
+
+```python
+# Create a Pirelli quarterly report
+report_id = report_create("Pirelli Q4 Tire Performance Report")
+report_add_section(report_id, "Executive Summary")
+report_add_text(report_id, "Analysis of production quality metrics across 3 plants.", "paragraph")
+report_add_table(report_id, metrics_json, "Key Metrics")
+report_add_chart(report_id, "plotly", "linechart", production_data, "Monthly Output")
+report_add_chart(report_id, "rawgraphs", "treemap", category_data, "Defects by Category")
+report_save(report_id, "pirelli_q4_report.html")
+```
+
+---
+
+## 4. Configuration System
+
+scomp-link supports persistent configuration for corporate branding defaults, applied automatically to all reports.
+
+### Setup
+
+```bash
+# Create global config (applies to all projects)
+scomp-link init-config
+
+# Create project-level config (overrides global)
+scomp-link init-config --local
+```
+
+### Config File Locations
+
+| File | Scope | Created By |
+|------|-------|-----------|
+| `~/.scomp-link/config.yaml` | Global (all projects) | `scomp-link init-config` |
+| `.scomp-link.yaml` | Project-local | `scomp-link init-config --local` |
+
+### Precedence
+
+`.scomp-link.yaml` (local) > `~/.scomp-link/config.yaml` (global) > built-in defaults
+
+### Example Config
+
+```yaml
+# ~/.scomp-link/config.yaml
+branding:
+  company_name: "Pirelli"
+  logo_url: "https://example.com/pirelli-logo.png"
+  primary_color: "#FFD700"
+  secondary_color: "#1A1A1A"
+  footer_html: "<p>© 2026 Pirelli S.p.A. — Confidential</p>"
+```
+
+The `report_create` MCP tool automatically reads these defaults. The `footer_html` parameter can also be passed directly to `ScompLinkHTMLReport` in the Python API.

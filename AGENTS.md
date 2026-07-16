@@ -26,7 +26,7 @@ Use `scomp-link` CLI commands when the user asks to:
 - Serve a model as REST API
 - Compare multiple models
 
-## CLI Quick Reference (25 commands)
+## CLI Quick Reference (26 commands)
 
 ```bash
 # Data understanding
@@ -63,6 +63,10 @@ scomp-link engineer --data file.csv --target col --interactions --log-transform 
 scomp-link init my_project
 scomp-link list-models
 scomp-link check-deps
+
+# Configuration
+scomp-link init-config              # Create global config (~/.scomp-link/config.yaml)
+scomp-link init-config --local      # Create project-level config (.scomp-link.yaml)
 ```
 
 ## Recommended Workflow
@@ -94,10 +98,26 @@ report.save_html('output.html')
 
 ## MCP Server
 
-For structured tool calls, start the MCP server:
+For structured tool calls (22 tools), start the MCP server:
 ```bash
 scomp-link mcp
 ```
+
+## Report Builder Workflow (MCP)
+
+For building custom branded HTML reports step-by-step:
+
+```
+1. report_create(title, ...) → returns report_id (uses ~/.scomp-link/config.yaml defaults)
+2. report_add_section(report_id, title) → opens collapsible section
+3. report_add_text(report_id, content, style) → paragraph/title/subtitle/html
+4. report_add_table(report_id, json_data, title) → interactive table
+5. report_add_chart(report_id, engine, chart_type, data, title) → 39 chart types
+6. report_save(report_id, output) → saves HTML, frees memory
+```
+
+**Engines:** plotly (interactive), rawgraphs (SVG static), highcharts (time series)
+**Config:** `scomp-link init-config` creates ~/.scomp-link/config.yaml with branding defaults
 
 ## Key Files
 

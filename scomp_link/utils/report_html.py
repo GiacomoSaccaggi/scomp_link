@@ -33,6 +33,148 @@ from scomp_link.utils.logger import get_logger
 
 logger = get_logger(__name__)
 
+_DEFAULT_FOOTER_CONTENT = """<footer><strong>About scomp-link</strong><br>
+                        scomp-link is a general-purpose data science toolkit for preprocessing, model selection, and validation. It is dataset- and domain-agnostic.
+                        Learn more in the project README and documentation.<br>
+                        <strong>May the code be with you.</strong><br><br>
+                        Copyright &copy; 2026 scomp-link contributors. All rights reserved.<br><br></footer>"""
+
+_FOOTER_JS_BLOCK = """
+                        <script>
+                        // Quick and simple export target #table_id into a csv
+                        function download_table_as_csv(table_id, separator = ',') {
+                            // Select rows from table_id
+                            var rows = document.querySelectorAll('table#' + table_id + ' tr');
+                            // Construct csv
+                            var csv = [];
+                            for (var i = 0; i < rows.length; i++) {
+                                var row = [], cols = rows[i].querySelectorAll('td, th');
+                                for (var j = 0; j < cols.length; j++) {
+                                    // Clean innertext to remove multiple spaces and jumpline (break csv)
+                                    var data = cols[j].innerText.replace(/(\\r\\n|\\n|\\r)/gm, '').replace(/(\\s\\s)/gm, ' ')
+                                    // Escape double-quote with double-double-quote (see https://stackoverflow.com/questions/17808511/properly-escape-a-double-quote-in-csv)
+                                    data = data.replace(/"/g, '""');
+                                    // Push escaped string
+                                    row.push('"' + data + '"');
+                                }
+                                csv.push(row.join(separator));
+                            }
+                            var csv_string = csv.join('\\n');
+                            // Download it
+                            var filename = 'export_' + table_id + '_' + new Date().toLocaleDateString() + '.csv';
+                            var link = document.createElement('a');
+                            link.style.display = 'none';
+                            link.setAttribute('target', '_blank');
+                            link.setAttribute('href', 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv_string));
+                            link.setAttribute('download', filename);
+                            document.body.appendChild(link);
+                            link.click();
+                            document.body.removeChild(link);
+                        }
+                        var coll = document.getElementsByClassName("collapsiblemygs");
+                        var i;
+
+                        for (i = 0; i < coll.length; i++) {
+                          coll[i].addEventListener("click", function() {
+                            this.classList.toggle("active");
+                            var content = this.nextElementSibling;
+                            if (content.style.display === "block") {
+                              content.style.display = "none";
+                            } else {
+                              content.style.display = "block";
+                            }
+                          });
+                        }
+                        document.addEventListener("DOMContentLoaded", function() {
+                            // Function to resize svg-containers, SVG images and rect elements
+                            function resizeElements() {
+                                // Seleziona tutti gli elementi con la classe 'svg-container'
+                                var svgContainers = document.querySelectorAll('.svg-container');
+                        
+                                // Itera su ogni svg-container e imposta la larghezza al 100%
+                                svgContainers.forEach(function(container) {
+                                    container.style.width = '100%';
+                                });
+                                
+                                 var svgContainers0 = document.querySelectorAll('.user-select-none');
+                        
+                                // Itera su ogni svg-container e imposta la larghezza al 100%
+                                svgContainers0.forEach(function(container) {
+                                    container.style.width = '100%';
+                                });
+                                
+                                
+                                 var cartesianlayer = document.querySelectorAll('.cartesianlayer');
+                        
+                                // Itera su ogni svg-container e imposta la larghezza al 100%
+                                cartesianlayer.forEach(function(container) {
+                                    container.style.width = '100%';
+                                });
+                                
+                                
+                        
+                                 var svgContainers1 = document.querySelectorAll('.js-plotly-plot');
+                        
+                                // Itera su ogni svg-container e imposta la larghezza al 100%
+                                svgContainers1.forEach(function(container) {
+                                    container.style.width = '100%';
+                                });
+                                
+                                
+                                 var svgContainers2 = document.querySelectorAll('.main-svg');
+                        
+                                // Itera su ogni svg-container e imposta la larghezza al 100%
+                                svgContainers2.forEach(function(container) {
+                                    container.style.width = '100%';
+                                });
+                        
+                                 var svgContainers3 = document.querySelectorAll('.plot-container');
+                        
+                                // Itera su ogni svg-container e imposta la larghezza al 100%
+                                svgContainers3.forEach(function(container) {
+                                    container.style.width = '100%';
+                                });
+                        
+                                // Seleziona tutti gli elementi con il tag '.highcharts-container'
+                                var items = document.querySelectorAll('.highcharts-container');
+                        
+                                // Itera su ogni rect e imposta la larghezza al 100%
+                                items.forEach(function(item) {
+                                    item.style.width = '100%';
+                                });
+                                
+                                
+                                // Seleziona tutti gli elementi con il tag 'select'
+                                var selects = document.querySelectorAll('select');
+                        
+                                // Itera su ogni rect e imposta la larghezza al 100%
+                                selects.forEach(function(select) {
+                                    select.style.width = '200px';
+                                });
+                                
+                                
+                                // Seleziona tutti gli elementi con il tag 'content'
+                                var contents = document.querySelectorAll('.content');
+                        
+                                contents.forEach(function(content) {
+                                    content.style.display = 'none';
+                                });
+                                
+                                 
+                            }
+                        
+                            // Call the function when the document is fully loaded
+                            resizeElements();
+                        });
+                        
+                        </script>
+                        </div><hr><br>"""
+
+
+def _build_footer(footer_html=None):
+    """Build the complete footer block (JS scripts + visual footer)."""
+    return _FOOTER_JS_BLOCK + (footer_html or _DEFAULT_FOOTER_CONTENT)
+
 
 class ScompLinkHTMLReport:
     def __init_subclass__(
@@ -49,6 +191,7 @@ class ScompLinkHTMLReport:
         main_color=MAIN,
         light_color=MAIN_LIGHT,
         dark_color=MAIN_DARK,
+        footer_html=None,
     ):
         cls.dark_color = dark_color
         cls.light_color = light_color
@@ -354,142 +497,7 @@ class ScompLinkHTMLReport:
             .replace("{dark_color}", cls.dark_color)
             .replace("{light_color}", cls.light_color)
         )
-        cls.footer = """
-        
-        
-                        <script>
-                        // Quick and simple export target #table_id into a csv
-                        function download_table_as_csv(table_id, separator = ',') {
-                            // Select rows from table_id
-                            var rows = document.querySelectorAll('table#' + table_id + ' tr');
-                            // Construct csv
-                            var csv = [];
-                            for (var i = 0; i < rows.length; i++) {
-                                var row = [], cols = rows[i].querySelectorAll('td, th');
-                                for (var j = 0; j < cols.length; j++) {
-                                    // Clean innertext to remove multiple spaces and jumpline (break csv)
-                                    var data = cols[j].innerText.replace(/(\\r\\n|\\n|\\r)/gm, '').replace(/(\s\s)/gm, ' ')
-                                    // Escape double-quote with double-double-quote (see https://stackoverflow.com/questions/17808511/properly-escape-a-double-quote-in-csv)
-                                    data = data.replace(/"/g, '""');
-                                    // Push escaped string
-                                    row.push('"' + data + '"');
-                                }
-                                csv.push(row.join(separator));
-                            }
-                            var csv_string = csv.join('\\n');
-                            // Download it
-                            var filename = 'export_' + table_id + '_' + new Date().toLocaleDateString() + '.csv';
-                            var link = document.createElement('a');
-                            link.style.display = 'none';
-                            link.setAttribute('target', '_blank');
-                            link.setAttribute('href', 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv_string));
-                            link.setAttribute('download', filename);
-                            document.body.appendChild(link);
-                            link.click();
-                            document.body.removeChild(link);
-                        }
-                        var coll = document.getElementsByClassName("collapsiblemygs");
-                        var i;
-
-                        for (i = 0; i < coll.length; i++) {
-                          coll[i].addEventListener("click", function() {
-                            this.classList.toggle("active");
-                            var content = this.nextElementSibling;
-                            if (content.style.display === "block") {
-                              content.style.display = "none";
-                            } else {
-                              content.style.display = "block";
-                            }
-                          });
-                        }
-                        document.addEventListener("DOMContentLoaded", function() {
-                            // Function to resize svg-containers, SVG images and rect elements
-                            function resizeElements() {
-                                // Seleziona tutti gli elementi con la classe 'svg-container'
-                                var svgContainers = document.querySelectorAll('.svg-container');
-                        
-                                // Itera su ogni svg-container e imposta la larghezza al 100%
-                                svgContainers.forEach(function(container) {
-                                    container.style.width = '100%';
-                                });
-                                
-                                 var svgContainers0 = document.querySelectorAll('.user-select-none');
-                        
-                                // Itera su ogni svg-container e imposta la larghezza al 100%
-                                svgContainers0.forEach(function(container) {
-                                    container.style.width = '100%';
-                                });
-                                
-                                
-                                 var cartesianlayer = document.querySelectorAll('.cartesianlayer');
-                        
-                                // Itera su ogni svg-container e imposta la larghezza al 100%
-                                cartesianlayer.forEach(function(container) {
-                                    container.style.width = '100%';
-                                });
-                                
-                                
-                        
-                                 var svgContainers1 = document.querySelectorAll('.js-plotly-plot');
-                        
-                                // Itera su ogni svg-container e imposta la larghezza al 100%
-                                svgContainers1.forEach(function(container) {
-                                    container.style.width = '100%';
-                                });
-                                
-                                
-                                 var svgContainers2 = document.querySelectorAll('.main-svg');
-                        
-                                // Itera su ogni svg-container e imposta la larghezza al 100%
-                                svgContainers2.forEach(function(container) {
-                                    container.style.width = '100%';
-                                });
-                        
-                                 var svgContainers3 = document.querySelectorAll('.plot-container');
-                        
-                                // Itera su ogni svg-container e imposta la larghezza al 100%
-                                svgContainers3.forEach(function(container) {
-                                    container.style.width = '100%';
-                                });
-                        
-                                // Seleziona tutti gli elementi con il tag '.highcharts-container'
-                                var items = document.querySelectorAll('.highcharts-container');
-                        
-                                // Itera su ogni rect e imposta la larghezza al 100%
-                                items.forEach(function(item) {
-                                    item.style.width = '100%';
-                                });
-                                
-                                
-                                // Seleziona tutti gli elementi con il tag 'select'
-                                var selects = document.querySelectorAll('select');
-                        
-                                // Itera su ogni rect e imposta la larghezza al 100%
-                                selects.forEach(function(select) {
-                                    select.style.width = '200px';
-                                });
-                                
-                                
-                                // Seleziona tutti gli elementi con il tag 'content'
-                                var contents = document.querySelectorAll('.content');
-                        
-                                contents.forEach(function(content) {
-                                    content.style.display = 'none';
-                                });
-                                
-                                 
-                            }
-                        
-                            // Call the function when the document is fully loaded
-                            resizeElements();
-                        });
-                        
-                        </script>
-                        </div><hr><br><footer><strong>About scomp-link</strong><br>
-                        scomp-link is a general-purpose data science toolkit for preprocessing, model selection, and validation. It is dataset- and domain-agnostic.
-                        Learn more in the project README and documentation.<br>
-                        <strong>May the code be with you.</strong><br><br>
-                        Copyright &copy; 2026 scomp-link contributors. All rights reserved.<br><br></footer>"""
+        cls.footer = _build_footer(footer_html)
         cls.html_report = ""
         cls.section_just_open = False
         cls.lan = language
@@ -508,6 +516,7 @@ class ScompLinkHTMLReport:
         main_color=MAIN,
         light_color=MAIN_LIGHT,
         dark_color=MAIN_DARK,
+        footer_html=None,
     ):
         self.dark_color = dark_color
         self.light_color = light_color
@@ -814,140 +823,7 @@ class ScompLinkHTMLReport:
             .replace("{dark_color}", self.dark_color)
             .replace("{light_color}", self.light_color)
         )
-        self.footer = """
-                        <script>
-                        // Quick and simple export target #table_id into a csv
-                        function download_table_as_csv(table_id, separator = ',') {
-                            // Select rows from table_id
-                            var rows = document.querySelectorAll('table#' + table_id + ' tr');
-                            // Construct csv
-                            var csv = [];
-                            for (var i = 0; i < rows.length; i++) {
-                                var row = [], cols = rows[i].querySelectorAll('td, th');
-                                for (var j = 0; j < cols.length; j++) {
-                                    // Clean innertext to remove multiple spaces and jumpline (break csv)
-                                    var data = cols[j].innerText.replace(/(\\r\\n|\\n|\\r)/gm, '').replace(/(\s\s)/gm, ' ')
-                                    // Escape double-quote with double-double-quote (see https://stackoverflow.com/questions/17808511/properly-escape-a-double-quote-in-csv)
-                                    data = data.replace(/"/g, '""');
-                                    // Push escaped string
-                                    row.push('"' + data + '"');
-                                }
-                                csv.push(row.join(separator));
-                            }
-                            var csv_string = csv.join('\\n');
-                            // Download it
-                            var filename = 'export_' + table_id + '_' + new Date().toLocaleDateString() + '.csv';
-                            var link = document.createElement('a');
-                            link.style.display = 'none';
-                            link.setAttribute('target', '_blank');
-                            link.setAttribute('href', 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv_string));
-                            link.setAttribute('download', filename);
-                            document.body.appendChild(link);
-                            link.click();
-                            document.body.removeChild(link);
-                        }
-                        var coll = document.getElementsByClassName("collapsiblemygs");
-                        var i;
-
-                        for (i = 0; i < coll.length; i++) {
-                          coll[i].addEventListener("click", function() {
-                            this.classList.toggle("active");
-                            var content = this.nextElementSibling;
-                            if (content.style.display === "block") {
-                              content.style.display = "none";
-                            } else {
-                              content.style.display = "block";
-                            }
-                          });
-                        }
-                        document.addEventListener("DOMContentLoaded", function() {
-                            // Function to resize svg-containers, SVG images and rect elements
-                            function resizeElements() {
-                                // Seleziona tutti gli elementi con la classe 'svg-container'
-                                var svgContainers = document.querySelectorAll('.svg-container');
-                        
-                                // Itera su ogni svg-container e imposta la larghezza al 100%
-                                svgContainers.forEach(function(container) {
-                                    container.style.width = '100%';
-                                });
-                                
-                                 var svgContainers0 = document.querySelectorAll('.user-select-none');
-                        
-                                // Itera su ogni svg-container e imposta la larghezza al 100%
-                                svgContainers0.forEach(function(container) {
-                                    container.style.width = '100%';
-                                });
-                                
-                                
-                                 var cartesianlayer = document.querySelectorAll('.cartesianlayer');
-                        
-                                // Itera su ogni svg-container e imposta la larghezza al 100%
-                                cartesianlayer.forEach(function(container) {
-                                    container.style.width = '100%';
-                                });
-                                
-                                
-                        
-                                 var svgContainers1 = document.querySelectorAll('.js-plotly-plot');
-                        
-                                // Itera su ogni svg-container e imposta la larghezza al 100%
-                                svgContainers1.forEach(function(container) {
-                                    container.style.width = '100%';
-                                });
-                                
-                                
-                                 var svgContainers2 = document.querySelectorAll('.main-svg');
-                        
-                                // Itera su ogni svg-container e imposta la larghezza al 100%
-                                svgContainers2.forEach(function(container) {
-                                    container.style.width = '100%';
-                                });
-                        
-                                 var svgContainers3 = document.querySelectorAll('.plot-container');
-                        
-                                // Itera su ogni svg-container e imposta la larghezza al 100%
-                                svgContainers3.forEach(function(container) {
-                                    container.style.width = '100%';
-                                });
-                        
-                                // Seleziona tutti gli elementi con il tag '.highcharts-container'
-                                var items = document.querySelectorAll('.highcharts-container');
-                        
-                                // Itera su ogni rect e imposta la larghezza al 100%
-                                items.forEach(function(item) {
-                                    item.style.width = '100%';
-                                });
-                                
-                                
-                                // Seleziona tutti gli elementi con il tag 'select'
-                                var selects = document.querySelectorAll('select');
-                        
-                                // Itera su ogni rect e imposta la larghezza al 100%
-                                selects.forEach(function(select) {
-                                    select.style.width = '200px';
-                                });
-                                
-                                 
-                                
-                                // Seleziona tutti gli elementi con il tag 'content'
-                                var contents = document.querySelectorAll('.content');
-                        
-                                contents.forEach(function(content) {
-                                    content.style.display = 'none';
-                                });
-                                
-                            }
-                        
-                            // Call the function when the document is fully loaded
-                            resizeElements();
-                        });
-                        
-                        </script>
-                        </div><hr><br><footer><strong>About scomp-link</strong><br>
-                        scomp-link is a general-purpose data science toolkit for preprocessing, model selection, and validation. It is dataset- and domain-agnostic.
-                        Learn more in the project README and documentation.<br>
-                        <strong>May the code be with you.</strong><br><br>
-                        Copyright &copy; 2026 scomp-link contributors. All rights reserved.<br><br></footer>"""
+        self.footer = _build_footer(footer_html)
         self.html_report = ""
         self.section_just_open = False
         self.lan = language
