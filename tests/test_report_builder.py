@@ -24,20 +24,29 @@ class TestConfig:
 
     def test_load_config_returns_defaults(self):
         from scomp_link.config import load_config
+        from pathlib import Path
+        import unittest.mock as mock
 
-        cfg = load_config()
-        assert "report" in cfg
-        assert cfg["report"]["main_color"] == "#6E37FA"
-        assert cfg["report"]["author"] == "scomp-link toolkit"
+        # Mock config paths to ensure only hardcoded defaults are used
+        with mock.patch("scomp_link.config._GLOBAL_CONFIG_PATH", Path("/nonexistent/cfg.yaml")):
+            with mock.patch("scomp_link.config._LOCAL_CONFIG_PATH", Path("/nonexistent/.scomp-link.yaml")):
+                cfg = load_config()
+                assert "report" in cfg
+                assert cfg["report"]["main_color"] == "#6E37FA"
+                assert cfg["report"]["author"] == "scomp-link toolkit"
 
     def test_get_report_defaults(self):
         from scomp_link.config import get_report_defaults
+        from pathlib import Path
+        import unittest.mock as mock
 
-        defaults = get_report_defaults()
-        assert defaults["font_family"] == "Baloo 2"
-        assert defaults["language"] == "en"
-        assert defaults["dark_color"] == "#4614B4"
-        assert defaults["footer_html"] is None
+        with mock.patch("scomp_link.config._GLOBAL_CONFIG_PATH", Path("/nonexistent/cfg.yaml")):
+            with mock.patch("scomp_link.config._LOCAL_CONFIG_PATH", Path("/nonexistent/.scomp-link.yaml")):
+                defaults = get_report_defaults()
+                assert defaults["font_family"] == "Baloo 2"
+                assert defaults["language"] == "en"
+                assert defaults["dark_color"] == "#4614B4"
+                assert defaults["footer_html"] is None
 
     def test_init_config_creates_file(self):
         with tempfile.TemporaryDirectory() as td:
@@ -71,7 +80,10 @@ class TestConfig:
 
     def test_local_config_overrides_defaults(self):
         """Test that a local .scomp-link.yaml overrides defaults."""
+        import unittest.mock as mock
+
         import yaml
+        from pathlib import Path
 
         from scomp_link.config import _LOCAL_CONFIG_PATH, load_config
 
@@ -80,11 +92,13 @@ class TestConfig:
         _LOCAL_CONFIG_PATH.write_text(yaml.dump(local_cfg), encoding="utf-8")
 
         try:
-            cfg = load_config()
-            assert cfg["report"]["main_color"] == "#FF0000"
-            assert cfg["report"]["author"] == "Test Corp"
-            # Non-overridden defaults should remain
-            assert cfg["report"]["font_family"] == "Baloo 2"
+            # Mock global config to avoid interference from real ~/.scomp-link/config.yaml
+            with mock.patch("scomp_link.config._GLOBAL_CONFIG_PATH", Path("/nonexistent/cfg.yaml")):
+                cfg = load_config()
+                assert cfg["report"]["main_color"] == "#FF0000"
+                assert cfg["report"]["author"] == "Test Corp"
+                # Non-overridden defaults should remain
+                assert cfg["report"]["font_family"] == "Baloo 2"
         finally:
             _LOCAL_CONFIG_PATH.unlink(missing_ok=True)
 
@@ -198,11 +212,14 @@ class TestReportCreate:
     def test_create_uses_config_defaults(self):
         """report_create with None params should use config defaults."""
         from scomp_link.mcp_server import report_create
+        from pathlib import Path
+        import unittest.mock as mock
 
-        result = json.loads(report_create("Default Report"))
-        # Should use hardcoded defaults (no local config in test env)
-        assert result["params"]["font_family"] == "Baloo 2"
-        assert result["params"]["main_color"] == "#6E37FA"
+        with mock.patch("scomp_link.config._GLOBAL_CONFIG_PATH", Path("/nonexistent/cfg.yaml")):
+            with mock.patch("scomp_link.config._LOCAL_CONFIG_PATH", Path("/nonexistent/.scomp-link.yaml")):
+                result = json.loads(report_create("Default Report"))
+                assert result["params"]["font_family"] == "Baloo 2"
+                assert result["params"]["main_color"] == "#6E37FA"
 
     def teardown_method(self):
         from scomp_link.mcp_server import _reports

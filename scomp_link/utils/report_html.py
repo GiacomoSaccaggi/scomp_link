@@ -231,262 +231,173 @@ class ScompLinkHTMLReport:
             <script>const colors = Highcharts.getOptions().colors;</script>
 
             <style>
-            html,body{font-family:{font_family}, sans-serif;font-size:15px;line-height:1.5;text-align: justify;text-justify: inter-word;color:#4D577D;}html{overflow-x:hidden}
-            h1{font-size:32px}h2{font-size:25px;color:#32BBB9;}h3{font-size:15px}h4{font-size:12px}h5{font-size:10px}h6{font-size:9px}
-            h1,h2,h3,h4,h5,h6{font-weight:400;margin:10px 0}.w3-wide{letter-spacing:4px}
-            footer{text-align: center;padding-left: 15%;padding-right: 15%;}
-            header{
-              position: relative;
-              background-position: center;
-              background-repeat: no-repeat;
-              background-size: cover;
-              background-image: url({url_background_header});
-              height: 50%;
-              width:100%;
-              color: white;
-              text-align: left;
-              padding-top: 5%;
-              padding-left: 15%;
-            }
-            .user-select-none .svg-container {
-              height: 100%;
-              width:100%;
-            }
-            .report {
-                padding-right: 20%;
-                padding-bottom: 5%;
-                padding-left: 20%;
-            }
-            input[type=button], input[type=submit], input[type=reset] {
-              padding: 16px 32px;
-              text-decoration: none;
-              margin: 4px 2px;
-              cursor: pointer;
-              display: inline-block;
-              border-radius: 4px;
-              background-color: white;
-              color:  {dark_color};
-              border: 2px solid  {main_color};
-              text-align: center;
-              transition: all 0.5s;
-              cursor: pointer;
-              margin: 5px;
-            }
-           :root {
-              --radius: 2px;
+            :root {
+              --bg: #ffffff;
+              --card: #f8fafc;
+              --accent: {main_color};
+              --accent2: {dark_color};
+              --accent3: #0f9d58;
+              --accent4: #e8590c;
+              --accent5: #d6336c;
+              --text: #1e293b;
+              --dim: #64748b;
+              --border: #e2e8f0;
+              --radius: 8px;
               --baseFg: dimgray;
               --baseBg: white;
-              --accentFg: #5528D2;
-              --accentBg:  {main_color};
+              --accentFg: {dark_color};
+              --accentBg: {main_color};
             }
-            input[type=button]:hover, input[type=submit]:hover, input[type=reset]:hover {
-                  background-color:  {main_color};
-                  color: white;
-                }
-
-            .plotly-graph-div {
-                        width: 100%;
-            }    
-            .highcharts-label-icon {
-                opacity: 0.5;
-            }
-
-        
-            .highcharts-figure,
-            .highcharts-data-table table {
-                min-width: 310px;
-                max-width: 800px;
-                overflow: auto;
-                margin: 1em auto;
-            }
-        
-            .highcharts-data-table table {
-                font-family: Verdana, sans-serif;
-                border-collapse: collapse;
-                border: 1px solid #ebebeb;
-                margin: 10px auto;
-                text-align: center;
-                width: 100%;
-                height: auto;
-                max-width: 90000px;
-            }
-            
-            .highcharts-figure {width: 100%;
-                height: auto;
-                max-width: 90000px;}
-        
-            .highcharts-data-table caption {
-                padding: 1em 0;
-                font-size: 1.2em;
-                color: #555;
-            }
-        
-            .highcharts-data-table th {
-                font-weight: 600;
-                padding: 0.5em;
-            }
-        
-            .highcharts-data-table td,
-            .highcharts-data-table th,
-            .highcharts-data-table caption {
-                padding: 0.5em;
-            }
-        
-            .highcharts-data-table thead tr,
-            .highcharts-data-table tr:nth-child(even) {
-                background: #f8f8f8;
-            }
-        
-            .highcharts-data-table tr:hover {
-                background: #f1f7ff;
-            }
-            #table-wrapper {
+            *{margin:0;padding:0;box-sizing:border-box}
+            html,body{font-family:{font_family}, system-ui, sans-serif;font-size:15px;line-height:1.6;color:var(--text)}
+            html{overflow-x:hidden}
+            h1{font-size:2.2rem;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+            h2{font-size:1.3rem;font-weight:700;color:var(--accent);margin:1rem 0 .5rem}
+            h3{font-size:1rem;font-weight:600;color:var(--text)}
+            h4{font-size:.9rem;color:var(--accent3)}
+            h5{font-size:.8rem;color:var(--dim)}
+            h6{font-size:.7rem;color:var(--dim)}
+            p{margin:.5rem 0;text-align:justify}
+            footer{text-align:center;padding:2rem 15%;color:var(--dim);font-size:.85rem}
+            header{
               position:relative;
-            }
-            #table-scroll {
-              height:500px;
-              overflow:auto;
-              margin-top:20px;
-            }
-            #table-wrapper table {
+              background-position:center;
+              background-repeat:no-repeat;
+              background-size:cover;
+              background-image:url({url_background_header});
+              height:50%;
               width:100%;
-            
+              color:white;
+              text-align:left;
+              padding-top:5%;
+              padding-left:15%;
             }
-            #table-wrapper table * {
-              color:black;
+            header h1{-webkit-text-fill-color:white;background:none}
+            .user-select-none .svg-container{height:100%;width:100%}
+            .report{
+              padding:2rem 10%;
+              max-width:1400px;
+              margin:0 auto;
+              background:var(--bg);
             }
-            #table-wrapper table thead th .text {
-              position:absolute;
-              top:-20px;
-              z-index:2;
-              height:20px;
-              width:35%;
-              border:1px solid red;
+            input[type=button],input[type=submit],input[type=reset]{
+              padding:12px 24px;
+              text-decoration:none;
+              margin:4px 2px;
+              cursor:pointer;
+              display:inline-block;
+              border-radius:var(--radius);
+              background-color:white;
+              color:var(--accent2);
+              border:2px solid var(--accent);
+              text-align:center;
+              transition:all .3s ease;
+              font-weight:600;
+              font-size:.85rem;
             }
-            .column_result_save {
-              float: left;
-              width: 50%;
-              padding: 10px;
+            input[type=button]:hover,input[type=submit]:hover,input[type=reset]:hover{
+              background-color:var(--accent);
+              color:white;
+              box-shadow:0 4px 12px rgba(0,0,0,.1);
             }
-
-            select {
-              font: 400 12px/1.3 sans-serif;
-              -webkit-appearance: none;
-              appearance: none;
-              color: var(--baseFg);
-              border: 1px solid var(--baseFg);
-              line-height: 1;
-              outline: 0;
-              padding: 0.65em 2.5em 0.55em 0.75em;
-              border-radius: var(--radius);
-              background-color: var(--baseBg);
-              background-image: linear-gradient(var(--baseFg), var(--baseFg)),
-                linear-gradient(-135deg, transparent 50%, var(--accentBg) 50%),
-                linear-gradient(-225deg, transparent 50%, var(--accentBg) 50%),
-                linear-gradient(var(--accentBg) 42%, var(--accentFg) 42%);
-              background-repeat: no-repeat, no-repeat, no-repeat, no-repeat;
-              background-size: 1px 100%, 20px 22px, 20px 22px, 20px 100%;
-              background-position: right 20px center, right bottom, right bottom, right bottom;   
+            .plotly-graph-div{width:100%}
+            #container{height:600px}
+            .highcharts-label-icon{opacity:0.5}
+            .highcharts-figure,.highcharts-data-table table{min-width:310px;max-width:100%;overflow:auto;margin:1em auto}
+            .highcharts-data-table table{font-family:inherit;border-collapse:collapse;border:1px solid var(--border);margin:10px auto;text-align:center;width:100%}
+            .highcharts-figure{width:100%;height:auto}
+            .highcharts-data-table caption{padding:1em 0;font-size:1.1em;color:var(--dim)}
+            .highcharts-data-table th{font-weight:600;padding:0.5em}
+            .highcharts-data-table td,.highcharts-data-table th,.highcharts-data-table caption{padding:0.5em}
+            .highcharts-data-table thead tr,.highcharts-data-table tr:nth-child(even){background:var(--card)}
+            .highcharts-data-table tr:hover{background:rgba(0,94,184,.04)}
+            #table-wrapper{position:relative}
+            #table-scroll{max-height:500px;overflow:auto;margin-top:20px;border:1px solid var(--border);border-radius:var(--radius)}
+            #table-wrapper table{width:100%;border-collapse:collapse}
+            #table-wrapper table *{color:var(--text)}
+            #table-wrapper table thead th{background:var(--accent);color:white;text-transform:uppercase;font-size:.7rem;letter-spacing:.04em;padding:.6rem .8rem}
+            #table-wrapper table td{padding:.45rem .8rem;border-bottom:1px solid var(--border);font-size:.85rem}
+            #table-wrapper table tr:nth-child(even){background:var(--card)}
+            #table-wrapper table tr:hover{background:rgba(0,94,184,.04)}
+            .column_result_save{float:left;width:50%;padding:10px}
+            code{color:var(--accent2);background:rgba(110,55,250,.07);padding:1px 5px;border-radius:3px;font-size:.85em}
+            select{
+              font:400 12px/1.3 sans-serif;
+              -webkit-appearance:none;
+              appearance:none;
+              color:var(--baseFg);
+              border:1px solid var(--border);
+              line-height:1;
+              outline:0;
+              padding:0.65em 2.5em 0.55em 0.75em;
+              border-radius:var(--radius);
+              background-color:var(--baseBg);
+              background-image:linear-gradient(var(--baseFg),var(--baseFg)),linear-gradient(-135deg,transparent 50%,var(--accentBg) 50%),linear-gradient(-225deg,transparent 50%,var(--accentBg) 50%),linear-gradient(var(--accentBg) 42%,var(--accentFg) 42%);
+              background-repeat:no-repeat;
+              background-size:1px 100%,20px 22px,20px 22px,20px 100%;
+              background-position:right 20px center,right bottom,right bottom,right bottom;
             }
-
-            select:hover {
-              background-image: linear-gradient(var(--accentFg), var(--accentFg)),
-                linear-gradient(-135deg, transparent 50%, var(--accentFg) 50%),
-                linear-gradient(-225deg, transparent 50%, var(--accentFg) 50%),
-                linear-gradient(var(--accentFg) 42%, var(--accentBg) 42%);
+            select:hover{
+              background-image:linear-gradient(var(--accentFg),var(--accentFg)),linear-gradient(-135deg,transparent 50%,var(--accentFg) 50%),linear-gradient(-225deg,transparent 50%,var(--accentFg) 50%),linear-gradient(var(--accentFg) 42%,var(--accentBg) 42%);
             }
-
-            select:active {
-              background-image: linear-gradient(var(--accentFg), var(--accentFg)),
-                linear-gradient(-135deg, transparent 50%, var(--accentFg) 50%),
-                linear-gradient(-225deg, transparent 50%, var(--accentFg) 50%),
-                linear-gradient(var(--accentFg) 42%, var(--accentBg) 42%);
-              color: var(--accentBg);
-              border-color: var(--accentFg);
-              background-color: var(--accentFg);
+            .collapsiblemygs{
+              background-color:var(--card);
+              color:var(--text);
+              cursor:pointer;
+              padding:14px 20px;
+              width:100%;
+              border:1px solid var(--border);
+              border-radius:var(--radius);
+              text-align:left;
+              outline:none;
+              font-size:.95rem;
+              font-weight:600;
+              margin-top:.75rem;
+              transition:all .2s ease;
             }
-            .collapsiblemygs {
-                  background-color: #777;
-                  color: white;
-                  cursor: pointer;
-                  padding: 18px;
-                  width: 100%;
-                  border: none;
-                  text-align: left;
-                  outline: none;
-                  font-size: 15px;
-                }
-
-                .active, .collapsiblemygs:hover {
-                  background-color: #555;
-                }
-
-                .content {
-                  padding: 0 18px;
-                  display: block;
-                  overflow: hidden;
-                  background-color: #f1f1f1;
-                }
-            /*rules*/
-            @media only screen and (max-width: 1024px) {
-            .report{padding-right: 5%; padding-left: 5%;}
+            .collapsiblemygs:hover,.active{
+              background-color:rgba(0,94,184,.04);
+              border-color:var(--accent);
+              color:var(--accent);
             }
-            /* ----------- iPhone 6+, 7+ and 8+ ----------- */
-            /* Portrait */
-            @media only screen and (max-width: 1024px) {
-            h2{font-size:18px}
-            h3{font-size:10px}
+            .content{
+              padding:1.2rem 1.5rem;
+              display:block;
+              overflow:hidden;
+              background-color:var(--card);
+              border:1px solid var(--border);
+              border-top:none;
+              border-radius:0 0 var(--radius) var(--radius);
             }
-            @media only screen and (max-width: 835px) {
-            h2{font-size:18px}
-            h3{font-size:8px}
+            @media only screen and (max-width:1024px){
+              .report{padding:1.5rem 5%}
             }
-            @media only screen and (max-width: 700px) {
-            h2{font-size:15px}
-            h3{font-size:6px}
+            @media only screen and (max-width:700px){
+              h2{font-size:1.1rem}
+              .collapsiblemygs{font-size:.85rem;padding:12px 16px}
             }
-            @media only screen and (max-width: 525px) {
-            h2{font-size:13px}
-            h3{font-size:5px}
-            }
-            @media only screen and (max-width: 370px) {
-            h2{font-size:10px}
-            h3{font-size:3px}
-            }
-            /* --- PDF PRINT STYLES --- */
-            @media print {
-                .collapsiblemygs {
-                    page-break-before: always;
-                    background-color: transparent !important;
-                    color: black !important;
-                    font-size: 24px !important;
-                    font-weight: bold;
-                    border-bottom: 2px solid var(--accentBg);
-                    padding: 0 0 10px 0 !important;
-                    margin-top: 30px !important;
-                }
-                .content {
-                    display: block !important;
-                    background-color: white !important;
-                    padding: 0 !important;
-                }
-                select, input[type="submit"], input[type="button"], label {
-                    display: none !important;
-                }
-                .print-grid-container {
-                    display: flex !important;
-                    flex-wrap: wrap !important;
-                    justify-content: space-between !important;
-                }
-                .print-grid-item {
-                    display: block !important;
-                    width: 48% !important;
-                    page-break-inside: avoid;
-                }
-                body {
-                    -webkit-print-color-adjust: exact;
-                    print-color-adjust: exact;
-                }
+            @media print{
+              .collapsiblemygs{
+                page-break-before:always;
+                background-color:transparent !important;
+                color:black !important;
+                font-size:24px !important;
+                font-weight:bold;
+                border-bottom:2px solid var(--accentBg);
+                border:none !important;
+                padding:0 0 10px 0 !important;
+                margin-top:30px !important;
+              }
+              .content{
+                display:block !important;
+                background-color:white !important;
+                border:none !important;
+                padding:0 !important;
+              }
+              select,input[type="submit"],input[type="button"],label{display:none !important}
+              .print-grid-container{display:flex !important;flex-wrap:wrap !important;justify-content:space-between !important}
+              .print-grid-item{display:block !important;width:48% !important;page-break-inside:avoid}
+              body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
             }
             </style>
             <script src="https://cdn.plot.ly/plotly-2.9.0.min.js"></script>
@@ -556,263 +467,173 @@ class ScompLinkHTMLReport:
             <script>const colors = Highcharts.getOptions().colors;</script>
 
             <style>
-            html,body{font-family:{font_family}, sans-serif;font-size:15px;line-height:1.5;text-align: justify;text-justify: inter-word;color:#4D577D;}html{overflow-x:hidden}
-            h1{font-size:32px}h2{font-size:25px;color:#32BBB9;}h3{font-size:15px}h4{font-size:12px}h5{font-size:10px}h6{font-size:9px}
-            h1,h2,h3,h4,h5,h6{font-weight:400;margin:10px 0}.w3-wide{letter-spacing:4px}
-            footer{text-align: center;padding-left: 15%;padding-right: 15%;}
-            header{
-              position: relative;
-              background-position: center;
-              background-repeat: no-repeat;
-              background-size: cover;
-              background-image: url({url_background_header});
-              height: 50%;
-              width:100%;
-              color: white;
-              text-align: left;
-              padding-top: 5%;
-              padding-left: 15%;
-            }
-            .user-select-none .svg-container {
-              height: 100%;
-              width:100%;
-            }
-            .report {
-                padding-right: 20%;
-                padding-bottom: 5%;
-                padding-left: 20%;
-            }
-            input[type=button], input[type=submit], input[type=reset] {
-              padding: 16px 32px;
-              text-decoration: none;
-              margin: 4px 2px;
-              cursor: pointer;
-              display: inline-block;
-              border-radius: 4px;
-              background-color: white;
-              color:  {dark_color};
-              border: 2px solid  {main_color};
-              text-align: center;
-              transition: all 0.5s;
-              cursor: pointer;
-              margin: 5px;
-            }
-           :root {
-              --radius: 2px;
+            :root {
+              --bg: #ffffff;
+              --card: #f8fafc;
+              --accent: {main_color};
+              --accent2: {dark_color};
+              --accent3: #0f9d58;
+              --accent4: #e8590c;
+              --accent5: #d6336c;
+              --text: #1e293b;
+              --dim: #64748b;
+              --border: #e2e8f0;
+              --radius: 8px;
               --baseFg: dimgray;
               --baseBg: white;
-              --accentFg: #5528D2;
-              --accentBg:  {main_color};
+              --accentFg: {dark_color};
+              --accentBg: {main_color};
             }
-            input[type=button]:hover, input[type=submit]:hover, input[type=reset]:hover {
-                  background-color:  {main_color};
-                  color: white;
-                }
-
-            .plotly-graph-div {
-                        width: 100%;
-            }
-             #container {
-                height: 600px;
-            }
-            .highcharts-label-icon {
-                opacity: 0.5;
-            }
-        
-            .highcharts-figure,
-            .highcharts-data-table table {
-                min-width: 310px;
-                max-width: 800px;
-                overflow: auto;
-                margin: 1em auto;
-            }
-        
-            .highcharts-data-table table {
-                font-family: Verdana, sans-serif;
-                border-collapse: collapse;
-                border: 1px solid #ebebeb;
-                margin: 10px auto;
-                text-align: center;
-                width: 100%;
-                height: auto;
-                max-width: 90000px;
-            }
-            
-            .highcharts-figure {width: 100%;
-                height: auto;
-                max-width: 90000px;}
-        
-            .highcharts-data-table caption {
-                padding: 1em 0;
-                font-size: 1.2em;
-                color: #555;
-            }
-        
-            .highcharts-data-table th {
-                font-weight: 600;
-                padding: 0.5em;
-            }
-        
-            .highcharts-data-table td,
-            .highcharts-data-table th,
-            .highcharts-data-table caption {
-                padding: 0.5em;
-            }
-        
-            .highcharts-data-table thead tr,
-            .highcharts-data-table tr:nth-child(even) {
-                background: #f8f8f8;
-            }
-        
-            .highcharts-data-table tr:hover {
-                background: #f1f7ff;
-            }
-            #table-wrapper {
+            *{margin:0;padding:0;box-sizing:border-box}
+            html,body{font-family:{font_family}, system-ui, sans-serif;font-size:15px;line-height:1.6;color:var(--text)}
+            html{overflow-x:hidden}
+            h1{font-size:2.2rem;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+            h2{font-size:1.3rem;font-weight:700;color:var(--accent);margin:1rem 0 .5rem}
+            h3{font-size:1rem;font-weight:600;color:var(--text)}
+            h4{font-size:.9rem;color:var(--accent3)}
+            h5{font-size:.8rem;color:var(--dim)}
+            h6{font-size:.7rem;color:var(--dim)}
+            p{margin:.5rem 0;text-align:justify}
+            footer{text-align:center;padding:2rem 15%;color:var(--dim);font-size:.85rem}
+            header{
               position:relative;
-            }
-            #table-scroll {
-              height:500px;
-              overflow:auto;
-              margin-top:20px;
-            }
-            #table-wrapper table {
+              background-position:center;
+              background-repeat:no-repeat;
+              background-size:cover;
+              background-image:url({url_background_header});
+              height:50%;
               width:100%;
-            
+              color:white;
+              text-align:left;
+              padding-top:5%;
+              padding-left:15%;
             }
-            #table-wrapper table * {
-              color:black;
+            header h1{-webkit-text-fill-color:white;background:none}
+            .user-select-none .svg-container{height:100%;width:100%}
+            .report{
+              padding:2rem 10%;
+              max-width:1400px;
+              margin:0 auto;
+              background:var(--bg);
             }
-            #table-wrapper table thead th .text {
-              position:absolute;
-              top:-20px;
-              z-index:2;
-              height:20px;
-              width:35%;
-              border:1px solid red;
+            input[type=button],input[type=submit],input[type=reset]{
+              padding:12px 24px;
+              text-decoration:none;
+              margin:4px 2px;
+              cursor:pointer;
+              display:inline-block;
+              border-radius:var(--radius);
+              background-color:white;
+              color:var(--accent2);
+              border:2px solid var(--accent);
+              text-align:center;
+              transition:all .3s ease;
+              font-weight:600;
+              font-size:.85rem;
             }
-            .column_result_save {
-              float: left;
-              width: 50%;
-              padding: 10px;
+            input[type=button]:hover,input[type=submit]:hover,input[type=reset]:hover{
+              background-color:var(--accent);
+              color:white;
+              box-shadow:0 4px 12px rgba(0,0,0,.1);
             }
-            select {
-              font: 400 12px/1.3 sans-serif;
-              -webkit-appearance: none;
-              appearance: none;
-              color: var(--baseFg);
-              border: 1px solid var(--baseFg);
-              line-height: 1;
-              outline: 0;
-              padding: 0.65em 2.5em 0.55em 0.75em;
-              border-radius: var(--radius);
-              background-color: var(--baseBg);
-              background-image: linear-gradient(var(--baseFg), var(--baseFg)),
-                linear-gradient(-135deg, transparent 50%, var(--accentBg) 50%),
-                linear-gradient(-225deg, transparent 50%, var(--accentBg) 50%),
-                linear-gradient(var(--accentBg) 42%, var(--accentFg) 42%);
-              background-repeat: no-repeat, no-repeat, no-repeat, no-repeat;
-              background-size: 1px 100%, 20px 22px, 20px 22px, 20px 100%;
-              background-position: right 20px center, right bottom, right bottom, right bottom;   
+            .plotly-graph-div{width:100%}
+            #container{height:600px}
+            .highcharts-label-icon{opacity:0.5}
+            .highcharts-figure,.highcharts-data-table table{min-width:310px;max-width:100%;overflow:auto;margin:1em auto}
+            .highcharts-data-table table{font-family:inherit;border-collapse:collapse;border:1px solid var(--border);margin:10px auto;text-align:center;width:100%}
+            .highcharts-figure{width:100%;height:auto}
+            .highcharts-data-table caption{padding:1em 0;font-size:1.1em;color:var(--dim)}
+            .highcharts-data-table th{font-weight:600;padding:0.5em}
+            .highcharts-data-table td,.highcharts-data-table th,.highcharts-data-table caption{padding:0.5em}
+            .highcharts-data-table thead tr,.highcharts-data-table tr:nth-child(even){background:var(--card)}
+            .highcharts-data-table tr:hover{background:rgba(0,94,184,.04)}
+            #table-wrapper{position:relative}
+            #table-scroll{max-height:500px;overflow:auto;margin-top:20px;border:1px solid var(--border);border-radius:var(--radius)}
+            #table-wrapper table{width:100%;border-collapse:collapse}
+            #table-wrapper table *{color:var(--text)}
+            #table-wrapper table thead th{background:var(--accent);color:white;text-transform:uppercase;font-size:.7rem;letter-spacing:.04em;padding:.6rem .8rem}
+            #table-wrapper table td{padding:.45rem .8rem;border-bottom:1px solid var(--border);font-size:.85rem}
+            #table-wrapper table tr:nth-child(even){background:var(--card)}
+            #table-wrapper table tr:hover{background:rgba(0,94,184,.04)}
+            .column_result_save{float:left;width:50%;padding:10px}
+            code{color:var(--accent2);background:rgba(110,55,250,.07);padding:1px 5px;border-radius:3px;font-size:.85em}
+            select{
+              font:400 12px/1.3 sans-serif;
+              -webkit-appearance:none;
+              appearance:none;
+              color:var(--baseFg);
+              border:1px solid var(--border);
+              line-height:1;
+              outline:0;
+              padding:0.65em 2.5em 0.55em 0.75em;
+              border-radius:var(--radius);
+              background-color:var(--baseBg);
+              background-image:linear-gradient(var(--baseFg),var(--baseFg)),linear-gradient(-135deg,transparent 50%,var(--accentBg) 50%),linear-gradient(-225deg,transparent 50%,var(--accentBg) 50%),linear-gradient(var(--accentBg) 42%,var(--accentFg) 42%);
+              background-repeat:no-repeat;
+              background-size:1px 100%,20px 22px,20px 22px,20px 100%;
+              background-position:right 20px center,right bottom,right bottom,right bottom;
             }
-
-            select:hover {
-              background-image: linear-gradient(var(--accentFg), var(--accentFg)),
-                linear-gradient(-135deg, transparent 50%, var(--accentFg) 50%),
-                linear-gradient(-225deg, transparent 50%, var(--accentFg) 50%),
-                linear-gradient(var(--accentFg) 42%, var(--accentBg) 42%);
+            select:hover{
+              background-image:linear-gradient(var(--accentFg),var(--accentFg)),linear-gradient(-135deg,transparent 50%,var(--accentFg) 50%),linear-gradient(-225deg,transparent 50%,var(--accentFg) 50%),linear-gradient(var(--accentFg) 42%,var(--accentBg) 42%);
             }
-
-            select:active {
-              background-image: linear-gradient(var(--accentFg), var(--accentFg)),
-                linear-gradient(-135deg, transparent 50%, var(--accentFg) 50%),
-                linear-gradient(-225deg, transparent 50%, var(--accentFg) 50%),
-                linear-gradient(var(--accentFg) 42%, var(--accentBg) 42%);
-              color: var(--accentBg);
-              border-color: var(--accentFg);
-              background-color: var(--accentFg);
+            .collapsiblemygs{
+              background-color:var(--card);
+              color:var(--text);
+              cursor:pointer;
+              padding:14px 20px;
+              width:100%;
+              border:1px solid var(--border);
+              border-radius:var(--radius);
+              text-align:left;
+              outline:none;
+              font-size:.95rem;
+              font-weight:600;
+              margin-top:.75rem;
+              transition:all .2s ease;
             }
-            .collapsiblemygs {
-                  background-color: #777;
-                  color: white;
-                  cursor: pointer;
-                  padding: 18px;
-                  width: 100%;
-                  border: none;
-                  text-align: left;
-                  outline: none;
-                  font-size: 15px;
-                }
-
-                .active, .collapsiblemygs:hover {
-                  background-color: #555;
-                }
-
-                .content {
-                  padding: 0 18px;
-                  display: block;
-                  overflow: hidden;
-                  background-color: #f1f1f1;
-                }
-            /*rules*/
-            @media only screen and (max-width: 1024px) {
-            .report{padding-right: 5%; padding-left: 5%;}
+            .collapsiblemygs:hover,.active{
+              background-color:rgba(0,94,184,.04);
+              border-color:var(--accent);
+              color:var(--accent);
             }
-            /* ----------- iPhone 6+, 7+ and 8+ ----------- */
-            /* Portrait */
-            @media only screen and (max-width: 1024px) {
-            h2{font-size:18px}
-            h3{font-size:10px}
+            .content{
+              padding:1.2rem 1.5rem;
+              display:block;
+              overflow:hidden;
+              background-color:var(--card);
+              border:1px solid var(--border);
+              border-top:none;
+              border-radius:0 0 var(--radius) var(--radius);
             }
-            @media only screen and (max-width: 835px) {
-            h2{font-size:18px}
-            h3{font-size:8px}
+            @media only screen and (max-width:1024px){
+              .report{padding:1.5rem 5%}
             }
-            @media only screen and (max-width: 700px) {
-            h2{font-size:15px}
-            h3{font-size:6px}
+            @media only screen and (max-width:700px){
+              h2{font-size:1.1rem}
+              .collapsiblemygs{font-size:.85rem;padding:12px 16px}
             }
-            @media only screen and (max-width: 525px) {
-            h2{font-size:13px}
-            h3{font-size:5px}
-            }
-            @media only screen and (max-width: 370px) {
-            h2{font-size:10px}
-            h3{font-size:3px}
-            }
-            /* --- PDF PRINT STYLES --- */
-            @media print {
-                .collapsiblemygs {
-                    page-break-before: always;
-                    background-color: transparent !important;
-                    color: black !important;
-                    font-size: 24px !important;
-                    font-weight: bold;
-                    border-bottom: 2px solid var(--accentBg);
-                    padding: 0 0 10px 0 !important;
-                    margin-top: 30px !important;
-                }
-                .content {
-                    display: block !important;
-                    background-color: white !important;
-                    padding: 0 !important;
-                }
-                select, input[type="submit"], input[type="button"], label {
-                    display: none !important;
-                }
-                .print-grid-container {
-                    display: flex !important;
-                    flex-wrap: wrap !important;
-                    justify-content: space-between !important;
-                }
-                .print-grid-item {
-                    display: block !important;
-                    width: 48% !important;
-                    page-break-inside: avoid;
-                }
-                body {
-                    -webkit-print-color-adjust: exact;
-                    print-color-adjust: exact;
-                }
+            @media print{
+              .collapsiblemygs{
+                page-break-before:always;
+                background-color:transparent !important;
+                color:black !important;
+                font-size:24px !important;
+                font-weight:bold;
+                border-bottom:2px solid var(--accentBg);
+                border:none !important;
+                padding:0 0 10px 0 !important;
+                margin-top:30px !important;
+              }
+              .content{
+                display:block !important;
+                background-color:white !important;
+                border:none !important;
+                padding:0 !important;
+              }
+              select,input[type="submit"],input[type="button"],label{display:none !important}
+              .print-grid-container{display:flex !important;flex-wrap:wrap !important;justify-content:space-between !important}
+              .print-grid-item{display:block !important;width:48% !important;page-break-inside:avoid}
+              body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
             }
             </style>
             <script src="https://cdn.plot.ly/plotly-2.9.0.min.js"></script>
