@@ -18,9 +18,129 @@ Usage:
 
 import json
 import os
+import subprocess
+import sys
+from datetime import datetime, timedelta
+from pathlib import Path
 from typing import Optional
 
 from mcp.server.fastmcp import FastMCP
+
+# ═══════════════════════════════════════════════════════════════════
+# AUTO-UPDATE SYSTEM
+# ═══════════════════════════════════════════════════════════════════
+
+_UPDATE_CHECK_FILE = Path.home() / ".scomp-link" / "last_update_check.json"
+_UPDATE_INTERVAL_DAYS = 30
+_update_checked_this_session = False
+
+
+def _get_last_update_info() -> dict:
+    """Read last update check info from disk."""
+    if _UPDATE_CHECK_FILE.exists():
+        try:
+            return json.loads(_UPDATE_CHECK_FILE.read_text())
+        except (json.JSONDecodeError, OSError):
+            pass
+    return {}
+
+
+def _save_update_info(info: dict) -> None:
+    """Save update check info to disk."""
+    _UPDATE_CHECK_FILE.parent.mkdir(parents=True, exist_ok=True)
+    _UPDATE_CHECK_FILE.write_text(json.dumps(info, indent=2))
+
+
+def _check_pypi_version() -> Optional[str]:
+    """Check the latest version available on PyPI."""
+    try:
+        import urllib.request
+
+        url = "https://pypi.org/pypi/scomp-link/json"
+        with urllib.request.urlopen(url, timeout=5) as response:
+            data = json.loads(response.read().decode())
+            return data.get("info", {}).get("version")
+    except Exception:
+        return None
+
+
+def _get_installed_version() -> str:
+    """Get the currently installed version."""
+    try:
+        import scomp_link
+
+        return getattr(scomp_link, "__version__", "unknown")
+    except Exception:
+        return "unknown"
+
+
+def _perform_update() -> dict:
+    """Perform the actual update using pip."""
+    try:
+        result = subprocess.run(
+            [sys.executable, "-m", "pip", "install", "--upgrade", "scomp-link[mcp]"],
+            capture_output=True,
+            text=True,
+            timeout=120,
+        )
+        success = result.returncode == 0
+        return {
+            "success": success,
+            "stdout": result.stdout[-500:] if result.stdout else "",
+            "stderr": result.stderr[-500:] if result.stderr else "",
+        }
+    except subprocess.TimeoutExpired:
+        return {"success": False, "error": "Update timed out after 120 seconds"}
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+
+
+def _maybe_auto_update() -> Optional[dict]:
+    """Check if auto-update is needed (>30 days since last check) and perform it.
+
+    Returns update result dict if update was performed, None otherwise.
+    This is called once per session on first tool use.
+    """
+    global _update_checked_this_session
+    if _update_checked_this_session:
+        return None
+    _update_checked_this_session = True
+
+    info = _get_last_update_info()
+    last_check_str = info.get("last_check")
+
+    if last_check_str:
+        try:
+            last_check = datetime.fromisoformat(last_check_str)
+            days_since = (datetime.now() - last_check).days
+            if days_since < _UPDATE_INTERVAL_DAYS:
+                return None  # Not time to check yet
+        except ValueError:
+            pass  # Invalid date, proceed with check
+
+    # Time to check for updates
+    current_version = _get_installed_version()
+    pypi_version = _check_pypi_version()
+
+    update_result = None
+    if pypi_version and pypi_version != current_version:
+        # New version available, perform update
+        update_result = _perform_update()
+        update_result["old_version"] = current_version
+        update_result["new_version"] = pypi_version
+        update_result["auto_triggered"] = True
+
+    # Save check time regardless of whether update was performed
+    _save_update_info(
+        {
+            "last_check": datetime.now().isoformat(),
+            "installed_version": pypi_version if update_result and update_result.get("success") else current_version,
+            "last_pypi_version": pypi_version,
+        }
+    )
+
+    return update_result
+
 
 mcp = FastMCP(
     "scomp-link",
@@ -36,10 +156,116 @@ mcp = FastMCP(
 
 
 @mcp.tool()
+def update_scomp_link(force: bool = False) -> str:
+    """Update scomp-link to the latest version from PyPI.
+
+    Parameters:
+        force: If true, update even if already on latest version or checked recently.
+
+    Returns status with old/new versions and any error messages.
+    Auto-update runs automatically every 30 days on first tool use, but you can
+    trigger a manual update anytime with this tool.
+    """
+    current_version = _get_installed_version()
+    pypi_version = _check_pypi_version()
+
+    if not pypi_version:
+        return json.dumps(
+            {
+                "status": "error",
+                "message": "Could not check PyPI for latest version",
+                "current_version": current_version,
+            }
+        )
+
+    if not force and pypi_version == current_version:
+        # Save check time
+        _save_update_info(
+            {
+                "last_check": datetime.now().isoformat(),
+                "installed_version": current_version,
+                "last_pypi_version": pypi_version,
+            }
+        )
+        return json.dumps(
+            {
+                "status": "up_to_date",
+                "current_version": current_version,
+                "pypi_version": pypi_version,
+                "message": "Already on latest version",
+            }
+        )
+
+    # Perform update
+    result = _perform_update()
+    result["old_version"] = current_version
+    result["new_version"] = pypi_version
+
+    if result["success"]:
+        _save_update_info(
+            {
+                "last_check": datetime.now().isoformat(),
+                "installed_version": pypi_version,
+                "last_pypi_version": pypi_version,
+            }
+        )
+        result["status"] = "updated"
+        result["message"] = (
+            f"Successfully updated from {current_version} to {pypi_version}. Restart the MCP server to use the new version."
+        )
+    else:
+        result["status"] = "failed"
+
+    return json.dumps(result, indent=2)
+
+
+@mcp.tool()
+def check_version() -> str:
+    """Check the current scomp-link version and whether an update is available.
+
+    Returns:
+        - installed_version: Currently installed version
+        - pypi_version: Latest version on PyPI
+        - update_available: Whether a newer version exists
+        - last_check: When the last update check was performed
+        - days_until_auto_update: Days until automatic update check
+    """
+    current_version = _get_installed_version()
+    pypi_version = _check_pypi_version()
+    info = _get_last_update_info()
+
+    last_check_str = info.get("last_check")
+    days_until_auto = _UPDATE_INTERVAL_DAYS
+
+    if last_check_str:
+        try:
+            last_check = datetime.fromisoformat(last_check_str)
+            days_since = (datetime.now() - last_check).days
+            days_until_auto = max(0, _UPDATE_INTERVAL_DAYS - days_since)
+        except ValueError:
+            pass
+
+    return json.dumps(
+        {
+            "installed_version": current_version,
+            "pypi_version": pypi_version or "unknown",
+            "update_available": bool(pypi_version and pypi_version != current_version),
+            "last_check": last_check_str,
+            "days_until_auto_update": days_until_auto,
+            "auto_update_interval_days": _UPDATE_INTERVAL_DAYS,
+        },
+        indent=2,
+    )
+
+
+@mcp.tool()
 def describe_data(path: str) -> str:
     """Profile a dataset. Returns column-level stats: dtype, missing%, unique count, min, max, mean, std.
     Use this first to understand any new dataset before training or visualization."""
     import pandas as pd
+
+    # Auto-update check (once per session, on first tool use)
+    _maybe_auto_update()
 
     df = _load_df(path)
     rows = []
