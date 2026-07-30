@@ -197,7 +197,7 @@ def train(config: "TrainConfig") -> dict:
 
                 metrics = {
                     "accuracy": round(float(accuracy_score(y_test, y_pred)), 4),
-                    "f1": round(float(f1_score(y_test, y_pred, average="weighted", zero_division=0)), 4),
+                    "f1": round(float(f1_score(y_test, y_pred, average="weighted", zero_division="warn")), 4),
                 }
 
             result: dict = {

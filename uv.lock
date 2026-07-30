@@ -3777,6 +3777,19 @@ wheels = [
 ]
 
 [[package]]
+name = "pyright"
+version = "1.1.411"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "nodeenv" },
+    { name = "typing-extensions" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/7e/ab/265f7dc69d28113ebba19092e57b075f41543b2ed048429c5f56e2b88eac/pyright-1.1.411.tar.gz", hash = "sha256:d885a0551f2e763b089a02702174e7f4ba77548cddabc972ab86d1f7f1b0f998", size = 4112861, upload-time = "2026-06-25T02:14:06.37Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/0a/49/385be530a6a5b78d1cbcd5c2e38debc8959a2fc6bdb716f4e581002979fc/pyright-1.1.411-py3-none-any.whl", hash = "sha256:dc7c72a8e2700c55baa127554040e067041ea53ccfd50bf96308cc4291c7d5d9", size = 6181526, upload-time = "2026-06-25T02:14:04.691Z" },
+]
+
+[[package]]
 name = "pytest"
 version = "8.4.2"
 source = { registry = "https://pypi.org/simple" }
@@ -4848,12 +4861,9 @@ wheels = [
 
 [[package]]
 name = "scomp-link"
-version = "1.3.0"
+version = "2.0.0"
 source = { editable = "." }
 dependencies = [
-    { name = "faiss-cpu" },
-    { name = "lime" },
-    { name = "markdown" },
     { name = "matplotlib", version = "3.8.4", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.12'" },
     { name = "matplotlib", version = "3.9.4", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version == '3.12.*'" },
     { name = "matplotlib", version = "3.11.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.13'" },
@@ -4863,13 +4873,9 @@ dependencies = [
     { name = "pandas", version = "2.1.4", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.12'" },
     { name = "pandas", version = "2.2.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version == '3.12.*'" },
     { name = "pandas", version = "2.3.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.13'" },
-    { name = "pillow" },
-    { name = "playwright" },
     { name = "plotly" },
     { name = "polars" },
     { name = "pyarrow" },
-    { name = "pyjwt" },
-    { name = "pytorch-tabnet2" },
     { name = "scikit-learn", version = "1.3.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
     { name = "scikit-learn", version = "1.4.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version == '3.11.*'" },
     { name = "scikit-learn", version = "1.5.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version == '3.12.*'" },
@@ -4878,11 +4884,25 @@ dependencies = [
     { name = "scipy", version = "1.13.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version == '3.12.*'" },
     { name = "scipy", version = "1.17.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.13'" },
     { name = "seaborn" },
+    { name = "statsmodels" },
+    { name = "tqdm" },
+]
+
+[package.optional-dependencies]
+all = [
+    { name = "faiss-cpu" },
+    { name = "flask" },
+    { name = "lime" },
+    { name = "markdown" },
+    { name = "mcp" },
+    { name = "pillow" },
+    { name = "playwright" },
+    { name = "pyjwt" },
+    { name = "pytorch-tabnet2" },
     { name = "sentence-transformers" },
     { name = "shap", version = "0.49.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.13'" },
     { name = "shap", version = "0.52.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.13'" },
     { name = "spacy" },
-    { name = "statsmodels" },
     { name = "tensorflow", version = "2.15.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.12'" },
     { name = "tensorflow", version = "2.17.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version == '3.12.*'" },
     { name = "tensorflow", version = "2.21.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version == '3.13.*'" },
@@ -4892,12 +4912,20 @@ dependencies = [
     { name = "torch", version = "2.3.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version == '3.11.*'" },
     { name = "torch", version = "2.4.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version == '3.12.*'" },
     { name = "torch", version = "2.12.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.13'" },
-    { name = "tqdm" },
     { name = "transformers" },
     { name = "weasyprint" },
 ]
-
-[package.optional-dependencies]
+anomaly = [
+    { name = "pytorch-tabnet2" },
+]
+cv = [
+    { name = "pillow" },
+    { name = "tensorflow", version = "2.15.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.12'" },
+    { name = "tensorflow", version = "2.17.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version == '3.12.*'" },
+    { name = "tensorflow", version = "2.21.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version == '3.13.*'" },
+    { name = "tf-keras", version = "2.17.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version == '3.12.*'" },
+    { name = "tf-keras", version = "2.21.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version == '3.13.*'" },
+]
 dev = [
     { name = "pre-commit" },
     { name = "pytest" },
@@ -4906,16 +4934,42 @@ dev = [
 mcp = [
     { name = "mcp" },
 ]
+nlp = [
+    { name = "faiss-cpu" },
+    { name = "sentence-transformers" },
+    { name = "spacy" },
+    { name = "torch", version = "2.2.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
+    { name = "torch", version = "2.3.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version == '3.11.*'" },
+    { name = "torch", version = "2.4.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version == '3.12.*'" },
+    { name = "torch", version = "2.12.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.13'" },
+    { name = "transformers" },
+]
+reports = [
+    { name = "markdown" },
+    { name = "playwright" },
+    { name = "pyjwt" },
+    { name = "weasyprint" },
+]
 serve = [
     { name = "flask" },
+]
+shap = [
+    { name = "lime" },
+    { name = "shap", version = "0.49.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.13'" },
+    { name = "shap", version = "0.52.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.13'" },
+]
+
+[package.dev-dependencies]
+dev = [
+    { name = "pyright" },
 ]
 
 [package.metadata]
 requires-dist = [
-    { name = "faiss-cpu", specifier = ">=1.7.0,<2.0.0" },
+    { name = "faiss-cpu", marker = "extra == 'nlp'", specifier = ">=1.7.0,<2.0.0" },
     { name = "flask", marker = "extra == 'serve'", specifier = ">=2.0.0,<4.0.0" },
-    { name = "lime", specifier = ">=0.2.0,<1.0.0" },
-    { name = "markdown", specifier = ">=3.3.0,<4.0.0" },
+    { name = "lime", marker = "extra == 'shap'", specifier = ">=0.2.0,<1.0.0" },
+    { name = "markdown", marker = "extra == 'reports'", specifier = ">=3.3.0,<4.0.0" },
     { name = "matplotlib", marker = "python_full_version == '3.10.*'", specifier = ">=3.6.0,<3.9.0" },
     { name = "matplotlib", marker = "python_full_version == '3.11.*'", specifier = ">=3.7.0,<3.9.0" },
     { name = "matplotlib", marker = "python_full_version == '3.12.*'", specifier = ">=3.8.0,<3.11.0" },
@@ -4933,17 +4987,17 @@ requires-dist = [
     { name = "pandas", marker = "python_full_version == '3.12.*'", specifier = ">=2.1.0,<2.3.0" },
     { name = "pandas", marker = "python_full_version == '3.13.*'", specifier = ">=2.1.0,<3.0.0" },
     { name = "pandas", marker = "python_full_version >= '3.14'", specifier = ">=2.2.0,<3.0.0" },
-    { name = "pillow", marker = "python_full_version >= '3.10' and python_full_version < '3.12'", specifier = ">=9.0.0,<13.0.0" },
-    { name = "pillow", marker = "python_full_version >= '3.12'", specifier = ">=10.0.0,<13.0.0" },
-    { name = "playwright", specifier = ">=1.40.0,<2.0.0" },
+    { name = "pillow", marker = "python_full_version >= '3.10' and python_full_version < '3.12' and extra == 'cv'", specifier = ">=9.0.0,<13.0.0" },
+    { name = "pillow", marker = "python_full_version >= '3.12' and extra == 'cv'", specifier = ">=10.0.0,<13.0.0" },
+    { name = "playwright", marker = "extra == 'reports'", specifier = ">=1.40.0,<2.0.0" },
     { name = "plotly", specifier = ">=5.0.0,<6.0.0" },
     { name = "polars", specifier = ">=0.20.0,<2.0.0" },
     { name = "pre-commit", marker = "extra == 'dev'", specifier = ">=3.0.0,<5.0.0" },
     { name = "pyarrow", specifier = ">=12.0.0" },
-    { name = "pyjwt", specifier = ">=2.0.0,<3.0.0" },
+    { name = "pyjwt", marker = "extra == 'reports'", specifier = ">=2.0.0,<3.0.0" },
     { name = "pytest", marker = "extra == 'dev'", specifier = ">=6.0.0,<9.0.0" },
     { name = "pytest-cov", marker = "extra == 'dev'", specifier = ">=2.10.0,<6.0.0" },
-    { name = "pytorch-tabnet2", specifier = ">=4.1.0,<5.0.0" },
+    { name = "pytorch-tabnet2", marker = "extra == 'anomaly'", specifier = ">=4.1.0,<5.0.0" },
     { name = "scikit-learn", marker = "python_full_version == '3.10.*'", specifier = ">=1.2.0,<1.8.0" },
     { name = "scikit-learn", marker = "python_full_version == '3.11.*'", specifier = ">=1.3.0,<1.5.0" },
     { name = "scikit-learn", marker = "python_full_version == '3.12.*'", specifier = ">=1.3.0,<1.6.0" },
@@ -4954,26 +5008,28 @@ requires-dist = [
     { name = "scipy", marker = "python_full_version == '3.12.*'", specifier = ">=1.11.0,<1.14.0" },
     { name = "scipy", marker = "python_full_version == '3.13.*'", specifier = ">=1.11.0,<2.0.0" },
     { name = "scipy", marker = "python_full_version >= '3.14'", specifier = ">=1.14.0,<2.0.0" },
+    { name = "scomp-link", extras = ["nlp", "cv", "anomaly", "reports", "shap", "mcp", "serve"], marker = "extra == 'all'" },
     { name = "seaborn", specifier = ">=0.11.0,<0.14.0" },
-    { name = "sentence-transformers", specifier = ">=2.2.0,<6.0.0" },
-    { name = "shap", specifier = ">=0.42.0,<1.0.0" },
-    { name = "spacy", specifier = ">=3.5.0,<4.0.0" },
+    { name = "sentence-transformers", marker = "extra == 'nlp'", specifier = ">=2.2.0,<6.0.0" },
+    { name = "shap", marker = "extra == 'shap'", specifier = ">=0.42.0,<1.0.0" },
+    { name = "spacy", marker = "extra == 'nlp'", specifier = ">=3.5.0,<4.0.0" },
     { name = "statsmodels", specifier = ">=0.13.0,<1.0.0" },
-    { name = "tensorflow", marker = "python_full_version == '3.10.*'", specifier = ">=2.10.0,<2.16.0" },
-    { name = "tensorflow", marker = "python_full_version == '3.11.*'", specifier = ">=2.12.0,<2.16.0" },
-    { name = "tensorflow", marker = "python_full_version == '3.12.*'", specifier = ">=2.13.0,<2.18.0" },
-    { name = "tensorflow", marker = "python_full_version == '3.13.*'", specifier = ">=2.13.0,<3.0.0" },
-    { name = "tf-keras", marker = "python_full_version >= '3.12' and python_full_version < '3.14'", specifier = ">=2.16.0" },
-    { name = "torch", marker = "python_full_version == '3.10.*'", specifier = ">=1.13.0,<2.13.0" },
-    { name = "torch", marker = "python_full_version == '3.11.*'", specifier = ">=2.0.0,<2.13.0" },
-    { name = "torch", marker = "python_full_version == '3.12.*'", specifier = ">=2.0.0,<2.13.0" },
-    { name = "torch", marker = "python_full_version == '3.13.*'", specifier = ">=2.0.0,<3.0.0" },
-    { name = "torch", marker = "python_full_version >= '3.14'", specifier = ">=2.4.0,<3.0.0" },
+    { name = "tensorflow", marker = "python_full_version == '3.10.*' and extra == 'cv'", specifier = ">=2.10.0,<2.16.0" },
+    { name = "tensorflow", marker = "python_full_version == '3.11.*' and extra == 'cv'", specifier = ">=2.12.0,<2.16.0" },
+    { name = "tensorflow", marker = "python_full_version == '3.12.*' and extra == 'cv'", specifier = ">=2.13.0,<2.18.0" },
+    { name = "tensorflow", marker = "python_full_version == '3.13.*' and extra == 'cv'", specifier = ">=2.13.0,<3.0.0" },
+    { name = "tf-keras", marker = "python_full_version >= '3.12' and python_full_version < '3.14' and extra == 'cv'", specifier = ">=2.16.0" },
+    { name = "torch", marker = "python_full_version == '3.10.*' and extra == 'nlp'", specifier = ">=1.13.0,<2.13.0" },
+    { name = "torch", marker = "python_full_version >= '3.11' and python_full_version < '3.14' and extra == 'nlp'", specifier = ">=2.0.0,<2.13.0" },
+    { name = "torch", marker = "python_full_version >= '3.14' and extra == 'nlp'", specifier = ">=2.4.0,<3.0.0" },
     { name = "tqdm", specifier = ">=4.50.0,<5.0.0" },
-    { name = "transformers", specifier = ">=4.30.0,<6.0.0" },
-    { name = "weasyprint", specifier = ">=57.0,<70.0" },
+    { name = "transformers", marker = "extra == 'nlp'", specifier = ">=4.30.0,<6.0.0" },
+    { name = "weasyprint", marker = "extra == 'reports'", specifier = ">=57.0,<70.0" },
 ]
-provides-extras = ["dev", "mcp", "serve"]
+provides-extras = ["nlp", "cv", "anomaly", "reports", "shap", "mcp", "serve", "all", "dev"]
+
+[package.metadata.requires-dev]
+dev = [{ name = "pyright", specifier = ">=1.1.411" }]
 
 [[package]]
 name = "seaborn"
