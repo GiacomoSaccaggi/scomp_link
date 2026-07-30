@@ -205,7 +205,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v7
-      - run: uv sync
+      - run: uv sync && uv pip install huggingface_hub
       - name: Upload skill to HuggingFace
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
