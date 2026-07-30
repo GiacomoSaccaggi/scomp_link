@@ -133,8 +133,8 @@ scomp-link = "scomp_link.cli:main"
 
 # NLP: text classification, contrastive learning, embeddings
 nlp = [
-    "torch>=1.13.0,<2.13.0;       python_version >= '3.10' and python_version < '3.11'",
-    "torch>=2.0.0,<2.13.0;        python_version >= '3.11' and python_version < '3.14'",
+    "torch>=1.13.0,<2.14.0;       python_version >= '3.10' and python_version < '3.11'",
+    "torch>=2.0.0,<2.14.0;        python_version >= '3.11' and python_version < '3.14'",
     "torch>=2.4.0,<3.0.0;         python_version >= '3.14'",
     "transformers>=4.30.0,<6.0.0",
     "spacy>=3.5.0,<4.0.0",
