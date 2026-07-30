@@ -20,6 +20,7 @@ import json
 import os
 import subprocess
 import sys
+import threading
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Optional
@@ -32,6 +33,7 @@ from mcp.server.fastmcp import FastMCP
 
 _UPDATE_CHECK_FILE = Path.home() / ".scomp-link" / "last_update_check.json"
 _UPDATE_INTERVAL_DAYS = 30
+_session_lock = threading.Lock()
 _update_checked_this_session = False
 
 
@@ -89,10 +91,16 @@ def _perform_update() -> dict:
             "stdout": result.stdout[-500:] if result.stdout else "",
             "stderr": result.stderr[-500:] if result.stderr else "",
         }
+    except PermissionError:
+        return {
+            "success": False,
+            "error": "permission_denied",
+            "message": "Cannot upgrade: read-only environment. Run manually: pip install --upgrade scomp-link[mcp]",
+        }
     except subprocess.TimeoutExpired:
-        return {"success": False, "error": "Update timed out after 120 seconds"}
+        return {"success": False, "error": "timeout", "message": "Update timed out after 120s"}
     except Exception as e:
-        return {"success": False, "error": str(e)}
+        return {"success": False, "error": "unknown", "message": str(e)}
 
 
 def _maybe_auto_update() -> Optional[dict]:
@@ -102,9 +110,10 @@ def _maybe_auto_update() -> Optional[dict]:
     This is called once per session on first tool use.
     """
     global _update_checked_this_session
-    if _update_checked_this_session:
-        return None
-    _update_checked_this_session = True
+    with _session_lock:
+        if _update_checked_this_session:
+            return None
+        _update_checked_this_session = True
 
     info = _get_last_update_info()
     last_check_str = info.get("last_check")
@@ -262,31 +271,18 @@ def check_version() -> str:
 def describe_data(path: str) -> str:
     """Profile a dataset. Returns column-level stats: dtype, missing%, unique count, min, max, mean, std.
     Use this first to understand any new dataset before training or visualization."""
-    import pandas as pd
+    from scomp_link import exceptions as exc
+    from scomp_link import services
+    from scomp_link.schemas import DescribeConfig
 
-    # Auto-update check (once per session, on first tool use)
     _maybe_auto_update()
-
-    df = _load_df(path)
-    rows = []
-    for col in df.columns:
-        row = {
-            "column": col,
-            "dtype": str(df[col].dtype),
-            "missing_pct": round(df[col].isnull().mean() * 100, 1),
-            "unique": int(df[col].nunique()),
-        }
-        if pd.api.types.is_numeric_dtype(df[col]):
-            row.update(
-                {
-                    "min": round(float(df[col].min()), 4),
-                    "max": round(float(df[col].max()), 4),
-                    "mean": round(float(df[col].mean()), 4),
-                    "std": round(float(df[col].std()), 4),
-                }
-            )
-        rows.append(row)
-    return json.dumps({"shape": list(df.shape), "columns": rows}, indent=2)
+    try:
+        result = services.describe(DescribeConfig(data=path))
+        return json.dumps(result, indent=2, default=str)
+    except exc.DataValidationError as e:
+        return json.dumps({"status": "error", "error": str(e), "type": "DataValidationError"})
+    except exc.ScompLinkError as e:
+        return json.dumps({"status": "error", "error": str(e), "type": type(e).__name__})
 
 
 @mcp.tool()
@@ -302,262 +298,137 @@ def train_model(
     """Train an ML model. Supports regression, classification, text, clustering.
     Set engineer=true for automatic feature engineering. Set tune=true for Optuna hyperparameter optimization.
     Returns metrics and optional artifact path."""
-    import scomp_link
+    from scomp_link import exceptions as exc
+    from scomp_link import services
+    from scomp_link.schemas import TrainConfig
 
-    scomp_link.set_verbosity("silent")
-    import pandas as pd
-
-    df = _load_df(data)
-    if engineer:
-        fe = scomp_link.FeatureEngineer(interactions=True, log_transform=True)
-        y = df[target]
-        X = fe.fit_transform(df.drop(columns=[target]), y)
-        df = X.copy()
-        df[target] = y.values
-
-    if tune:
-        from sklearn.ensemble import GradientBoostingClassifier, GradientBoostingRegressor
-        from sklearn.model_selection import train_test_split
-
-        from scomp_link.models.advanced_tuning import OptunaOptimizer
-
-        X = df.drop(columns=[target])
-        y = df[target]
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-
-        base = GradientBoostingRegressor if task == "regression" else GradientBoostingClassifier
-        scoring = "r2" if task == "regression" else "accuracy"
-
-        def param_space(trial):
-            return {
-                "n_estimators": trial.suggest_int("n_estimators", 50, 300),
-                "max_depth": trial.suggest_int("max_depth", 3, 12),
-                "learning_rate": trial.suggest_float("learning_rate", 0.01, 0.3, log=True),
-            }
-
-        opt = OptunaOptimizer(base, param_space, scoring=scoring, n_trials=n_trials)
-        best_model = opt.optimize(X_train, y_train)
-
-        y_pred = best_model.predict(X_test)
-        if task == "regression":
-            from sklearn.metrics import mean_squared_error, r2_score
-
-            metrics = {
-                "r2": round(r2_score(y_test, y_pred), 4),
-                "rmse": round(mean_squared_error(y_test, y_pred) ** 0.5, 4),
-            }
-        else:
-            from sklearn.metrics import accuracy_score, f1_score
-
-            metrics = {
-                "accuracy": round(accuracy_score(y_test, y_pred), 4),
-                "f1": round(f1_score(y_test, y_pred, average="weighted", zero_division=0), 4),
-            }
-
-        result = {"status": "success", "model_type": type(best_model).__name__, "metrics": metrics}
-        if save_artifact:
-            artifact = scomp_link.ScompArtifact()
-            artifact.set_model(best_model)
-            artifact.set_config(task_type=task, target_col=target)
-            artifact.set_metrics(metrics)
-            artifact.set_feature_schema(X_train)
-            artifact.save(save_artifact)
-            result["artifact_path"] = save_artifact
-    else:
-        pipe = scomp_link.ScompLinkPipeline("mcp_train")
-        pipe.import_and_clean_data(df)
-        pipe.select_variables(target_col=target)
-        pipe.choose_model("numerical_prediction" if task == "regression" else "categorical_known")
-        results = pipe.run_pipeline(task_type=task)
-        result = {
-            "status": results.get("status", "success"),
-            "model_type": results.get("model_type"),
-            "metrics": results.get("metrics"),
-        }
-        if save_artifact:
-            artifact = scomp_link.ScompArtifact()
-            artifact.set_model(pipe.model)
-            artifact.set_config(task_type=task, target_col=target)
-            artifact.set_metrics(results.get("metrics", {}))
-            artifact.save(save_artifact)
-            result["artifact_path"] = save_artifact
-
-    return json.dumps(result, indent=2, default=str)
+    try:
+        result = services.train(
+            TrainConfig(
+                data=data,
+                target=target,
+                task=task,
+                engineer=engineer,
+                tune=tune,
+                n_trials=n_trials,
+                save_artifact=save_artifact,
+            )
+        )
+        return json.dumps(result, indent=2, default=str)
+    except exc.DataValidationError as e:
+        return json.dumps({"status": "error", "error": str(e), "type": "DataValidationError"})
+    except exc.ModelTrainingError as e:
+        return json.dumps({"status": "error", "error": str(e), "type": "ModelTrainingError"})
+    except exc.ScompLinkError as e:
+        return json.dumps({"status": "error", "error": str(e), "type": type(e).__name__})
 
 
 @mcp.tool()
 def predict(artifact: str, data: str, output: Optional[str] = None) -> str:
     """Generate predictions from a .scomp artifact on new data.
     Returns predictions array. Optionally saves to CSV."""
-    import pandas as pd
+    from scomp_link import exceptions as exc
+    from scomp_link import services
+    from scomp_link.schemas import PredictConfig
 
-    import scomp_link
-
-    scomp_link.set_verbosity("silent")
-
-    loaded = scomp_link.ScompArtifact.load(artifact)
-    df = _load_df(data)
-    target_col = loaded.config.get("target_col")
-    feature_cols = [c for c in df.columns if c != target_col]
-    predictions = loaded.predict(df[feature_cols])
-
-    if output:
-        out_df = df.copy()
-        out_df["prediction"] = predictions
-        out_df.to_csv(output, index=False)
-
-    preds_list = predictions.tolist() if hasattr(predictions, "tolist") else list(predictions)
-    return json.dumps(
-        {"n_predictions": len(preds_list), "predictions": preds_list[:20], "output_path": output}, default=str
-    )
+    try:
+        result = services.predict_from_artifact(PredictConfig(artifact=artifact, data=data, output=output))
+        return json.dumps(result, indent=2, default=str)
+    except exc.ArtifactError as e:
+        return json.dumps({"status": "error", "error": str(e), "type": "ArtifactError"})
+    except exc.ScompLinkError as e:
+        return json.dumps({"status": "error", "error": str(e), "type": type(e).__name__})
 
 
 @mcp.tool()
 def validate_model(artifact: str, data: str, target: str, report: Optional[str] = None) -> str:
     """Evaluate a saved model on test data. Returns metrics (regression: r2, rmse, mae; classification: accuracy, f1, precision, recall).
     Optionally generates an HTML validation report."""
-    import scomp_link
+    from scomp_link import exceptions as exc
+    from scomp_link import services
+    from scomp_link.schemas import ValidateConfig
 
-    scomp_link.set_verbosity("silent")
-
-    loaded = scomp_link.ScompArtifact.load(artifact)
-    df = _load_df(data)
-    feature_cols = [c for c in df.columns if c != target]
-    X, y = df[feature_cols], df[target]
-    predictions = loaded.predict(X)
-
-    task_type = loaded.config.get("task_type", "regression")
-    validator = scomp_link.Validator(loaded.model)
-    metrics = validator.evaluate(y, predictions, task_type=task_type)
-
-    if report:
-        validator.generate_validation_report(y, predictions, task_type=task_type, report_name=report)
-
-    return json.dumps(
-        {"task_type": task_type, "metrics": metrics, "n_samples": len(y), "report_path": report}, indent=2, default=str
-    )
+    try:
+        result = services.validate(ValidateConfig(artifact=artifact, data=data, target=target, report=report))
+        return json.dumps(result, indent=2, default=str)
+    except exc.ArtifactError as e:
+        return json.dumps({"status": "error", "error": str(e), "type": "ArtifactError"})
+    except exc.DataValidationError as e:
+        return json.dumps({"status": "error", "error": str(e), "type": "DataValidationError"})
+    except exc.ScompLinkError as e:
+        return json.dumps({"status": "error", "error": str(e), "type": type(e).__name__})
 
 
 @mcp.tool()
 def detect_drift(reference: str, current: str, threshold: float = 0.2, plot: Optional[str] = None) -> str:
     """Detect distribution drift between reference (training) and current (production) data.
     Returns PSI per feature and which features drifted."""
-    import scomp_link
+    from scomp_link import exceptions as exc
+    from scomp_link import services
+    from scomp_link.schemas import DriftConfig
 
-    scomp_link.set_verbosity("silent")
-
-    df_ref = _load_df(reference)
-    df_cur = _load_df(current)
-    numeric_cols = df_ref.select_dtypes(include=["number"]).columns.tolist()
-    common = [c for c in numeric_cols if c in df_cur.columns]
-
-    detector = scomp_link.DriftDetector(df_ref[common], psi_threshold=threshold)
-    report = detector.detect(df_cur[common])
-    summary = detector.summary(report)
-
-    if plot:
-        fig = detector.plot_drift_report(report)
-        fig.write_html(plot)
-
-    return json.dumps(
-        {
-            "drifted_features": summary["drifted_features"],
-            "total_features": summary["total_features"],
-            "worst_feature": summary.get("worst_feature"),
-            "max_psi": round(summary.get("max_psi", 0), 4),
-            "plot_path": plot,
-        },
-        indent=2,
-        default=str,
-    )
+    try:
+        result = services.detect_drift(
+            DriftConfig(reference=reference, current=current, threshold=threshold, plot=plot)
+        )
+        return json.dumps(result, indent=2, default=str)
+    except exc.DriftDetectionError as e:
+        return json.dumps({"status": "error", "error": str(e), "type": "DriftDetectionError"})
+    except exc.ScompLinkError as e:
+        return json.dumps({"status": "error", "error": str(e), "type": type(e).__name__})
 
 
 @mcp.tool()
 def detect_anomalies(data: str, methods: str = "iforest,lof", contamination: float = 0.05, consensus: int = 2) -> str:
     """Detect anomalies using multi-method consensus (Isolation Forest, LOF, TabNet, Transformer).
     Returns number of anomalies and per-method comparison."""
-    import scomp_link
+    from scomp_link import exceptions as exc
+    from scomp_link import services
+    from scomp_link.schemas import AnomalyConfig
 
-    scomp_link.set_verbosity("silent")
-
-    df = _load_df(data)
-    features = df.select_dtypes(include=["number"]).columns.tolist()
-    method_list = [m.strip() for m in methods.split(",")]
-
-    detector = scomp_link.AnomalyDetector(
-        contamination=contamination, methods=method_list, consensus_threshold=consensus, verbose=False
-    )
-    results = detector.fit_predict(df, features=features)
-
-    comparison = results["comparison"].to_dict("records")
-    n_anomalies = int(results["data"]["is_anomaly"].sum())
-
-    return json.dumps({"n_anomalies": n_anomalies, "total_rows": len(df), "methods": comparison}, indent=2, default=str)
+    try:
+        result = services.detect_anomalies(
+            AnomalyConfig(data=data, methods=methods, contamination=contamination, consensus=consensus)
+        )
+        return json.dumps(result, indent=2, default=str)
+    except exc.ScompLinkError as e:
+        return json.dumps({"status": "error", "error": str(e), "type": type(e).__name__})
 
 
 @mcp.tool()
 def check_fairness(data: str, target: str, predicted: str, sensitive: str) -> str:
     """Compute fairness metrics: demographic parity, disparate impact (4/5 rule), equalized odds.
     Returns whether the model is fair and detailed group-level metrics."""
-    import scomp_link
+    from scomp_link import exceptions as exc
+    from scomp_link import services
+    from scomp_link.schemas import FairnessConfig
 
-    scomp_link.set_verbosity("silent")
-
-    df = _load_df(data)
-    fm = scomp_link.FairnessMetrics(df[target].values, df[predicted].values, sensitive_feature=df[sensitive].values)
-    report = fm.compute_all()
-
-    return json.dumps(
-        {
-            "demographic_parity": report["demographic_parity"],
-            "disparate_impact": report["disparate_impact"],
-            "equalized_odds": {
-                "tpr_diff": report["equalized_odds"]["tpr_diff"],
-                "fpr_diff": report["equalized_odds"]["fpr_diff"],
-                "fair": report["equalized_odds"]["fair"],
-            },
-        },
-        indent=2,
-        default=str,
-    )
+    try:
+        result = services.check_fairness(
+            FairnessConfig(data=data, target=target, predicted=predicted, sensitive=sensitive)
+        )
+        return json.dumps(result, indent=2, default=str)
+    except exc.DataValidationError as e:
+        return json.dumps({"status": "error", "error": str(e), "type": "DataValidationError"})
+    except exc.ScompLinkError as e:
+        return json.dumps({"status": "error", "error": str(e), "type": type(e).__name__})
 
 
 @mcp.tool()
 def forecast_series(data: str, column: str, horizon: int = 10, method: str = "auto", plot: Optional[str] = None) -> str:
     """Forecast future values of a time series column. Methods: auto, arima, exp_smoothing.
     Returns predicted values and optional plot."""
-    import scomp_link
+    from scomp_link import exceptions as exc
+    from scomp_link import services
+    from scomp_link.schemas import ForecastConfig
 
-    scomp_link.set_verbosity("silent")
-
-    df = _load_df(data)
-    series = df[column].dropna()
-
-    fc = scomp_link.TimeSeriesForecaster(method=method, horizon=horizon)
-    fc.fit(series)
-    ci = fc.predict_with_ci(steps=horizon)
-
-    if plot:
-        import plotly.graph_objects as go
-
-        fig = go.Figure()
-        fig.add_trace(go.Scatter(y=series.values, name="Historical"))
-        fig.add_trace(
-            go.Scatter(
-                x=list(range(len(series), len(series) + horizon)),
-                y=ci["forecast"].values,
-                name="Forecast",
-                line=dict(dash="dash"),
-            )
-        )
-        fig.update_layout(title=f"Forecast: {column}")
-        fig.write_html(plot)
-
-    return json.dumps(
-        {"horizon": horizon, "method": method, "forecast": ci["forecast"].round(4).tolist(), "plot_path": plot},
-        indent=2,
-        default=str,
-    )
+    try:
+        result = services.forecast(ForecastConfig(data=data, column=column, horizon=horizon, method=method, plot=plot))
+        return json.dumps(result, indent=2, default=str)
+    except exc.DataValidationError as e:
+        return json.dumps({"status": "error", "error": str(e), "type": "DataValidationError"})
+    except exc.ScompLinkError as e:
+        return json.dumps({"status": "error", "error": str(e), "type": type(e).__name__})
 
 
 @mcp.tool()
@@ -566,32 +437,21 @@ def engineer_features(
 ) -> str:
     """Apply automated feature engineering: polynomial interactions, log transforms for skewed features,
     date extraction, target encoding. Returns output path and new shape."""
-    import pandas as pd
+    from scomp_link import exceptions as exc
+    from scomp_link import services
+    from scomp_link.schemas import EngineerConfig
 
-    import scomp_link
-
-    scomp_link.set_verbosity("silent")
-
-    df = _load_df(data)
-    y = df[target]
-    X = df.drop(columns=[target])
-
-    fe = scomp_link.FeatureEngineer(interactions=interactions, log_transform=log_transform)
-    X_eng = fe.fit_transform(X, y)
-    X_eng[target] = y.values
-
-    out_path = output or data.replace(".csv", "_engineered.csv")
-    X_eng.to_csv(out_path, index=False)
-
-    return json.dumps(
-        {
-            "output_path": out_path,
-            "original_shape": list(df.shape),
-            "engineered_shape": list(X_eng.shape),
-            "new_columns": [c for c in X_eng.columns if c not in df.columns],
-        },
-        indent=2,
-    )
+    try:
+        result = services.engineer(
+            EngineerConfig(
+                data=data, target=target, interactions=interactions, log_transform=log_transform, output=output
+            )
+        )
+        return json.dumps(result, indent=2, default=str)
+    except exc.DataValidationError as e:
+        return json.dumps({"status": "error", "error": str(e), "type": "DataValidationError"})
+    except exc.ScompLinkError as e:
+        return json.dumps({"status": "error", "error": str(e), "type": type(e).__name__})
 
 
 @mcp.tool()
@@ -600,44 +460,19 @@ def cluster_data(
 ) -> str:
     """Cluster data using KMeans or MeanShift. Returns cluster labels and silhouette score.
     Optionally saves result with cluster column."""
-    import numpy as np
-    import pandas as pd
-    from sklearn.metrics import silhouette_score
+    from scomp_link import exceptions as exc
+    from scomp_link import services
+    from scomp_link.schemas import ClusterConfig
 
-    import scomp_link
-
-    scomp_link.set_verbosity("silent")
-
-    df = _load_df(data)
-    feat_cols = features.split(",") if features else df.select_dtypes(include=["number"]).columns.tolist()
-    X = df[feat_cols].values
-
-    if method == "kmeans":
-        from sklearn.cluster import KMeans
-
-        model = KMeans(n_clusters=n_clusters, random_state=42)
-    else:
-        from sklearn.cluster import MeanShift
-
-        model = MeanShift()
-
-    labels = model.fit_predict(X)
-    sil = float(silhouette_score(X, labels))
-
-    if output:
-        out_df = df.copy()
-        out_df["cluster"] = labels
-        out_df.to_csv(output, index=False)
-
-    return json.dumps(
-        {
-            "n_clusters": int(len(np.unique(labels))),
-            "silhouette_score": round(sil, 4),
-            "cluster_sizes": {str(k): int(v) for k, v in zip(*np.unique(labels, return_counts=True))},
-            "output_path": output,
-        },
-        indent=2,
-    )
+    try:
+        result = services.cluster(
+            ClusterConfig(data=data, n_clusters=n_clusters, method=method, features=features, output=output)
+        )
+        return json.dumps(result, indent=2, default=str)
+    except exc.DataValidationError as e:
+        return json.dumps({"status": "error", "error": str(e), "type": "DataValidationError"})
+    except exc.ScompLinkError as e:
+        return json.dumps({"status": "error", "error": str(e), "type": type(e).__name__})
 
 
 @mcp.tool()

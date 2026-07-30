@@ -38,8 +38,12 @@ from scomp_link.utils.logger import get_logger
 logger = get_logger(__name__)
 
 
-SCOMP_FORMAT_VERSION = "1.0"
+SCOMP_FORMAT_VERSION = "2.0"
 MAGIC_BYTES = b"SCOMP\x01"
+
+# Set to False to suppress pickle security warnings when loading artifacts.
+# Only disable this if you are certain all artifacts come from trusted sources.
+SCOMP_WARN_ON_LOAD = True
 
 
 class ScompArtifact:
@@ -181,10 +185,26 @@ class ScompArtifact:
         ⚠️ SECURITY WARNING: .scomp files use pickle internally.
         Only load files you created yourself or received from a trusted source.
         Loading untrusted files can execute arbitrary code.
+
+        Set ``scomp_link.persistence.artifact.SCOMP_WARN_ON_LOAD = False`` to
+        suppress the security warning in production environments where artifacts
+        are fully controlled.
         """
+        import warnings
+
         path = Path(path)
         if not path.exists():
             raise FileNotFoundError(f"Artifact not found: {path}")
+
+        if SCOMP_WARN_ON_LOAD:
+            warnings.warn(
+                f"Loading .scomp artifact from '{path}'. "
+                "⚠️  Only load artifacts from trusted sources — .scomp files use pickle "
+                "serialization and can execute arbitrary code if tampered with. "
+                "Set SCOMP_WARN_ON_LOAD=False to suppress this warning.",
+                UserWarning,
+                stacklevel=2,
+            )
 
         artifact = cls()
 
@@ -195,6 +215,20 @@ class ScompArtifact:
                 raise ValueError("Invalid .scomp file: bad magic bytes")
 
             manifest = json.loads(zf.read("manifest.json"))
+
+            # Check format version compatibility
+            fmt_ver = manifest.get("format_version", "1.0")
+            if fmt_ver != SCOMP_FORMAT_VERSION:
+                import warnings
+
+                warnings.warn(
+                    f"Artifact format version {fmt_ver!r} differs from current {SCOMP_FORMAT_VERSION!r}. "
+                    "Some fields may be missing or behave differently. "
+                    "Re-save the artifact with the current version to remove this warning.",
+                    UserWarning,
+                    stacklevel=2,
+                )
+
             artifact.metadata = {
                 k: v
                 for k, v in manifest.items()
