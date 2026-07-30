@@ -242,3 +242,8 @@ ignore = ["E501", "F401", "E402", "W605"]
 
 [tool.ruff.format]
 quote-style = "double"
+
+[dependency-groups]
+dev = [
+    "pyright>=1.1.411",
+]
