@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "scomp-link"
-version = "1.3.2"
+version = "2.0.0"
 description = "The Astromech arm for your Python data projects — end-to-end ML toolkit"
 readme = "README.md"
 license = {text = "MIT"}
@@ -113,59 +113,63 @@ dependencies = [
     "plotly>=5.0.0,<6.0.0",
     # --- seaborn ---
     "seaborn>=0.11.0,<0.14.0",
-    # --- NLP: torch, transformers, spacy, faiss, sentence-transformers ---
+    # --- polars ---
+    "polars>=0.20.0,<2.0.0",
+    "pyarrow>=12.0.0",
+    # --- Tuning ---
+    "optuna>=3.0.0,<5.0.0",
+    # --- Utilities ---
+    "tqdm>=4.50.0,<5.0.0",
+    # --- Time series anomaly (lightweight) ---
+    "statsmodels>=0.13.0,<1.0.0",
+]
+
+[project.scripts]
+scomp-link = "scomp_link.cli:main"
+
+# ── Optional dependency groups ──
+
+[project.optional-dependencies]
+
+# NLP: text classification, contrastive learning, embeddings
+nlp = [
     "torch>=1.13.0,<2.13.0;       python_version >= '3.10' and python_version < '3.11'",
-    "torch>=2.0.0,<2.13.0;        python_version >= '3.11' and python_version < '3.12'",
-    "torch>=2.0.0,<2.13.0;        python_version >= '3.12' and python_version < '3.13'",
-    "torch>=2.0.0,<3.0.0;         python_version >= '3.13' and python_version < '3.14'",
+    "torch>=2.0.0,<2.13.0;        python_version >= '3.11' and python_version < '3.14'",
     "torch>=2.4.0,<3.0.0;         python_version >= '3.14'",
     "transformers>=4.30.0,<6.0.0",
     "spacy>=3.5.0,<4.0.0",
     "faiss-cpu>=1.7.0,<2.0.0",
     "sentence-transformers>=2.2.0,<6.0.0",
-    # --- Computer Vision: tensorflow, pillow ---
-    # NOTE: TensorFlow does not yet support Python 3.14 (no wheels available).
-    # Tracking issue: https://github.com/tensorflow/tensorflow/issues/102890
+]
+
+# Computer Vision: image classification and clustering
+cv = [
     "tensorflow>=2.10.0,<2.16.0;  python_version >= '3.10' and python_version < '3.11'",
     "tensorflow>=2.12.0,<2.16.0;  python_version >= '3.11' and python_version < '3.12'",
     "tensorflow>=2.13.0,<2.18.0;  python_version >= '3.12' and python_version < '3.13'",
     "tensorflow>=2.13.0,<3.0.0;   python_version >= '3.13' and python_version < '3.14'",
     "pillow>=9.0.0,<13.0.0;        python_version >= '3.10' and python_version < '3.12'",
     "pillow>=10.0.0,<13.0.0;      python_version >= '3.12'",
-    # --- Anomaly Detection: pytorch-tabnet, statsmodels ---
-    "pytorch-tabnet2>=4.1.0,<5.0.0",
-    "statsmodels>=0.13.0,<1.0.0",
-    # --- Keras compat ---
     "tf-keras>=2.16.0;  python_version >= '3.12' and python_version < '3.14'",
-    # --- polars ---
-    "polars>=0.20.0,<2.0.0",
-    "pyarrow>=12.0.0",
-    # --- Explainability ---
-    "shap>=0.42.0,<1.0.0",
-    "lime>=0.2.0,<1.0.0",
-    # --- Advanced Tuning ---
-    "optuna>=3.0.0,<5.0.0",
-    # --- Utilities ---
-    "tqdm>=4.50.0,<5.0.0",
+]
+
+# Anomaly Detection: TabNet neural network
+anomaly = [
+    "pytorch-tabnet2>=4.1.0,<5.0.0",
+]
+
+# Reports: HTML/PDF generation
+reports = [
     "PyJWT>=2.0.0,<3.0.0",
-    # --- PDF conversion ---
     "markdown>=3.3.0,<4.0.0",
     "weasyprint>=57.0,<70.0",
     "playwright>=1.40.0,<2.0.0",
 ]
 
-[project.scripts]
-scomp-link = "scomp_link.cli:main"
-
-# ── Optional dependency groups (dev only) ──
-
-[project.optional-dependencies]
-
-# Development and testing
-dev = [
-    "pytest>=6.0.0,<9.0.0",
-    "pytest-cov>=2.10.0,<6.0.0",
-    "pre-commit>=3.0.0,<5.0.0",
+# Explainability: SHAP and LIME
+shap = [
+    "shap>=0.42.0,<1.0.0",
+    "lime>=0.2.0,<1.0.0",
 ]
 
 # MCP server for AI agent integration
@@ -176,6 +180,16 @@ mcp = [
 # REST API serving
 serve = [
     "flask>=2.0.0,<4.0.0",
+]
+
+# All optional extras
+all = ["scomp-link[nlp,cv,anomaly,reports,shap,mcp,serve]"]
+
+# Development and testing
+dev = [
+    "pytest>=6.0.0,<9.0.0",
+    "pytest-cov>=2.10.0,<6.0.0",
+    "pre-commit>=3.0.0,<5.0.0",
 ]
 
 [project.urls]
