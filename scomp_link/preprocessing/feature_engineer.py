@@ -2,28 +2,30 @@
 """
 ███████╗███████╗ █████╗ ████████╗██╗   ██╗██████╗ ███████╗
 ██╔════╝██╔════╝██╔══██╗╚══██╔══╝██║   ██║██╔══██╗██╔════╝
-█████╗  █████╗  ███████║   ██║   ██║   ██║██████╔╝█████╗  
-██╔══╝  ██╔══╝  ██╔══██║   ██║   ██║   ██║██╔══██╗██╔══╝  
+█████╗  █████╗  ███████║   ██║   ██║   ██║██████╔╝█████╗
+██╔══╝  ██╔══╝  ██╔══██║   ██║   ██║   ██║██╔══██╗██╔══╝
 ██║     ███████╗██║  ██║   ██║   ╚██████╔╝██║  ██║███████╗
 ╚═╝     ╚══════╝╚═╝  ╚═╝   ╚═╝    ╚═════╝ ╚═╝  ╚═╝╚══════╝
 
-███████╗███╗   ██╗ ██████╗ ██╗███╗   ██╗███████╗███████╗██████╗ 
+███████╗███╗   ██╗ ██████╗ ██╗███╗   ██╗███████╗███████╗██████╗
 ██╔════╝████╗  ██║██╔════╝ ██║████╗  ██║██╔════╝██╔════╝██╔══██╗
 █████╗  ██╔██╗ ██║██║  ██╗ ██║██╔██╗ ██║█████╗  █████╗  ██████╔╝
 ██╔══╝  ██║╚████║██║  ╚██╗██║██║╚████║██╔══╝  ██╔══╝  ██╔══██╗
 ███████╗██║ ╚███║╚██████╔╝██║██║ ╚███║███████╗███████╗██║  ██║
 ╚══════╝╚═╝  ╚══╝ ╚═════╝ ╚═╝╚═╝  ╚══╝╚══════╝╚══════╝╚═╝  ╚═╝
 """
+
+from typing import Dict, List, Optional, Union
+
 import numpy as np
 import pandas as pd
 import polars as pl
-from typing import Optional, List, Dict, Union
 from sklearn.base import BaseEstimator, TransformerMixin
 
 from scomp_link.utils.logger import get_logger
-logger = get_logger(__name__)
-from scomp_link.utils.decorators import timer, memory_usage
 
+logger = get_logger(__name__)
+from scomp_link.utils.decorators import memory_usage, timer
 
 
 class FeatureEngineer(BaseEstimator, TransformerMixin):
@@ -51,11 +53,18 @@ class FeatureEngineer(BaseEstimator, TransformerMixin):
         X_test_eng = fe.transform(X_test)
     """
 
-    def __init__(self, interactions: bool = True, interaction_degree: int = 2,
-                 log_transform: bool = True, skew_threshold: float = 1.0,
-                 date_features: bool = True, target_encode: bool = True,
-                 target_encode_threshold: int = 10, auto_bin: bool = False,
-                 n_bins: int = 5):
+    def __init__(
+        self,
+        interactions: bool = True,
+        interaction_degree: int = 2,
+        log_transform: bool = True,
+        skew_threshold: float = 1.0,
+        date_features: bool = True,
+        target_encode: bool = True,
+        target_encode_threshold: int = 10,
+        auto_bin: bool = False,
+        n_bins: int = 5,
+    ):
         self.interactions = interactions
         self.interaction_degree = interaction_degree
         self.log_transform = log_transform
@@ -84,23 +93,17 @@ class FeatureEngineer(BaseEstimator, TransformerMixin):
         df_pl = pl.from_pandas(X)
 
         # Detect numeric and date columns
-        self._numeric_cols = [c for c in df_pl.columns
-                              if df_pl[c].dtype.is_numeric()]
-        self._date_cols = [c for c in df_pl.columns
-                           if df_pl[c].dtype in (pl.Date, pl.Datetime)]
+        self._numeric_cols = [c for c in df_pl.columns if df_pl[c].dtype.is_numeric()]
+        self._date_cols = [c for c in df_pl.columns if df_pl[c].dtype in (pl.Date, pl.Datetime)]
         # Also check pandas datetime columns that polars might read as Object/String
-        for col in X.select_dtypes(include=['datetime64', 'datetime64[ns]']).columns:
+        for col in X.select_dtypes(include=["datetime64", "datetime64[ns]"]).columns:
             if col not in self._date_cols:
                 self._date_cols.append(col)
 
         # Detect skewed columns — vectorized with polars
         if self.log_transform and self._numeric_cols:
-            skew_df = df_pl.select([
-                pl.col(c).skew().alias(c) for c in self._numeric_cols
-            ])
-            min_df = df_pl.select([
-                pl.col(c).min().alias(c) for c in self._numeric_cols
-            ])
+            skew_df = df_pl.select([pl.col(c).skew().alias(c) for c in self._numeric_cols])
+            min_df = df_pl.select([pl.col(c).min().alias(c) for c in self._numeric_cols])
             for col in self._numeric_cols:
                 skew_val = skew_df[col][0]
                 min_val = min_df[col][0]
@@ -110,8 +113,7 @@ class FeatureEngineer(BaseEstimator, TransformerMixin):
 
         # Detect high-cardinality categoricals and compute target encoding maps
         if self.target_encode and y is not None:
-            cat_cols = [c for c in df_pl.columns
-                        if df_pl[c].dtype in (pl.Utf8, pl.Categorical, pl.String)]
+            cat_cols = [c for c in df_pl.columns if df_pl[c].dtype in (pl.Utf8, pl.Categorical, pl.String)]
             if cat_cols:
                 df_with_y = df_pl.select(cat_cols).with_columns(
                     pl.Series("__target__", y.values if hasattr(y, "values") else y)
@@ -120,9 +122,7 @@ class FeatureEngineer(BaseEstimator, TransformerMixin):
                     n_unique = df_pl[col].n_unique()
                     if n_unique > self.target_encode_threshold:
                         self._high_card_cols.append(col)
-                        mapping_df = df_with_y.group_by(col).agg(
-                            pl.col("__target__").mean()
-                        )
+                        mapping_df = df_with_y.group_by(col).agg(pl.col("__target__").mean())
                         self._target_encoding_maps[col] = dict(
                             zip(mapping_df[col].to_list(), mapping_df["__target__"].to_list())
                         )
@@ -140,6 +140,7 @@ class FeatureEngineer(BaseEstimator, TransformerMixin):
         # Interaction column pairs
         if self.interactions and len(self._numeric_cols) >= 2:
             from itertools import combinations
+
             self._interaction_cols = list(combinations(self._numeric_cols[:10], 2))
 
         logger.info(f"  ✅ Skewed cols (log): {len(self._skewed_cols)}")
@@ -167,13 +168,15 @@ class FeatureEngineer(BaseEstimator, TransformerMixin):
                     # Ensure column is datetime type
                     if df_pl[col].dtype not in (pl.Date, pl.Datetime):
                         df_pl = df_pl.with_columns(pl.col(col).cast(pl.Datetime))
-                    new_exprs.extend([
-                        pl.col(col).dt.year().alias(f"{col}_year"),
-                        pl.col(col).dt.month().alias(f"{col}_month"),
-                        pl.col(col).dt.weekday().alias(f"{col}_day_of_week"),
-                        (pl.col(col).dt.weekday() >= 6).cast(pl.Int8).alias(f"{col}_is_weekend"),
-                        pl.col(col).dt.quarter().alias(f"{col}_quarter"),
-                    ])
+                    new_exprs.extend(
+                        [
+                            pl.col(col).dt.year().alias(f"{col}_year"),
+                            pl.col(col).dt.month().alias(f"{col}_month"),
+                            pl.col(col).dt.weekday().alias(f"{col}_day_of_week"),
+                            (pl.col(col).dt.weekday() >= 6).cast(pl.Int8).alias(f"{col}_is_weekend"),
+                            pl.col(col).dt.quarter().alias(f"{col}_quarter"),
+                        ]
+                    )
                     drop_cols.append(col)
 
         # Target encoding — vectorized replace
@@ -181,11 +184,12 @@ class FeatureEngineer(BaseEstimator, TransformerMixin):
             for col in self._high_card_cols:
                 if col in df_pl.columns:
                     mapping = self._target_encoding_maps[col]
-                    global_mean = np.mean(list(mapping.values()))
+                    global_mean = float(np.mean(list(mapping.values())))
                     new_exprs.append(
-                        pl.col(col).replace_strict(
-                            mapping, default=global_mean
-                        ).cast(pl.Float64).alias(f"{col}_target_enc")
+                        pl.col(col)
+                        .replace_strict(mapping, default=global_mean)
+                        .cast(pl.Float64)
+                        .alias(f"{col}_target_enc")
                     )
                     drop_cols.append(col)
 
@@ -193,9 +197,7 @@ class FeatureEngineer(BaseEstimator, TransformerMixin):
         if self.interactions:
             for col_a, col_b in self._interaction_cols:
                 if col_a in df_pl.columns and col_b in df_pl.columns:
-                    new_exprs.append(
-                        (pl.col(col_a) * pl.col(col_b)).alias(f"{col_a}_x_{col_b}")
-                    )
+                    new_exprs.append((pl.col(col_a) * pl.col(col_b)).alias(f"{col_a}_x_{col_b}"))
 
         # Apply all expressions in a single pass
         if new_exprs:
@@ -210,9 +212,7 @@ class FeatureEngineer(BaseEstimator, TransformerMixin):
             bin_exprs = []
             for col, edges in self._bin_edges.items():
                 if col in df_pl.columns and len(edges) > 1:
-                    bin_exprs.append(
-                        pl.col(col).cut(edges[1:-1].tolist()).cast(pl.Utf8).alias(f"{col}_bin")
-                    )
+                    bin_exprs.append(pl.col(col).cut(edges[1:-1].tolist()).cast(pl.Utf8).alias(f"{col}_bin"))
             if bin_exprs:
                 df_pl = df_pl.with_columns(bin_exprs)
 
@@ -228,22 +228,24 @@ class FeatureEngineer(BaseEstimator, TransformerMixin):
         return self.transform(X.head(1)).columns.tolist()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Sample data
     np.random.seed(42)
     size_df = 500
-    df = pd.DataFrame({
-        'income': np.random.exponential(50000, size_df),  # skewed
-        'age': np.random.normal(35, 10, size_df),
-        'score': np.random.exponential(100, size_df),  # skewed
-        'city': np.random.choice(['NYC', 'LA', 'CHI', 'HOU', 'PHX', 'PHI',
-                                   'SA', 'SD', 'DAL', 'SJ', 'AUS', 'JAX'], size_df),
-        'signup_date': pd.date_range('2020-01-01', periods=size_df, freq='D'),
-    })
-    y = 0.5 * df['income'] + 100 * df['age'] + np.random.randn(size_df) * 1000
+    df = pd.DataFrame(
+        {
+            "income": np.random.exponential(50000, size_df),  # skewed
+            "age": np.random.normal(35, 10, size_df),
+            "score": np.random.exponential(100, size_df),  # skewed
+            "city": np.random.choice(
+                ["NYC", "LA", "CHI", "HOU", "PHX", "PHI", "SA", "SD", "DAL", "SJ", "AUS", "JAX"], size_df
+            ),
+            "signup_date": pd.date_range("2020-01-01", periods=size_df, freq="D"),
+        }
+    )
+    y = 0.5 * df["income"] + 100 * df["age"] + np.random.randn(size_df) * 1000
 
-    fe = FeatureEngineer(interactions=True, log_transform=True,
-                         date_features=True, target_encode=True, auto_bin=True)
+    fe = FeatureEngineer(interactions=True, log_transform=True, date_features=True, target_encode=True, auto_bin=True)
     df_eng = fe.fit_transform(df, y)
     logger.info(f"\n🎯 Original shape: {df.shape} → Engineered shape: {df_eng.shape}")
     logger.info(f"   New columns: {[c for c in df_eng.columns if c not in df.columns]}")

@@ -28,8 +28,8 @@ It provides:
 
 | Category | What you get |
 |----------|-------------|
-| 🎯 **Pipeline** | Automated model selection, training, validation, HTML reports |
-| ⌨️ **CLI** | 25 commands: `run`, `predict`, `text`, `cluster`, `tune`, `validate`, `explain`, `engineer`, `forecast`, `anomaly`, `drift`, `fairness`, `quality`, `describe`, `report`, `compare`, `monitor`, `serve`, `export`, `pipeline`, `info`, `init`, `list-models`, `check-deps`, `mcp` |
+| 🎯 **Pipeline** | Automated model selection, training, validation, HTML reports; **`>>` DSL** for declarative pipeline composition |
+| ⌨️ **CLI** | 26 commands: `run`, `predict`, `text`, `cluster`, `tune`, `validate`, `explain`, `engineer`, `forecast`, `anomaly`, `drift`, `fairness`, `quality`, `describe`, `report`, `compare`, `monitor`, `serve`, `export`, `pipeline`, `info`, `init`, `list-models`, `check-deps`, `mcp` |
 | 🔧 **Preprocessing** | Polars-backed cleaning, feature engineering (interactions, log, dates, target encoding, binning), data quality profiling |
 | 🤖 **Models** | Regression, classification, clustering, time series, anomaly detection, text (BERT contrastive + TF-IDF), images (CNN) |
 | ⚙️ **Tuning** | Optuna (Bayesian), Halving Grid Search, Early Stopping CV |

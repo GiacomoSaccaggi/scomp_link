@@ -1,29 +1,31 @@
 # -*- coding: utf-8 -*-
 """
 
-██████╗  █████╗ ████████╗ █████╗ 
+██████╗  █████╗ ████████╗ █████╗
 ██╔══██╗██╔══██╗╚══██╔══╝██╔══██╗
 ██║  ██║███████║   ██║   ███████║
 ██║  ██║██╔══██║   ██║   ██╔══██║
 ██████╔╝██║  ██║   ██║   ██║  ██║
 ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚═╝  ╚═╝
 
-██████╗ ██████╗ ███████╗██████╗ ██████╗  █████╗  █████╗ ███████╗ ██████╗ ██████╗██╗███╗  ██╗ ██████╗ 
-██╔══██╗██╔══██╗██╔════╝██╔══██╗██╔══██╗██╔══██╗██╔══██╗██╔════╝██╔════╝██╔════╝██║████╗ ██║██╔════╝ 
-██████╔╝██████╔╝█████╗  ██████╔╝██████╔╝██║  ██║██║  ╚═╝█████╗  ╚█████╗ ╚█████╗ ██║██╔██╗██║██║  ██╗ 
+██████╗ ██████╗ ███████╗██████╗ ██████╗  █████╗  █████╗ ███████╗ ██████╗ ██████╗██╗███╗  ██╗ ██████╗
+██╔══██╗██╔══██╗██╔════╝██╔══██╗██╔══██╗██╔══██╗██╔══██╗██╔════╝██╔════╝██╔════╝██║████╗ ██║██╔════╝
+██████╔╝██████╔╝█████╗  ██████╔╝██████╔╝██║  ██║██║  ╚═╝█████╗  ╚█████╗ ╚█████╗ ██║██╔██╗██║██║  ██╗
 ██╔═══╝ ██╔══██╗██╔══╝  ██╔═══╝ ██╔══██╗██║  ██║██║  ██╗██╔══╝   ╚═══██╗ ╚═══██╗██║██║╚████║██║  ╚██╗
 ██║     ██║  ██║███████╗██║     ██║  ██║╚█████╔╝╚█████╔╝███████╗██████╔╝██████╔╝██║██║ ╚███║╚██████╔╝
-╚═╝     ╚═╝  ╚═╝╚══════╝╚═╝     ╚═╝  ╚═╝ ╚════╝  ╚════╝ ╚══════╝╚═════╝ ╚═════╝ ╚═╝╚═╝  ╚══╝ ╚═════╝ 
+╚═╝     ╚═╝  ╚═╝╚══════╝╚═╝     ╚═╝  ╚═╝ ╚════╝  ╚════╝ ╚══════╝╚═════╝ ╚═════╝ ╚═╝╚═╝  ╚══╝ ╚═════╝
 """
-import polars as pl
-import pandas as pd
-import numpy as np
+
 from typing import List, Optional, Union
 
+import numpy as np
+import pandas as pd
+import polars as pl
+
 from scomp_link.utils.logger import get_logger
+
 logger = get_logger(__name__)
 from scomp_link.utils.decorators import timer
-
 
 
 def _to_polars(df: Union[pd.DataFrame, pl.DataFrame, pl.LazyFrame]) -> pl.DataFrame:
@@ -40,6 +42,7 @@ class Preprocessor:
     Accepts pandas or polars DataFrames as input. Uses polars internally.
     Returns pandas DataFrames for backward compatibility with sklearn.
     """
+
     def __init__(self, df: Union[pd.DataFrame, pl.DataFrame]):
         self.df = _to_polars(df)
         self.original_df = self.df.clone()
@@ -53,26 +56,26 @@ class Preprocessor:
         self.df = self.df.unique()
 
         if remove_outliers:
-            numeric_cols = [c for c, dt in zip(self.df.columns, self.df.dtypes)
-                           if dt.is_numeric()]
+            numeric_cols = [c for c, dt in zip(self.df.columns, self.df.dtypes) if dt.is_numeric()]
             for col in numeric_cols:
                 mean = self.df[col].mean()
                 std = self.df[col].std()
-                if std is not None and std > 0:
-                    self.df = self.df.filter(
-                        ((pl.col(col) - mean) / std).abs() < outlier_threshold
-                    )
+                if std is not None and isinstance(std, (int, float)) and std > 0:
+                    self.df = self.df.filter(((pl.col(col) - mean) / std).abs() < outlier_threshold)
 
         logger.info(f"Data cleaned. Current shape: {self.df.shape}")
         return self.df.to_pandas()
 
-    def integrate_data(self, other_df: Union[pd.DataFrame, pl.DataFrame], on: str, how: str = 'left') -> pd.DataFrame:
+    def integrate_data(self, other_df: Union[pd.DataFrame, pl.DataFrame], on: str, how: str = "left") -> pd.DataFrame:
         """
         P5: Data Integration (combining multiple sources) RECORD LINKAGE.
         """
+        from typing import Literal, cast
+
         logger.info("P5: Integrating data...")
         other = _to_polars(other_df)
-        self.df = self.df.join(other, on=on, how=how)
+        join_how = cast(Literal["inner", "left", "right", "full", "semi", "anti", "cross"], how)
+        self.df = self.df.join(other, on=on, how=join_how)
         logger.info(f"Data integrated. Current shape: {self.df.shape}")
         return self.df.to_pandas()
 
@@ -89,8 +92,7 @@ class Preprocessor:
         """
         logger.info("P10: Selecting features...")
         if target_col in self.df.columns:
-            numeric_cols = [c for c, dt in zip(self.df.columns, self.df.dtypes)
-                           if dt.is_numeric() and c != target_col]
+            numeric_cols = [c for c, dt in zip(self.df.columns, self.df.dtypes) if dt.is_numeric() and c != target_col]
             # polars pearson_corr per column
             correlations = {}
             for col in numeric_cols:
@@ -98,7 +100,7 @@ class Preprocessor:
                 if corr is not None:
                     correlations[col] = abs(corr)
 
-            sorted_features = sorted(correlations, key=correlations.get, reverse=True)
+            sorted_features = sorted(correlations, key=lambda x: correlations[x], reverse=True)
             top_features = sorted_features[:n_features] if n_features else sorted_features
             logger.info(f"Top features selected: {top_features}")
             return top_features
@@ -114,7 +116,7 @@ class Preprocessor:
             "shape": self.df.shape,
             "missing_values": null_counts,
             "dtypes": {c: str(dt) for c, dt in zip(self.df.columns, self.df.dtypes)},
-            "description": self.df.describe().to_pandas().to_dict()
+            "description": self.df.describe().to_pandas().to_dict(),
         }
         return summary
 

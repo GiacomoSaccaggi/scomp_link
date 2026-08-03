@@ -14,7 +14,7 @@ for embedding in HTML reports.
 
 from scomp_link.utils.colors import PRIMARY_JSON as _DEFAULT_COLORS_JSON
 
-css = '''
+css = """
     <style>
     #container {
         height: 600px;
@@ -70,8 +70,8 @@ css = '''
     }
 
     </style>
-    '''
-js = '''
+    """
+js = """
     <script src="https://code.highcharts.com/highcharts.js"></script>
     <script src="https://code.highcharts.com/modules/streamgraph.js"></script>
     <script src="https://code.highcharts.com/modules/series-label.js"></script>
@@ -79,62 +79,91 @@ js = '''
     <script src="https://code.highcharts.com/modules/exporting.js"></script>
     <script src="https://code.highcharts.com/modules/export-data.js"></script>
     <script>const colors = Highcharts.getOptions().colors;</script>
-    '''
+    """
 
 
-def streamgraphs(title, dates, series_dict:'{serie_name: list_values}', annotation:'dict {annotation_description: int(dates_index)}' = None, area=True):
+def streamgraphs(title, dates, series_dict: dict, annotation: dict = None, area=True):  # type: ignore[type-arg]
+    """
+    Highcharts streamgraph/area chart.
+
+    Args:
+        series_dict: {serie_name: list_values}
+        annotation: {annotation_description: int(dates_index)}
+    """
 
     id_name = title.lower().replace(" ", "_")
-    for p in '!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~':
-        id_name = id_name.replace(p, '_')
+    for p in "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~":
+        id_name = id_name.replace(p, "_")
     html_figure = f"""
     <figure class="highcharts-figure">
         <div id="{id_name}"></div>
     </figure>"""
     import random
-    list_colors = [f'Highcharts.color(colors[{str(int(round(9*i/len(series_dict.keys()),0)))}]).brighten({str(round(i/(len(series_dict.keys())*2),1))}).get()' for i in range(len(series_dict.keys()))]
+
+    list_colors = [
+        f"Highcharts.color(colors[{str(int(round(9*i/len(series_dict.keys()),0)))}]).brighten({str(round(i/(len(series_dict.keys())*2),1))}).get()"
+        for i in range(len(series_dict.keys()))
+    ]
     random.shuffle(list_colors)
-    colors = ', '.join(list_colors)
-    annotations_text = ''
+    colors = ", ".join(list_colors)
+    annotations_text = ""
     if annotation:
         for k, v in annotation.items():
-            separ = ',' if annotations_text != '' else ''
-            annotations_text += separ+"""{
+            separ = "," if annotations_text != "" else ""
+            annotations_text += (
+                separ
+                + """{
                            point: {
-                                x: """ + str(int(v)) + """,
+                                x: """
+                + str(int(v))
+                + """,
                                 xAxis: 0,
                                 y: 0,
                                 yAxis: 0
                             },
-                            text: '""" + str(k) + """'
+                            text: '"""
+                + str(k)
+                + """'
                         }"""
+            )
 
     if area:
-        type_graph = 'area'
-        visibility_y = 'true'
+        type_graph = "area"
+        visibility_y = "true"
     else:
-        type_graph = 'streamgraph'
-        visibility_y = 'false'
-    graph = """
+        type_graph = "streamgraph"
+        visibility_y = "false"
+    graph = (
+        """
     <script>
-    Highcharts.chart('""" + id_name + """', {
+    Highcharts.chart('"""
+        + id_name
+        + """', {
 
         chart: {
-            type: '"""+type_graph+"""',
+            type: '"""
+        + type_graph
+        + """',
             marginBottom: 30,
             zoomType: 'x'
         },
-        colors: [""" + colors + """],
+        colors: ["""
+        + colors
+        + """],
        title: {
             floating: true,
             align: 'left',
-            text: '""" + title + """'
+            text: '"""
+        + title
+        + """'
         },
         subtitle: {
             floating: true,
             align: 'left',
             y: 30,
-            text: '"""+type_graph+"""'
+            text: '"""
+        + type_graph
+        + """'
         },
 
         xAxis: {
@@ -142,8 +171,11 @@ def streamgraphs(title, dates, series_dict:'{serie_name: list_values}', annotati
             type: 'category',
             crosshair: true,
             categories: [
-    """ + "'" + "', '".join(dates) + "'" + \
-               """
+    """
+        + "'"
+        + "', '".join(dates)
+        + "'"
+        + """
                ],
                        labels: {
                            align: 'left',
@@ -156,16 +188,24 @@ def streamgraphs(title, dates, series_dict:'{serie_name: list_values}', annotati
                    },
 
                    yAxis: {
-                       visible: """+visibility_y+""",
-                       startOnTick: """+visibility_y+""",
-                       endOnTick: """+visibility_y+"""
+                       visible: """
+        + visibility_y
+        + """,
+                       startOnTick: """
+        + visibility_y
+        + """,
+                       endOnTick: """
+        + visibility_y
+        + """
                    },
 
                    legend: {
                        enabled: false
                    },
 
-                   annotations: [{labels: [""" + str(annotations_text) + """],
+                   annotations: [{labels: ["""
+        + str(annotations_text)
+        + """],
             labelOptions: {
                 backgroundColor: 'rgba(255,255,255,0.5)',
                 borderColor: 'silver'
@@ -189,8 +229,14 @@ def streamgraphs(title, dates, series_dict:'{serie_name: list_values}', annotati
 
         // Data parsed with olympic-medals.node.js
         series: [
-    """ + ", ".join(["{" + f"name:'{k.upper()}', data: [{','.join([str(int(i)) for i in v])}]" + "}" for k, v in series_dict.items()]) + \
-               """
+    """
+        + ", ".join(
+            [
+                "{" + f"name:'{k.upper()}', data: [{','.join([str(int(i)) for i in v])}]" + "}"
+                for k, v in series_dict.items()
+            ]
+        )
+        + """
                ],
 
                exporting: {
@@ -202,6 +248,7 @@ def streamgraphs(title, dates, series_dict:'{serie_name: list_values}', annotati
 
            </script>
                """
+    )
 
     return f"""
             {html_figure}
@@ -209,28 +256,42 @@ def streamgraphs(title, dates, series_dict:'{serie_name: list_values}', annotati
             """
 
 
-def calendar_heatmap(title, series_dict: 'dict {"yyyy-mm-dd": round(percentage_value*100, 2)}', min=0, max =1):
+def calendar_heatmap(title, series_dict: dict, min=0, max=1):  # type: ignore[type-arg]
+    """
+    Highcharts calendar heatmap.
+
+    Args:
+        series_dict: {"yyyy-mm-dd": round(percentage_value*100, 2)}
+    """
 
     q = len(series_dict.keys())
-    if q <= (7*5):
-        qmin ='0'
+    if q <= (7 * 5):
+        qmin = "0"
     else:
-        qmin = f'-{(int((q - (7*5))/7)+1)}'
+        qmin = f"-{(int((q - (7*5))/7)+1)}"
     id_name = title.lower().replace(" ", "_")
-    for p in '!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~':
-        id_name = id_name.replace(p, '_')
+    for p in "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~":
+        id_name = id_name.replace(p, "_")
     html_figure = f"""
     <figure class="highcharts-figure">
         <div id="{id_name}"></div>
     </figure>"""
 
-    data_init = f'const data_{id_name} = ' + '[{' + '}, {'.join([f"date:'{k}', value:{v}" for k,v in series_dict.items()]) + '}];'
+    data_init = (
+        f"const data_{id_name} = "
+        + "[{"
+        + "}, {".join([f"date:'{k}', value:{v}" for k, v in series_dict.items()])
+        + "}];"
+    )
     data_init += f"\n const weekdays_{id_name} = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];"
-    data_init += """
+    data_init += (
+        """
                     
                 // The function takes in a dataset and calculates how many empty tiles needed
                 // before and after the dataset is plotted.
-                function generateChartData_"""+id_name+"""(data) {
+                function generateChartData_"""
+        + id_name
+        + """(data) {
                 
                     // Calculate the starting weekday index (0-6 of the first date in the given
                     // array)
@@ -295,16 +356,22 @@ def calendar_heatmap(title, series_dict: 'dict {"yyyy-mm-dd": round(percentage_v
                     return chartData;
                 }
     """
+    )
     data_init += f"const chartData_{id_name} = generateChartData_{id_name}(data_{id_name});"
 
-    graph = """
-            Highcharts.chart('"""+id_name+"""', {
+    graph = (
+        """
+            Highcharts.chart('"""
+        + id_name
+        + """', {
                 chart: {
                     type: 'heatmap'
                 },
             
                 title: {
-                    text: '"""+ title+"""',
+                    text: '"""
+        + title
+        + """',
                     align: 'left'
                 },
             
@@ -327,7 +394,9 @@ def calendar_heatmap(title, series_dict: 'dict {"yyyy-mm-dd": round(percentage_v
                 },
             
                 xAxis: {
-                    categories: weekdays_"""+id_name+""",
+                    categories: weekdays_"""
+        + id_name
+        + """,
                     opposite: true,
                     lineWidth: 26,
                     offset: 13,
@@ -347,7 +416,9 @@ def calendar_heatmap(title, series_dict: 'dict {"yyyy-mm-dd": round(percentage_v
                 },
             
                 yAxis: {
-                    min: """+qmin+""",
+                    min: """
+        + qmin
+        + """,
                     max: 5,
                     accessibility: {
                         description: 'weeks'
@@ -362,12 +433,22 @@ def calendar_heatmap(title, series_dict: 'dict {"yyyy-mm-dd": round(percentage_v
                 },
             
                 colorAxis: {
-                    min: """+str(round(min,2))+""",
+                    min: """
+        + str(round(min, 2))
+        + """,
                     stops: [
-                        ["""+str(round(min+((max-min)*0.2),2))+""", 'lightblue'],
-                        ["""+str(round(min+((max-min)*0.4),2))+""", '#CBDFC8'],
-                        ["""+str(round(min+((max-min)*0.6),2))+""", '#F3E99E'],
-                        ["""+str(round(min+((max-min)*0.9),2))+""", '#F9A05C']
+                        ["""
+        + str(round(min + ((max - min) * 0.2), 2))
+        + """, 'lightblue'],
+                        ["""
+        + str(round(min + ((max - min) * 0.4), 2))
+        + """, '#CBDFC8'],
+                        ["""
+        + str(round(min + ((max - min) * 0.6), 2))
+        + """, '#F3E99E'],
+                        ["""
+        + str(round(min + ((max - min) * 0.9), 2))
+        + """, '#F9A05C']
                     ],
                     labels: {
                         format: '{value} %'
@@ -376,7 +457,9 @@ def calendar_heatmap(title, series_dict: 'dict {"yyyy-mm-dd": round(percentage_v
             
                 series: [{
                     keys: ['x', 'y', 'value', 'date', 'id'],
-                    data: chartData_"""+id_name+""",
+                    data: chartData_"""
+        + id_name
+        + """,
                     nullColor: 'rgba(196, 196, 196, 0.2)',
                     borderWidth: 2,
                     borderColor: 'rgba(196, 196, 196, 0.2)',
@@ -408,6 +491,7 @@ def calendar_heatmap(title, series_dict: 'dict {"yyyy-mm-dd": round(percentage_v
                 }]
             });    
     """
+    )
 
     return f"""
             {html_figure}
@@ -418,19 +502,30 @@ def calendar_heatmap(title, series_dict: 'dict {"yyyy-mm-dd": round(percentage_v
             """
 
 
-def calendar_gantt(title, series_dict: 'list of dict all info see https://www.highcharts.com/demo/gantt/project-management?redirect-to-jsfiddle', min_date:"yyyy-mm-dd", max_date:"yyyy-mm-dd", colors:str = None):
+def calendar_gantt(title, series_dict: list, min_date: str, max_date: str, colors: str = None):  # type: ignore[type-arg]
+    """
+    Highcharts Gantt chart.
+
+    Args:
+        series_dict: list of dict, all info see https://www.highcharts.com/demo/gantt/project-management
+        min_date: yyyy-mm-dd
+        max_date: yyyy-mm-dd
+    """
     if not colors:
         colors = _DEFAULT_COLORS_JSON
     id_name = title.lower().replace(" ", "_")
-    for p in '!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~':
-        id_name = id_name.replace(p, '_')
+    for p in "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~":
+        id_name = id_name.replace(p, "_")
     html_figure = f"""
     <figure class="highcharts-figure">
         <div id="{id_name}"></div>
     </figure>"""
 
-    data_init = """
-            const options_"""+id_name+""" = {
+    data_init = (
+        """
+            const options_"""
+        + id_name
+        + """ = {
                 chart: {
                     plotBackgroundColor: 'rgba(128,128,128,0.02)',
                     plotBorderColor: 'rgba(128,128,128,0.1)',
@@ -471,12 +566,36 @@ def calendar_gantt(title, series_dict: 'list of dict all info see https://www.hi
                         }]
                     }
                 },
-                colors: """+colors+""",
+                colors: """
+        + colors
+        + """,
                 series: [
     """
-    no_string_c = ['start','end','milestone', 'completed', 'collapsed']
-    data_init += '{'+ '}, {'.join([f"name: '{components['name']}', data: [" + '{'+ '}, {'.join([', '.join([f"{k}: '{v}'" if k not in no_string_c else f"{k}: {v}" for k, v in component.items()]) for component in components['data']]) + '}' + ']' for components in series_dict]) + '}'
-    data_init += """
+    )
+    no_string_c = ["start", "end", "milestone", "completed", "collapsed"]
+    data_init += (
+        "{"
+        + "}, {".join(
+            [
+                f"name: '{components['name']}', data: ["
+                + "{"
+                + "}, {".join(
+                    [
+                        ", ".join(
+                            [f"{k}: '{v}'" if k not in no_string_c else f"{k}: {v}" for k, v in component.items()]
+                        )
+                        for component in components["data"]
+                    ]
+                )
+                + "}"
+                + "]"
+                for components in series_dict
+            ]
+        )
+        + "}"
+    )
+    data_init += (
+        """
     
                 ],
              tooltip: {
@@ -489,7 +608,9 @@ def calendar_gantt(title, series_dict: 'list of dict all info see https://www.hi
                         '{/if}' 
                 },
                 title: {
-                    text: '"""+title+"""'
+                    text: '"""
+        + title
+        + """'
                 },
                 xAxis: [{
                     currentDateIndicator: {
@@ -507,8 +628,12 @@ def calendar_gantt(title, series_dict: 'list of dict all info see https://www.hi
                         borderWidth: 0
                     },
                     gridLineWidth: 1,
-                    min: new Date('"""+min_date+"""').getTime(),
-                    max: new Date('"""+max_date+"""').getTime()+160000000,
+                    min: new Date('"""
+        + min_date
+        + """').getTime(),
+                    max: new Date('"""
+        + max_date
+        + """').getTime()+160000000,
                     custom: {
                         weekendPlotBands: true
                     }
@@ -593,6 +718,7 @@ def calendar_gantt(title, series_dict: 'list of dict all info see https://www.hi
             };
 
     """
+    )
 
     graph = """
             // Plug-in to render plot bands for the weekends
@@ -646,5 +772,3 @@ def calendar_gantt(title, series_dict: 'list of dict all info see https://www.hi
                 {graph}
             </script>
             """
-
-

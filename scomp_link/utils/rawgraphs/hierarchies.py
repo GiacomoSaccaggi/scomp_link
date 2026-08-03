@@ -13,9 +13,10 @@ Generates SVG charts server-side using matplotlib and scipy.
 
 import io
 import math
-import numpy as np
-import matplotlib.pyplot as plt
+
 import matplotlib.patches as mpatches
+import matplotlib.pyplot as plt
+import numpy as np
 from matplotlib.patches import FancyBboxPatch, Wedge
 from scipy.cluster.hierarchy import dendrogram as scipy_dendrogram
 from scipy.spatial import Voronoi
@@ -26,12 +27,12 @@ from scomp_link.utils.colors import PRIMARY as COLORS
 def _fig_to_svg(fig):
     """Convert a matplotlib figure to an embeddable SVG string."""
     buf = io.BytesIO()
-    fig.savefig(buf, format='svg', bbox_inches='tight')
+    fig.savefig(buf, format="svg", bbox_inches="tight")
     plt.close(fig)
     buf.seek(0)
-    svg = buf.read().decode('utf-8')
-    if svg.startswith('<?xml'):
-        svg = svg[svg.index('<svg'):]
+    svg = buf.read().decode("utf-8")
+    if svg.startswith("<?xml"):
+        svg = svg[svg.index("<svg") :]
     return svg
 
 
@@ -42,19 +43,19 @@ def _get_colors(colors):
 
 def _flatten_leaves(node):
     """Recursively flatten hierarchy to list of (name, value) tuples."""
-    if 'children' in node and node['children']:
+    if "children" in node and node["children"]:
         leaves = []
-        for child in node['children']:
+        for child in node["children"]:
             leaves.extend(_flatten_leaves(child))
         return leaves
-    return [(node.get('name', ''), node.get('value', 1))]
+    return [(node.get("name", ""), node.get("value", 1))]
 
 
 def _get_node_value(node):
     """Get total value of a node (sum of children or own value)."""
-    if 'children' in node and node['children']:
-        return sum(_get_node_value(c) for c in node['children'])
-    return node.get('value', 1)
+    if "children" in node and node["children"]:
+        return sum(_get_node_value(c) for c in node["children"])
+    return node.get("value", 1)
 
 
 def _squarify(values, x, y, w, h):
@@ -96,7 +97,7 @@ def _squarify(values, x, y, w, h):
     return rects
 
 
-def circlepacking(data: dict, title: str = '', width: int = 700, height: int = 700, colors: list = None) -> str:
+def circlepacking(data: dict, title: str = "", width: int = 700, height: int = 700, colors: list | None = None) -> str:
     """Circle packing visualization for hierarchical data."""
     palette = _get_colors(colors)
     leaves = _flatten_leaves(data)
@@ -108,10 +109,10 @@ def circlepacking(data: dict, title: str = '', width: int = 700, height: int = 7
     max_r = max(radii) if radii else 1
 
     fig, ax = plt.subplots(1, 1, figsize=(width / 100, height / 100))
-    ax.set_aspect('equal')
-    ax.axis('off')
+    ax.set_aspect("equal")
+    ax.axis("off")
     if title:
-        ax.set_title(title, fontsize=14, fontweight='bold')
+        ax.set_title(title, fontsize=14, fontweight="bold")
 
     n = len(leaves)
     if n == 0:
@@ -141,23 +142,30 @@ def circlepacking(data: dict, title: str = '', width: int = 700, height: int = 7
             positions.append((px, py))
 
     # Draw container circle
-    container = plt.Circle((cx, cy), container_r, fill=False, edgecolor='#333', linewidth=1.5, linestyle='--')
+    container = mpatches.Circle((cx, cy), container_r, fill=False, edgecolor="#333", linewidth=1.5, linestyle="--")
     ax.add_patch(container)
 
     # Draw leaf circles
     for i, (pos, r, name) in enumerate(zip(positions, radii_scaled, names)):
         color = palette[i % len(palette)]
-        circle = plt.Circle(pos, r, facecolor=color, edgecolor='white', linewidth=1, alpha=0.8)
+        circle = mpatches.Circle(pos, r, facecolor=color, edgecolor="white", linewidth=1, alpha=0.8)
         ax.add_patch(circle)
         if r > 0.02:
-            ax.text(pos[0], pos[1], name, ha='center', va='center', fontsize=7, color='white', fontweight='bold')
+            ax.text(pos[0], pos[1], name, ha="center", va="center", fontsize=7, color="white", fontweight="bold")
 
     ax.set_xlim(-0.05, 1.05)
     ax.set_ylim(-0.05, 1.05)
     return _fig_to_svg(fig)
 
 
-def circular_dendrogram(linkage_matrix, labels: list = None, title: str = '', width: int = 700, height: int = 700, colors: list = None) -> str:
+def circular_dendrogram(
+    linkage_matrix,
+    labels: list | None = None,
+    title: str = "",
+    width: int = 700,
+    height: int = 700,
+    colors: list | None = None,
+) -> str:
     """Dendrogram in polar/circular layout."""
     palette = _get_colors(colors)
 
@@ -166,13 +174,13 @@ def circular_dendrogram(linkage_matrix, labels: list = None, title: str = '', wi
     ddata = scipy_dendrogram(linkage_matrix, labels=labels, no_plot=True)
     plt.close(fig_tmp)
 
-    fig, ax = plt.subplots(1, 1, figsize=(width / 100, height / 100), subplot_kw={'projection': 'polar'})
+    fig, ax = plt.subplots(1, 1, figsize=(width / 100, height / 100), subplot_kw={"projection": "polar"})
     if title:
-        fig.suptitle(title, fontsize=14, fontweight='bold')
+        fig.suptitle(title, fontsize=14, fontweight="bold")
 
-    n_leaves = len(ddata['leaves'])
+    n_leaves = len(ddata["leaves"])
     # Map x coordinates to angles
-    x_coords = sorted(set(x for xs in ddata['icoord'] for x in xs))
+    x_coords = sorted(set(x for xs in ddata["icoord"] for x in xs))
     x_min, x_max = min(x_coords), max(x_coords)
 
     def x_to_angle(x):
@@ -181,14 +189,14 @@ def circular_dendrogram(linkage_matrix, labels: list = None, title: str = '', wi
         return 2 * math.pi * (x - x_min) / (x_max - x_min)
 
     # Max height for radial scaling
-    y_coords = [y for ys in ddata['dcoord'] for y in ys]
+    y_coords = [y for ys in ddata["dcoord"] for y in ys]
     y_max = max(y_coords) if y_coords else 1
 
     def y_to_radius(y):
         return 0.3 + 0.6 * (1 - y / y_max) if y_max > 0 else 0.9
 
     # Draw links
-    for i, (xs, ys) in enumerate(zip(ddata['icoord'], ddata['dcoord'])):
+    for i, (xs, ys) in enumerate(zip(ddata["icoord"], ddata["dcoord"])):
         color = palette[i % len(palette)]
         angles = [x_to_angle(x) for x in xs]
         radii = [y_to_radius(y) for y in ys]
@@ -203,11 +211,12 @@ def circular_dendrogram(linkage_matrix, labels: list = None, title: str = '', wi
     # Draw labels at leaves
     if labels is None:
         labels = [str(i) for i in range(n_leaves)]
-    leaf_xs = sorted(set(ddata['icoord'][i][j] for i in range(len(ddata['icoord'])) for j in [0, 3]
-                         if ddata['dcoord'][i][j] == 0))
-    for lx, label in zip(leaf_xs, [labels[i] for i in ddata['leaves']]):
+    leaf_xs = sorted(
+        set(ddata["icoord"][i][j] for i in range(len(ddata["icoord"])) for j in [0, 3] if ddata["dcoord"][i][j] == 0)
+    )
+    for lx, label in zip(leaf_xs, [labels[i] for i in ddata["leaves"]]):
         angle = x_to_angle(lx)
-        ax.text(angle, 1.0, label, ha='center', va='center', fontsize=8, fontweight='bold')
+        ax.text(angle, 1.0, label, ha="center", va="center", fontsize=8, fontweight="bold")
 
     ax.set_ylim(0, 1.1)
     ax.set_yticklabels([])
@@ -216,7 +225,14 @@ def circular_dendrogram(linkage_matrix, labels: list = None, title: str = '', wi
     return _fig_to_svg(fig)
 
 
-def dendrogram(linkage_matrix, labels: list = None, title: str = '', width: int = 800, height: int = 500, colors: list = None) -> str:
+def dendrogram(
+    linkage_matrix,
+    labels: list | None = None,
+    title: str = "",
+    width: int = 800,
+    height: int = 500,
+    colors: list | None = None,
+) -> str:
     """Standard linear dendrogram."""
     palette = _get_colors(colors)
 
@@ -227,7 +243,7 @@ def dendrogram(linkage_matrix, labels: list = None, title: str = '', width: int 
         linkage_matrix,
         labels=labels,
         ax=ax,
-        above_threshold_color='#333',
+        above_threshold_color="#333",
         leaf_font_size=9,
     )
 
@@ -237,15 +253,15 @@ def dendrogram(linkage_matrix, labels: list = None, title: str = '', width: int 
         line.set_linewidth(1.5)
 
     if title:
-        ax.set_title(title, fontsize=14, fontweight='bold')
-    ax.spines['top'].set_visible(False)
-    ax.spines['right'].set_visible(False)
-    ax.spines['bottom'].set_visible(False)
-    ax.set_ylabel('Distance', fontsize=10)
+        ax.set_title(title, fontsize=14, fontweight="bold")
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
+    ax.spines["bottom"].set_visible(False)
+    ax.set_ylabel("Distance", fontsize=10)
     return _fig_to_svg(fig)
 
 
-def sunburst(data: dict, title: str = '', width: int = 700, height: int = 700, colors: list = None) -> str:
+def sunburst(data: dict, title: str = "", width: int = 700, height: int = 700, colors: list | None = None) -> str:
     """Sunburst chart (nested rings)."""
     palette = _get_colors(colors)
 
@@ -253,27 +269,27 @@ def sunburst(data: dict, title: str = '', width: int = 700, height: int = 700, c
     def build_levels(node, depth=0, color_idx=0, levels=None):
         if levels is None:
             levels = []
-        if 'children' in node and node['children']:
+        if "children" in node and node["children"]:
             while len(levels) <= depth:
                 levels.append([])
-            for i, child in enumerate(node['children']):
+            for i, child in enumerate(node["children"]):
                 cidx = (color_idx + i) % len(palette)
                 val = _get_node_value(child)
-                levels[depth].append((child.get('name', ''), val, cidx))
+                levels[depth].append((child.get("name", ""), val, cidx))
                 build_levels(child, depth + 1, cidx, levels)
         return levels
 
     levels = build_levels(data)
     if not levels:
         fig, ax = plt.subplots(1, 1, figsize=(width / 100, height / 100))
-        ax.axis('off')
+        ax.axis("off")
         return _fig_to_svg(fig)
 
     fig, ax = plt.subplots(1, 1, figsize=(width / 100, height / 100))
-    ax.set_aspect('equal')
-    ax.axis('off')
+    ax.set_aspect("equal")
+    ax.axis("off")
     if title:
-        ax.set_title(title, fontsize=14, fontweight='bold')
+        ax.set_title(title, fontsize=14, fontweight="bold")
 
     n_levels = len(levels)
     ring_width = 0.3 / n_levels if n_levels > 0 else 0.3
@@ -292,12 +308,15 @@ def sunburst(data: dict, title: str = '', width: int = 700, height: int = 700, c
             theta2 = start_angle + sweep
 
             wedge = Wedge(
-                (0.5, 0.5), outer_r, theta1, theta2,
+                (0.5, 0.5),
+                outer_r,
+                theta1,
+                theta2,
                 width=outer_r - inner_r,
                 facecolor=palette[cidx],
-                edgecolor='white',
+                edgecolor="white",
                 linewidth=1,
-                alpha=0.85
+                alpha=0.85,
             )
             ax.add_patch(wedge)
 
@@ -307,7 +326,7 @@ def sunburst(data: dict, title: str = '', width: int = 700, height: int = 700, c
                 mid_r = (inner_r + outer_r) / 2
                 lx = 0.5 + mid_r * math.cos(mid_angle)
                 ly = 0.5 + mid_r * math.sin(mid_angle)
-                ax.text(lx, ly, name, ha='center', va='center', fontsize=6, color='white', fontweight='bold')
+                ax.text(lx, ly, name, ha="center", va="center", fontsize=6, color="white", fontweight="bold")
 
             start_angle += sweep
 
@@ -316,17 +335,17 @@ def sunburst(data: dict, title: str = '', width: int = 700, height: int = 700, c
     return _fig_to_svg(fig)
 
 
-def treemap(data: dict, title: str = '', width: int = 800, height: int = 600, colors: list = None) -> str:
+def treemap(data: dict, title: str = "", width: int = 800, height: int = 600, colors: list | None = None) -> str:
     """Treemap with area-proportional rectangles."""
     palette = _get_colors(colors)
 
-    children = data.get('children', [])
+    children = data.get("children", [])
     if not children:
         fig, ax = plt.subplots(1, 1, figsize=(width / 100, height / 100))
-        ax.axis('off')
+        ax.axis("off")
         return _fig_to_svg(fig)
 
-    names = [c.get('name', '') for c in children]
+    names = [c.get("name", "") for c in children]
     values = [_get_node_value(c) for c in children]
 
     # Sort descending for better layout
@@ -340,40 +359,53 @@ def treemap(data: dict, title: str = '', width: int = 800, height: int = 600, co
     fig, ax = plt.subplots(1, 1, figsize=(width / 100, height / 100))
     ax.set_xlim(0, width)
     ax.set_ylim(0, height)
-    ax.axis('off')
+    ax.axis("off")
     if title:
-        ax.set_title(title, fontsize=14, fontweight='bold')
+        ax.set_title(title, fontsize=14, fontweight="bold")
 
     for i, (rx, ry, rw, rh) in enumerate(rects):
         color = palette[sorted_indices[i] % len(palette)]
         rect = mpatches.FancyBboxPatch(
-            (rx + 1, ry + 1), rw - 2, rh - 2,
+            (rx + 1, ry + 1),
+            rw - 2,
+            rh - 2,
             boxstyle="round,pad=2",
-            facecolor=color, edgecolor='white', linewidth=2, alpha=0.85
+            facecolor=color,
+            edgecolor="white",
+            linewidth=2,
+            alpha=0.85,
         )
         ax.add_patch(rect)
         # Label
         if rw > 30 and rh > 20:
             ax.text(
-                rx + rw / 2, ry + rh / 2, f"{sorted_names[i]}\n{sorted_values[i]}",
-                ha='center', va='center', fontsize=8, color='white', fontweight='bold'
+                rx + rw / 2,
+                ry + rh / 2,
+                f"{sorted_names[i]}\n{sorted_values[i]}",
+                ha="center",
+                va="center",
+                fontsize=8,
+                color="white",
+                fontweight="bold",
             )
 
     ax.invert_yaxis()
     return _fig_to_svg(fig)
 
 
-def voronoi_treemap(data: dict, title: str = '', width: int = 700, height: int = 700, colors: list = None) -> str:
+def voronoi_treemap(
+    data: dict, title: str = "", width: int = 700, height: int = 700, colors: list | None = None
+) -> str:
     """Weighted Voronoi treemap using Lloyd's relaxation."""
     palette = _get_colors(colors)
 
-    children = data.get('children', [])
+    children = data.get("children", [])
     if not children:
         fig, ax = plt.subplots(1, 1, figsize=(width / 100, height / 100))
-        ax.axis('off')
+        ax.axis("off")
         return _fig_to_svg(fig)
 
-    names = [c.get('name', '') for c in children]
+    names = [c.get("name", "") for c in children]
     values = np.array([_get_node_value(c) for c in children], dtype=float)
     n = len(values)
     weights = values / values.sum()
@@ -385,13 +417,15 @@ def voronoi_treemap(data: dict, title: str = '', width: int = 700, height: int =
     # Lloyd's relaxation iterations
     for _ in range(50):
         # Add mirror points for bounded Voronoi
-        mirrored = np.vstack([
-            points,
-            np.column_stack([-points[:, 0], points[:, 1]]),
-            np.column_stack([2 - points[:, 0], points[:, 1]]),
-            np.column_stack([points[:, 0], -points[:, 1]]),
-            np.column_stack([points[:, 0], 2 - points[:, 1]]),
-        ])
+        mirrored = np.vstack(
+            [
+                points,
+                np.column_stack([-points[:, 0], points[:, 1]]),
+                np.column_stack([2 - points[:, 0], points[:, 1]]),
+                np.column_stack([points[:, 0], -points[:, 1]]),
+                np.column_stack([points[:, 0], 2 - points[:, 1]]),
+            ]
+        )
         try:
             vor = Voronoi(mirrored)
         except Exception:
@@ -414,20 +448,22 @@ def voronoi_treemap(data: dict, title: str = '', width: int = 700, height: int =
         points = new_points
 
     # Final Voronoi for drawing
-    mirrored = np.vstack([
-        points,
-        np.column_stack([-points[:, 0], points[:, 1]]),
-        np.column_stack([2 - points[:, 0], points[:, 1]]),
-        np.column_stack([points[:, 0], -points[:, 1]]),
-        np.column_stack([points[:, 0], 2 - points[:, 1]]),
-    ])
+    mirrored = np.vstack(
+        [
+            points,
+            np.column_stack([-points[:, 0], points[:, 1]]),
+            np.column_stack([2 - points[:, 0], points[:, 1]]),
+            np.column_stack([points[:, 0], -points[:, 1]]),
+            np.column_stack([points[:, 0], 2 - points[:, 1]]),
+        ]
+    )
     vor = Voronoi(mirrored)
 
     fig, ax = plt.subplots(1, 1, figsize=(width / 100, height / 100))
-    ax.set_aspect('equal')
-    ax.axis('off')
+    ax.set_aspect("equal")
+    ax.axis("off")
     if title:
-        ax.set_title(title, fontsize=14, fontweight='bold')
+        ax.set_title(title, fontsize=14, fontweight="bold")
 
     for i in range(n):
         region_idx = vor.point_region[i]
@@ -439,64 +475,88 @@ def voronoi_treemap(data: dict, title: str = '', width: int = 700, height: int =
         polygon = np.clip(polygon, 0, 1)
         if len(polygon) >= 3:
             color = palette[i % len(palette)]
-            poly = plt.Polygon(polygon, facecolor=color, edgecolor='white', linewidth=2, alpha=0.85)
+            poly = mpatches.Polygon(polygon, facecolor=color, edgecolor="white", linewidth=2, alpha=0.85)
             ax.add_patch(poly)
             centroid = polygon.mean(axis=0)
-            ax.text(centroid[0], centroid[1], names[i], ha='center', va='center',
-                    fontsize=8, color='white', fontweight='bold')
+            ax.text(
+                centroid[0],
+                centroid[1],
+                names[i],
+                ha="center",
+                va="center",
+                fontsize=8,
+                color="white",
+                fontweight="bold",
+            )
 
     ax.set_xlim(-0.02, 1.02)
     ax.set_ylim(-0.02, 1.02)
     return _fig_to_svg(fig)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
+    import os
+
     import numpy as np
     from scipy.cluster.hierarchy import linkage
-    from scomp_link.utils.report_html import ScompLinkHTMLReport
-    import os
-    os.makedirs('tmp', exist_ok=True)
 
-    report = ScompLinkHTMLReport('RAWGraphs Hierarchies Demo')
+    from scomp_link.utils.report_html import ScompLinkHTMLReport
+
+    os.makedirs("tmp", exist_ok=True)
+
+    report = ScompLinkHTMLReport("RAWGraphs Hierarchies Demo")
     np.random.seed(42)
 
     # circlepacking
-    data = {'name': 'World', 'children': [
-        {'name': 'Europe', 'children': [{'name': 'France', 'value': 67}, {'name': 'Germany', 'value': 83}, {'name': 'Italy', 'value': 60}]},
-        {'name': 'Asia', 'children': [{'name': 'China', 'value': 140}, {'name': 'Japan', 'value': 126}]},
-        {'name': 'Americas', 'children': [{'name': 'USA', 'value': 330}, {'name': 'Brazil', 'value': 210}]}
-    ]}
-    svg = circlepacking(data, 'World Population')
-    report.add_rawgraphs_to_report(svg, 'Circle Packing')
+    data = {
+        "name": "World",
+        "children": [
+            {
+                "name": "Europe",
+                "children": [
+                    {"name": "France", "value": 67},
+                    {"name": "Germany", "value": 83},
+                    {"name": "Italy", "value": 60},
+                ],
+            },
+            {"name": "Asia", "children": [{"name": "China", "value": 140}, {"name": "Japan", "value": 126}]},
+            {"name": "Americas", "children": [{"name": "USA", "value": 330}, {"name": "Brazil", "value": 210}]},
+        ],
+    }
+    svg = circlepacking(data, "World Population")
+    report.add_rawgraphs_to_report(svg, "Circle Packing")
 
     # dendrogram
     X = np.random.rand(8, 4)
-    Z = linkage(X, method='ward')
-    svg = dendrogram(Z, ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'], 'Cluster Hierarchy')
-    report.add_rawgraphs_to_report(svg, 'Dendrogram')
+    Z = linkage(X, method="ward")
+    svg = dendrogram(Z, ["A", "B", "C", "D", "E", "F", "G", "H"], "Cluster Hierarchy")
+    report.add_rawgraphs_to_report(svg, "Dendrogram")
 
     # circular_dendrogram
-    svg = circular_dendrogram(Z, ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'], 'Circular Dendrogram')
-    report.add_rawgraphs_to_report(svg, 'Circular Dendrogram')
+    svg = circular_dendrogram(Z, ["A", "B", "C", "D", "E", "F", "G", "H"], "Circular Dendrogram")
+    report.add_rawgraphs_to_report(svg, "Circular Dendrogram")
 
     # sunburst
-    svg = sunburst(data, 'Population Sunburst')
-    report.add_rawgraphs_to_report(svg, 'Sunburst')
+    svg = sunburst(data, "Population Sunburst")
+    report.add_rawgraphs_to_report(svg, "Sunburst")
 
     # treemap
-    tree_data = {'name': 'Budget', 'children': [
-        {'name': 'Engineering', 'value': 40},
-        {'name': 'Marketing', 'value': 25},
-        {'name': 'Sales', 'value': 20},
-        {'name': 'Support', 'value': 10},
-        {'name': 'HR', 'value': 5}
-    ]}
-    svg = treemap(tree_data, 'Department Budget')
-    report.add_rawgraphs_to_report(svg, 'Treemap')
+    tree_data = {
+        "name": "Budget",
+        "children": [
+            {"name": "Engineering", "value": 40},
+            {"name": "Marketing", "value": 25},
+            {"name": "Sales", "value": 20},
+            {"name": "Support", "value": 10},
+            {"name": "HR", "value": 5},
+        ],
+    }
+    svg = treemap(tree_data, "Department Budget")
+    report.add_rawgraphs_to_report(svg, "Treemap")
 
     # voronoi_treemap
-    svg = voronoi_treemap(tree_data, 'Budget Voronoi')
-    report.add_rawgraphs_to_report(svg, 'Voronoi Treemap')
+    svg = voronoi_treemap(tree_data, "Budget Voronoi")
+    report.add_rawgraphs_to_report(svg, "Voronoi Treemap")
 
-    report.save_html('tmp/demo_hierarchies.html')
-    print('Saved tmp/demo_hierarchies.html')
+    report.save_html("tmp/demo_hierarchies.html")
+    print("Saved tmp/demo_hierarchies.html")

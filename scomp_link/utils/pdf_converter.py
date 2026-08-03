@@ -2,10 +2,10 @@
 """
 ██████╗ ██████╗ ███████╗
 ██╔══██╗██╔══██╗██╔════╝
-██████╔╝██║  ██║█████╗  
-██╔═══╝ ██║  ██║██╔══╝  
-██║     ██████╔╝██║     
-╚═╝     ╚═════╝ ╚═╝     
+██████╔╝██║  ██║█████╗
+██╔═══╝ ██║  ██║██╔══╝
+██║     ██████╔╝██║
+╚═╝     ╚═════╝ ╚═╝
 
 PDF conversion utilities for scomp-link.
 Provides functions to convert Markdown and HTML files to PDF format.
@@ -17,18 +17,20 @@ Dependencies (optional):
 
 try:
     import markdown
+
     HAS_MARKDOWN = True
 except ImportError:
     HAS_MARKDOWN = False
 
 try:
     from weasyprint import HTML
+
     HAS_WEASYPRINT = True
 except (ImportError, OSError):
     HAS_WEASYPRINT = False
 
 
-def markdown_to_pdf(input_path: str, output_path: str = None, css: str = None) -> str:
+def markdown_to_pdf(input_path: str, output_path: str | None = None, css: str | None = None) -> str:
     """
     Convert a Markdown file to PDF.
 
@@ -52,21 +54,22 @@ def markdown_to_pdf(input_path: str, output_path: str = None, css: str = None) -
         raise ImportError("weasyprint package not installed. Install with: pip install weasyprint")
 
     if output_path is None:
-        output_path = input_path.rsplit('.', 1)[0] + '.pdf'
+        output_path = input_path.rsplit(".", 1)[0] + ".pdf"
 
-    with open(input_path, 'r', encoding='utf-8') as f:
+    with open(input_path, "r", encoding="utf-8") as f:
         md_content = f.read()
 
-    html_content = markdown.markdown(md_content, extensions=['tables', 'fenced_code', 'toc'])
+    html_content = markdown.markdown(md_content, extensions=["tables", "fenced_code", "toc"])
 
     full_html = _wrap_html(html_content, css)
 
+    assert output_path is not None  # type narrowing
     HTML(string=full_html).write_pdf(output_path)
 
     return output_path
 
 
-def html_to_pdf(input_path: str, output_path: str = None, css: str = None) -> str:
+def html_to_pdf(input_path: str, output_path: str | None = None, css: str | None = None) -> str:
     """
     Convert an HTML file to PDF.
 
@@ -88,14 +91,15 @@ def html_to_pdf(input_path: str, output_path: str = None, css: str = None) -> st
         raise ImportError("weasyprint package not installed. Install with: pip install weasyprint")
 
     if output_path is None:
-        output_path = input_path.rsplit('.', 1)[0] + '.pdf'
+        output_path = input_path.rsplit(".", 1)[0] + ".pdf"
 
+    assert output_path is not None  # type narrowing
     if css:
-        with open(input_path, 'r', encoding='utf-8') as f:
+        with open(input_path, "r", encoding="utf-8") as f:
             html_content = f.read()
-        style_tag = f'<style>{css}</style>'
-        if '</head>' in html_content:
-            html_content = html_content.replace('</head>', f'{style_tag}</head>')
+        style_tag = f"<style>{css}</style>"
+        if "</head>" in html_content:
+            html_content = html_content.replace("</head>", f"{style_tag}</head>")
         else:
             html_content = style_tag + html_content
         HTML(string=html_content).write_pdf(output_path)
@@ -108,7 +112,7 @@ def html_to_pdf(input_path: str, output_path: str = None, css: str = None) -> st
 from scomp_link.utils.colors import MAIN, MAIN_DARK
 
 
-def _wrap_html(body: str, css: str = None) -> str:
+def _wrap_html(body: str, css: str | None = None) -> str:
     """Wrap HTML body content in a full HTML document with optional CSS."""
     default_css = f"""
         body {{ font-family: sans-serif; font-size: 14px; line-height: 1.6; margin: 40px; color: #333; }}

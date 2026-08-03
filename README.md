@@ -174,6 +174,49 @@ predictions = loaded.predict(new_data)
 
 ---
 
+## Pipeline DSL (`>>` operator)
+
+Compose ML pipelines and HTML reports declaratively with Airflow-style `>>` syntax:
+
+```python
+from scomp_link import CleanStep, SelectStep, ModelStep, TrainStep
+
+# Lazy pipeline — >> builds the chain, .run() executes it
+results = (
+    CleanStep(df)
+    >> SelectStep("price", features=["sqm", "rooms"])
+    >> ModelStep("numerical_prediction")
+    >> TrainStep("regression", test_size=0.2)
+).run()
+```
+
+Build HTML reports the same way:
+
+```python
+from scomp_link import SectionStep, TitleStep, TableStep, GraphStep, SaveStep
+from scomp_link.utils.report_html import ScompLinkHTMLReport
+
+report = ScompLinkHTMLReport("Q4 Report")
+
+(
+    SectionStep("Results")
+    >> TitleStep("Model Performance")
+    >> TableStep(metrics_df, "Metrics")
+    >> GraphStep(fig, "RMSE Chart")
+    >> SaveStep("q4_report.html")
+).run(report)
+```
+
+Use `LogStep` to inspect intermediate state:
+
+```python
+from scomp_link import LogStep
+
+(CleanStep(df) >> LogStep("after clean") >> SelectStep("y") >> TrainStep("regression")).run()
+```
+
+---
+
 ## Feature Engineering
 
 ```python

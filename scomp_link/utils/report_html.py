@@ -649,14 +649,15 @@ class ScompLinkHTMLReport:
         self.section_just_open = False
         self.lan = language
 
-    def single_plotly(
-        self, fig: "plotly.graph_objs._figure.Figure", title: str, plotdivid: str = None
-    ) -> "html plotly code":
+    def single_plotly(self, fig: "plotly.graph_objs._figure.Figure", title: str, plotdivid: str | None = None) -> str:
         """
-        This function it is usefull to create a single plot in html
+        This function it is usefull to create a single plot in html.
+        Returns HTML plotly code.
         :type plotdivid: object
         """
-        fig_dict = json.loads(to_json_plotly(fig))
+        fig_json = to_json_plotly(fig)
+        assert fig_json is not None
+        fig_dict = json.loads(fig_json)
         jdata = to_json_plotly(fig_dict.get("data", []))
         jlayout = to_json_plotly(fig_dict.get("layout", {}))
         jconfig = to_json_plotly({"responsive": True})
@@ -696,9 +697,9 @@ class ScompLinkHTMLReport:
 
         return script
 
-    def select_plotly(self, figures_dict: dict, title: str, labels="Choose a label") -> "html plotly code":
+    def select_plotly(self, figures_dict: dict, title: str, labels="Choose a label") -> str:
         """
-
+        Returns HTML plotly code with select dropdown.
         :type figures_dict: object
         """
         import random
@@ -721,7 +722,9 @@ class ScompLinkHTMLReport:
             idhide_ = [f"1_{title_}"]
         i = 0
         for single_title, fig in figures_dict.items():
-            fig_dict = json.loads(to_json_plotly(fig))
+            fig_json = to_json_plotly(fig)
+            assert fig_json is not None
+            fig_dict = json.loads(fig_json)
             jdata = to_json_plotly(fig_dict.get("data", []))
             jlayout = to_json_plotly(fig_dict.get("layout", {}))
             jconfig = to_json_plotly({"responsive": True})
@@ -839,13 +842,11 @@ class ScompLinkHTMLReport:
         self.html_report += self.single_plotly(fig, title)
         logger.info("Added graph to report!")
 
-    def add_matplotlib_graph_to_report(
-        self, fig: "matplotlib.figure.Figure", title: str, dpi: int = 150, img_format: str = "png"
-    ):
+    def add_matplotlib_graph_to_report(self, fig, title: str, dpi: int = 150, img_format: str = "png"):
         """
         Add a matplotlib figure to the report as a base64-encoded image.
 
-        :param fig: matplotlib.figure.Figure
+        :param fig: matplotlib.figure.Figure - the matplotlib figure
         :param title: str - title displayed above the image
         :param dpi: int - resolution of the exported image (default 150)
         :param img_format: str - image format, 'png' or 'svg' (default 'png')
@@ -926,7 +927,7 @@ class ScompLinkHTMLReport:
         self.html_report += self.select_plotly(figures_dict, title, labels=labels)
         logger.info("Added graph to report!")
 
-    def open_section(self, section_title: str, ingore_multi_section=False) -> "html plotly code":
+    def open_section(self, section_title: str, ingore_multi_section=False) -> None:
         if not self.section_just_open or ingore_multi_section:
             self.html_report += f'<button class="collapsiblemygs">{section_title}</button> <div class="content">'
             self.section_just_open = True
@@ -934,7 +935,7 @@ class ScompLinkHTMLReport:
         else:
             logger.info("Warning you already have an open section")
 
-    def close_section(self, ingore_multi_section=False) -> "html plotly code":
+    def close_section(self, ingore_multi_section=False) -> None:
         if self.section_just_open or ingore_multi_section:
             self.html_report += "</div>"
             self.section_just_open = False
@@ -942,15 +943,15 @@ class ScompLinkHTMLReport:
         else:
             logger.info("Warning you did not open section yet")
 
-    def add_title(self, title: str) -> "html plotly code":
+    def add_title(self, title: str) -> None:
         self.html_report += f"<h2>{title}</h2>"
         logger.info("Added title to report!")
 
-    def add_text(self, text: str) -> "html plotly code":
+    def add_text(self, text: str) -> None:
         self.html_report += f"<p>{text}</p>"
         logger.info("Added text to report!")
 
-    def add_dataframe(self, df: pd.DataFrame, title: str, limit_max=2000) -> "html plotly code":
+    def add_dataframe(self, df: pd.DataFrame, title: str, limit_max=2000) -> None:
         if len(df) < limit_max:
             self.html_report += (
                 '<a href="#" onclick="download_table_as_csv('

@@ -98,10 +98,10 @@ class ScompArtifact:
 
     def set_feature_schema(self, X: pd.DataFrame) -> "ScompArtifact":
         """Infer and store feature schema from a DataFrame."""
-        schema = {}
+        schema: Dict[str, Any] = {}
         for col in X.columns:
-            info = {"dtype": str(X[col].dtype)}
-            if np.issubdtype(X[col].dtype, np.number):
+            info: Dict[str, Any] = {"dtype": str(X[col].dtype)}
+            if pd.api.types.is_numeric_dtype(X[col]):
                 info["min"] = float(X[col].min())
                 info["max"] = float(X[col].max())
                 info["mean"] = float(X[col].mean())
@@ -316,6 +316,8 @@ if __name__ == "__main__":
     )
     y = 2 * X["x1"] + 0.5 * X["x2"] + np.random.randn(size_df) * 0.1
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    assert isinstance(X_train, pd.DataFrame)
+    assert isinstance(X_test, pd.DataFrame)
 
     model = RandomForestRegressor(n_estimators=50, random_state=42)
     model.fit(X_train, y_train)

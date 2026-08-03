@@ -1,5 +1,19 @@
 # Changelog
 
+## 2.1.0 (2026-08-03)
+
+### Added
+- **Pipeline DSL (`>>` operator)**: Airflow-style declarative composition for ML pipelines and HTML reports
+  - `CleanStep`, `SelectStep`, `ModelStep`, `TrainStep` — wrap `ScompLinkPipeline` steps
+  - `SectionStep`, `TitleStep`, `TextStep`, `GraphStep`, `TableStep`, `RawGraphStep`, `SaveStep` — wrap `ScompLinkHTMLReport` methods
+  - `LogStep` — transparent inspection step (works in both chain types)
+  - Lazy execution: `>>` builds the chain, `.run()` executes it
+  - Type safety: mixing ML and Report steps raises `TypeError` at chain construction time
+- **Pyright 0 errors**: Full strict typing across entire codebase (344 errors resolved)
+
+### Changed
+- `ScompLinkPipeline` gains `__rshift__` for `pipeline >> step` syntax
+
 ## 1.3.0 (2026-07-16)
 
 ### Added

@@ -9,7 +9,7 @@ on first access, keeping `import scomp_link` near-instant.
 
 from .utils.logger import set_verbosity
 
-__version__ = "2.0.0"
+__version__ = "2.1.0"
 
 __all__ = [
     "set_verbosity",
@@ -33,6 +33,19 @@ __all__ = [
     "LimeExplainer",
     "DriftDetector",
     "ScompArtifact",
+    # DSL
+    "Chain",
+    "CleanStep",
+    "SelectStep",
+    "ModelStep",
+    "TrainStep",
+    "SectionStep",
+    "TitleStep",
+    "TextStep",
+    "GraphStep",
+    "TableStep",
+    "RawGraphStep",
+    "SaveStep",
 ]
 
 _LAZY_IMPORTS = {
@@ -63,6 +76,20 @@ _LAZY_IMPORTS = {
     "DriftDetector": (".monitoring", "DriftDetector"),
     # persistence
     "ScompArtifact": (".persistence", "ScompArtifact"),
+    # DSL
+    "Chain": (".pipeline_dsl", "Chain"),
+    "CleanStep": (".pipeline_dsl", "CleanStep"),
+    "SelectStep": (".pipeline_dsl", "SelectStep"),
+    "ModelStep": (".pipeline_dsl", "ModelStep"),
+    "TrainStep": (".pipeline_dsl", "TrainStep"),
+    "SectionStep": (".pipeline_dsl", "SectionStep"),
+    "TitleStep": (".pipeline_dsl", "TitleStep"),
+    "TextStep": (".pipeline_dsl", "TextStep"),
+    "GraphStep": (".pipeline_dsl", "GraphStep"),
+    "TableStep": (".pipeline_dsl", "TableStep"),
+    "RawGraphStep": (".pipeline_dsl", "RawGraphStep"),
+    "SaveStep": (".pipeline_dsl", "SaveStep"),
+    "LogStep": (".pipeline_dsl", "LogStep"),
 }
 
 

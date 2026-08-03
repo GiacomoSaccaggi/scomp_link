@@ -24,13 +24,14 @@ Methods:
 
 """
 
+from typing import Dict, List, Optional, Tuple
+
 import numpy as np
 import pandas as pd
-from typing import Optional, List, Dict, Tuple
 
 from scomp_link.utils.logger import get_logger
-logger = get_logger(__name__)
 
+logger = get_logger(__name__)
 
 
 class TimeSeriesAnomalyDetector:
@@ -71,7 +72,7 @@ class TimeSeriesAnomalyDetector:
     >>> print(results['anomalies'])
     """
 
-    AVAILABLE_METHODS = ['autoencoder', 'moving_avg', 'moving_median', 'arima']
+    AVAILABLE_METHODS = ["autoencoder", "moving_avg", "moving_median", "arima"]
 
     def __init__(
         self,
@@ -145,7 +146,7 @@ class TimeSeriesAnomalyDetector:
         """Create overlapping sequences for autoencoder."""
         output = []
         for i in range(len(values) - self.time_steps + 1):
-            output.append(values[i: i + self.time_steps])
+            output.append(values[i : i + self.time_steps])
         return np.stack(output)
 
     def _fit_autoencoder(self, values: np.ndarray):
@@ -153,12 +154,14 @@ class TimeSeriesAnomalyDetector:
         from tensorflow import keras
 
         self._log("  [AE] Building and training Conv1D Autoencoder...")
+        assert self.training_mean_ is not None and self.training_std_ is not None
         normalized = (values - self.training_mean_) / self.training_std_
         x_train = self._create_sequences(normalized.reshape(-1, 1))
 
         self.ae_model_ = self._build_autoencoder((x_train.shape[1], x_train.shape[2]))
         self.ae_model_.fit(
-            x_train, x_train,
+            x_train,
+            x_train,
             epochs=self.ae_epochs,
             batch_size=self.ae_batch_size,
             validation_split=0.1,
@@ -174,6 +177,8 @@ class TimeSeriesAnomalyDetector:
 
     def _detect_autoencoder(self, values: np.ndarray) -> np.ndarray:
         """Detect anomalies using autoencoder reconstruction error."""
+        assert self.training_mean_ is not None and self.training_std_ is not None
+        assert self.ae_model_ is not None
         normalized = (values - self.training_mean_) / self.training_std_
         x_test = self._create_sequences(normalized.reshape(-1, 1))
         x_pred = self.ae_model_.predict(x_test, verbose=0)
@@ -235,10 +240,7 @@ class TimeSeriesAnomalyDetector:
         try:
             from statsmodels.tsa.arima.model import ARIMA
         except ImportError:
-            raise ImportError(
-                "statsmodels required for ARIMA method. "
-                "Install with: pip install statsmodels"
-            )
+            raise ImportError("statsmodels required for ARIMA method. " "Install with: pip install statsmodels")
 
         self._log("  [ARIMA] Fitting model...")
         model = ARIMA(values, order=self.arima_order)
@@ -269,7 +271,7 @@ class TimeSeriesAnomalyDetector:
         self.training_mean_ = np.mean(values)
         self.training_std_ = np.std(values)
 
-        if 'autoencoder' in self.methods:
+        if "autoencoder" in self.methods:
             self._fit_autoencoder(values)
 
         return self
@@ -294,10 +296,10 @@ class TimeSeriesAnomalyDetector:
         method_results = {}
 
         method_map = {
-            'autoencoder': self._detect_autoencoder,
-            'moving_avg': self._detect_moving_avg,
-            'moving_median': self._detect_moving_median,
-            'arima': self._detect_arima,
+            "autoencoder": self._detect_autoencoder,
+            "moving_avg": self._detect_moving_avg,
+            "moving_median": self._detect_moving_median,
+            "arima": self._detect_arima,
         }
 
         for method in self.methods:
@@ -318,7 +320,7 @@ class TimeSeriesAnomalyDetector:
         self._log(f"  Total anomalies detected: {anomalies.sum()} / {n}")
 
         return {
-            'anomalies': anomalies,
-            'methods': method_results,
-            'consensus_score': consensus,
+            "anomalies": anomalies,
+            "methods": method_results,
+            "consensus_score": consensus,
         }
