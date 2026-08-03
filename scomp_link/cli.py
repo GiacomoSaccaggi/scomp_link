@@ -957,7 +957,7 @@ def cmd_tune(args):
 
         metrics = {
             "accuracy": float(accuracy_score(y_test, y_pred)),
-            "f1": float(f1_score(y_test, y_pred, average="weighted", zero_division="0")),
+            "f1": float(f1_score(y_test, y_pred, average="weighted", zero_division=0)),  # type: ignore[arg-type]
         }
 
     fmt = getattr(args, "format", "json")
