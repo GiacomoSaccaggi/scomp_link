@@ -77,6 +77,42 @@ scomp-link init-config --local      # Create project-level config (.scomp-link.y
 4. `validate` → evaluate on test data
 5. `serve` or `export` → deploy
 
+## Pipeline DSL (`>>` operator)
+
+Use the `>>` operator for declarative, readable pipelines (Python API only):
+
+```python
+from scomp_link import CleanStep, SelectStep, ModelStep, TrainStep, LogStep
+
+# Lazy ML pipeline — >> builds, .run() executes
+results = (
+    CleanStep(df)
+    >> SelectStep("target")
+    >> ModelStep("numerical_prediction")   # or "categorical_known", "categorical_unknown"
+    >> TrainStep("regression")             # or "classification", "clustering"
+).run()
+
+# Report pipeline
+from scomp_link import SectionStep, TableStep, GraphStep, SaveStep
+from scomp_link.utils.report_html import ScompLinkHTMLReport
+
+(
+    SectionStep("Results")
+    >> TableStep(metrics_df, "Metrics")
+    >> GraphStep(fig, "Chart")
+    >> SaveStep("report.html")
+).run(ScompLinkHTMLReport("My Report"))
+```
+
+Use `LogStep` to inspect intermediate state without modifying the pipeline:
+```python
+CleanStep(df) >> LogStep("after clean") >> SelectStep("y") >> TrainStep("regression")
+```
+
+**Rules:**
+- Mixing ML steps and Report steps in the same chain raises `TypeError` immediately
+- `LogStep` is neutral — works in both chain types, can appear anywhere
+
 ## Visualization (Python API)
 
 For creating HTML reports with charts:

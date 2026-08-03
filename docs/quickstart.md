@@ -119,3 +119,41 @@ See [Agent Integration Guide](agent-integration.md) for full setup.
 - [Python API](API_REFERENCE.md) — Programmatic usage
 - [Visualization Guide](visualization.md) — 39 chart types
 - [Examples](examples.md) — 34 runnable examples
+
+
+---
+
+## Pipeline DSL (`>>` operator)
+
+Compose pipelines declaratively with the `>>` operator — same syntax for ML and reports:
+
+```python
+from scomp_link import CleanStep, SelectStep, ModelStep, TrainStep
+import pandas as pd
+
+df = pd.read_csv("train.csv")
+
+results = (
+    CleanStep(df)
+    >> SelectStep("price")
+    >> ModelStep("numerical_prediction")
+    >> TrainStep("regression")
+).run()
+
+print(results["metrics"])
+```
+
+Build HTML reports the same way:
+```python
+from scomp_link import SectionStep, TableStep, GraphStep, SaveStep
+from scomp_link.utils.report_html import ScompLinkHTMLReport
+
+report = ScompLinkHTMLReport("My Report")
+
+(
+    SectionStep("Results")
+    >> TableStep(metrics_df, "Metrics")
+    >> GraphStep(fig, "Performance")
+    >> SaveStep("report.html")
+).run(report)
+```

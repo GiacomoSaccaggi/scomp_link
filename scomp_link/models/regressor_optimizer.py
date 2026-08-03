@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 """
 
-██████╗ ███████╗ ██████╗ ██████╗ ███████╗ ██████╗ ██████╗ █████╗ ██████╗ 
+██████╗ ███████╗ ██████╗ ██████╗ ███████╗ ██████╗ ██████╗ █████╗ ██████╗
 ██╔══██╗██╔════╝██╔════╝ ██╔══██╗██╔════╝██╔════╝██╔════╝██╔══██╗██╔══██╗
 ██████╔╝█████╗  ██║  ██╗ ██████╔╝█████╗  ╚█████╗ ╚█████╗ ██║  ██║██████╔╝
 ██╔══██╗██╔══╝  ██║  ╚██╗██╔══██╗██╔══╝   ╚═══██╗ ╚═══██╗██║  ██║██╔══██╗
 ██║  ██║███████╗╚██████╔╝██║  ██║███████╗██████╔╝██████╔╝╚█████╔╝██║  ██║
 ╚═╝  ╚═╝╚══════╝ ╚═════╝ ╚═╝  ╚═╝╚══════╝╚═════╝ ╚═════╝  ╚════╝ ╚═╝  ╚═╝
 
- █████╗ ██████╗ ████████╗██╗███╗   ███╗██╗███████╗███████╗██████╗ 
+ █████╗ ██████╗ ████████╗██╗███╗   ███╗██╗███████╗███████╗██████╗
 ██╔══██╗██╔══██╗╚══██╔══╝██║████╗ ████║██║╚════██║██╔════╝██╔══██╗
 ██║  ██║██████╔╝   ██║   ██║██╔████╔██║██║  ███╔═╝█████╗  ██████╔╝
 ██║  ██║██╔═══╝    ██║   ██║██║╚██╔╝██║██║██╔══╝  ██╔══╝  ██╔══██╗
@@ -16,73 +16,83 @@
  ╚════╝ ╚═╝        ╚═╝   ╚═╝╚═╝     ╚═╝╚═╝╚══════╝╚══════╝╚═╝  ╚═╝
 
 """
-import numpy as np
-import scipy as sp
-import pandas as pd
-from sklearn.svm import SVR
+
 from datetime import datetime
 from itertools import product
+
 import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import scipy as sp
 from scipy.stats import fisher_exact
+from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.compose import ColumnTransformer
-from sklearn.neural_network import MLPRegressor
-from sklearn.model_selection import GridSearchCV
-from sklearn.neighbors import KNeighborsRegressor
-from sklearn.pipeline import Pipeline, make_pipeline
-from sklearn.utils import check_random_state, check_X_y
-from sklearn.base import TransformerMixin, BaseEstimator
-from sklearn.model_selection import cross_val_score, KFold, train_test_split
 from sklearn.ensemble import GradientBoostingRegressor, RandomForestRegressor
-from sklearn.linear_model import SGDRegressor, Lasso, LinearRegression, ElasticNet
+from sklearn.linear_model import ElasticNet, Lasso, LinearRegression, SGDRegressor
+from sklearn.model_selection import GridSearchCV, KFold, cross_val_score, train_test_split
+from sklearn.neighbors import KNeighborsRegressor
+from sklearn.neural_network import MLPRegressor
+from sklearn.pipeline import Pipeline, make_pipeline
 from sklearn.preprocessing import OneHotEncoder, PolynomialFeatures, StandardScaler
+from sklearn.svm import SVR
+from sklearn.utils import check_random_state, check_X_y
 
 from scomp_link.utils.logger import get_logger
+
 logger = get_logger(__name__)
-
-
 
 
 class Boruta(BaseEstimator, TransformerMixin):
     """
-       Improved Python implementation of the Boruta algorithm for feature selection.
-        Original code and method by: Miron B Kursa, https://m2.icm.edu.pl/boruta/
+    Improved Python implementation of the Boruta algorithm for feature selection.
+     Original code and method by: Miron B Kursa, https://m2.icm.edu.pl/boruta/
 
-        Boruta is an all relevant feature selection method, while most other are
-        minimal optimal; this means it tries to find all features carrying
-        information usable for prediction, rather than finding a possibly compact
-        subset of features on which some classifier has a minimal error.
+     Boruta is an all relevant feature selection method, while most other are
+     minimal optimal; this means it tries to find all features carrying
+     information usable for prediction, rather than finding a possibly compact
+     subset of features on which some classifier has a minimal error.
 
-        Why bother with all relevant feature selection?
-        When you try to understand the phenomenon that made your data, you should
-        care about all factors that contribute to it, not just the bluntest signs
-        of it in context of your methodology (yes, minimal optimal set of features
-        by definition depends on your classifier choice).
+     Why bother with all relevant feature selection?
+     When you try to understand the phenomenon that made your data, you should
+     care about all factors that contribute to it, not just the bluntest signs
+     of it in context of your methodology (yes, minimal optimal set of features
+     by definition depends on your classifier choice).
 
 
-       Dependencies:
-       - numpy
-       - scipy
-       - pandas
-       - sklearn
-       - matplotlib
+    Dependencies:
+    - numpy
+    - scipy
+    - pandas
+    - sklearn
+    - matplotlib
 
-       Parameters:
-       - estimator: Estimator object with a 'fit' method and 'feature_importances_' attribute
-       - n_estimators: Number of estimators in the ensemble method or 'auto'
-       - perc: Percentile for feature threshold comparison (default = 100)
-       - alpha: Level for corrected p-value rejection in corrections (default = 0.05)
-       - two_step: Boolean for two-step correction (default = True)
-       - max_iter: Maximum iterations to perform (default = 100)
-       - random_state: RandomState instance or seed (default=None)
-       - verbose: Verbosity level (0, 1, or 2) for output control (default=0)
+    Parameters:
+    - estimator: Estimator object with a 'fit' method and 'feature_importances_' attribute
+    - n_estimators: Number of estimators in the ensemble method or 'auto'
+    - perc: Percentile for feature threshold comparison (default = 100)
+    - alpha: Level for corrected p-value rejection in corrections (default = 0.05)
+    - two_step: Boolean for two-step correction (default = True)
+    - max_iter: Maximum iterations to perform (default = 100)
+    - random_state: RandomState instance or seed (default=None)
+    - verbose: Verbosity level (0, 1, or 2) for output control (default=0)
 
-       Methods:
-       - fit: Fits Boruta feature selection with the provided estimator
-       - transform: Reduces input to selected Boruta features
-       - fit_transform: Fits Boruta and reduces input to selected features
-       """
-    def __init__(self, estimator, n_estimators=1000, perc=100, alpha=0.05,
-                 two_step=True, max_iter=100, random_state=None, verbose=1):
+    Methods:
+    - fit: Fits Boruta feature selection with the provided estimator
+    - transform: Reduces input to selected Boruta features
+    - fit_transform: Fits Boruta and reduces input to selected features
+    """
+
+    def __init__(
+        self,
+        estimator,
+        n_estimators=1000,
+        perc=100,
+        alpha=0.05,
+        two_step=True,
+        max_iter=100,
+        random_state=None,
+        verbose=1,
+    ):
         self.estimator = estimator
         self.n_estimators = n_estimators
         self.perc = perc
@@ -138,29 +148,29 @@ class Boruta(BaseEstimator, TransformerMixin):
         # 0  - default state = tentative in original code
         # 1  - accepted in original code
         # -1 - rejected in original code
-        dec_reg = np.zeros(n_feat, dtype = int)
+        dec_reg = np.zeros(n_feat, dtype=int)
         # counts how many times a given feature was more important than
         # the best of the shadow features
-        hit_reg = np.zeros(n_feat, dtype = int)
+        hit_reg = np.zeros(n_feat, dtype=int)
         # these record the history of the iterations
-        imp_history = np.zeros(n_feat, dtype = float)
+        imp_history = np.zeros(n_feat, dtype=float)
         sha_max_history = []
 
         # set n_estimators
-        if self.n_estimators != 'auto':
-            self.estimator.set_params(n_estimators = self.n_estimators)
+        if self.n_estimators != "auto":
+            self.estimator.set_params(n_estimators=self.n_estimators)
 
         # main feature selection loop
         while np.any(dec_reg == 0) and _iter < self.max_iter:
             # find optimal number of trees and depth
-            if self.n_estimators == 'auto':
+            if self.n_estimators == "auto":
                 # number of features that aren't rejected
                 not_rejected = np.where(dec_reg >= 0)[0].shape[0]
                 n_tree = self._get_tree_num(not_rejected)
-                self.estimator.set_params(n_estimators = n_tree)
+                self.estimator.set_params(n_estimators=n_tree)
 
             # make sure we start with a new tree in each iteration
-            self.estimator.set_params(random_state = self.random_state)
+            self.estimator.set_params(random_state=self.random_state)
 
             # add shadow attributes, shuffle them and train estimator, get imps
             cur_imp = self._add_shadows_get_imps(X, y, dec_reg)
@@ -189,21 +199,20 @@ class Boruta(BaseEstimator, TransformerMixin):
         confirmed = np.where(dec_reg == 1)[0]
         tentative = np.where(dec_reg == 0)[0]
         # ignore the first row of zeros
-        tentative_median = np.median(imp_history[1:, tentative], axis = 0)
+        tentative_median = np.median(imp_history[1:, tentative], axis=0)
         # which tentative to keep
-        tentative_confirmed = np.where(tentative_median
-                                       > np.median(sha_max_history))[0]
+        tentative_confirmed = np.where(tentative_median > np.median(sha_max_history))[0]
         tentative = tentative[tentative_confirmed]
 
         # basic result variables
         self.n_features_ = confirmed.shape[0]
-        self.support_ = np.zeros(n_feat, dtype = bool)
+        self.support_ = np.zeros(n_feat, dtype=bool)
         self.support_[confirmed] = 1
-        self.support_weak_ = np.zeros(n_feat, dtype = bool)
+        self.support_weak_ = np.zeros(n_feat, dtype=bool)
         self.support_weak_[tentative] = 1
 
         # ranking, confirmed variables are rank 1
-        self.ranking_ = np.ones(n_feat, dtype = int)
+        self.ranking_ = np.ones(n_feat, dtype=int)
         # tentative variables are rank 2
         self.ranking_[tentative] = 2
         # selected = confirmed and tentative
@@ -216,9 +225,9 @@ class Boruta(BaseEstimator, TransformerMixin):
         # update rank for not_selected features
         if not_selected.shape[0] > 0:
             # calculate ranks in each iteration, then median of ranks across feats
-            iter_ranks = self._nanrankdata(imp_history_rejected, axis = 1)
-            rank_medians = np.nanmedian(iter_ranks, axis = 0)
-            ranks = self._nanrankdata(rank_medians, axis = 0)
+            iter_ranks = self._nanrankdata(imp_history_rejected, axis=1)
+            rank_medians = np.nanmedian(iter_ranks, axis=0)
+            ranks = self._nanrankdata(rank_medians, axis=0)
 
             # set smallest rank to 3 if there are tentative feats
             if tentative.shape[0] > 0:
@@ -229,7 +238,7 @@ class Boruta(BaseEstimator, TransformerMixin):
             self.ranking_[not_selected] = ranks
         else:
             # all are selected, thus we set feature supports to True
-            self.support_ = np.ones(n_feat, dtype = bool)
+            self.support_ = np.ones(n_feat, dtype=bool)
 
         # notify user
         if self.verbose > 0:
@@ -241,7 +250,7 @@ class Boruta(BaseEstimator, TransformerMixin):
         try:
             self.ranking_
         except AttributeError:
-            raise ValueError('You need to call the fit(X, y) method first.')
+            raise ValueError("You need to call the fit(X, y) method first.")
 
         if weak:
             X = X[:, self.support_ + self.support_weak_]
@@ -250,13 +259,13 @@ class Boruta(BaseEstimator, TransformerMixin):
         return X
 
     def _get_tree_num(self, n_feat):
-        depth = self.estimator.get_params()['max_depth']
+        depth = self.estimator.get_params()["max_depth"]
         if depth == None:
             depth = 10
         # how many times a feature should be considered on average
         f_repr = 100
         # n_feat * 2 because the training matrix is extended with n shadow features
-        multi = ((n_feat * 2) / (np.sqrt(n_feat * 2) * depth))
+        multi = (n_feat * 2) / (np.sqrt(n_feat * 2) * depth)
         n_estimators = int(multi * f_repr)
         return n_estimators
 
@@ -264,16 +273,17 @@ class Boruta(BaseEstimator, TransformerMixin):
         try:
             self.estimator.fit(X, y)
         except Exception as e:
-            raise ValueError('Please check your X and y variable. The provided'
-                             'estimator cannot be fitted to your data.\n' + str(e))
+            raise ValueError(
+                "Please check your X and y variable. The provided" "estimator cannot be fitted to your data.\n" + str(e)
+            )
         try:
             imp = self.estimator.feature_importances_
         except Exception:
-            raise ValueError('Only methods with feature_importance_ attribute '
-                             'are currently supported in  Boruta.')
+            raise ValueError("Only methods with feature_importance_ attribute " "are currently supported in  Boruta.")
         return imp
 
     def _get_shuffle(self, seq):
+        assert self.random_state is not None, "Call fit() before _get_shuffle()"
         self.random_state.shuffle(seq)
         return seq
 
@@ -285,7 +295,7 @@ class Boruta(BaseEstimator, TransformerMixin):
         # deep copy the matrix for the shadow matrix
         x_sha = np.copy(x_cur)
         # make sure there's at least 5 columns in the shadow matrix for
-        while (x_sha.shape[1] < 5):
+        while x_sha.shape[1] < 5:
             x_sha = np.hstack((x_sha, x_sha))
         # shuffle xSha
         x_sha = np.apply_along_axis(self._get_shuffle, 0, x_sha)
@@ -310,14 +320,14 @@ class Boruta(BaseEstimator, TransformerMixin):
         active_features = np.where(dec_reg >= 0)[0]
         hits = hit_reg[active_features]
         # get uncorrected p values based on hit_reg
-        to_accept_ps = sp.stats.binom.sf(hits - 1, _iter, .5).flatten()
-        to_reject_ps = sp.stats.binom.cdf(hits, _iter, .5).flatten()
+        to_accept_ps = sp.stats.binom.sf(hits - 1, _iter, 0.5).flatten()
+        to_reject_ps = sp.stats.binom.cdf(hits, _iter, 0.5).flatten()
 
         if self.two_step:
             # two step multicor process
             # first we correct for testing several features in each round using FDR
-            to_accept = self._fdrcorrection(to_accept_ps, alpha = self.alpha)[0]
-            to_reject = self._fdrcorrection(to_reject_ps, alpha = self.alpha)[0]
+            to_accept = self._fdrcorrection(to_accept_ps, alpha=self.alpha)[0]
+            to_reject = self._fdrcorrection(to_reject_ps, alpha=self.alpha)[0]
 
             # second we correct for testing the same feature over and over again
             # using bonferroni
@@ -386,7 +396,7 @@ class Boruta(BaseEstimator, TransformerMixin):
         """
         Replaces bottleneck's nanrankdata with scipy and numpy alternative.
         """
-        ranks = sp.stats.mstats.rankdata(X, axis = axis)
+        ranks = sp.stats.mstats.rankdata(X, axis=axis)
         ranks[np.isnan(X)] = np.nan
         return ranks
 
@@ -397,16 +407,16 @@ class Boruta(BaseEstimator, TransformerMixin):
         # check X and y are consistent len, X is Array and y is column
         X, y = check_X_y(X, y)
         if self.perc <= 0 or self.perc > 100:
-            raise ValueError('The percentile should be between 0 and 100.')
+            raise ValueError("The percentile should be between 0 and 100.")
 
         if self.alpha <= 0 or self.alpha > 1:
-            raise ValueError('Alpha should be between 0 and 1.')
+            raise ValueError("Alpha should be between 0 and 1.")
 
     def _print_results(self, dec_reg, _iter, flag):
-        n_iter = str(_iter) + ' / ' + str(self.max_iter)
+        n_iter = str(_iter) + " / " + str(self.max_iter)
         n_confirmed = np.where(dec_reg == 1)[0].shape[0]
         n_rejected = np.where(dec_reg == -1)[0].shape[0]
-        cols = ['Iteration: ', 'Confirmed: ', 'Tentative: ', 'Rejected: ']
+        cols = ["Iteration: ", "Confirmed: ", "Tentative: ", "Rejected: "]
 
         # still in feature selection
         if flag == 0:
@@ -415,13 +425,13 @@ class Boruta(BaseEstimator, TransformerMixin):
             if self.verbose == 1:
                 output = cols[0] + n_iter
             elif self.verbose > 1:
-                output = '\n'.join([x[0] + '\t' + x[1] for x in zip(cols, content)])
+                output = "\n".join([x[0] + "\t" + x[1] for x in zip(cols, content)])
 
         # Boruta finished running and tentatives have been filtered
         else:
             n_tentative = np.sum(self.support_weak_)
             content = map(str, [n_iter, n_confirmed, n_tentative, n_rejected])
-            result = '\n'.join([x[0] + '\t' + x[1] for x in zip(cols, content)])
+            result = "\n".join([x[0] + "\t" + x[1] for x in zip(cols, content)])
             output = "\n\n Boruta finished running.\n\n" + result
         logger.info(output)
 
@@ -457,33 +467,34 @@ class RegressorOptimizer:
     - test_models_regression: Tests various regression models using optimized hyperparameters
     - grafico_fit_con_errore: Generates a graph displaying observed versus predicted values and residuals for a specific model
     """
+
     def __init__(self, df, y_col, x_cols, x_complexity_col, models_to_test, select_features=False):
         # Dividi il dataset in features (X) e target (y)
         if select_features:
             self.X, self.y, self.dropped_columns = self.select_features(df, y_col, x_cols)
             col_dropped = "\n\t".join(self.dropped_columns)
-            logger.info(f'Columns dropped: \n\t{col_dropped}')
+            logger.info(f"Columns dropped: \n\t{col_dropped}")
         else:
             self.X = df[x_cols]
             self.y = df[y_col]
         self.x_graph_col = df[x_complexity_col]
 
         # Identifica le colonne categoriche, numeriche e binarie e fa il preproc adeguato
-        self.categorical_cols = self.X.select_dtypes(include = ['object']).columns.tolist()
-        self.binary_cols = self.X.select_dtypes(include = ['bool']).columns.tolist()
-        self.numeric_cols = self.X.select_dtypes(include = ['int64', 'float64']).columns.tolist()
+        self.categorical_cols = self.X.select_dtypes(include=["object"]).columns.tolist()
+        self.binary_cols = self.X.select_dtypes(include=["bool"]).columns.tolist()
+        self.numeric_cols = self.X.select_dtypes(include=["int64", "float64"]).columns.tolist()
 
         # Crea i transformer per le colonne categoriche e binarie
         self.categorical_transformer = OneHotEncoder()
-        self.binary_transformer = OneHotEncoder(drop='if_binary', sparse_output=False)
+        self.binary_transformer = OneHotEncoder(drop="if_binary", sparse_output=False)
         self.numeric_transformer = StandardScaler()
 
         # Combiniamo i transformer
         self.preprocessor = ColumnTransformer(
-            transformers = [
-                ('categorical', self.categorical_transformer, self.categorical_cols),
-                ('binary', self.binary_transformer, self.binary_cols),
-                ('numeric', self.numeric_transformer, self.numeric_cols)
+            transformers=[
+                ("categorical", self.categorical_transformer, self.categorical_cols),
+                ("binary", self.binary_transformer, self.binary_cols),
+                ("numeric", self.numeric_transformer, self.numeric_cols),
             ]
         )
 
@@ -494,9 +505,11 @@ class RegressorOptimizer:
         self.model_results = {}
 
         # Dividi il dataset in set di training e test
-        self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(self.X, self.y, test_size = 0.2, random_state = 42)
+        self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(
+            self.X, self.y, test_size=0.2, random_state=42
+        )
         # Define cross-validation strategy
-        self.cv_strategy = KFold(n_splits=5, shuffle=True, random_state = 15121)
+        self.cv_strategy = KFold(n_splits=5, shuffle=True, random_state=15121)
 
     @staticmethod
     def select_features(df, y_col, x_cols):
@@ -530,14 +543,13 @@ class RegressorOptimizer:
         \n\n\033[100mBest Practice: always include a function description so you can always understand its purpose\033[0m
         """
 
-
         columns_to_drop = []
-        binary_cols = df.select_dtypes(include = ['bool']).columns.tolist()
+        binary_cols = df.select_dtypes(include=["bool"]).columns.tolist()
         ############ Valutazione colonne BOOLEANE
         if len(binary_cols) > 1:
             # Creazione di DataFrame per la correlazione tetracorica
-            tetracorrelation_matrix = pd.DataFrame(index = binary_cols, columns = binary_cols)
-            fisher_matrix = pd.DataFrame(index = binary_cols, columns = binary_cols)
+            tetracorrelation_matrix = pd.DataFrame(index=binary_cols, columns=binary_cols)
+            fisher_matrix = pd.DataFrame(index=binary_cols, columns=binary_cols)
             for var1, var2 in list(product(binary_cols, binary_cols)):
                 if var1 != var2:
                     a = df[(df[var1]) & (df[var2])].shape[0]
@@ -556,14 +568,17 @@ class RegressorOptimizer:
                 else:
                     tetracorrelation_matrix.loc[var1, var2] = 1
                     fisher_matrix.loc[var1, var2] = 1
-            for [col_name1, tetracorrelation], [col_name2, fisher_index] in zip(tetracorrelation_matrix.iterrows(),
-                                                                                fisher_matrix.iterrows()):
-                if col_name1 == col_name2 \
-                        and np.mean(fisher_index) == 1 \
-                        and (np.mean(tetracorrelation) == 1 or np.mean(tetracorrelation) == -1)\
-                        and col_name1 != y_col:
+            for [col_name1, tetracorrelation], [col_name2, fisher_index] in zip(
+                tetracorrelation_matrix.iterrows(), fisher_matrix.iterrows()
+            ):
+                if (
+                    col_name1 == col_name2
+                    and np.mean(fisher_index) == 1
+                    and (np.mean(tetracorrelation) == 1 or np.mean(tetracorrelation) == -1)
+                    and col_name1 != y_col
+                ):
                     columns_to_drop.append(col_name1)
-        elif len(binary_cols)==1 and sum(df[binary_cols[0]]) == len(df[binary_cols[0]]):
+        elif len(binary_cols) == 1 and sum(df[binary_cols[0]]) == len(df[binary_cols[0]]):
             columns_to_drop.append(binary_cols[0])
 
         # Dividi il dataset in features (X) e target (y)
@@ -571,41 +586,40 @@ class RegressorOptimizer:
         y = df[y_col]
 
         # Identifica le colonne numeriche, categoriche e binarie
-        categorical_cols = X.select_dtypes(include = ['object']).columns.tolist()
+        categorical_cols = X.select_dtypes(include=["object"]).columns.tolist()
         logger.info(categorical_cols)
-        binary_cols = X.select_dtypes(include = ['bool']).columns.tolist()
-        numeric_cols = X.select_dtypes(include = ['int64', 'float64']).columns.tolist()
-
+        binary_cols = X.select_dtypes(include=["bool"]).columns.tolist()
+        numeric_cols = X.select_dtypes(include=["int64", "float64"]).columns.tolist()
 
         # Crea le dummy per le colonne categoriche e binarie
-        categorical_transformer = OneHotEncoder(drop = 'first', sparse_output = False)
+        categorical_transformer = OneHotEncoder(drop="first", sparse_output=False)
         X_categorical = categorical_transformer.fit_transform(X[categorical_cols])
         X_binary = X[binary_cols].astype(int)  # Le colonne booleane sono già binarie
 
         # Concatena le colonne dummy alle features esistenti
-        X_encoded = np.concatenate([X_categorical, X_binary, X[numeric_cols]], axis = 1)
+        X_encoded = np.concatenate([X_categorical, X_binary, X[numeric_cols]], axis=1)
 
         # Creazione del DataFrame con le nuove features dummy
         new_columns = list(categorical_transformer.get_feature_names_out(categorical_cols)) + binary_cols + numeric_cols
-        X_encoded_df = pd.DataFrame(X_encoded, columns = new_columns)
+        X_encoded_df = pd.DataFrame(X_encoded, columns=new_columns)
 
         # Unione dei dataframe con le nuove features dummy
-        X_processed = pd.concat([X.drop(columns = categorical_cols + binary_cols + numeric_cols), X_encoded_df],
-                                axis = 1)
+        X_processed = pd.concat([X.drop(columns=categorical_cols + binary_cols + numeric_cols), X_encoded_df], axis=1)
 
         # Utilizza un algoritmo Random Forest per valutare l'importanza delle features
-        rf = RandomForestRegressor(n_estimators = 100, max_depth = 5, min_samples_split = 5, min_samples_leaf = 2,
-                                   random_state = 1)
+        rf = RandomForestRegressor(
+            n_estimators=100, max_depth=5, min_samples_split=5, min_samples_leaf=2, random_state=1
+        )
         rf.fit(X_processed, y)
 
         # Utilizza Boruta per selezionare le feature più importanti
-        boruta_selector =  Boruta(rf, n_estimators = 'auto', verbose = 0, random_state = 1)
+        boruta_selector = Boruta(rf, n_estimators=100, verbose=0, random_state=1)
         boruta_selector.fit(X_processed.values, y.values)
 
         # Ottieni l'elenco delle colonne selezionate da Boruta
         selected_columns = X_processed.columns[boruta_selector.support_].tolist()
         for col in [i for i in x_cols if i not in columns_to_drop]:
-            if True not in [col == c[:len(col)] for c in selected_columns]:
+            if True not in [col == c[: len(col)] for c in selected_columns]:
                 columns_to_drop.append(col)
         return df[[i for i in x_cols if i not in columns_to_drop]], y, columns_to_drop
 
@@ -631,7 +645,7 @@ class RegressorOptimizer:
         total_time = 0
 
         for model_name, model_data in self.models_to_test.items():
-            params_grid = model_data.get('params_grid', {})
+            params_grid = model_data.get("params_grid", {})
             num_combinations = 1
 
             for param_name, param_values in params_grid.items():
@@ -667,20 +681,21 @@ class RegressorOptimizer:
 
         \n\n\033[100mBest Practice: always include a function description so you can always understand its purpose\033[0m
         """
-        pipeline = Pipeline([
-            ('preprocessor', self.preprocessor),
-            ('regressor', regressor)
-        ])
+        pipeline = Pipeline([("preprocessor", self.preprocessor), ("regressor", regressor)])
 
-        grid_search = GridSearchCV(pipeline, {'regressor__'+k: v for k,v in params_grid.items()}, cv=self.cv_strategy, scoring='neg_mean_squared_error', verbose = True)
+        grid_search = GridSearchCV(
+            pipeline,
+            {"regressor__" + k: v for k, v in params_grid.items()},
+            cv=self.cv_strategy,
+            scoring="neg_mean_squared_error",
+            verbose=True,
+        )
         grid_search.fit(self.X_train, self.y_train)
 
         best_regressor = grid_search.best_estimator_
         best_params = grid_search.best_params_
 
         return best_regressor, best_params
-
-
 
     def test_models_regression(self):
         """
@@ -703,13 +718,15 @@ class RegressorOptimizer:
         \n\n\033[100mBest Practice: always include a function description so you can always understand its purpose\033[0m
         """
         for model_name, model_data in self.models_to_test.items():
-            logger.info(f"\n\t... Testing {model_name}:\n\t{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\t... Optimizing HyperParameters ...\n\t")
+            logger.info(
+                f"\n\t... Testing {model_name}:\n\t{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\t... Optimizing HyperParameters ...\n\t"
+            )
             # Ottieni il modello e la griglia dei parametri da testare
-            model = model_data['model']
-            params_grid = model_data['params_grid']
+            model = model_data["model"]
+            params_grid = model_data["params_grid"]
 
             # Seleziona i migliori iperparametri
-            best_regressor, best_params = self.select_hyperparameters( model, params_grid)
+            best_regressor, best_params = self.select_hyperparameters(model, params_grid)
             logger.info(f"\n\t{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\t... Training the Final Model ...\n\t")
 
             # Fai il fit del regressore migliore sul set di training
@@ -718,20 +735,16 @@ class RegressorOptimizer:
             # Valuta il regressore migliore sul set di test
             y_pred = best_regressor.predict(self.X_test)
 
-
             # Salva i risultati nel dizionario
             self.model_results[model_name] = {
-                'Model': best_regressor,
-                'Params': best_params,
-                'Fitted_Test': y_pred,
-                'True_Test': self.y_test,
+                "Model": best_regressor,
+                "Params": best_params,
+                "Fitted_Test": y_pred,
+                "True_Test": self.y_test,
             }
             logger.info(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\t... Finished ...\n\t")
 
-
-
-
-    def grafico_fit_con_errore(self, model_name, h=16 ,w=9):
+    def grafico_fit_con_errore(self, model_name, h=16, w=9):
         """
         Description:
         This function returns fit plots for a given regressor.
@@ -766,96 +779,116 @@ class RegressorOptimizer:
         x = self.x_graph_col
         y = self.y
         if len(self.model_results.keys()) == 0:
-            raise Exception('You have first to run test_models_regression function!')
-        fitted = self.model_results[model_name]['Model'].predict(self.X)
+            raise Exception("You have first to run test_models_regression function!")
+        fitted = self.model_results[model_name]["Model"].predict(self.X)
 
-
-        fig, ax = plt.subplots(figsize=[h,w],nrows=3,ncols=1)
-        ax[0].plot(x, y, '.r')
+        fig, ax = plt.subplots(figsize=[h, w], nrows=3, ncols=1)
+        ax[0].plot(x, y, ".r")
         ax[0].grid(True)
-        ax[0].plot(x, fitted, 'sb-', ms=1)
-        ax[0].fill_between(x,fitted + np.sqrt(np.var(fitted)/len(fitted)), fitted - np.sqrt(np.var(fitted)/len(fitted)),color='r',alpha=.2)
-        ax[0].fill_between(x,fitted + 1.96 * np.sqrt(np.var(fitted)/len(fitted)), fitted - 1.96 * np.sqrt(np.var(fitted)/len(fitted)),color='r',alpha=.1)
+        ax[0].plot(x, fitted, "sb-", ms=1)
+        ax[0].fill_between(
+            x,
+            fitted + np.sqrt(np.var(fitted) / len(fitted)),
+            fitted - np.sqrt(np.var(fitted) / len(fitted)),
+            color="r",
+            alpha=0.2,
+        )
+        ax[0].fill_between(
+            x,
+            fitted + 1.96 * np.sqrt(np.var(fitted) / len(fitted)),
+            fitted - 1.96 * np.sqrt(np.var(fitted) / len(fitted)),
+            color="r",
+            alpha=0.1,
+        )
         ax[0].set_xticklabels([])
-        ax[1].bar(x, fitted-y, color='b',width=0.1)
+        ax[1].bar(x, fitted - y, color="b", width=0.1)
         ax[1].grid(True)
-        ax[1].plot(np.zeros(21),'sr-', ms=1)
+        ax[1].plot(np.zeros(21), "sr-", ms=1)
         ax[1].set_xticklabels([])
-        difference= fitted-y
-        intrange=np.arange(0,len(x),int(len(x)*0.1))
+        difference = fitted - y
+        intrange = np.arange(0, len(x), int(len(x) * 0.1))
         media = []
         varianza = []
         laX = [0]
         for i, val in enumerate(intrange):
             if i != (len(intrange) - 1):
-                media.append(difference[val:intrange[i + 1]].mean())
-                varianza.append(np.var(difference[val:intrange[i + 1]]))
+                media.append(difference[val : intrange[i + 1]].mean())
+                varianza.append(np.var(difference[val : intrange[i + 1]]))
                 laX.append(x[intrange[i + 1]])
         h = int(len(x) * 0.001)
         if h < 1:
             h = 1
 
         h = (laX[1] + laX[0]) / 4
-        ax[2].plot(laX, (np.ones(len(media) + 1) * sum(media) / len(media)), 'r-')
+        ax[2].plot(laX, (np.ones(len(media) + 1) * sum(media) / len(media)), "r-")
         for i in range(len(media)):
-            ax[2].plot((laX[i + 1] + laX[i]) / 2, media[i], 'ob')
-            ax[2].plot([(laX[i + 1] + laX[i]) / 2, (laX[i + 1] + laX[i]) / 2],
-                            [media[i] + 1.96 * np.sqrt(varianza[i]), media[i] - 1.96 * np.sqrt(varianza[i])], 'b--')
-            ax[2].plot([(laX[i + 1] + laX[i]) / 2 - h, (laX[i + 1] + laX[i]) / 2 + h],
-                            [media[i] + 1.96 * np.sqrt(varianza[i]), media[i] + 1.96 * np.sqrt(varianza[i])], 'b--')
-            ax[2].plot([(laX[i + 1] + laX[i]) / 2 - h, (laX[i + 1] + laX[i]) / 2 + h],
-                            [media[i] - 1.96 * np.sqrt(varianza[i]), media[i] - 1.96 * np.sqrt(varianza[i])], 'b--')
-        ax[2].set_xlabel('X')
-        ax[0].set_ylabel('Fitted vs observed')
-        ax[1].set_ylabel('Residui')
-        ax[2].set_ylabel('Residui')
+            ax[2].plot((laX[i + 1] + laX[i]) / 2, media[i], "ob")
+            ax[2].plot(
+                [(laX[i + 1] + laX[i]) / 2, (laX[i + 1] + laX[i]) / 2],
+                [media[i] + 1.96 * np.sqrt(varianza[i]), media[i] - 1.96 * np.sqrt(varianza[i])],
+                "b--",
+            )
+            ax[2].plot(
+                [(laX[i + 1] + laX[i]) / 2 - h, (laX[i + 1] + laX[i]) / 2 + h],
+                [media[i] + 1.96 * np.sqrt(varianza[i]), media[i] + 1.96 * np.sqrt(varianza[i])],
+                "b--",
+            )
+            ax[2].plot(
+                [(laX[i + 1] + laX[i]) / 2 - h, (laX[i + 1] + laX[i]) / 2 + h],
+                [media[i] - 1.96 * np.sqrt(varianza[i]), media[i] - 1.96 * np.sqrt(varianza[i])],
+                "b--",
+            )
+        ax[2].set_xlabel("X")
+        ax[0].set_ylabel("Fitted vs observed")
+        ax[1].set_ylabel("Residui")
+        ax[2].set_ylabel("Residui")
         ax[2].grid(True)
-        ax[2].set_xlabel('X')
-        ax[0].set_ylabel('Fitted vs observed')
-        ax[1].set_ylabel('Residui')
-        ax[2].set_ylabel('Residui')
+        ax[2].set_xlabel("X")
+        ax[0].set_ylabel("Fitted vs observed")
+        ax[1].set_ylabel("Residui")
+        ax[2].set_ylabel("Residui")
         fig.tight_layout()
 
         return fig
 
-if __name__ == '__main__':
 
+if __name__ == "__main__":
     # Sample data
     import hashlib
+
     size_df = 2000
-    random_from_string = lambda x: int(hashlib.sha256(str(x).encode('utf-8')).hexdigest(), 16) % 11
+    random_from_string = lambda x: int(hashlib.sha256(str(x).encode("utf-8")).hexdigest(), 16) % 11
     epon = lambda x, a, b, c: a * np.exp(b * x) + c
     a, b, c = [0.4, 0.3, 0.2]
     x = np.linspace(1, 20, size_df)
     p = [1.36, 1.21]
     noise = np.random.randn(size_df)
-    countries = np.random.choice(['US', 'IT', 'AU', 'GB'], size = size_df)
-    colors = np.random.choice(['Blue', 'Red', 'Orange', 'Yellow', 'Purple', 'Green'], size = size_df)
-    genders = np.random.choice([True, False], size = size_df)
-    y = epon(x, a, b, c) + [10 if g else 5 for g in genders] + [random_from_string(c) for c in colors] + [random_from_string(c) for c in countries] + noise * 0.4 * x
-
+    countries = np.random.choice(["US", "IT", "AU", "GB"], size=size_df)
+    colors = np.random.choice(["Blue", "Red", "Orange", "Yellow", "Purple", "Green"], size=size_df)
+    genders = np.random.choice([True, False], size=size_df)
+    y = (
+        epon(x, a, b, c)
+        + [10 if g else 5 for g in genders]
+        + [random_from_string(c) for c in colors]
+        + [random_from_string(c) for c in countries]
+        + noise * 0.4 * x
+    )
 
     # Creazione del DataFrame
-    data = {
-        'x': x,
-        'y': y,
-        'country': countries,
-        'colors': colors,
-        'gender': genders
-    }
+    data = {"x": x, "y": y, "country": countries, "colors": colors, "gender": genders}
 
     df = pd.DataFrame(data)
 
     # Utilizzo della classe RegressorOptimizer
-    reg_opt = RegressorOptimizer(df, 'y', ['x', 'country', 'colors', 'gender'], 'x',
-                                 models_to_test = {
-            'LinearRegression': {
-                'model': LinearRegression(),
-                'params_grid': {
-                    'fit_intercept': [True, False],
-                    'copy_X': [True, False],
-                    'n_jobs': [None, 1, 2, 4]
-                }
+    reg_opt = RegressorOptimizer(
+        df,
+        "y",
+        ["x", "country", "colors", "gender"],
+        "x",
+        models_to_test={
+            "LinearRegression": {
+                "model": LinearRegression(),
+                "params_grid": {"fit_intercept": [True, False], "copy_X": [True, False], "n_jobs": [None, 1, 2, 4]},
             },
             # 'RandomForestRegressor': {
             #     'model': RandomForestRegressor(),
@@ -868,14 +901,13 @@ if __name__ == '__main__':
             #         'n_estimators': [600, 1000, 2000]
             #     },
             # },
-
-            'SVR': {
-                'model': SVR(),
-                'params_grid': {
-                    'kernel': ['linear', 'poly', 'rbf'],
-                    'C': [1, 10, 100],
-                    'gamma': ['scale', 'auto'],
-                }
+            "SVR": {
+                "model": SVR(),
+                "params_grid": {
+                    "kernel": ["linear", "poly", "rbf"],
+                    "C": [1, 10, 100],
+                    "gamma": ["scale", "auto"],
+                },
             },
             # 'GradientBoostingRegressor': {
             #     'model': GradientBoostingRegressor(),
@@ -899,39 +931,30 @@ if __name__ == '__main__':
             #         'weights': ['uniform', 'distance'],
             #     }
             # },
-            'MLPRegressor': {
-                'model': MLPRegressor(activation = 'relu', learning_rate= 'adaptive', max_iter= 400, verbose=True),
-                'params_grid': {
-                    'solver': [ 'lbfgs',  'adam'],
-                    'hidden_layer_sizes': [(100), (100, 200), (100, 200, 100)],
-                    'alpha': [0.0001, 0.001, 0.00001],
-                }
+            "MLPRegressor": {
+                "model": MLPRegressor(activation="relu", learning_rate="adaptive", max_iter=400, verbose=True),
+                "params_grid": {
+                    "solver": ["lbfgs", "adam"],
+                    "hidden_layer_sizes": [(100), (100, 200), (100, 200, 100)],
+                    "alpha": [0.0001, 0.001, 0.00001],
+                },
             },
-            'ElasticNet': {
-                'model': ElasticNet(),
-                'params_grid': {
-                    'alpha': [0.1, 1.0, 10.0],
-                    'l1_ratio': [0, 0.25, 0.5, 0.75, 1],
-                    'fit_intercept': [True, False]
-                }
+            "ElasticNet": {
+                "model": ElasticNet(),
+                "params_grid": {
+                    "alpha": [0.1, 1.0, 10.0],
+                    "l1_ratio": [0, 0.25, 0.5, 0.75, 1],
+                    "fit_intercept": [True, False],
+                },
             },
-            'Polynomial': {
-                'model': make_pipeline(PolynomialFeatures(), LinearRegression()),
-                'params_grid': {
-                    'polynomialfeatures__degree': [2, 3, 4],
-                    'linearregression__fit_intercept': [True, False]
-                }
-            }
-        })
-    reg_opt.estimate_optimization_time(60*5)
+            "Polynomial": {
+                "model": make_pipeline(PolynomialFeatures(), LinearRegression()),
+                "params_grid": {
+                    "polynomialfeatures__degree": [2, 3, 4],
+                    "linearregression__fit_intercept": [True, False],
+                },
+            },
+        },
+    )
+    reg_opt.estimate_optimization_time(60 * 5)
     reg_opt.test_models_regression()
-
-
-
-
-
-
-
-
-
-

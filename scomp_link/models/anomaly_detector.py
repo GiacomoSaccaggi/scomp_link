@@ -3,12 +3,12 @@
 
  █████╗ ███╗   ██╗ ██████╗ ███╗   ███╗ █████╗ ██╗  ██╗   ██╗
 ██╔══██╗████╗  ██║██╔═══██╗████╗ ████║██╔══██╗██║  ╚██╗ ██╔╝
-███████║██╔██╗ ██║██║   ██║██╔████╔██║███████║██║   ╚████╔╝ 
-██╔══██║██║╚██╗██║██║   ██║██║╚██╔╝██║██╔══██║██║    ╚██╔╝  
-██║  ██║██║ ╚████║╚██████╔╝██║ ╚═╝ ██║██║  ██║███████╗██║   
-╚═╝  ╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚═╝     ╚═╝╚═╝  ╚═╝╚══════╝╚═╝   
+███████║██╔██╗ ██║██║   ██║██╔████╔██║███████║██║   ╚████╔╝
+██╔══██║██║╚██╗██║██║   ██║██║╚██╔╝██║██╔══██║██║    ╚██╔╝
+██║  ██║██║ ╚████║╚██████╔╝██║ ╚═╝ ██║██║  ██║███████╗██║
+╚═╝  ╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚═╝     ╚═╝╚═╝  ╚═╝╚══════╝╚═╝
 
-██████╗ ███████╗████████╗███████╗ ██████╗████████╗ ██████╗ ██████╗ 
+██████╗ ███████╗████████╗███████╗ ██████╗████████╗ ██████╗ ██████╗
 ██╔══██╗██╔════╝╚══██╔══╝██╔════╝██╔════╝╚══██╔══╝██╔═══██╗██╔══██╗
 ██║  ██║█████╗     ██║   █████╗  ██║        ██║   ██║   ██║██████╔╝
 ██║  ██║██╔══╝     ██║   ██╔══╝  ██║        ██║   ██║   ██║██╔══██╗
@@ -17,19 +17,20 @@
 
 """
 
+import warnings
+from typing import Dict, List, Optional
+
 import numpy as np
 import pandas as pd
-import warnings
-from typing import Optional, Dict, List
 from sklearn.base import BaseEstimator
 from sklearn.ensemble import IsolationForest
 from sklearn.neighbors import LocalOutlierFactor
 from sklearn.preprocessing import StandardScaler
 
 from scomp_link.utils.logger import get_logger
+
 logger = get_logger(__name__)
 from scomp_link.utils.decorators import timer
-
 
 warnings.filterwarnings("ignore", category=UserWarning)
 
@@ -84,7 +85,7 @@ class AnomalyDetector(BaseEstimator):
     >>> anomalies = results['data'][results['data']['is_anomaly']]
     """
 
-    AVAILABLE_METHODS = ['iforest', 'lof', 'tabnet', 'transformer']
+    AVAILABLE_METHODS = ["iforest", "lof", "tabnet", "transformer"]
 
     def __init__(
         self,
@@ -130,7 +131,7 @@ class AnomalyDetector(BaseEstimator):
         """
         self._log("  [1/4] Isolation Forest...")
         model = IsolationForest(
-            contamination=self.contamination,
+            contamination=self.contamination,  # type: ignore[arg-type]
             random_state=self.random_state,
             n_jobs=-1,
         )
@@ -148,7 +149,7 @@ class AnomalyDetector(BaseEstimator):
         self._log("  [2/4] Local Outlier Factor...")
         model = LocalOutlierFactor(
             n_neighbors=self.lof_neighbors,
-            contamination=self.contamination,
+            contamination=self.contamination,  # type: ignore[arg-type]
             n_jobs=-1,
         )
         return model.fit_predict(X) == -1
@@ -169,13 +170,14 @@ class AnomalyDetector(BaseEstimator):
             from pytorch_tabnet import TabNetPretrainer
         except ImportError:
             raise ImportError(
-                "pytorch-tabnet required for TabNet anomaly detection. "
-                "Install with: pip install pytorch-tabnet"
+                "pytorch-tabnet required for TabNet anomaly detection. " "Install with: pip install pytorch-tabnet"
             )
 
         X_float = X.astype(np.float32)
         pretrainer = TabNetPretrainer(
-            n_d=8, n_a=8, n_steps=3,
+            n_d=8,
+            n_a=8,
+            n_steps=3,
             optimizer_params=dict(lr=2e-2),
             mask_type="entmax",
             verbose=0,
@@ -212,10 +214,7 @@ class AnomalyDetector(BaseEstimator):
             import torch.nn as nn
             from torch.utils.data import DataLoader, TensorDataset
         except ImportError:
-            raise ImportError(
-                "PyTorch required for Transformer anomaly detection. "
-                "Install with: pip install torch"
-            )
+            raise ImportError("PyTorch required for Transformer anomaly detection. " "Install with: pip install torch")
 
         X_float = X.astype(np.float32)
         n_features = X_float.shape[1]
@@ -228,9 +227,11 @@ class AnomalyDetector(BaseEstimator):
                 super().__init__()
                 self_model.input_proj = nn.Linear(1, d_model)
                 encoder_layer = nn.TransformerEncoderLayer(
-                    d_model=d_model, nhead=nhead,
+                    d_model=d_model,
+                    nhead=nhead,
                     dim_feedforward=d_model * 4,
-                    dropout=0.1, batch_first=True,
+                    dropout=0.1,
+                    batch_first=True,
                 )
                 self_model.encoder = nn.TransformerEncoder(encoder_layer, num_layers=num_layers)
                 self_model.decoder = nn.Linear(d_model, 1)
@@ -303,10 +304,10 @@ class AnomalyDetector(BaseEstimator):
         X = self.scaler_.fit_transform(clean[features])
 
         method_map = {
-            'iforest': self._run_iforest,
-            'lof': self._run_lof,
-            'tabnet': self._run_tabnet,
-            'transformer': self._run_transformer,
+            "iforest": self._run_iforest,
+            "lof": self._run_lof,
+            "tabnet": self._run_tabnet,
+            "transformer": self._run_transformer,
         }
 
         anom_cols = []
@@ -322,11 +323,13 @@ class AnomalyDetector(BaseEstimator):
         clean["is_anomaly"] = clean["consensus_score"] >= self.consensus_threshold
 
         # Comparison table
-        comparison = pd.DataFrame({
-            "method": [c.replace("anom_", "") for c in anom_cols],
-            "n_anomalies": [int(clean[c].sum()) for c in anom_cols],
-            "pct": [clean[c].mean() * 100 for c in anom_cols],
-        })
+        comparison = pd.DataFrame(
+            {
+                "method": [c.replace("anom_", "") for c in anom_cols],
+                "n_anomalies": [int(clean[c].sum()) for c in anom_cols],
+                "pct": [clean[c].mean() * 100 for c in anom_cols],
+            }
+        )
         comparison.loc[len(comparison)] = [
             f"consensus (≥{self.consensus_threshold})",
             int(clean["is_anomaly"].sum()),
@@ -375,9 +378,11 @@ class AnomalyDetector(BaseEstimator):
 
         return (
             anomalies.groupby(group_by)
-            .agg(**{
-                "count": ("is_anomaly", "sum"),
-                "avg_consensus": ("consensus_score", "mean"),
-            })
+            .agg(
+                **{
+                    "count": ("is_anomaly", "sum"),
+                    "avg_consensus": ("consensus_score", "mean"),
+                }
+            )
             .sort_values("count", ascending=False)
         )

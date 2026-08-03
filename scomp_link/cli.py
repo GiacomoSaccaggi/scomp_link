@@ -346,7 +346,8 @@ def cmd_report(args):
 
                 residuals = df[target_col].values - predictions
                 fig_res = histogram(residuals, "Residual Distribution")
-                report.add_graph_to_report(fig_res, "Residuals")
+                if fig_res is not None:
+                    report.add_graph_to_report(fig_res, "Residuals")
                 report.close_section()
 
         report.save_html(output_path)
@@ -383,14 +384,16 @@ def cmd_report(args):
         report.open_section("Feature Distributions")
         for col in numeric_cols[:12]:  # cap at 12
             fig = histogram(df[col].dropna().values, f"Distribution: {col}")
-            report.add_graph_to_report(fig, col)
+            if fig is not None:
+                report.add_graph_to_report(fig, col)
         report.close_section()
 
         # Correlations
         if len(numeric_cols) >= 2:
             report.open_section("Correlations")
-            corr = df[numeric_cols].corr()
-            fig_corr = px.imshow(corr, text_auto=".2f", color_continuous_scale="RdBu_r", title="Correlation Matrix")
+            numeric_df = df.select_dtypes(include=["number"])
+            corr = numeric_df.corr()
+            fig_corr = px.imshow(corr, text_auto=True, color_continuous_scale="RdBu_r", title="Correlation Matrix")
             report.add_graph_to_report(fig_corr, "Correlation Matrix")
             report.close_section()
 
@@ -444,6 +447,7 @@ def cmd_engineer(args):
     )
     X_eng = fe.fit_transform(X, y)
     if args.target:
+        assert y is not None
         X_eng[args.target] = y.values
 
     output_path = args.output or "engineered.csv"
@@ -477,8 +481,7 @@ def cmd_forecast(args):
 
     fc.fit(series)
     ci = fc.predict_with_ci(steps=args.horizon)
-    ci.index = range(len(series), len(series) + args.horizon)
-    ci.index.name = "step"
+    ci.index = pd.RangeIndex(start=len(series), stop=len(series) + args.horizon, name="step")
 
     output_path = args.output or "forecast.csv"
     _write_output(ci.reset_index(), output_path)
@@ -954,7 +957,7 @@ def cmd_tune(args):
 
         metrics = {
             "accuracy": float(accuracy_score(y_test, y_pred)),
-            "f1": float(f1_score(y_test, y_pred, average="weighted", zero_division=0)),
+            "f1": float(f1_score(y_test, y_pred, average="weighted", zero_division="0")),
         }
 
     fmt = getattr(args, "format", "json")
@@ -1194,7 +1197,7 @@ def cmd_check_deps(args):
     print(f"\n  {installed}/{len(deps)} packages available.")
 
 
-def _format_output(data, fmt: str, output_path: str = None):
+def _format_output(data, fmt: str, output_path: str | None = None):
     """Format and print/save output in json, csv, or table format."""
     import pandas as pd
 
@@ -1638,7 +1641,7 @@ Examples:
   scomp-link forecast --data series.csv --column value --horizon 30 --plot forecast.html
 """,
     )
-    parser.add_argument("--version", action="version", version="%(prog)s 1.3.0")
+    parser.add_argument("--version", action="version", version="%(prog)s 2.1.0")
     subparsers = parser.add_subparsers(dest="command", help="Available commands")
 
     # ── run ──

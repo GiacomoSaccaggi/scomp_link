@@ -250,3 +250,52 @@ exp = lime_exp.explain_instance(X_test.iloc[0], num_features=5)
 exp.as_list()   # [(feature_rule, weight), ...]
 fig = lime_exp.plot_explanation(exp)
 ```
+
+## Pipeline DSL (`>>` operator)
+
+Compose pipelines declaratively. Lazy: `>>` builds, `.run()` executes.
+
+### ML chain
+
+```python
+from scomp_link import CleanStep, SelectStep, ModelStep, TrainStep
+
+results = (
+    CleanStep(df)
+    >> SelectStep("target", features=["col1", "col2"])
+    >> ModelStep("numerical_prediction")          # or "categorical_known", "categorical_unknown"
+    >> TrainStep("regression")                    # or "classification", "clustering"
+).run()
+# → {"status": "success", "model_type": ..., "metrics": {...}}
+```
+
+### Report chain
+
+```python
+from scomp_link import SectionStep, TitleStep, TextStep, TableStep, GraphStep, RawGraphStep, SaveStep
+
+(
+    SectionStep("Section Title")     # opens collapsible section, auto-closes previous
+    >> TitleStep("h2 title")
+    >> TextStep("paragraph text")
+    >> TableStep(df, "Table Title")
+    >> GraphStep(plotly_fig, "Chart Title")
+    >> RawGraphStep(svg_string, "SVG Chart")
+    >> SaveStep("output.html")       # auto-closes open section before saving
+).run(report)                        # pass ScompLinkHTMLReport or omit for auto-created default
+```
+
+### LogStep (works in both chain types)
+
+```python
+from scomp_link import LogStep
+
+CleanStep(df) >> LogStep("after clean") >> SelectStep("y") >> TrainStep("regression")
+# LogStep logs df shape / model_type (ML) or section_open state (Report), then passes through
+```
+
+### Type safety rules
+
+- Mixing `MLStep` and `ReportStep` in the same chain raises `TypeError` at `>>` time
+- `LogStep` is neutral — can appear anywhere in either chain type
+- Chain with only `LogStep` instances raises `TypeError` on `.run()`

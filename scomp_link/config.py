@@ -117,7 +117,7 @@ def get_report_defaults() -> dict:
     return load_config().get("report", _HARDCODED_DEFAULTS["report"])
 
 
-def init_config(path: str = None, force: bool = False) -> str:
+def init_config(path: str | None = None, force: bool = False) -> str:
     """Create a config file with the default template.
 
     Args:

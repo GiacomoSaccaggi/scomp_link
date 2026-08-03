@@ -3,6 +3,26 @@
 All notable changes to scomp-link are documented here.
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
+## [2.1.0] - 2026-08-03
+
+### Added
+- **Pipeline DSL (`>>` operator)**: Airflow-style declarative pipeline composition for both ML pipelines and HTML reports
+  - ML steps: `CleanStep`, `SelectStep`, `ModelStep`, `TrainStep`
+  - Report steps: `SectionStep`, `TitleStep`, `TextStep`, `GraphStep`, `TableStep`, `RawGraphStep`, `SaveStep`
+  - `LogStep`: transparent step for intermediate state inspection, works in both chain types
+  - Chain type inferred automatically from first typed step (MLStep vs ReportStep)
+  - Mix of ML and Report steps raises `TypeError` at construction time (not runtime)
+  - `pipeline >> step` syntax carries existing `ScompLinkPipeline` instance via `_BoundPipelineStep`
+  - All steps lazy-imported from `scomp_link` root
+- **Pyright strict typing**: All 344 Pyright errors across the full package resolved → 0 errors
+
+### Changed
+- `ScompLinkPipeline` gains `__rshift__` method enabling `pipeline >> step` syntax
+- All steps exported via lazy imports in `__init__.py`
+
+### Tests
+- 21 new dedicated DSL tests in `tests/test_pipeline_dsl.py` (all passing)
+
 ## [1.2.15] - 2026-07-09
 
 ### Added

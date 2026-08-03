@@ -23,7 +23,7 @@ import sys
 import threading
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Optional
+from typing import Literal, Optional, cast
 
 from mcp.server.fastmcp import FastMCP
 
@@ -307,7 +307,7 @@ def train_model(
             TrainConfig(
                 data=data,
                 target=target,
-                task=task,
+                task=cast(Literal["regression", "classification", "clustering"], task),
                 engineer=engineer,
                 tune=tune,
                 n_trials=n_trials,
@@ -423,7 +423,15 @@ def forecast_series(data: str, column: str, horizon: int = 10, method: str = "au
     from scomp_link.schemas import ForecastConfig
 
     try:
-        result = services.forecast(ForecastConfig(data=data, column=column, horizon=horizon, method=method, plot=plot))
+        result = services.forecast(
+            ForecastConfig(
+                data=data,
+                column=column,
+                horizon=horizon,
+                method=cast(Literal["auto", "arima", "exp_smoothing"], method),
+                plot=plot,
+            )
+        )
         return json.dumps(result, indent=2, default=str)
     except exc.DataValidationError as e:
         return json.dumps({"status": "error", "error": str(e), "type": "DataValidationError"})
@@ -466,7 +474,13 @@ def cluster_data(
 
     try:
         result = services.cluster(
-            ClusterConfig(data=data, n_clusters=n_clusters, method=method, features=features, output=output)
+            ClusterConfig(
+                data=data,
+                n_clusters=n_clusters,
+                method=cast(Literal["kmeans", "meanshift"], method),
+                features=features,
+                output=output,
+            )
         )
         return json.dumps(result, indent=2, default=str)
     except exc.DataValidationError as e:
@@ -522,7 +536,8 @@ def generate_report(
         report.open_section("Feature Distributions")
         for col in numeric_cols[:8]:
             fig = histogram(df[col].dropna().values, f"{col}")
-            report.add_graph_to_report(fig, col)
+            if fig is not None:
+                report.add_graph_to_report(fig, col)
         report.close_section()
 
     # Model evaluation if artifact provided

@@ -5,7 +5,7 @@ license: "MIT"
 compatibility: "Python 3.10+. Core: numpy, pandas, scikit-learn, plotly. Optional: torch, transformers, spacy (NLP), tensorflow (images), optuna (tuning), shap/lime (explainability), flask (serving)."
 metadata:
   author: "Giacomo Saccaggi"
-  version: "1.3.0"
+  version: "2.1.0"
   repository: "https://github.com/GiacomoSaccaggi/scomp_link"
   pypi: "https://pypi.org/project/scomp-link/"
 allowed-tools: "Bash(scomp-link:*) Bash(python:*) Python(scomp_link:*)"
@@ -64,7 +64,8 @@ I have data and want to...
 ├─ Serve as REST API              → scomp-link serve --artifact model.scomp --port 8080
 ├─ Export to ONNX/pickle          → scomp-link export --artifact model.scomp --format onnx
 ├─ Scaffold a new project         → scomp-link init my_project
-└─ Configure branding defaults    → scomp-link init-config
+├─ Configure branding defaults    → scomp-link init-config
+└─ Use declarative >> DSL         → see Pipeline DSL section below
 ```
 
 ## Recommended Workflow
@@ -116,6 +117,39 @@ save: models/price_model.scomp
 ```bash
 scomp-link pipeline --config pipeline.yaml
 ```
+
+
+## Pipeline DSL (`>>` operator)
+
+For declarative, readable pipeline composition (Python API only):
+
+```python
+from scomp_link import CleanStep, SelectStep, ModelStep, TrainStep, LogStep
+
+# ML pipeline — lazy, executes on .run()
+results = (
+    CleanStep(df)
+    >> SelectStep("target")
+    >> LogStep("before model")          # optional: logs state without side effects
+    >> ModelStep("numerical_prediction")
+    >> TrainStep("regression", test_size=0.2)
+).run()
+
+# Report pipeline
+from scomp_link import SectionStep, TableStep, GraphStep, SaveStep
+from scomp_link.utils.report_html import ScompLinkHTMLReport
+
+(
+    SectionStep("Results")
+    >> TableStep(metrics_df, "Metrics")
+    >> GraphStep(fig, "Performance Chart")
+    >> SaveStep("report.html")
+).run(ScompLinkHTMLReport("My Report"))
+```
+
+**When to use DSL vs imperative API:**
+- Use `>>` when the pipeline is linear and the steps are known upfront
+- Use imperative `pipe.import_and_clean_data()` / `pipe.run_pipeline()` when you need branching, loops, or conditional logic
 
 ## Visualization & Reports
 
