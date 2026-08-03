@@ -167,8 +167,8 @@ def multiple_histograms(
         barmode="overlay",
         legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1, font=dict(size=16)),
         height=h * len(location),
-        **style,
-    )  # type: ignore[arg-type]
+        **style,  # type: ignore[arg-type]
+    )
     return fig
 
 

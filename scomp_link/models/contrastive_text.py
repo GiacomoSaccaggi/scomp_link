@@ -879,7 +879,7 @@ class ContrastiveTextClassifier:
         # Section 1: Overall metrics
         report.open_section("Overall Performance")
         acc = accuracy_score(y_true, y_pred)
-        f1 = f1_score(y_true, y_pred, average="weighted", zero_division="0")
+        f1 = f1_score(y_true, y_pred, average="weighted", zero_division=0)  # type: ignore[arg-type]
         metrics_df = pd.DataFrame(
             [
                 {
@@ -896,7 +896,7 @@ class ContrastiveTextClassifier:
 
         # Section 2: Per-class F1
         report.open_section("Per-Class Performance")
-        cls_report = classification_report(y_true, y_pred, output_dict=True, zero_division="0")
+        cls_report = classification_report(y_true, y_pred, output_dict=True, zero_division=0)  # type: ignore[arg-type]
         cls_df = pd.DataFrame(cls_report).T
         cls_df = cls_df[cls_df.index.isin(set(y_true))].sort_values("f1-score", ascending=False)  # type: ignore[call-overload]
 

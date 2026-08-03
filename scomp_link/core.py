@@ -252,8 +252,8 @@ class ScompLinkPipeline:
                     # Fit head classifier on training embeddings
                     logger.info("Fitting head classifier on embeddings...")
                     head_results = classifier.fit_head(
-                        train_df,
-                        text_col=text_col,  # type: ignore[arg-type]
+                        train_df,  # type: ignore[arg-type]
+                        text_col=text_col,
                         label_col=self.target_col,
                         head="auto",
                     )
@@ -264,7 +264,7 @@ class ScompLinkPipeline:
                     y_pred = test_preds_df["prediction"].tolist()
 
                     acc = accuracy_score(y_true, y_pred)
-                    f1 = f1_score(y_true, y_pred, average="weighted", zero_division="0")
+                    f1 = f1_score(y_true, y_pred, average="weighted", zero_division=0)  # type: ignore[arg-type]
 
                     # Generate HTML report
                     report_path = "Contrastive_Text_Report.html"
@@ -312,7 +312,7 @@ class ScompLinkPipeline:
                     y_pred = pipeline.predict(X_test)
 
                     acc = accuracy_score(y_test, y_pred)
-                    f1 = f1_score(y_test, y_pred, average="weighted", zero_division="0")
+                    f1 = f1_score(y_test, y_pred, average="weighted", zero_division=0)  # type: ignore[arg-type]
 
                     self.model = pipeline
                     self.results = {
@@ -500,8 +500,8 @@ class ScompLinkPipeline:
                 logger.info(f"  {result['method']}: {result['mean_score']:.4f} (±{result['std_score']:.4f})")
 
         validator.generate_validation_report(
-            y_test, y_pred, task_type=task_type, y_proba=y_proba, report_name="ScompLink_Validation_Report.html"
-        )  # type: ignore[arg-type]
+            y_test, y_pred, task_type=task_type, y_proba=y_proba, report_name="ScompLink_Validation_Report.html"  # type: ignore[arg-type]
+        )
 
         self.results = {
             "status": "success",
