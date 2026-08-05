@@ -82,7 +82,7 @@ class Validator:
         metrics = self.evaluate(y_true, y_pred, task_type=task_type)
         
         report.open_section("Metrics Summary")
-        metrics_df = pd.DataFrame(list(metrics.items()), columns=["Metric", "Value"])
+        metrics_df = pd.DataFrame(list(metrics.items()), columns=["Metric", "Value"])  # type: ignore[call-overload]
         report.add_dataframe(metrics_df, "Validation Metrics")
         report.close_section()
 

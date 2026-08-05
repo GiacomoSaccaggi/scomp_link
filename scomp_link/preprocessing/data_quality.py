@@ -131,7 +131,7 @@ class DataQualityReport:
     def _high_correlations(self, threshold: float = 0.95) -> pd.DataFrame:
         numeric = self.df.select_dtypes(include=[np.number])
         if numeric.shape[1] < 2:
-            return pd.DataFrame(columns=["col_a", "col_b", "correlation"])
+            return pd.DataFrame(columns=["col_a", "col_b", "correlation"])  # type: ignore[call-overload]
         corr = numeric.corr().abs()
         pairs = []
         for i in range(len(corr.columns)):
