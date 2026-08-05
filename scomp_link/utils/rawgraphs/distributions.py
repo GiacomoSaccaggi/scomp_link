@@ -143,7 +143,7 @@ def violinplot(
     palette = colors or COLORS
     fig, ax = plt.subplots(figsize=(width / 100, height / 100))
     vp = ax.violinplot(data, showmeans=False, showmedians=True)
-    for i, body in enumerate(vp["bodies"]):
+    for i, body in enumerate(vp["bodies"]):  # type: ignore[arg-type]
         body.set_facecolor(palette[i % len(palette)])
         body.set_alpha(0.7)
     for partname in ("cbars", "cmins", "cmaxes", "cmedians"):
