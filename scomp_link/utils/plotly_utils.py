@@ -389,6 +389,238 @@ def linechart(
     return fig
 
 
+def fill_timeslots(values, n_slots: int, fill_value: float = 0.0) -> np.ndarray:
+    """Ensure array has exactly n_slots elements, padding or truncating as needed.
+
+    Useful for preparing time-series data where some slots may be missing.
+
+    :param values: list or array of numeric values
+    :param n_slots: desired output length
+    :param fill_value: value used to pad if input is shorter (default 0.0)
+    :return: numpy array of length n_slots
+
+    ## example
+    from scomp_link.utils.plotly_utils import fill_timeslots
+    result = fill_timeslots([1, 2, 3], n_slots=5)  # [1, 2, 3, 0, 0]
+    """
+    arr = np.asarray(values, dtype=float)
+    if len(arr) >= n_slots:
+        return arr[:n_slots]
+    padded = np.full(n_slots, fill_value, dtype=float)
+    padded[:len(arr)] = arr
+    return padded
+
+
+def normalize_to_index(values, baseline: float = 100.0) -> np.ndarray:
+    """Normalize array so that its mean equals the baseline value.
+
+    Useful for creating index charts where baseline=100 represents the average.
+    Returns zeros if the input mean is zero.
+
+    :param values: list or array of numeric values
+    :param baseline: target mean value (default 100.0)
+    :return: numpy array with mean approximately equal to baseline
+
+    ## example
+    from scomp_link.utils.plotly_utils import normalize_to_index
+    result = normalize_to_index([2, 4, 6], baseline=100)  # [50, 100, 150]
+    """
+    arr = np.asarray(values, dtype=float)
+    mean_val = arr.mean()
+    if mean_val == 0:
+        return np.zeros_like(arr)
+    return arr / mean_val * baseline
+
+
+def index_chart(
+    series_dict: dict,
+    x_labels: list[str],
+    title: str,
+    baseline: float = 100.0,
+    height: int = 400,
+    colors: list[str] | None = None,
+) -> go.Figure:
+    """Create an index chart with toggle buttons to switch between series groups.
+
+    Each series is normalized so its mean equals `baseline` (default 100).
+    A horizontal reference line is drawn at the baseline.
+
+    series_dict formats:
+    - Simple: {"A": [values], "B": [values]} — one solid trace per key
+    - Paired: {"A": {"solid": [values], "dashed": [values]}} — two traces per key
+
+    :param series_dict: dict mapping series names to values or {"solid": ..., "dashed": ...}
+    :param x_labels: list of x-axis labels
+    :param title: chart title
+    :param baseline: index baseline value (default 100)
+    :param height: chart height in pixels (default 400)
+    :param colors: optional list of colors for series (cycles if fewer than series)
+    :return: plotly Figure
+
+    ## example
+    from scomp_link.utils.plotly_utils import index_chart
+    fig = index_chart(
+        {"Group A": {"solid": [2,4,3,5], "dashed": [3,3,4,4]},
+         "Group B": {"solid": [5,3,4,2], "dashed": [4,4,3,3]}},
+        x_labels=["Q1", "Q2", "Q3", "Q4"],
+        title="Performance Index"
+    )
+    """
+    default_colors = [c for group in [PRIMARY, MEDIUM, DARK, MEDIUM_LIGHT, MEDIUM_DARK, DARKEST, LIGHT] for c in group]
+    palette = colors or default_colors
+
+    fig = go.Figure()
+
+    # Determine format
+    first_val = next(iter(series_dict.values()))
+    is_paired = isinstance(first_val, dict)
+
+    group_names = list(series_dict.keys())
+    traces_per_group = 2 if is_paired else 1
+
+    for i, (name, data) in enumerate(series_dict.items()):
+        color = palette[i % len(palette)]
+        visible = (i == 0)
+
+        if is_paired:
+            solid_vals = normalize_to_index(data["solid"], baseline)
+            dashed_vals = normalize_to_index(data["dashed"], baseline)
+            fig.add_trace(go.Scatter(
+                x=x_labels, y=solid_vals.tolist(),
+                name=f"{name} (solid)", line=dict(color=color, width=3),
+                mode="lines", visible=visible,
+            ))
+            fig.add_trace(go.Scatter(
+                x=x_labels, y=dashed_vals.tolist(),
+                name=f"{name} (dashed)", line=dict(color=color, width=3, dash="dash"),
+                mode="lines", visible=visible,
+            ))
+        else:
+            vals = normalize_to_index(data, baseline)
+            fig.add_trace(go.Scatter(
+                x=x_labels, y=vals.tolist(),
+                name=name, line=dict(color=color, width=3),
+                mode="lines", visible=visible,
+            ))
+
+    fig.add_hline(y=baseline, line_dash="dot", line_color="rgba(128,128,128,0.4)")
+
+    # Toggle buttons
+    total_traces = len(group_names) * traces_per_group
+    buttons = []
+    for i, name in enumerate(group_names):
+        vis = [False] * total_traces
+        for j in range(traces_per_group):
+            vis[i * traces_per_group + j] = True
+        buttons.append(dict(
+            label=f"  {name}  ", method="update",
+            args=[{"visible": vis}, {"title": f"{title} — {name}"}],
+        ))
+
+    # "All" button
+    buttons.append(dict(
+        label="  All  ", method="update",
+        args=[{"visible": [True] * total_traces}, {"title": title}],
+    ))
+
+    fig.update_layout(
+        title=f"{title} — {group_names[0]}" if group_names else title,
+        height=height,
+        xaxis_title="", yaxis_title=f"Index ({baseline} = average)",
+        xaxis=dict(tickangle=45),
+        legend=dict(orientation="h", yanchor="bottom", y=1.05, xanchor="center", x=0.5),
+        updatemenus=[dict(
+            type="buttons", direction="right",
+            x=0.5, xanchor="center", y=-0.2, yanchor="top",
+            buttons=buttons,
+        )],
+        margin=dict(b=100),
+    )
+    return fig
+
+
+def stacked_area_comparison(
+    data_left: dict[str, list[float]],
+    data_right: dict[str, list[float]],
+    categories: list[str],
+    x_labels: list[str],
+    title: str,
+    subplot_titles: tuple[str, str] = ("Left", "Right"),
+    height: int = 400,
+    colors: list[str] | None = None,
+) -> go.Figure:
+    """Create side-by-side 100%% stacked area charts for comparison.
+
+    Each slot sums to 100%%. Useful for comparing composition between two sources.
+
+    :param data_left: dict mapping category names to value lists for left subplot
+    :param data_right: dict mapping category names to value lists for right subplot
+    :param categories: ordered list of category names (determines stacking order and legend)
+    :param x_labels: x-axis labels
+    :param title: overall chart title
+    :param subplot_titles: tuple of (left_title, right_title)
+    :param height: chart height in pixels (default 400)
+    :param colors: optional list of colors for categories
+    :return: plotly Figure with 2 subplots
+
+    ## example
+    from scomp_link.utils.plotly_utils import stacked_area_comparison
+    fig = stacked_area_comparison(
+        data_left={"Young": [30,25,20], "Mid": [40,45,50], "Senior": [30,30,30]},
+        data_right={"Young": [20,20,25], "Mid": [50,50,45], "Senior": [30,30,30]},
+        categories=["Young", "Mid", "Senior"],
+        x_labels=["Morning", "Afternoon", "Evening"],
+        title="Age Composition",
+        subplot_titles=("Source A", "Source B")
+    )
+    """
+    default_colors = [c for group in [PRIMARY, MEDIUM, DARK, MEDIUM_LIGHT, MEDIUM_DARK, DARKEST, LIGHT] for c in group]
+    palette = colors or default_colors
+
+    def _normalize_to_pct(data_dict: dict, cats: list[str], n_points: int) -> dict[str, list[float]]:
+        """Normalize each slot to sum to 100%."""
+        result = {}
+        for cat in cats:
+            result[cat] = list(data_dict.get(cat, [0.0] * n_points))
+        # Normalize each position
+        for j in range(n_points):
+            total = sum(result[cat][j] for cat in cats)
+            if total > 0:
+                for cat in cats:
+                    result[cat][j] = result[cat][j] / total * 100
+            else:
+                for cat in cats:
+                    result[cat][j] = 0.0
+        return result
+
+    n_points = len(x_labels)
+    left_pct = _normalize_to_pct(data_left, categories, n_points)
+    right_pct = _normalize_to_pct(data_right, categories, n_points)
+
+    fig = make_subplots(rows=1, cols=2, subplot_titles=list(subplot_titles), horizontal_spacing=0.05)
+
+    for data_pct, col_idx in [(left_pct, 1), (right_pct, 2)]:
+        for i, cat in enumerate(categories):
+            color = palette[i % len(palette)]
+            fig.add_trace(go.Scatter(
+                x=x_labels, y=data_pct[cat],
+                name=cat if col_idx == 1 else None,
+                legendgroup=cat, showlegend=(col_idx == 1),
+                stackgroup="one",
+                fillcolor=color,
+                line=dict(width=0.5, color=color),
+                mode="lines",
+            ), row=1, col=col_idx)
+
+    fig.update_layout(
+        title=title, height=height,
+        legend=dict(orientation="h", yanchor="bottom", y=1.05, xanchor="center", x=0.5),
+    )
+    fig.update_xaxes(tickangle=45)
+    fig.update_yaxes(title_text="% of slot", range=[0, 100])
+    return fig
+
+
 if __name__ == "__main__":
     demo_report = ScompLinkHTMLReport("This is a demo report")
 
