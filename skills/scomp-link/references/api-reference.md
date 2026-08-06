@@ -299,3 +299,53 @@ CleanStep(df) >> LogStep("after clean") >> SelectStep("y") >> TrainStep("regress
 - Mixing `MLStep` and `ReportStep` in the same chain raises `TypeError` at `>>` time
 - `LogStep` is neutral — can appear anywhere in either chain type
 - Chain with only `LogStep` instances raises `TypeError` on `.run()`
+
+## Report Builder — Interactive Components (v2.1.0)
+
+```python
+from scomp_link.utils.report_html import ScompLinkHTMLReport
+report = ScompLinkHTMLReport("My Report")
+
+# KPI cards
+report.add_kpi_cards({"RMSE": {"value": 0.81, "trend": "-0.05", "status": "good"}})
+
+# Plotly grid
+report.add_plotly_grid([fig1, fig2, fig3], cols=2, titles=["A", "B", "C"])
+
+# Tabs
+report.add_tabs({"Overview": "<p>text</p>", "Chart": fig, "Data": df})
+
+# Cascading dropdowns
+report.add_cascading_content("By Client x Year",
+    dimensions=[{"label":"Client","options":["A","B"]}, {"label":"Year","options":["2024","2025"]}],
+    content_map={("A","2024"): fig_a24, ("B","2025"): "<p>No data</p>"},
+    cascade=True)
+
+# Comparison table with deltas
+report.add_comparison_table(df, baseline_col="v1", compare_cols=["v2"],
+                            higher_is_better={"R2": True, "RMSE": False})
+
+# Data profiling
+report.add_summary_stats(df, title="Training Data Overview")
+
+# Dark mode toggle
+report.add_dark_mode_toggle()
+
+# DataFrame with threshold coloring
+report.add_dataframe(df, "Metrics", thresholds={"error": (0.10, 0.25, False), "r2": (0.80, 0.50, True)})
+```
+
+## Plotly Utilities — New Functions (v2.1.0)
+
+```python
+from scomp_link.utils.plotly_utils import (
+    fill_timeslots, normalize_to_index, index_chart, stacked_area_comparison
+)
+
+arr = fill_timeslots([1, 2, 3], n_slots=5)           # [1, 2, 3, 0, 0]
+idx = normalize_to_index([80, 100, 120])              # mean→100
+fig = index_chart({"A": [100,110], "B": [90,105]}, ["Jan","Feb"], "Index")
+fig = stacked_area_comparison({"A":[30,40],"B":[70,60]}, {"A":[20,30],"B":[80,70]},
+                               ["A","B"], ["2024","2025"], "Comparison")
+```
+
