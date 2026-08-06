@@ -85,7 +85,6 @@ jobs:
   # ═══════════════════════════════════════════════════════════════
   pages:
     needs: test
-    continue-on-error: true
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     continue-on-error: true
