@@ -46,24 +46,18 @@ _FOOTER_JS_BLOCK = """
                         <script>
                         // Quick and simple export target #table_id into a csv
                         function download_table_as_csv(table_id, separator = ',') {
-                            // Select rows from table_id
                             var rows = document.querySelectorAll('table#' + table_id + ' tr');
-                            // Construct csv
                             var csv = [];
                             for (var i = 0; i < rows.length; i++) {
                                 var row = [], cols = rows[i].querySelectorAll('td, th');
                                 for (var j = 0; j < cols.length; j++) {
-                                    // Clean innertext to remove multiple spaces and jumpline (break csv)
                                     var data = cols[j].innerText.replace(/(\\r\\n|\\n|\\r)/gm, '').replace(/(\\s\\s)/gm, ' ')
-                                    // Escape double-quote with double-double-quote (see https://stackoverflow.com/questions/17808511/properly-escape-a-double-quote-in-csv)
                                     data = data.replace(/"/g, '""');
-                                    // Push escaped string
                                     row.push('"' + data + '"');
                                 }
                                 csv.push(row.join(separator));
                             }
-                            var csv_string = csv.join('\\n');
-                            // Download it
+                            var csv_string = csv.join('\n');
                             var filename = 'export_' + table_id + '_' + new Date().toLocaleDateString() + '.csv';
                             var link = document.createElement('a');
                             link.style.display = 'none';
@@ -74,10 +68,19 @@ _FOOTER_JS_BLOCK = """
                             link.click();
                             document.body.removeChild(link);
                         }
-                        var coll = document.getElementsByClassName("collapsiblemygs");
-                        var i;
 
-                        for (i = 0; i < coll.length; i++) {
+                        // Resize all Plotly charts within a container
+                        function resizePlotsIn(container) {
+                            if (!window.Plotly) return;
+                            var plots = container.querySelectorAll('.js-plotly-plot');
+                            plots.forEach(function(plot) {
+                                Plotly.Plots.resize(plot);
+                            });
+                        }
+
+                        // Collapsible sections with Plotly resize on open
+                        var coll = document.getElementsByClassName("collapsiblemygs");
+                        for (var i = 0; i < coll.length; i++) {
                           coll[i].addEventListener("click", function() {
                             this.classList.toggle("active");
                             var content = this.nextElementSibling;
@@ -85,91 +88,62 @@ _FOOTER_JS_BLOCK = """
                               content.style.display = "none";
                             } else {
                               content.style.display = "block";
+                              // Resize Plotly charts after section becomes visible
+                              setTimeout(function() { resizePlotsIn(content); }, 50);
+                              setTimeout(function() { resizePlotsIn(content); }, 300);
                             }
                           });
                         }
+
                         document.addEventListener("DOMContentLoaded", function() {
-                            // Function to resize svg-containers, SVG images and rect elements
-                            function resizeElements() {
-                                // Seleziona tutti gli elementi con la classe 'svg-container'
-                                var svgContainers = document.querySelectorAll('.svg-container');
-                        
-                                // Itera su ogni svg-container e imposta la larghezza al 100%
-                                svgContainers.forEach(function(container) {
-                                    container.style.width = '100%';
+                            // Collapse all sections initially
+                            var contents = document.querySelectorAll('.content');
+                            contents.forEach(function(content) {
+                                content.style.display = 'none';
+                            });
+
+                            // Highcharts containers: ensure 100% width
+                            document.querySelectorAll('.highcharts-container').forEach(function(item) {
+                                item.style.width = '100%';
+                            });
+
+                            // Global ResizeObserver: auto-resize all Plotly charts on container resize
+                            if (window.ResizeObserver && window.Plotly) {
+                                var ro = new ResizeObserver(function(entries) {
+                                    entries.forEach(function(entry) {
+                                        var plot = entry.target.querySelector('.js-plotly-plot') || entry.target;
+                                        if (plot && plot.classList.contains('js-plotly-plot')) {
+                                            Plotly.Plots.resize(plot);
+                                        }
+                                    });
                                 });
-                                
-                                 var svgContainers0 = document.querySelectorAll('.user-select-none');
-                        
-                                // Itera su ogni svg-container e imposta la larghezza al 100%
-                                svgContainers0.forEach(function(container) {
-                                    container.style.width = '100%';
+                                document.querySelectorAll('.plotly-graph-div').forEach(function(div) {
+                                    ro.observe(div);
                                 });
-                                
-                                
-                                 var cartesianlayer = document.querySelectorAll('.cartesianlayer');
-                        
-                                // Itera su ogni svg-container e imposta la larghezza al 100%
-                                cartesianlayer.forEach(function(container) {
-                                    container.style.width = '100%';
+                                // Also observe for dynamically added charts
+                                var bodyObserver = new MutationObserver(function(mutations) {
+                                    mutations.forEach(function(m) {
+                                        m.addedNodes.forEach(function(node) {
+                                            if (node.nodeType === 1) {
+                                                var divs = node.querySelectorAll ? node.querySelectorAll('.plotly-graph-div') : [];
+                                                divs.forEach(function(d) { ro.observe(d); });
+                                                if (node.classList && node.classList.contains('plotly-graph-div')) { ro.observe(node); }
+                                            }
+                                        });
+                                    });
                                 });
-                                
-                                
-                        
-                                 var svgContainers1 = document.querySelectorAll('.js-plotly-plot');
-                        
-                                // Itera su ogni svg-container e imposta la larghezza al 100%
-                                svgContainers1.forEach(function(container) {
-                                    container.style.width = '100%';
-                                });
-                                
-                                
-                                 var svgContainers2 = document.querySelectorAll('.main-svg');
-                        
-                                // Itera su ogni svg-container e imposta la larghezza al 100%
-                                svgContainers2.forEach(function(container) {
-                                    container.style.width = '100%';
-                                });
-                        
-                                 var svgContainers3 = document.querySelectorAll('.plot-container');
-                        
-                                // Itera su ogni svg-container e imposta la larghezza al 100%
-                                svgContainers3.forEach(function(container) {
-                                    container.style.width = '100%';
-                                });
-                        
-                                // Seleziona tutti gli elementi con il tag '.highcharts-container'
-                                var items = document.querySelectorAll('.highcharts-container');
-                        
-                                // Itera su ogni rect e imposta la larghezza al 100%
-                                items.forEach(function(item) {
-                                    item.style.width = '100%';
-                                });
-                                
-                                
-                                // Seleziona tutti gli elementi con il tag 'select'
-                                var selects = document.querySelectorAll('select');
-                        
-                                // Itera su ogni rect e imposta la larghezza al 100%
-                                selects.forEach(function(select) {
-                                    select.style.width = '200px';
-                                });
-                                
-                                
-                                // Seleziona tutti gli elementi con il tag 'content'
-                                var contents = document.querySelectorAll('.content');
-                        
-                                contents.forEach(function(content) {
-                                    content.style.display = 'none';
-                                });
-                                
-                                 
+                                bodyObserver.observe(document.body, { childList: true, subtree: true });
                             }
-                        
-                            // Call the function when the document is fully loaded
-                            resizeElements();
+
+                            // Fallback: resize all visible Plotly charts on window resize
+                            window.addEventListener('resize', function() {
+                                if (!window.Plotly) return;
+                                document.querySelectorAll('.js-plotly-plot').forEach(function(plot) {
+                                    Plotly.Plots.resize(plot);
+                                });
+                            });
                         });
-                        
+
                         </script>
                         </div><hr><br>"""
 
@@ -303,7 +277,7 @@ class ScompLinkHTMLReport:
               color:white;
               box-shadow:0 4px 12px rgba(0,0,0,.1);
             }
-            .plotly-graph-div{width:100%}
+            .plotly-graph-div{width:100%;min-height:200px;overflow:hidden}
             #container{height:600px}
             .highcharts-label-icon{opacity:0.5}
             .highcharts-figure,.highcharts-data-table table{min-width:310px;max-width:100%;overflow:auto;margin:1em auto}
@@ -539,7 +513,7 @@ class ScompLinkHTMLReport:
               color:white;
               box-shadow:0 4px 12px rgba(0,0,0,.1);
             }
-            .plotly-graph-div{width:100%}
+            .plotly-graph-div{width:100%;min-height:200px;overflow:hidden}
             #container{height:600px}
             .highcharts-label-icon{opacity:0.5}
             .highcharts-figure,.highcharts-data-table table{min-width:310px;max-width:100%;overflow:auto;margin:1em auto}
@@ -662,28 +636,17 @@ class ScompLinkHTMLReport:
         assert fig_json is not None
         fig_dict = json.loads(fig_json)
         jdata = to_json_plotly(fig_dict.get("data", []))
-        jlayout = to_json_plotly(fig_dict.get("layout", {}))
+        layout = fig_dict.get("layout", {})
+        layout["autosize"] = True
+        layout.pop("width", None)  # remove fixed width if set by user
+        jlayout = to_json_plotly(layout)
         jconfig = to_json_plotly({"responsive": True})
         if plotdivid is None:
             plotdivid = title.replace(" ", "_")
             for p in "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~":
                 plotdivid = plotdivid.replace(p, "_")
 
-        options = (
-            """ 
-                // Imposta la larghezza al 100%
-                Plotly.update('"""
-            + plotdivid
-            + """', { 'layout.width': window.innerWidth * 0.9 }); // Puoi anche usare '100%' al posto di 'window.innerWidth * 0.9' se preferisci una larghezza fissa
-            
-                // Aggiungi un listener per aggiornare la larghezza quando la finestra viene ridimensionata
-                window.addEventListener('resize', function() {
-                    Plotly.update('"""
-            + plotdivid
-            + """', { 'layout.width': window.innerWidth * 0.9 });
-                });
-                """
-        )
+        options = ""  # autosize handled by responsive config + ResizeObserver
         script = """\
                 <h2>{title}</h2>
                 <div id="{id}" class="plotly-graph-div"></div>
