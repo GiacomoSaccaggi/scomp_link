@@ -149,7 +149,7 @@ class TestFooterParametrization:
         report = ScompLinkHTMLReport("Test", footer_html=custom)
         assert "<script>" in report.footer
         assert "download_table_as_csv" in report.footer
-        assert "resizeElements" in report.footer
+        assert "resizePlotsIn" in report.footer
 
     def test_custom_footer_in_saved_html(self):
         from scomp_link.utils.report_html import ScompLinkHTMLReport
