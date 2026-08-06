@@ -1214,6 +1214,471 @@ setTimeout(function() {{ update_{uid}(); }}, 500);
         else:
             logger.info("The DataFrame is to big!")
 
+
+    # ═══════════════════════════════════════════════════════════════════
+    # Advanced report components
+    # ═══════════════════════════════════════════════════════════════════
+
+    def add_kpi_cards(self, metrics: dict, cols: int = 3) -> None:
+        """Add a row of KPI summary cards to the report.
+
+        Displays key metrics as colored cards with optional trend indicators.
+
+        :param metrics: dict mapping metric names to their config. Each value can be:
+            - str/number: displayed as-is (no coloring)
+            - dict with keys:
+                - "value" (required): the displayed value
+                - "trend" (optional): trend text (e.g. "+1.3%", "-0.5")
+                - "status" (optional): "good" | "warning" | "critical" → card border color
+                - "subtitle" (optional): small text below the value
+        :param cols: number of columns in the grid (default 3)
+
+        ## example
+        report.add_kpi_cards({
+            "Accuracy": {"value": "94.2%", "trend": "+1.3%", "status": "good"},
+            "RMSE": {"value": "0.087", "status": "good"},
+            "Latency": {"value": "230ms", "trend": "+15ms", "status": "warning"},
+            "Drift Score": {"value": "0.31", "status": "critical"},
+            "Samples": {"value": "12,450", "subtitle": "last 24h"},
+        })
+        """
+        status_colors = {
+            "good": "var(--accent3)",       # green
+            "warning": "var(--accent4)",    # orange
+            "critical": "var(--accent5)",   # red/pink
+        }
+        trend_colors = {
+            "good": "#0f9d58",
+            "warning": "#e8590c",
+            "critical": "#d6336c",
+        }
+
+        html = f'<div style="display:grid;grid-template-columns:repeat({cols},1fr);gap:1rem;margin:1rem 0;">'
+
+        for name, config in metrics.items():
+            if not isinstance(config, dict):
+                config = {"value": str(config)}
+
+            value = config.get("value", "")
+            trend = config.get("trend", "")
+            status = config.get("status", "")
+            subtitle = config.get("subtitle", "")
+
+            border_color = status_colors.get(status, "var(--border)")
+            trend_color = trend_colors.get(status, "var(--dim)")
+
+            # Trend arrow
+            trend_html = ""
+            if trend:
+                arrow = "↑" if trend.startswith("+") else "↓" if trend.startswith("-") else ""
+                trend_html = (
+                    f'<span style="font-size:.8rem;color:{trend_color};font-weight:600;'
+                    f'margin-left:.5rem;">{arrow} {trend}</span>'
+                )
+
+            subtitle_html = ""
+            if subtitle:
+                subtitle_html = f'<div style="font-size:.7rem;color:var(--dim);margin-top:.15rem;">{subtitle}</div>'
+
+            html += f"""<div style="background:var(--card);border:2px solid {border_color};
+                border-radius:var(--radius);padding:1.2rem 1rem;text-align:center;">
+                <div style="font-size:.75rem;color:var(--dim);text-transform:uppercase;
+                    letter-spacing:.04em;font-weight:600;margin-bottom:.4rem;">{name}</div>
+                <div style="font-size:1.6rem;font-weight:800;color:var(--text);">
+                    {value}{trend_html}
+                </div>
+                {subtitle_html}
+            </div>"""
+
+        html += "</div>"
+        self.html_report += html
+        logger.info("Added KPI cards to report!")
+
+    def add_plotly_grid(
+        self,
+        figures: list,
+        cols: int = 2,
+        titles: list[str] | None = None,
+        height: int | None = None,
+    ) -> None:
+        """Add multiple Plotly figures arranged in a CSS grid.
+
+        Each figure is rendered independently (not as Plotly subplots) and
+        arranged in a responsive grid layout.
+
+        :param figures: list of Plotly Figure objects
+        :param cols: number of columns (default 2, responsive down to 1 on mobile)
+        :param titles: optional list of titles for each figure (same length as figures)
+        :param height: optional fixed height in px for each chart container
+
+        ## example
+        report.add_plotly_grid([fig1, fig2, fig3, fig4], cols=2, titles=["A", "B", "C", "D"])
+        """
+        import plotly.io as pio
+
+        height_style = f"min-height:{height}px;" if height else "min-height:300px;"
+
+        html = (
+            f'<div style="display:grid;grid-template-columns:repeat({cols},1fr);'
+            f'gap:1rem;margin:1rem 0;">'
+        )
+
+        for i, fig in enumerate(figures):
+            title = titles[i] if titles and i < len(titles) else ""
+            fig_html = pio.to_html(
+                fig, include_plotlyjs=False, full_html=False,
+                config={"responsive": True},
+            )
+            title_html = f'<h3 style="margin-bottom:.5rem;font-size:.9rem;">{title}</h3>' if title else ""
+            html += (
+                f'<div style="background:var(--card);border:1px solid var(--border);'
+                f'border-radius:var(--radius);padding:1rem;{height_style}overflow:hidden;">'
+                f'{title_html}{fig_html}</div>'
+            )
+
+        html += "</div>"
+
+        # Add responsive media query for single column on small screens
+        html += f"""<style>
+            @media(max-width:768px){{
+                div[style*="grid-template-columns:repeat({cols}"] {{
+                    grid-template-columns:1fr !important;
+                }}
+            }}
+        </style>"""
+
+        self.html_report += html
+        logger.info("Added plotly grid to report!")
+
+    def add_tabs(self, tabs: dict, title: str = "") -> None:
+        """Add tabbed content navigation to the report.
+
+        Displays horizontal tabs that switch visible content on click.
+        Content can be HTML strings or Plotly Figures.
+
+        :param tabs: dict mapping tab labels to content (str, Plotly Figure, or pd.DataFrame)
+        :param title: optional section title above the tabs
+
+        ## example
+        report.add_tabs({
+            "Overview": "<p>Summary text here</p>",
+            "Chart": plotly_figure,
+            "Data": dataframe,
+        }, title="Results")
+        """
+        import plotly.io as pio
+
+        uid = uuid.uuid4().hex[:8]
+
+        # Build tab buttons and content panels
+        buttons_html = f'<div id="tabs_{uid}" style="display:flex;gap:0;border-bottom:2px solid var(--border);margin:1rem 0 0;">'
+        panels_html = ""
+
+        for i, (label, content) in enumerate(tabs.items()):
+            active = i == 0
+            safe_label = label.replace(" ", "_").replace("-", "_")
+            panel_id = f"tabpanel_{uid}_{safe_label}"
+
+            # Tab button
+            active_style = (
+                f"border-bottom:3px solid {self.main_color};color:{self.main_color};font-weight:700;"
+                if active else "border-bottom:3px solid transparent;color:var(--dim);"
+            )
+            buttons_html += (
+                f'<button onclick="switchTab_{uid}(\'{safe_label}\')" '
+                f'id="tabbtn_{uid}_{safe_label}" '
+                f'style="padding:.6rem 1.2rem;background:none;border:none;cursor:pointer;'
+                f'font-size:.85rem;transition:all .2s;{active_style}">{label}</button>'
+            )
+
+            # Panel content
+            display = "block" if active else "none"
+
+            # Convert content to HTML (check Plotly Figure first — it also has to_html)
+            if hasattr(content, "data") and hasattr(content, "layout"):  # Plotly Figure
+                content_html = pio.to_html(
+                    content, include_plotlyjs=False, full_html=False,
+                    config={"responsive": True},
+                )
+            elif hasattr(content, "to_html") and hasattr(content, "columns"):  # DataFrame
+                content_html = content.to_html(index=False, classes="scomp-table")
+            else:
+                content_html = str(content)
+
+            panels_html += (
+                f'<div id="{panel_id}" style="display:{display};padding:1rem 0;">'
+                f'{content_html}</div>'
+            )
+
+        buttons_html += "</div>"
+
+        # JS for tab switching
+        script = f"""<script>
+function switchTab_{uid}(tab) {{
+    document.querySelectorAll('[id^="tabpanel_{uid}_"]').forEach(function(p) {{ p.style.display = 'none'; }});
+    document.querySelectorAll('[id^="tabbtn_{uid}_"]').forEach(function(b) {{
+        b.style.borderBottom = '3px solid transparent'; b.style.color = 'var(--dim)'; b.style.fontWeight = '400';
+    }});
+    var panel = document.getElementById('tabpanel_{uid}_' + tab);
+    var btn = document.getElementById('tabbtn_{uid}_' + tab);
+    if (panel) {{ panel.style.display = 'block'; }}
+    if (btn) {{ btn.style.borderBottom = '3px solid {self.main_color}'; btn.style.color = '{self.main_color}'; btn.style.fontWeight = '700'; }}
+    // Resize Plotly charts in newly visible panel
+    if (panel && window.Plotly) {{
+        setTimeout(function() {{
+            panel.querySelectorAll('.js-plotly-plot').forEach(function(p) {{ Plotly.Plots.resize(p); }});
+        }}, 100);
+    }}
+}}
+</script>"""
+
+        title_html = f"<h2>{title}</h2>" if title else ""
+        self.html_report += title_html + buttons_html + panels_html + script
+        logger.info("Added tabs to report!")
+
+    def add_comparison_table(
+        self,
+        df,
+        baseline_col: str,
+        compare_cols: list[str],
+        metric_col: str | None = None,
+        higher_is_better: dict[str, bool] | None = None,
+    ) -> None:
+        """Add a comparison table with delta indicators between columns.
+
+        Shows a baseline column and comparison columns with color-coded deltas (Δ).
+        Useful for model comparison or A/B test results.
+
+        :param df: pandas or polars DataFrame with metrics as rows
+        :param baseline_col: column name to use as the reference
+        :param compare_cols: list of column names to compare against baseline
+        :param metric_col: column containing metric names (used as row labels). If None, uses the index.
+        :param higher_is_better: dict mapping metric names to bool. If not provided,
+            assumes higher is better for all. Used to determine arrow/color direction.
+
+        ## example
+        df = pd.DataFrame({
+            "metric": ["accuracy", "rmse", "latency_ms"],
+            "model_v1": [0.92, 0.12, 45],
+            "model_v2": [0.95, 0.09, 52],
+            "model_v3": [0.94, 0.10, 38],
+        })
+        report.add_comparison_table(df, baseline_col="model_v1",
+            compare_cols=["model_v2", "model_v3"], metric_col="metric",
+            higher_is_better={"accuracy": True, "rmse": False, "latency_ms": False})
+        """
+        import pandas as pd
+
+        if hasattr(df, "to_pandas"):
+            df = df.to_pandas()
+
+        higher_is_better = higher_is_better or {}
+
+        # Determine metric labels
+        if metric_col and metric_col in df.columns:
+            metrics = df[metric_col].tolist()
+            value_df = df.drop(columns=[metric_col])
+        else:
+            metrics = [str(i) for i in df.index]
+            value_df = df
+
+        # Build table
+        html = '<div style="overflow-x:auto;margin:1rem 0;">'
+        html += '<table style="width:100%;border-collapse:collapse;font-size:.85rem;font-family:inherit;">'
+
+        # Header
+        html += '<thead><tr style="border-bottom:2px solid var(--border);">'
+        html += '<th style="padding:.6rem;text-align:left;color:var(--dim);font-size:.75rem;text-transform:uppercase;">Metric</th>'
+        html += f'<th style="padding:.6rem;text-align:center;color:var(--dim);font-size:.75rem;text-transform:uppercase;">{baseline_col}<br><span style="font-size:.65rem;font-weight:400;">(baseline)</span></th>'
+        for col in compare_cols:
+            html += f'<th style="padding:.6rem;text-align:center;color:var(--dim);font-size:.75rem;text-transform:uppercase;">{col}<br><span style="font-size:.65rem;font-weight:400;">vs baseline</span></th>'
+        html += '</tr></thead><tbody>'
+
+        # Rows
+        for i, metric_name in enumerate(metrics):
+            html += '<tr style="border-bottom:1px solid var(--border);">'
+            html += f'<td style="padding:.5rem;font-weight:600;">{metric_name}</td>'
+
+            baseline_val = value_df[baseline_col].iloc[i]
+            html += f'<td style="padding:.5rem;text-align:center;font-family:monospace;">{self._format_num(baseline_val)}</td>'
+
+            hib = higher_is_better.get(metric_name, True)
+
+            for col in compare_cols:
+                comp_val = value_df[col].iloc[i]
+                delta = comp_val - baseline_val
+
+                if pd.isna(delta) or pd.isna(comp_val):
+                    html += '<td style="padding:.5rem;text-align:center;color:var(--dim);">—</td>'
+                    continue
+
+                # Determine if delta is "good" or "bad"
+                is_improvement = (delta > 0 and hib) or (delta < 0 and not hib)
+                is_worse = (delta < 0 and hib) or (delta > 0 and not hib)
+
+                if is_improvement:
+                    color = "#0f9d58"
+                    arrow = "↑" if delta > 0 else "↓"
+                elif is_worse:
+                    color = "#d6336c"
+                    arrow = "↓" if delta < 0 else "↑"
+                else:
+                    color = "var(--dim)"
+                    arrow = "="
+
+                delta_str = f"+{delta:.4g}" if delta > 0 else f"{delta:.4g}"
+                html += (
+                    f'<td style="padding:.5rem;text-align:center;">'
+                    f'<span style="font-family:monospace;">{self._format_num(comp_val)}</span> '
+                    f'<span style="font-size:.75rem;color:{color};font-weight:600;">'
+                    f'{arrow} {delta_str}</span></td>'
+                )
+
+            html += '</tr>'
+
+        html += '</tbody></table></div>'
+        self.html_report += html
+        logger.info("Added comparison table to report!")
+
+    def add_summary_stats(self, df, title: str = "Data Summary") -> None:
+        """Add an auto-generated data profiling summary to the report.
+
+        Displays a compact table with column statistics: type, non-null count,
+        missing %, unique values, and distribution indicators.
+
+        :param df: pandas or polars DataFrame to profile
+        :param title: section title (default "Data Summary")
+
+        ## example
+        report.add_summary_stats(df, title="Training Data Overview")
+        """
+        import pandas as pd
+
+        if hasattr(df, "to_pandas"):
+            df = df.to_pandas()
+
+        n_rows = len(df)
+        html = f'<h2>{title}</h2>'
+        html += f'<p style="color:var(--dim);font-size:.85rem;margin-bottom:.75rem;">{n_rows:,} rows × {len(df.columns)} columns</p>'
+        html += '<div style="overflow-x:auto;">'
+        html += '<table style="width:100%;border-collapse:collapse;font-size:.8rem;font-family:inherit;">'
+
+        # Header
+        html += '<thead><tr style="background:var(--card);border-bottom:2px solid var(--border);">'
+        for col_header in ["Column", "Type", "Non-Null", "Missing %", "Unique", "Sample Values"]:
+            html += f'<th style="padding:.5rem .6rem;text-align:left;color:var(--dim);font-size:.7rem;text-transform:uppercase;letter-spacing:.03em;">{col_header}</th>'
+        html += '</tr></thead><tbody>'
+
+        for col in df.columns:
+            series = df[col]
+            dtype = str(series.dtype)
+            non_null = int(series.notna().sum())
+            missing_pct = (1 - non_null / n_rows) * 100 if n_rows > 0 else 0
+            n_unique = int(series.nunique())
+
+            # Sample values (first 3 unique non-null values)
+            unique_vals = series.dropna().unique()[:3]
+            sample_str = ", ".join(str(v)[:20] for v in unique_vals)
+            if len(sample_str) > 50:
+                sample_str = sample_str[:50] + "…"
+
+            # Missing color
+            if missing_pct == 0:
+                miss_color = "var(--accent3)"
+            elif missing_pct < 5:
+                miss_color = "var(--text)"
+            elif missing_pct < 20:
+                miss_color = "var(--accent4)"
+            else:
+                miss_color = "var(--accent5)"
+
+            # Type badge color
+            if "int" in dtype or "float" in dtype:
+                type_color = "var(--accent)"
+            elif "object" in dtype or "str" in dtype:
+                type_color = "var(--accent2)"
+            elif "datetime" in dtype or "date" in dtype:
+                type_color = "var(--accent3)"
+            elif "bool" in dtype:
+                type_color = "var(--accent4)"
+            else:
+                type_color = "var(--dim)"
+
+            html += '<tr style="border-bottom:1px solid var(--border);">'
+            html += f'<td style="padding:.4rem .6rem;font-weight:600;">{col}</td>'
+            html += f'<td style="padding:.4rem .6rem;"><code style="color:{type_color};font-size:.75rem;">{dtype}</code></td>'
+            html += f'<td style="padding:.4rem .6rem;font-family:monospace;">{non_null:,}</td>'
+            html += f'<td style="padding:.4rem .6rem;color:{miss_color};font-weight:600;">{missing_pct:.1f}%</td>'
+            html += f'<td style="padding:.4rem .6rem;font-family:monospace;">{n_unique:,}</td>'
+            html += f'<td style="padding:.4rem .6rem;color:var(--dim);font-size:.75rem;">{sample_str}</td>'
+            html += '</tr>'
+
+        html += '</tbody></table></div>'
+        self.html_report += html
+        logger.info("Added summary stats to report!")
+
+    def add_dark_mode_toggle(self) -> None:
+        """Add a dark/light mode toggle button to the report.
+
+        Inserts a floating toggle button in the top-right corner that switches
+        between light mode (default) and dark mode by swapping CSS custom properties.
+
+        ## example
+        report.add_dark_mode_toggle()
+        """
+        uid = uuid.uuid4().hex[:8]
+        html = f"""
+        <button id="darkToggle_{uid}" onclick="toggleDarkMode_{uid}()"
+            style="position:fixed;top:1rem;right:1rem;z-index:9999;
+            background:var(--card);border:1px solid var(--border);border-radius:50%;
+            width:40px;height:40px;cursor:pointer;font-size:1.2rem;
+            display:flex;align-items:center;justify-content:center;
+            box-shadow:0 2px 8px rgba(0,0,0,.1);transition:all .3s;">🌙</button>
+        <script>
+        (function() {{
+            var isDark = false;
+            var root = document.documentElement;
+            var btn = document.getElementById('darkToggle_{uid}');
+            var lightVars = {{
+                '--bg': '#ffffff', '--card': '#f8fafc', '--text': '#1e293b',
+                '--dim': '#64748b', '--border': '#e2e8f0',
+            }};
+            var darkVars = {{
+                '--bg': '#0f172a', '--card': '#1e293b', '--text': '#e2e8f0',
+                '--dim': '#94a3b8', '--border': '#334155',
+            }};
+            window.toggleDarkMode_{uid} = function() {{
+                isDark = !isDark;
+                var vars = isDark ? darkVars : lightVars;
+                Object.keys(vars).forEach(function(k) {{ root.style.setProperty(k, vars[k]); }});
+                btn.textContent = isDark ? '☀️' : '🌙';
+                // Update body and report backgrounds
+                document.body.style.background = vars['--bg'];
+                var report = document.querySelector('.report');
+                if (report) report.style.background = vars['--bg'];
+                // Update tables
+                document.querySelectorAll('.scomp-table thead tr, .scomp-table th').forEach(function(el) {{
+                    if (isDark) {{ el.style.backgroundColor = '#334155'; }}
+                    else {{ el.style.backgroundColor = ''; }}
+                }});
+            }};
+        }})();
+        </script>"""
+        self.html_report += html
+        logger.info("Added dark mode toggle to report!")
+
+    @staticmethod
+    def _format_num(val) -> str:
+        """Format a numeric value for table display."""
+        import pandas as pd
+        if pd.isna(val):
+            return "—"
+        if isinstance(val, float):
+            if abs(val) < 0.01 or abs(val) >= 10000:
+                return f"{val:.4g}"
+            return f"{val:.4f}".rstrip("0").rstrip(".")
+        return str(val)
+
     def save_pdf(self, file_name="export.pdf"):
         """
         Saves the report as a PDF by rendering the HTML in a headless browser.
