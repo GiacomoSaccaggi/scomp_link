@@ -389,3 +389,246 @@ class TestDeprecation:
         html = report.html_report
         assert len(html) > 0
         assert "<select" in html
+
+
+# ═══════════════════════════════════════════════════════════════════
+# Tests for advanced report components
+# ═══════════════════════════════════════════════════════════════════
+
+
+class TestKPICards:
+    """Tests for add_kpi_cards."""
+
+    def _make_report(self):
+        from scomp_link.utils.report_html import ScompLinkHTMLReport
+        return ScompLinkHTMLReport("Test Report")
+
+    def test_basic_kpi_cards(self):
+        report = self._make_report()
+        report.add_kpi_cards({
+            "Accuracy": {"value": "94.2%", "trend": "+1.3%", "status": "good"},
+            "RMSE": {"value": "0.087", "status": "warning"},
+            "Drift": {"value": "0.31", "status": "critical"},
+        })
+        html = report.html_report
+        assert "94.2%" in html
+        assert "0.087" in html
+        assert "+1.3%" in html
+        assert "grid" in html
+
+    def test_kpi_simple_values(self):
+        report = self._make_report()
+        report.add_kpi_cards({"Count": "1234", "Score": 0.95})
+        html = report.html_report
+        assert "1234" in html
+        assert "0.95" in html
+
+    def test_kpi_custom_cols(self):
+        report = self._make_report()
+        report.add_kpi_cards({"A": "1", "B": "2", "C": "3", "D": "4"}, cols=4)
+        html = report.html_report
+        assert "repeat(4,1fr)" in html
+
+    def test_kpi_subtitle(self):
+        report = self._make_report()
+        report.add_kpi_cards({"Samples": {"value": "12,450", "subtitle": "last 24h"}})
+        html = report.html_report
+        assert "last 24h" in html
+
+    def test_kpi_trend_arrows(self):
+        report = self._make_report()
+        report.add_kpi_cards({
+            "Up": {"value": "10", "trend": "+5", "status": "good"},
+            "Down": {"value": "10", "trend": "-3", "status": "critical"},
+        })
+        html = report.html_report
+        assert "↑" in html
+        assert "↓" in html
+
+
+class TestPlotlyGrid:
+    """Tests for add_plotly_grid."""
+
+    def _make_report(self):
+        from scomp_link.utils.report_html import ScompLinkHTMLReport
+        return ScompLinkHTMLReport("Test Report")
+
+    def test_basic_grid(self):
+        import plotly.graph_objects as go
+        report = self._make_report()
+        figs = [go.Figure() for _ in range(4)]
+        report.add_plotly_grid(figs, cols=2)
+        html = report.html_report
+        assert "grid-template-columns" in html
+        assert html.count("plotly") >= 4
+
+    def test_grid_with_titles(self):
+        import plotly.graph_objects as go
+        report = self._make_report()
+        report.add_plotly_grid([go.Figure(), go.Figure()], cols=2, titles=["Chart A", "Chart B"])
+        html = report.html_report
+        assert "Chart A" in html
+        assert "Chart B" in html
+
+    def test_grid_responsive(self):
+        import plotly.graph_objects as go
+        report = self._make_report()
+        report.add_plotly_grid([go.Figure()], cols=3)
+        html = report.html_report
+        assert "768px" in html  # responsive breakpoint
+
+
+class TestTabs:
+    """Tests for add_tabs."""
+
+    def _make_report(self):
+        from scomp_link.utils.report_html import ScompLinkHTMLReport
+        return ScompLinkHTMLReport("Test Report")
+
+    def test_basic_tabs(self):
+        report = self._make_report()
+        report.add_tabs({"Tab 1": "<p>Content 1</p>", "Tab 2": "<p>Content 2</p>"})
+        html = report.html_report
+        assert "Content 1" in html
+        assert "Content 2" in html
+        assert "switchTab_" in html
+
+    def test_tabs_with_plotly(self):
+        import plotly.graph_objects as go
+        report = self._make_report()
+        report.add_tabs({"Chart": go.Figure(data=[go.Scatter(x=[1], y=[2])])})
+        html = report.html_report
+        assert "plotly" in html.lower()
+
+    def test_tabs_with_dataframe(self):
+        report = self._make_report()
+        report.add_tabs({"Data": pd.DataFrame({"x": [1, 2, 3]})})
+        html = report.html_report
+        assert "<table" in html
+
+    def test_tabs_first_visible(self):
+        report = self._make_report()
+        report.add_tabs({"A": "aaa", "B": "bbb", "C": "ccc"})
+        html = report.html_report
+        # First panel should be display:block
+        first_panel = html.find("aaa")
+        block_before = html[:first_panel].rfind("display:")
+        assert "block" in html[block_before:block_before + 20]
+
+    def test_tabs_with_title(self):
+        report = self._make_report()
+        report.add_tabs({"X": "content"}, title="My Tabs")
+        html = report.html_report
+        assert "My Tabs" in html
+
+    def test_tabs_resize_on_switch(self):
+        report = self._make_report()
+        report.add_tabs({"A": "a", "B": "b"})
+        html = report.html_report
+        assert "Plotly.Plots.resize" in html
+
+
+class TestComparisonTable:
+    """Tests for add_comparison_table."""
+
+    def _make_report(self):
+        from scomp_link.utils.report_html import ScompLinkHTMLReport
+        return ScompLinkHTMLReport("Test Report")
+
+    def test_basic_comparison(self):
+        report = self._make_report()
+        df = pd.DataFrame({"metric": ["acc"], "v1": [0.90], "v2": [0.95]})
+        report.add_comparison_table(df, "v1", ["v2"], metric_col="metric")
+        html = report.html_report
+        assert "baseline" in html
+        assert "↑" in html  # improvement
+
+    def test_higher_is_better_false(self):
+        report = self._make_report()
+        df = pd.DataFrame({"metric": ["rmse"], "v1": [0.12], "v2": [0.09]})
+        report.add_comparison_table(df, "v1", ["v2"], metric_col="metric",
+                                    higher_is_better={"rmse": False})
+        html = report.html_report
+        assert "0f9d58" in html  # green color = improvement
+
+    def test_multiple_compare_cols(self):
+        report = self._make_report()
+        df = pd.DataFrame({"m": ["x"], "a": [1.0], "b": [2.0], "c": [0.5]})
+        report.add_comparison_table(df, "a", ["b", "c"], metric_col="m")
+        html = report.html_report
+        assert "vs baseline" in html
+
+    def test_polars_input(self):
+        try:
+            import polars as pl
+        except ImportError:
+            pytest.skip("polars not installed")
+        report = self._make_report()
+        df = pl.DataFrame({"metric": ["acc"], "v1": [0.9], "v2": [0.95]})
+        report.add_comparison_table(df, "v1", ["v2"], metric_col="metric")
+        assert len(report.html_report) > 0
+
+
+class TestSummaryStats:
+    """Tests for add_summary_stats."""
+
+    def _make_report(self):
+        from scomp_link.utils.report_html import ScompLinkHTMLReport
+        return ScompLinkHTMLReport("Test Report")
+
+    def test_basic_summary(self):
+        report = self._make_report()
+        df = pd.DataFrame({"a": [1, 2, 3], "b": ["x", "y", None]})
+        report.add_summary_stats(df)
+        html = report.html_report
+        assert "Data Summary" in html
+        assert "Missing %" in html
+        assert "3 rows" in html
+
+    def test_custom_title(self):
+        report = self._make_report()
+        report.add_summary_stats(pd.DataFrame({"x": [1]}), title="My Stats")
+        assert "My Stats" in report.html_report
+
+    def test_missing_percentage_shown(self):
+        report = self._make_report()
+        df = pd.DataFrame({"col": [1, None, None, 4]})
+        report.add_summary_stats(df)
+        html = report.html_report
+        assert "50.0%" in html  # 2 out of 4 missing
+
+    def test_type_badges(self):
+        report = self._make_report()
+        df = pd.DataFrame({"num": [1.0], "text": ["hello"], "flag": [True]})
+        report.add_summary_stats(df)
+        html = report.html_report
+        assert "float" in html
+        assert "object" in html
+        assert "bool" in html
+
+
+class TestDarkModeToggle:
+    """Tests for add_dark_mode_toggle."""
+
+    def _make_report(self):
+        from scomp_link.utils.report_html import ScompLinkHTMLReport
+        return ScompLinkHTMLReport("Test Report")
+
+    def test_toggle_added(self):
+        report = self._make_report()
+        report.add_dark_mode_toggle()
+        html = report.html_report
+        assert "toggleDarkMode_" in html
+        assert "🌙" in html
+
+    def test_toggle_has_dark_vars(self):
+        report = self._make_report()
+        report.add_dark_mode_toggle()
+        html = report.html_report
+        assert "#0f172a" in html  # dark background
+        assert "--bg" in html
+
+    def test_toggle_fixed_position(self):
+        report = self._make_report()
+        report.add_dark_mode_toggle()
+        assert "position:fixed" in report.html_report
