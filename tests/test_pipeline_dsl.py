@@ -247,3 +247,61 @@ def test_only_log_steps_raises():
     """Chain with only LogStep instances should raise TypeError on .run()."""
     with pytest.raises(TypeError, match="only LogStep"):
         (LogStep() >> LogStep()).run()
+
+
+# ---------------------------------------------------------------------------
+# add_graph() smart dispatcher
+# ---------------------------------------------------------------------------
+
+class TestAddGraph:
+    """Tests for ScompLinkHTMLReport.add_graph() smart dispatcher."""
+
+    @pytest.fixture
+    def report(self):
+        from scomp_link.utils.report_html import ScompLinkHTMLReport
+        return ScompLinkHTMLReport("Test")
+
+    def test_plotly_figure(self, report):
+        import plotly.express as px
+        fig = px.scatter(x=[1, 2], y=[1, 4])
+        report.add_graph(fig, "Plotly")
+        assert "plotly" in report.html_report.lower() or "Plotly" in report.html_report
+
+    def test_matplotlib_figure(self, report):
+        import matplotlib
+        matplotlib.use("Agg")
+        import matplotlib.pyplot as plt
+        fig, ax = plt.subplots()
+        ax.plot([1, 2], [1, 4])
+        report.add_graph(fig, "Matplotlib")
+        assert "img" in report.html_report
+        plt.close()
+
+    def test_matplotlib_axes(self, report):
+        import matplotlib
+        matplotlib.use("Agg")
+        import matplotlib.pyplot as plt
+        _, ax = plt.subplots()
+        ax.bar([1, 2], [1, 4])
+        report.add_graph(ax, "Axes")
+        assert "img" in report.html_report
+        plt.close()
+
+    def test_svg_string(self, report):
+        svg = '<svg width="100" height="100"><circle cx="50" cy="50" r="40"/></svg>'
+        report.add_graph(svg, "SVG")
+        assert "<svg" in report.html_report
+
+    def test_highcharts_string(self, report):
+        hc = "<script>Highcharts.chart('c', {});</script>"
+        report.add_graph(hc, "HC")
+        assert "Highcharts" in report.html_report
+
+    def test_raw_html_string(self, report):
+        report.add_graph('<div class="x">hello</div>', "Raw")
+        assert "hello" in report.html_report
+
+    def test_unsupported_type_raises(self, report):
+        with pytest.raises(TypeError, match="does not support"):
+            report.add_graph(12345, "Bad")  # type: ignore[arg-type]
+

@@ -82,7 +82,7 @@ js = """
     """
 
 
-def streamgraphs(title, dates, series_dict: dict, annotation: dict = None, area=True):  # type: ignore[type-arg]
+def streamgraphs(title, dates, series_dict: dict, annotation: dict | None = None, area=True):  # type: ignore[type-arg]
     """
     Highcharts streamgraph/area chart.
 

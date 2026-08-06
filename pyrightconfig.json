@@ -1,12 +1,23 @@
 {
-  "include": ["scomp_link"],
-  "exclude": ["**/__pycache__", ".tox", ".venv", "develop", "staging"],
+  "include": [
+    "scomp_link",
+    "examples"
+  ],
+  "exclude": [
+    "**/__pycache__",
+    ".tox",
+    ".venv",
+    "develop",
+    "staging"
+  ],
   "typeCheckingMode": "basic",
+  "pythonVersion": "3.10",
   "reportMissingImports": "warning",
   "reportMissingTypeStubs": false,
   "reportUnknownMemberType": false,
   "reportUnknownArgumentType": false,
   "reportUnknownVariableType": false,
-  "reportGeneralClassIssues": false,
-  "pythonVersion": "3.10"
+  "reportUnsupportedDunderAll": false,
+  "reportMissingModuleSource": false,
+  "reportSelfClsParameterName": false
 }

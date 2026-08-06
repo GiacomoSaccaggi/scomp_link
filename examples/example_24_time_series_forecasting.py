@@ -36,7 +36,7 @@ print("\n--- 1. ARIMA Forecasting ---")
 fc_arima = TimeSeriesForecaster(method='arima', horizon=20)
 fc_arima.fit(series[:180])
 pred_arima = fc_arima.predict()
-actual = series[180:200].values
+actual = series[180:200].values  # type: ignore[union-attr]
 mae_arima = np.abs(actual - pred_arima.values).mean()
 print(f"  Forecast MAE: {mae_arima:.2f}")
 

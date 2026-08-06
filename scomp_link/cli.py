@@ -200,7 +200,7 @@ def cmd_explain(args):
     if artifact.preprocessor is not None:
         import pandas as pd
 
-        X = pd.DataFrame(artifact.preprocessor.transform(X), columns=feature_cols)
+        X = pd.DataFrame(artifact.preprocessor.transform(X), columns=feature_cols)  # type: ignore[call-overload]
 
     explainer = scomp_link.ShapExplainer(artifact.model, X[: min(100, len(X))])
     explainer.explain(X[: min(args.n_samples, len(X))])
@@ -1516,9 +1516,9 @@ def cmd_export(args):
 
     elif args.format == "onnx":
         try:
-            import skl2onnx
-            from skl2onnx import convert_sklearn
-            from skl2onnx.common.data_types import FloatTensorType
+            import skl2onnx  # type: ignore[import-not-found]
+            from skl2onnx import convert_sklearn  # type: ignore[import-not-found]
+            from skl2onnx.common.data_types import FloatTensorType  # type: ignore[import-not-found]
         except ImportError:
             sys.exit("Error: skl2onnx required for ONNX export. Install with: pip install skl2onnx")
 
@@ -1534,7 +1534,7 @@ def cmd_export(args):
 
     elif args.format == "pmml":
         try:
-            from sklearn2pmml import PMMLPipeline, sklearn2pmml
+            from sklearn2pmml import PMMLPipeline, sklearn2pmml  # type: ignore[import-not-found]
         except ImportError:
             sys.exit("Error: sklearn2pmml required for PMML export. Install with: pip install sklearn2pmml")
 

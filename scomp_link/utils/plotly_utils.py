@@ -297,7 +297,7 @@ def area_chart(
     lines,
     title_text="Trend analysis",
     x_label="date",
-    y_labels="value",
+    y_labels: "str | list[str]" = "value",
     format_date="%Y-%m-%d",
     yaxis_ticksuffix="",
 ):
@@ -352,7 +352,7 @@ def linechart(
     lines,
     title_text="Trend analysis",
     x_label="date",
-    y_labels="value",
+    y_labels: "str | list[str]" = "value",
     format_date="%Y-%m-%d",
     yaxis_ticksuffix="",
 ):

@@ -77,6 +77,41 @@ class TestShapExplainer:
         fig = explainer.plot_importance(top_n=3)
         assert hasattr(fig, 'to_json')  # plotly figure
 
+    def test_plot_beeswarm_before_explain_raises(self, regression_model_and_data):
+        from scomp_link import ShapExplainer
+        model, X_train, _, _, _ = regression_model_and_data
+        explainer = ShapExplainer(model, X_train[:50])
+        with pytest.raises(ValueError):
+            explainer.plot_beeswarm()
+
+    def test_plot_waterfall_before_explain_raises(self, regression_model_and_data):
+        from scomp_link import ShapExplainer
+        model, X_train, _, _, _ = regression_model_and_data
+        explainer = ShapExplainer(model, X_train[:50])
+        with pytest.raises(ValueError):
+            explainer.plot_waterfall(idx=0)
+
+    def test_feature_importance_ndim_gt1_multiclass(self):
+        """Covers importance.ndim > 1 branch via a multiclass classifier."""
+        from scomp_link import ShapExplainer
+        from sklearn.datasets import make_classification
+        from sklearn.ensemble import RandomForestClassifier
+        try:
+            import shap  # noqa: F401
+        except ImportError:
+            pytest.skip("shap not available")
+        X, y = make_classification(n_samples=120, n_features=6, n_classes=3,
+                                   n_informative=4, random_state=42)
+        X_df = pd.DataFrame(X, columns=[f"f{i}" for i in range(6)])
+        clf = RandomForestClassifier(n_estimators=20, random_state=42)
+        clf.fit(X_df, y)
+        exp = ShapExplainer(clf, X_df[:40])
+        exp.explain(X_df[40:60])
+        importance = exp.feature_importance()
+        assert len(importance) == 6
+        assert importance["mean_abs_shap"].is_monotonic_decreasing
+
+
 
 class TestLimeExplainer:
 
@@ -101,6 +136,23 @@ class TestLimeExplainer:
         exp = explainer.explain_instance(X_test.iloc[0])
         fig = explainer.plot_explanation(exp)
         assert hasattr(fig, 'to_json')
+
+    def test_feature_importance_aggregated(self, regression_model_and_data):
+        from scomp_link import LimeExplainer
+        model, X_train, X_test, _, _ = regression_model_and_data
+        explainer = LimeExplainer(model, X_train, task='regression')
+        df = explainer.feature_importance(X_test, n_samples=15, num_features=3)
+        assert 'feature' in df.columns
+        assert 'mean_abs_weight' in df.columns
+        assert df['mean_abs_weight'].is_monotonic_decreasing
+
+    def test_feature_names_explicit(self, regression_model_and_data):
+        from scomp_link import LimeExplainer
+        model, X_train, X_test, _, _ = regression_model_and_data
+        explainer = LimeExplainer(model, X_train, task='regression',
+                                  feature_names=['a', 'b', 'c'])
+        exp = explainer.explain_instance(X_test.iloc[0], num_features=2)
+        assert len(exp.as_list()) == 2
 
 
 # ===================== ADVANCED TUNING =====================

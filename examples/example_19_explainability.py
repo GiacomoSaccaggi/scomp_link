@@ -52,7 +52,7 @@ print(f"✅ SHAP importance plot generated (plotly figure with {len(fig.data)} t
 # --- LIME ---
 print("\n🔬 LIME Analysis (single instance)")
 lime_exp = LimeExplainer(model, X_train, task='regression')
-exp = lime_exp.explain_instance(X_test.iloc[0], num_features=5)
+exp = lime_exp.explain_instance(X_test.iloc[0], num_features=5)  # type: ignore[union-attr]
 print("Instance explanation:")
 for feat, weight in exp.as_list():
     direction = "↑" if weight > 0 else "↓"
@@ -86,5 +86,5 @@ print(shap_cls.feature_importance().to_string(index=False))
 
 # LIME on classifier
 lime_cls = LimeExplainer(clf, X_train_c, task='classification')
-exp_cls = lime_cls.explain_instance(X_test_c.iloc[0])
+exp_cls = lime_cls.explain_instance(X_test_c.iloc[0])  # type: ignore[union-attr]
 print(f"\nLIME top feature: {exp_cls.as_list()[0]}")

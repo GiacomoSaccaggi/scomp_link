@@ -98,8 +98,8 @@ def main():
     train_df, test_df = train_test_split(df, test_size=0.2, random_state=42, stratify=df['label'])
     
     # Use the "good" embeddings directly to demo fit_head without actual BERT
-    train_emb = emb_good[train_df.index]
-    test_emb = emb_good[test_df.index]
+    train_emb = emb_good[train_df.index]  # type: ignore[call-overload]
+    test_emb = emb_good[test_df.index]  # type: ignore[call-overload]
     
     # Fit multiple weak learners and auto-select
     from sklearn.preprocessing import LabelEncoder
@@ -109,8 +109,8 @@ def main():
     from sklearn.model_selection import cross_val_score
     
     le = LabelEncoder()
-    y_train = le.fit_transform(train_df['label'])
-    y_test = le.transform(test_df['label'])
+    y_train = le.fit_transform(train_df['label'])  # type: ignore[call-overload]
+    y_test = le.transform(test_df['label'])  # type: ignore[call-overload]
     
     heads = [
         ('LogisticRegression', LogisticRegression(max_iter=1000, random_state=42)),
@@ -134,13 +134,13 @@ def main():
     logger.info(f"\n   🏆 Best: {best_name} (CV accuracy={best_score:.4f})")
     
     # Train final model
-    best_model.fit(train_emb, y_train)
+    best_model.fit(train_emb, y_train)  # type: ignore[union-attr]
     
     # ─── Step 4: Evaluate ──────────────────────────────────────
     logger.info("\n📈 Step 4: Evaluating on test set...")
     
     # Head prediction
-    y_pred_head = best_model.predict(test_emb)
+    y_pred_head = best_model.predict(test_emb)  # type: ignore[union-attr]
     acc_head = accuracy_score(y_test, y_pred_head)
     
     # Nearest-neighbor prediction (for comparison)
@@ -171,8 +171,8 @@ def main():
         mock_model.return_value = bert
         clf = ContrastiveTextClassifier(use_faiss=False, embedding_dim=64)
     
-    clf.labels = le.classes_.tolist()
-    clf.label_embeddings = np.random.randn(len(le.classes_), 64).astype('float32')
+    clf.labels = le.classes_.tolist()  # type: ignore[union-attr]
+    clf.label_embeddings = np.random.randn(len(le.classes_), 64).astype('float32')  # type: ignore[arg-type]
     clf._head_type = best_name
     
     y_true_labels = le.inverse_transform(y_test)

@@ -653,7 +653,7 @@ class ContrastiveTextClassifier:
         # Optional: LightGBM
         if head in ("auto", "lgbm"):
             try:
-                from lightgbm import LGBMClassifier
+                from lightgbm import LGBMClassifier  # type: ignore[import-not-found]
 
                 candidates.append(
                     (
@@ -669,7 +669,7 @@ class ContrastiveTextClassifier:
         # Optional: XGBoost
         if head in ("auto", "xgb"):
             try:
-                from xgboost import XGBClassifier
+                from xgboost import XGBClassifier  # type: ignore[import-not-found]
 
                 candidates.append(
                     (
