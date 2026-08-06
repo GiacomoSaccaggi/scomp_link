@@ -44,7 +44,7 @@ cp -r /path/to/scomp_link/skills/scomp-link .github/copilot/skills/
 
 ## 2. MCP Server — Model Context Protocol (Structured Tools)
 
-The MCP server exposes 22 tools, 3 resources, and 4 prompts over the standard MCP protocol. Any MCP-compatible client can discover and call them with typed inputs.
+The MCP server exposes 27 tools, 3 resources, and 4 prompts over the standard MCP protocol. Any MCP-compatible client can discover and call them with typed inputs.
 
 ### Install
 
@@ -140,7 +140,7 @@ python -m scomp_link.mcp_server
 | `engineer_features` | Automated feature engineering |
 | `cluster_data` | KMeans/MeanShift clustering |
 | `generate_report` | Create interactive HTML report |
-| `create_visualization` | Generate a single chart (39 types available) |
+| `create_visualization` | Generate a single chart (41 types available) |
 | `compare_models` | Side-by-side model comparison |
 | `export_model` | Convert .scomp to pickle/joblib/ONNX |
 | `tune_model` | Hyperparameter optimization (via train_model with tune=true) |
@@ -148,7 +148,12 @@ python -m scomp_link.mcp_server
 | `report_add_section` | Add a collapsible section to the report |
 | `report_add_text` | Add text content (paragraph, title, subtitle, raw HTML) |
 | `report_add_table` | Add an interactive data table from JSON |
-| `report_add_chart` | Add a chart (39 types across plotly/rawgraphs/highcharts engines) |
+| `report_add_chart` | Add a chart (41 types across plotly/rawgraphs/highcharts engines) |
+| `report_add_kpi_cards` | Add KPI summary cards with trend/status coloring |
+| `report_add_tabs` | Add tabbed navigation (html/chart/table content) |
+| `report_add_comparison_table` | Add model comparison table with color-coded deltas |
+| `report_add_summary_stats` | Add auto-generated data profiling table |
+| `report_add_dark_mode_toggle` | Add floating dark/light mode toggle button |
 | `report_save` | Save the report to HTML file and free memory |
 
 ## Available MCP Resources
@@ -187,7 +192,7 @@ python -m scomp_link.mcp_server
 
 ## 3. Report Builder (MCP Tools)
 
-The report builder is a set of 6 stateful MCP tools that let AI agents construct branded HTML reports step-by-step. Each report session maintains state server-side until saved.
+The report builder is a set of 11 stateful MCP tools that let AI agents construct branded HTML reports step-by-step. Each report session maintains state server-side until saved.
 
 ### Workflow
 
@@ -196,15 +201,20 @@ The report builder is a set of 6 stateful MCP tools that let AI agents construct
 2. report_add_section(report_id, title) → opens collapsible section
 3. report_add_text(report_id, content, style) → paragraph/title/subtitle/html
 4. report_add_table(report_id, json_data, title) → interactive table
-5. report_add_chart(report_id, engine, chart_type, data, title) → 39 chart types
-6. report_save(report_id, output) → saves HTML file, frees memory
+5. report_add_chart(report_id, engine, chart_type, data, title) → 41 chart types (6 plotly + 31 rawgraphs + 3 highcharts + 1 custom)
+6. report_add_kpi_cards(report_id, metrics_json, cols) → KPI cards with trend/status
+7. report_add_tabs(report_id, tabs_json, title) → tabbed navigation (html/chart/table)
+8. report_add_comparison_table(report_id, data, baseline_col, compare_cols, ...) → delta comparison
+9. report_add_summary_stats(report_id, data_json, title) → auto data profiling table
+10. report_add_dark_mode_toggle(report_id) → floating dark/light toggle
+11. report_save(report_id, output) → saves HTML file, frees memory
 ```
 
 ### Chart Engines
 
 | Engine | Chart Types | Output |
 |--------|-------------|--------|
-| `plotly` | histogram, barchart, linechart, area_chart, scatter | Interactive HTML |
+| `plotly` | histogram, barchart, linechart, area_chart, index_chart, stacked_area_comparison | Interactive HTML |
 | `rawgraphs` | treemap, sankey, sunburst, chord, alluvial, + 26 more | Static SVG |
 | `highcharts` | streamgraphs, calendar_heatmap, calendar_gantt | Interactive HTML |
 

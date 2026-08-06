@@ -44,7 +44,7 @@ cp -r /path/to/scomp_link/skills/scomp-link .github/copilot/skills/
 
 ## 2. MCP Server — Model Context Protocol (Structured Tools)
 
-The MCP server exposes 15 tools, 3 resources, and 4 prompts over the standard MCP protocol. Any MCP-compatible client can discover and call them with typed inputs.
+The MCP server exposes 27 tools, 3 resources, and 4 prompts over the standard MCP protocol. Any MCP-compatible client can discover and call them with typed inputs.
 
 ### Install
 
@@ -238,7 +238,7 @@ scomp-link supports the emerging `.well-known/mcp/server-card.json` standard (SE
 GET https://Euribor512-scomp-link.hf.space/.well-known/mcp/server-card.json
 ```
 
-The server card advertises all 15 tools, transport type, and connection URL — enabling auto-configuration without manual setup.
+The server card advertises all 27 tools, transport type, and connection URL — enabling auto-configuration without manual setup.
 
 ---
 

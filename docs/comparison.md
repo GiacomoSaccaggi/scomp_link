@@ -9,14 +9,14 @@
 | **Auto model selection** | ✅ Decision tree | ❌ Manual | ✅ | ✅ |
 | **Hyperparameter tuning** | ✅ Optuna + Halving | ❌ Manual | ✅ | ✅ |
 | **Model persistence** | ✅ `.scomp` (model+config+metrics) | ⚠️ pickle only | ✅ | ✅ |
-| **HTML reports** | ✅ 39 chart types | ❌ | ✅ Basic | ❌ |
+| **HTML reports** | ✅ 41 chart types | ❌ | ✅ Basic | ❌ |
 | **Data drift detection** | ✅ PSI + KS | ❌ | ❌ | ❌ |
 | **Anomaly detection** | ✅ 4 methods (IForest+LOF+TabNet+Transformer) | ❌ | ❌ | ❌ |
 | **Fairness metrics** | ✅ Demographic parity, DI, equalized odds | ❌ | ❌ | ❌ |
 | **Time series** | ✅ ARIMA + ETS + auto | ❌ | ✅ | ✅ |
 | **Text classification** | ✅ TF-IDF + BERT contrastive | ❌ | ✅ Basic | ✅ |
 | **REST API deploy** | ✅ `scomp-link serve` | ❌ | ❌ | ❌ |
-| **MCP server (AI agents)** | ✅ 15 tools | ❌ | ❌ | ❌ |
+| **MCP server (AI agents)** | ✅ 27 tools | ❌ | ❌ | ❌ |
 | **YAML pipelines** | ✅ `scomp-link pipeline` | ❌ | ❌ | ❌ |
 | **Agent Skill** | ✅ SKILL.md | ❌ | ❌ | ❌ |
 | **Feature engineering** | ✅ Auto (interactions, log, encoding) | ❌ Manual | ✅ | ✅ |
@@ -98,7 +98,7 @@ save_model(best, 'model')
 | Quick prototype from terminal | **scomp-link** |
 | Production ML with monitoring | **scomp-link** |
 | AI agent automation | **scomp-link** (only one with MCP) |
-| Interactive dashboards + reports | **scomp-link** (39 chart types) |
+| Interactive dashboards + reports | **scomp-link** (41 chart types) |
 | Deep custom model architectures | sklearn / PyTorch directly |
 | Kaggle competitions | AutoGluon |
 | Enterprise AutoML (no code) | PyCaret |
