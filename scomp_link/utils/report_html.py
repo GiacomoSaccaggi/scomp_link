@@ -19,6 +19,8 @@
 import base64
 import io
 import json
+import uuid
+import warnings
 from typing import Any
 
 # Read constants from encrypted file
@@ -44,24 +46,18 @@ _FOOTER_JS_BLOCK = """
                         <script>
                         // Quick and simple export target #table_id into a csv
                         function download_table_as_csv(table_id, separator = ',') {
-                            // Select rows from table_id
                             var rows = document.querySelectorAll('table#' + table_id + ' tr');
-                            // Construct csv
                             var csv = [];
                             for (var i = 0; i < rows.length; i++) {
                                 var row = [], cols = rows[i].querySelectorAll('td, th');
                                 for (var j = 0; j < cols.length; j++) {
-                                    // Clean innertext to remove multiple spaces and jumpline (break csv)
                                     var data = cols[j].innerText.replace(/(\\r\\n|\\n|\\r)/gm, '').replace(/(\\s\\s)/gm, ' ')
-                                    // Escape double-quote with double-double-quote (see https://stackoverflow.com/questions/17808511/properly-escape-a-double-quote-in-csv)
                                     data = data.replace(/"/g, '""');
-                                    // Push escaped string
                                     row.push('"' + data + '"');
                                 }
                                 csv.push(row.join(separator));
                             }
-                            var csv_string = csv.join('\\n');
-                            // Download it
+                            var csv_string = csv.join('\n');
                             var filename = 'export_' + table_id + '_' + new Date().toLocaleDateString() + '.csv';
                             var link = document.createElement('a');
                             link.style.display = 'none';
@@ -72,10 +68,19 @@ _FOOTER_JS_BLOCK = """
                             link.click();
                             document.body.removeChild(link);
                         }
-                        var coll = document.getElementsByClassName("collapsiblemygs");
-                        var i;
 
-                        for (i = 0; i < coll.length; i++) {
+                        // Resize all Plotly charts within a container
+                        function resizePlotsIn(container) {
+                            if (!window.Plotly) return;
+                            var plots = container.querySelectorAll('.js-plotly-plot');
+                            plots.forEach(function(plot) {
+                                Plotly.Plots.resize(plot);
+                            });
+                        }
+
+                        // Collapsible sections with Plotly resize on open
+                        var coll = document.getElementsByClassName("collapsiblemygs");
+                        for (var i = 0; i < coll.length; i++) {
                           coll[i].addEventListener("click", function() {
                             this.classList.toggle("active");
                             var content = this.nextElementSibling;
@@ -83,91 +88,62 @@ _FOOTER_JS_BLOCK = """
                               content.style.display = "none";
                             } else {
                               content.style.display = "block";
+                              // Resize Plotly charts after section becomes visible
+                              setTimeout(function() { resizePlotsIn(content); }, 50);
+                              setTimeout(function() { resizePlotsIn(content); }, 300);
                             }
                           });
                         }
+
                         document.addEventListener("DOMContentLoaded", function() {
-                            // Function to resize svg-containers, SVG images and rect elements
-                            function resizeElements() {
-                                // Seleziona tutti gli elementi con la classe 'svg-container'
-                                var svgContainers = document.querySelectorAll('.svg-container');
-                        
-                                // Itera su ogni svg-container e imposta la larghezza al 100%
-                                svgContainers.forEach(function(container) {
-                                    container.style.width = '100%';
+                            // Collapse all sections initially
+                            var contents = document.querySelectorAll('.content');
+                            contents.forEach(function(content) {
+                                content.style.display = 'none';
+                            });
+
+                            // Highcharts containers: ensure 100% width
+                            document.querySelectorAll('.highcharts-container').forEach(function(item) {
+                                item.style.width = '100%';
+                            });
+
+                            // Global ResizeObserver: auto-resize all Plotly charts on container resize
+                            if (window.ResizeObserver && window.Plotly) {
+                                var ro = new ResizeObserver(function(entries) {
+                                    entries.forEach(function(entry) {
+                                        var plot = entry.target.querySelector('.js-plotly-plot') || entry.target;
+                                        if (plot && plot.classList.contains('js-plotly-plot')) {
+                                            Plotly.Plots.resize(plot);
+                                        }
+                                    });
                                 });
-                                
-                                 var svgContainers0 = document.querySelectorAll('.user-select-none');
-                        
-                                // Itera su ogni svg-container e imposta la larghezza al 100%
-                                svgContainers0.forEach(function(container) {
-                                    container.style.width = '100%';
+                                document.querySelectorAll('.plotly-graph-div').forEach(function(div) {
+                                    ro.observe(div);
                                 });
-                                
-                                
-                                 var cartesianlayer = document.querySelectorAll('.cartesianlayer');
-                        
-                                // Itera su ogni svg-container e imposta la larghezza al 100%
-                                cartesianlayer.forEach(function(container) {
-                                    container.style.width = '100%';
+                                // Also observe for dynamically added charts
+                                var bodyObserver = new MutationObserver(function(mutations) {
+                                    mutations.forEach(function(m) {
+                                        m.addedNodes.forEach(function(node) {
+                                            if (node.nodeType === 1) {
+                                                var divs = node.querySelectorAll ? node.querySelectorAll('.plotly-graph-div') : [];
+                                                divs.forEach(function(d) { ro.observe(d); });
+                                                if (node.classList && node.classList.contains('plotly-graph-div')) { ro.observe(node); }
+                                            }
+                                        });
+                                    });
                                 });
-                                
-                                
-                        
-                                 var svgContainers1 = document.querySelectorAll('.js-plotly-plot');
-                        
-                                // Itera su ogni svg-container e imposta la larghezza al 100%
-                                svgContainers1.forEach(function(container) {
-                                    container.style.width = '100%';
-                                });
-                                
-                                
-                                 var svgContainers2 = document.querySelectorAll('.main-svg');
-                        
-                                // Itera su ogni svg-container e imposta la larghezza al 100%
-                                svgContainers2.forEach(function(container) {
-                                    container.style.width = '100%';
-                                });
-                        
-                                 var svgContainers3 = document.querySelectorAll('.plot-container');
-                        
-                                // Itera su ogni svg-container e imposta la larghezza al 100%
-                                svgContainers3.forEach(function(container) {
-                                    container.style.width = '100%';
-                                });
-                        
-                                // Seleziona tutti gli elementi con il tag '.highcharts-container'
-                                var items = document.querySelectorAll('.highcharts-container');
-                        
-                                // Itera su ogni rect e imposta la larghezza al 100%
-                                items.forEach(function(item) {
-                                    item.style.width = '100%';
-                                });
-                                
-                                
-                                // Seleziona tutti gli elementi con il tag 'select'
-                                var selects = document.querySelectorAll('select');
-                        
-                                // Itera su ogni rect e imposta la larghezza al 100%
-                                selects.forEach(function(select) {
-                                    select.style.width = '200px';
-                                });
-                                
-                                
-                                // Seleziona tutti gli elementi con il tag 'content'
-                                var contents = document.querySelectorAll('.content');
-                        
-                                contents.forEach(function(content) {
-                                    content.style.display = 'none';
-                                });
-                                
-                                 
+                                bodyObserver.observe(document.body, { childList: true, subtree: true });
                             }
-                        
-                            // Call the function when the document is fully loaded
-                            resizeElements();
+
+                            // Fallback: resize all visible Plotly charts on window resize
+                            window.addEventListener('resize', function() {
+                                if (!window.Plotly) return;
+                                document.querySelectorAll('.js-plotly-plot').forEach(function(plot) {
+                                    Plotly.Plots.resize(plot);
+                                });
+                            });
                         });
-                        
+
                         </script>
                         </div><hr><br>"""
 
@@ -301,7 +277,7 @@ class ScompLinkHTMLReport:
               color:white;
               box-shadow:0 4px 12px rgba(0,0,0,.1);
             }
-            .plotly-graph-div{width:100%}
+            .plotly-graph-div{width:100%;min-height:200px;overflow:hidden}
             #container{height:600px}
             .highcharts-label-icon{opacity:0.5}
             .highcharts-figure,.highcharts-data-table table{min-width:310px;max-width:100%;overflow:auto;margin:1em auto}
@@ -537,7 +513,7 @@ class ScompLinkHTMLReport:
               color:white;
               box-shadow:0 4px 12px rgba(0,0,0,.1);
             }
-            .plotly-graph-div{width:100%}
+            .plotly-graph-div{width:100%;min-height:200px;overflow:hidden}
             #container{height:600px}
             .highcharts-label-icon{opacity:0.5}
             .highcharts-figure,.highcharts-data-table table{min-width:310px;max-width:100%;overflow:auto;margin:1em auto}
@@ -660,28 +636,17 @@ class ScompLinkHTMLReport:
         assert fig_json is not None
         fig_dict = json.loads(fig_json)
         jdata = to_json_plotly(fig_dict.get("data", []))
-        jlayout = to_json_plotly(fig_dict.get("layout", {}))
+        layout = fig_dict.get("layout", {})
+        layout["autosize"] = True
+        layout.pop("width", None)  # remove fixed width if set by user
+        jlayout = to_json_plotly(layout)
         jconfig = to_json_plotly({"responsive": True})
         if plotdivid is None:
             plotdivid = title.replace(" ", "_")
             for p in "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~":
                 plotdivid = plotdivid.replace(p, "_")
 
-        options = (
-            """ 
-                // Imposta la larghezza al 100%
-                Plotly.update('"""
-            + plotdivid
-            + """', { 'layout.width': window.innerWidth * 0.9 }); // Puoi anche usare '100%' al posto di 'window.innerWidth * 0.9' se preferisci una larghezza fissa
-            
-                // Aggiungi un listener per aggiornare la larghezza quando la finestra viene ridimensionata
-                window.addEventListener('resize', function() {
-                    Plotly.update('"""
-            + plotdivid
-            + """', { 'layout.width': window.innerWidth * 0.9 });
-                });
-                """
-        )
+        options = ""  # autosize handled by responsive config + ResizeObserver
         script = """\
                 <h2>{title}</h2>
                 <div id="{id}" class="plotly-graph-div"></div>
@@ -700,132 +665,51 @@ class ScompLinkHTMLReport:
 
     def select_plotly(self, figures_dict: dict, title: str, labels="Choose a label") -> str:
         """
+        .. deprecated::
+            Use :meth:`add_cascading_content` instead.
+
         Returns HTML plotly code with select dropdown.
-        :type figures_dict: object
+
+        :param figures_dict: dict mapping label(s) to Plotly figures
+        :param title: str - section title
+        :param labels: str or list[str] - dropdown label(s)
+        :return: empty string (content is appended directly to the report)
         """
-        import random
-
-        option_val = []
-        hide_element = ""
-        script = ""
-        multiple = type(list(figures_dict.keys())[0]) == tuple
-        n_filters = len(list(figures_dict.keys())[0]) if multiple else 1
-        if labels != "Choose a label" and len(labels) == n_filters:
-            labels_ord = list(labels)
-        else:
-            labels_ord = ["Choose a label"] * n_filters
-        title_ = title.replace(" ", "_")
-        for p in "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~":
-            title_ = title_.replace(p, "_")
-        if multiple:
-            idhide_ = [f"{i}_{title_}" for i in range(n_filters)]
-        else:
-            idhide_ = [f"1_{title_}"]
-        i = 0
-        for single_title, fig in figures_dict.items():
-            fig_json = to_json_plotly(fig)
-            assert fig_json is not None
-            fig_dict = json.loads(fig_json)
-            jdata = to_json_plotly(fig_dict.get("data", []))
-            jlayout = to_json_plotly(fig_dict.get("layout", {}))
-            jconfig = to_json_plotly({"responsive": True})
-            plotdivid = "".join(single_title).replace(" ", "_")
-            for p in "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~":
-                plotdivid = plotdivid.replace(p, "_")
-            idhide = f"{title_}_{plotdivid}"
-            hide_element += f'document.getElementById("{idhide}").style.display = "none"; '
-            display = "block" if i == 0 else "none"
-            i += 1
-            # option_val.append([f'<option value="{idhide}">{single_title}</option>'])
-            if multiple:
-                option_val_tmp = []
-                for k_part in single_title:
-                    k_part_tmp = k_part.replace(" ", "_")
-                    for p in "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~":
-                        k_part_tmp = k_part_tmp.replace(p, "_")
-                    option_val_tmp.append(f'<option value="{k_part_tmp}">{k_part}</option>')
-                option_val.append(option_val_tmp)
-            else:
-                single_title_tmp = single_title.replace(" ", "_")
-                for p in "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~":
-                    single_title_tmp = single_title_tmp.replace(p, "_")
-                option_val.append([f'<option value="{single_title_tmp}">{single_title}</option>'])
-            id_plotdiv = f"plotdivid_{random.randint(1000, 9999)}"
-            options = (
-                """ 
-                           // Imposta la larghezza al 100%
-                           Plotly.update('"""
-                + id_plotdiv
-                + """', { 'layout.width': window.innerWidth * 0.9 }); // Puoi anche usare '100%' al posto di 'window.innerWidth * 0.9' se preferisci una larghezza fissa
-
-                           // Aggiungi un listener per aggiornare la larghezza quando la finestra viene ridimensionata
-                           window.addEventListener('resize', function() {
-                               Plotly.update('"""
-                + id_plotdiv
-                + """', { 'layout.width': window.innerWidth * 0.9 });
-                           });
-                           """
-            )
-            script += """\
-                    <div id="{idhide}" class="print-grid-item" style="display:{display}">
-                        <h3 class="print-grid-title">{grid_title}</h3>
-                        <div id="{id}" class="plotly-graph-div"></div>
-                        <script>
-                                Plotly.newPlot(\n
-                                    "{id}",\n
-                                    {data},\n
-                                    {layout},\n
-                                    {config}
-                                )
-                                {options}
-                        </script>
-                    </div>
-                        """.format(
-                idhide=idhide,
-                display=display,
-                grid_title=" - ".join(single_title) if isinstance(single_title, tuple) else single_title,
-                id=id_plotdiv,
-                data=jdata,
-                layout=jlayout,
-                config=jconfig,
-                options=options,
-            )
-
-        documentget = f"'{title_}_'+" + "+".join(
-            [f'document.getElementById("labels{idhidepart}").value' for idhidepart in idhide_]
-        ).replace(" ", "_")
-        script = (
-            f"<h2>{title}</h2>\n"
-            + "".join(
-                [
-                    f"""
-                           <label for="labels{idhidepart}">{lab}:</label>
-                             <select name="labels{idhidepart}" id="labels{idhidepart}"  class="form-control js-example-tags">
-                               {''.join(list(set([option_tmp[n] for option_tmp in option_val])))}
-                             </select>
-                         <br><br>"""
-                    for n, [idhidepart, lab] in enumerate(zip(idhide_, labels_ord))
-                ]
-            )
-            + f"""
-                         <input type="submit"  onclick="SelectFunction{title_}()">
-                   """
-            + '<div class="print-grid-container">'
-            + script
-            + "</div>"
-            + """
-                        <script>
-                            function SelectFunction{idhide_}() {start_fun}
-                                {hide_element}
-                                var value = {documentget};
-                                document.getElementById(value).style.display = "block";
-                            {end_fun}
-                        </script>
-                   """.format(
-                idhide_=title_, documentget=documentget, hide_element=hide_element, start_fun="{", end_fun="}"
-            )
+        warnings.warn(
+            "select_plotly() is deprecated, use add_cascading_content() instead",
+            DeprecationWarning,
+            stacklevel=2,
         )
-        return script
+
+        # Convert old format to new format
+        keys = list(figures_dict.keys())
+        multiple = isinstance(keys[0], tuple)
+
+        if multiple:
+            n_filters = len(keys[0])
+            if isinstance(labels, (list, tuple)) and len(labels) == n_filters:
+                dim_labels = list(labels)
+            else:
+                dim_labels = [f"Choose a label"] * n_filters
+
+            # Gather unique options per dimension
+            options_per_dim: list[list[str]] = [[] for _ in range(n_filters)]
+            for key_tuple in keys:
+                for i, k in enumerate(key_tuple):
+                    if k not in options_per_dim[i]:
+                        options_per_dim[i].append(k)
+
+            dimensions = [
+                {"label": dim_labels[i], "options": options_per_dim[i]} for i in range(n_filters)
+            ]
+            content_map = {k: v for k, v in figures_dict.items()}
+        else:
+            dim_label = labels if isinstance(labels, str) else labels[0]
+            dimensions = [{"label": dim_label, "options": [str(k) for k in keys]}]
+            content_map = {(str(k),): v for k, v in figures_dict.items()}
+
+        self.add_cascading_content(title, dimensions, content_map)
+        return ""
 
     def add_graph_to_report(self, fig: "plotly.graph_objs._figure.Figure", title: str):
         """
@@ -990,24 +874,29 @@ class ScompLinkHTMLReport:
 
     def add_many_plots_with_selection_box_to_report(self, figures_dict: dict, title: str, **kwargs):
         """
-        Add many graphs to report
-        :param figures_dict: plotly.graph_objs._figure.Figure
-        :param title: str
-        :return:
+        .. deprecated::
+            Use :meth:`add_cascading_content` instead.
+
+        Add multiple Plotly graphs to the report with a dropdown selector.
+
+        :param figures_dict: dict mapping label(s) to Plotly figures
+        :param title: str - section title
+        :param kwargs: optional 'labels' parameter for dropdown label(s)
 
         ## example
-        demo_report = NielsenHTMLreport('My fisrt REPORT') # if you don't have just created
         import plotly.express as px
         fig1 = px.scatter(x=range(10), y=range(10))
         fig2 = px.scatter(x=range(20), y=range(20))
-        figures_dict = {
-                        'This is the first 1':fig1,
-                        'This is the second 2':fig2
-                        }
-        demo_report.add_many_plots_with_selection_box_to_report(figures_dict, 'My first Graph')
+        figures_dict = {'First': fig1, 'Second': fig2}
+        report.add_many_plots_with_selection_box_to_report(figures_dict, 'My Graphs')
         """
+        warnings.warn(
+            "add_many_plots_with_selection_box_to_report() is deprecated, use add_cascading_content() instead",
+            DeprecationWarning,
+            stacklevel=2,
+        )
         labels = kwargs.get("labels", "Choose a label")
-        self.html_report += self.select_plotly(figures_dict, title, labels=labels)
+        self.select_plotly(figures_dict, title, labels=labels)
         logger.info("Added graph to report!")
 
     def open_section(self, section_title: str, ingore_multi_section=False) -> None:
@@ -1087,16 +976,207 @@ class ScompLinkHTMLReport:
         self.html_report += html
         logger.info("Added raw HTML to report!")
 
-    def add_dataframe(self, df: pd.DataFrame, title: str, limit_max=2000) -> None:
+    def add_cascading_content(
+        self, title: str, dimensions: list[dict], content_map: dict, cascade: bool = False
+    ) -> None:
+        """
+        Add interactive content with cascading dropdown selectors.
+
+        Each combination of dropdown selections maps to a content block (HTML string
+        or Plotly Figure). Only one block is visible at a time.
+
+        :param title: str - heading displayed above the dropdowns
+        :param dimensions: list[dict] - each dict has keys "label" (str) and "options" (list[str])
+        :param content_map: dict - keys are tuples of option strings, values are HTML strings or Plotly Figures
+        :param cascade: bool - if True, child dropdown options are filtered based on parent selection
+
+        ## example
+        import plotly.express as px
+        fig1 = px.scatter(x=[1,2,3], y=[1,2,3])
+        fig2 = px.scatter(x=[1,2,3], y=[3,2,1])
+        report.add_cascading_content(
+            "My Charts",
+            [{"label": "Category", "options": ["A", "B"]}],
+            {("A",): fig1, ("B",): fig2},
+        )
+        """
+        import plotly.graph_objects as go
+        import plotly.io as pio
+
+        uid = uuid.uuid4().hex[:8]
+
+        def _sanitize(s: str) -> str:
+            return s.replace("-", "_").replace(".", "_").replace(" ", "_")
+
+        # Build content divs
+        content_divs = ""
+        first = True
+        for key_tuple, content in content_map.items():
+            sanitized_key = "___".join(_sanitize(str(k)) for k in key_tuple)
+            div_id = f"wrap_{uid}_{sanitized_key}"
+            display = "block" if first else "none"
+            first = False
+
+            if isinstance(content, go.Figure):
+                inner_html = pio.to_html(
+                    content, include_plotlyjs=False, full_html=False, config={"responsive": True}
+                )
+            else:
+                inner_html = str(content)
+
+            content_divs += f'<div id="{div_id}" style="display:{display};overflow:visible;">{inner_html}</div>\n'
+
+        # Build select elements
+        selects_html = ""
+        for i, dim in enumerate(dimensions):
+            sel_id = f"sel_{i}_{uid}"
+            options_html = "".join(
+                f'<option value="{_sanitize(opt)}">{opt}</option>' for opt in dim["options"]
+            )
+            selects_html += (
+                f'<label for="{sel_id}" style="margin-right:6px;font-weight:600;">{dim["label"]}:</label>'
+                f'<select id="{sel_id}" onchange="update_{uid}()" '
+                f'style="margin-right:12px;padding:4px 8px;border-radius:4px;border:1px solid #ccc;">'
+                f"{options_html}</select>\n"
+            )
+
+        # Build cascade JS (filter child options based on parent selections)
+        cascade_js = ""
+        if cascade and len(dimensions) > 1:
+            # Build mapping: parent_value -> available child options for each child dimension
+            cascade_map: dict[int, dict[str, list[str]]] = {}
+            for child_idx in range(1, len(dimensions)):
+                parent_to_children: dict[str, set[str]] = {}
+                for key_tuple in content_map.keys():
+                    parent_key = "___".join(_sanitize(str(k)) for k in key_tuple[:child_idx])
+                    child_val = str(key_tuple[child_idx])
+                    if parent_key not in parent_to_children:
+                        parent_to_children[parent_key] = set()
+                    parent_to_children[parent_key].add(child_val)
+                cascade_map[child_idx] = {k: sorted(v) for k, v in parent_to_children.items()}
+
+            cascade_js = f"var cascade_{uid} = {json.dumps({str(k): v for k, v in cascade_map.items()})};\n"
+            cascade_js += f"""
+            function update_cascade_{uid}() {{
+                var cas = cascade_{uid};
+                for (var ci = 1; ci < {len(dimensions)}; ci++) {{
+                    var parentKey = '';
+                    for (var pi = 0; pi < ci; pi++) {{
+                        if (pi > 0) parentKey += '___';
+                        parentKey += document.getElementById('sel_' + pi + '_{uid}').value;
+                    }}
+                    var sel = document.getElementById('sel_' + ci + '_{uid}');
+                    var opts = (cas[String(ci)] && cas[String(ci)][parentKey]) || [];
+                    var curVal = sel.value;
+                    sel.innerHTML = '';
+                    for (var oi = 0; oi < opts.length; oi++) {{
+                        var o = document.createElement('option');
+                        o.value = opts[oi].replace(/-/g,'_').replace(/\\./g,'_').replace(/ /g,'_');
+                        o.textContent = opts[oi];
+                        sel.appendChild(o);
+                    }}
+                    if (opts.map(function(x){{return x.replace(/-/g,'_').replace(/\\./g,'_').replace(/ /g,'_');}}).indexOf(curVal) >= 0) {{
+                        sel.value = curVal;
+                    }}
+                }}
+            }}
+            """
+
+        # Build update JS
+        key_parts = " + '___' + ".join(
+            f"document.getElementById('sel_{i}_{uid}').value" for i in range(len(dimensions))
+        )
+
+        script = f"""
+<script>
+{cascade_js}
+function update_{uid}() {{
+    {"update_cascade_" + uid + "();" if cascade and len(dimensions) > 1 else ""}
+    var k = {key_parts};
+    document.querySelectorAll('[id^="wrap_{uid}_"]').forEach(function(d) {{ d.style.display = 'none'; }});
+    var tk = k.replace(/-/g, '_').replace(/\\./g, '_').replace(/ /g, '_');
+    var tgt = document.getElementById('wrap_{uid}_' + tk);
+    if (tgt) {{
+        tgt.style.display = 'block';
+        tgt.style.overflow = 'visible';
+        setTimeout(function() {{ window.dispatchEvent(new Event('resize')); }}, 150);
+        setTimeout(function() {{ window.dispatchEvent(new Event('resize')); }}, 500);
+    }}
+}}
+document.addEventListener('DOMContentLoaded', function() {{ update_{uid}(); }});
+setTimeout(function() {{ update_{uid}(); }}, 500);
+</script>
+"""
+
+        self.html_report += f"<h2>{title}</h2>\n"
+        self.html_report += f'<div style="margin-bottom:12px;">{selects_html}</div>\n'
+        self.html_report += content_divs
+        self.html_report += script
+        logger.info("Added cascading content to report!")
+
+    def add_dataframe(self, df, title: str, limit_max=2000, thresholds=None) -> None:
+        """
+        Add a DataFrame as an HTML table to the report.
+
+        :param df: pandas or polars DataFrame
+        :param title: str - table title and CSV download ID
+        :param limit_max: int - maximum rows before skipping rendering (default 2000)
+        :param thresholds: dict[str, tuple[float, float, bool]] or None - color-coding thresholds per column.
+            Format: {"col": (good_threshold, bad_threshold, higher_is_better)}.
+            If higher_is_better=True: value > good → green, bad < value ≤ good → orange, value ≤ bad → red.
+            If higher_is_better=False: value < good → green, good ≤ value < bad → orange, value ≥ bad → red.
+        """
+        # Accept polars DataFrames
+        if hasattr(df, "to_pandas"):
+            df = df.to_pandas()
+
         if len(df) < limit_max:
+            table_id = title.replace(" ", "")
             self.html_report += (
                 '<a href="#" onclick="download_table_as_csv('
-                + f"'{title.replace(' ', '')}'"
+                + f"'{table_id}'"
                 + ');">Download as CSV</a>'
             )
-            tab = df.to_html(index=False, classes="scomp-table").replace('border="1"', 'border="0"')
-            tab = tab.replace('class="dataframe scomp-table"', f'id="{title.replace(" ", "")}" class="scomp-table"')
-            tab = tab.replace('style="text-align: right;"', 'style="text-align: left;"')
+
+            if thresholds is not None:
+                # Build custom HTML table with threshold coloring
+                tab = f'<table id="{table_id}" class="scomp-table">\n<thead><tr>'
+                for col in df.columns:
+                    tab += f"<th>{col}</th>"
+                tab += "</tr></thead>\n<tbody>\n"
+                for _, row in df.iterrows():
+                    tab += "<tr>"
+                    for col in df.columns:
+                        val = row[col]
+                        bg = ""
+                        if col in thresholds:
+                            good, bad, higher_is_better = thresholds[col]
+                            if pd.isna(val):
+                                bg = "rgba(100,100,100,0.2)"
+                            elif higher_is_better:
+                                if val > good:
+                                    bg = "rgba(52,211,153,0.3)"
+                                elif val > bad:
+                                    bg = "rgba(251,146,60,0.3)"
+                                else:
+                                    bg = "rgba(239,68,68,0.3)"
+                            else:
+                                if val < good:
+                                    bg = "rgba(52,211,153,0.3)"
+                                elif val < bad:
+                                    bg = "rgba(251,146,60,0.3)"
+                                else:
+                                    bg = "rgba(239,68,68,0.3)"
+                        style_attr = f' style="background-color:{bg};"' if bg else ""
+                        display_val = "" if pd.isna(val) else val
+                        tab += f"<td{style_attr}>{display_val}</td>"
+                    tab += "</tr>\n"
+                tab += "</tbody></table>"
+            else:
+                tab = df.to_html(index=False, classes="scomp-table").replace('border="1"', 'border="0"')
+                tab = tab.replace('class="dataframe scomp-table"', f'id="{table_id}" class="scomp-table"')
+                tab = tab.replace('style="text-align: right;"', 'style="text-align: left;"')
+
             self.html_report += f"""
             <div id="table-wrapper">
                 <div id="table-scroll">
