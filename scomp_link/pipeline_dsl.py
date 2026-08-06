@@ -334,6 +334,17 @@ class TitleStep(ReportStep):
         return report
 
 
+class SubtitleStep(ReportStep):
+    """Adds an <h3> subtitle to the report."""
+
+    def __init__(self, subtitle: str):
+        self.subtitle = subtitle
+
+    def execute(self, report: "ScompLinkHTMLReport") -> "ScompLinkHTMLReport":
+        report.add_subtitle(self.subtitle)
+        return report
+
+
 class TextStep(ReportStep):
     """Adds a <p> paragraph to the report."""
 
@@ -360,7 +371,7 @@ class GraphStep(ReportStep):
         self.title = title
 
     def execute(self, report: "ScompLinkHTMLReport") -> "ScompLinkHTMLReport":
-        report.add_graph_to_report(self.fig, self.title)
+        report.add_graph(self.fig, self.title)
         return report
 
 
@@ -400,6 +411,30 @@ class RawGraphStep(ReportStep):
 
     def execute(self, report: "ScompLinkHTMLReport") -> "ScompLinkHTMLReport":
         report.add_rawgraphs_to_report(self.svg, self.title)
+        return report
+
+
+class HighchartsStep(ReportStep):
+    """
+    Adds a Highcharts chart to the report.
+
+    Parameters
+    ----------
+    html_snippet : str
+        HTML string returned by scomp_link.utils.highcharts functions
+        (streamgraphs, calendar_heatmap, calendar_gantt, etc.).
+    title : str
+        Optional title shown above the chart.
+    """
+
+    def __init__(self, html_snippet: str, title: str = ""):
+        self.html_snippet = html_snippet
+        self.title = title
+
+    def execute(self, report: "ScompLinkHTMLReport") -> "ScompLinkHTMLReport":
+        if self.title:
+            report.add_title(self.title)
+        report.add_highcharts(self.html_snippet)
         return report
 
 
@@ -488,6 +523,8 @@ __all__ = [
     "GraphStep",
     "TableStep",
     "RawGraphStep",
+    "HighchartsStep",
+    "SubtitleStep",
     "SaveStep",
     "LogStep",
 ]

@@ -858,9 +858,9 @@ def report_add_text(report_id: str, content: str, style: str = "paragraph") -> s
     if style == "title":
         report.add_title(content)
     elif style == "subtitle":
-        report.html_report += f"<h3>{content}</h3>"
+        report.add_subtitle(content)
     elif style == "html":
-        report.html_report += content
+        report.add_html(content)
     else:
         report.add_text(content)
 
@@ -1059,7 +1059,7 @@ def report_add_chart(report_id: str, engine: str, chart_type: str, data: str, ti
             func = getattr(highcharts, chart_type)
             kwargs = dict(chart_data)
             html = func(title, **kwargs)
-            report.html_report += html
+            report.add_highcharts(html)
 
         else:
             return json.dumps({"error": f"Unknown engine '{engine}'. Valid: plotly, rawgraphs, highcharts"})

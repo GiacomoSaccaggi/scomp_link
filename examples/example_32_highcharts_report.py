@@ -173,7 +173,7 @@ def build_report():
         annotation=annotations,
         area=True,
     )
-    report.html_report += html_area
+    report.add_highcharts(html_area)
     report.close_section()
     print(f"    ✅ Area chart: {len(series_dict)} series, {len(dates)} time points")
 
@@ -188,7 +188,7 @@ def build_report():
         annotation=None,
         area=False,
     )
-    report.html_report += html_stream
+    report.add_highcharts(html_stream)
     report.close_section()
     print("    ✅ Streamgraph: symmetric layout")
 
@@ -204,7 +204,7 @@ def build_report():
         min=0,
         max=100,
     )
-    report.html_report += html_heatmap
+    report.add_highcharts(html_heatmap)
     report.close_section()
     print(f"    ✅ Heatmap: {len(heatmap_data)} days")
 
@@ -223,7 +223,7 @@ def build_report():
         min_date=min_date,
         max_date=max_date,
     )
-    report.html_report += html_gantt
+    report.add_highcharts(html_gantt)
     report.close_section()
     print(f"    ✅ Gantt: {sum(len(s['data']) for s in gantt_data)} tasks, " f"range {min_date} → {max_date}")
 

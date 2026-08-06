@@ -88,6 +88,8 @@ _LAZY_IMPORTS = {
     "GraphStep": (".pipeline_dsl", "GraphStep"),
     "TableStep": (".pipeline_dsl", "TableStep"),
     "RawGraphStep": (".pipeline_dsl", "RawGraphStep"),
+    "HighchartsStep": (".pipeline_dsl", "HighchartsStep"),
+    "SubtitleStep": (".pipeline_dsl", "SubtitleStep"),
     "SaveStep": (".pipeline_dsl", "SaveStep"),
     "LogStep": (".pipeline_dsl", "LogStep"),
 }
