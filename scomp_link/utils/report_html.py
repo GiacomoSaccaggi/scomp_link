@@ -19,6 +19,7 @@
 import base64
 import io
 import json
+from typing import Any
 
 # Read constants from encrypted file
 import os
@@ -905,6 +906,88 @@ class ScompLinkHTMLReport:
         self.html_report += f'<div style="width:100%;overflow-x:auto;">{svg_string}</div>'
         logger.info("Added RAWGraphs SVG to report!")
 
+    def add_graph(self, fig: Any, title: str = "", **kwargs: Any) -> None:
+        """
+        Add a chart to the report. Automatically detects the chart type.
+
+        Supported types (detected automatically):
+        - plotly.graph_objs.Figure       → embedded as interactive Plotly chart
+        - matplotlib.figure.Figure       → embedded as base64 image
+        - matplotlib.axes.Axes           → extracts .figure, then embedded as base64 image
+          (seaborn returns Axes — just pass the result of sns.barplot() etc. directly)
+        - str starting with "<svg"       → RAWGraphs SVG (from scomp_link.utils.rawgraphs)
+        - str containing "Highcharts"    → Highcharts HTML snippet (from scomp_link.utils.highcharts)
+        - str (other)                    → raw HTML injected verbatim
+
+        :param fig: the chart object or HTML string
+        :param title: str - optional title displayed above the chart
+        :param kwargs: extra args forwarded to the underlying method
+                       (e.g. dpi=150, img_format="png" for matplotlib)
+
+        ## example
+        import plotly.express as px
+        import matplotlib.pyplot as plt
+        import seaborn as sns
+        from scomp_link.utils.rawgraphs import treemap
+        from scomp_link.utils.highcharts import streamgraphs
+
+        report.add_graph(px.scatter(df, x="x", y="y"), "Scatter")
+        report.add_graph(plt.figure(), "Matplotlib")
+        report.add_graph(sns.barplot(data=df, x="x", y="y"), "Seaborn")
+        report.add_graph(treemap(data, "x", "value"), "Treemap")
+        report.add_graph(streamgraphs("Stream", dates, series), "Stream")
+        """
+        # --- Plotly ---
+        try:
+            import plotly.graph_objs as _go
+            if isinstance(fig, _go.Figure):
+                self.add_graph_to_report(fig, title)
+                return
+        except ImportError:
+            pass
+
+        # --- Matplotlib Figure ---
+        try:
+            import matplotlib.figure as _mfig
+            if isinstance(fig, _mfig.Figure):
+                self.add_matplotlib_graph_to_report(fig, title, **kwargs)
+                return
+        except ImportError:
+            pass
+
+        # --- Matplotlib Axes (seaborn returns Axes) ---
+        try:
+            import matplotlib.axes as _maxes
+            if isinstance(fig, _maxes.Axes):
+                self.add_matplotlib_graph_to_report(fig.figure, title, **kwargs)
+                return
+        except ImportError:
+            pass
+
+        # --- String-based: SVG, Highcharts, raw HTML ---
+        if isinstance(fig, str):
+            stripped = fig.lstrip()
+            if stripped.startswith("<svg") or stripped.startswith("<?xml"):
+                # RAWGraphs SVG
+                self.add_rawgraphs_to_report(fig, title)
+                return
+            if "Highcharts" in fig or "HighchartsGantt" in fig:
+                # Highcharts HTML snippet
+                if title:
+                    self.html_report += f"<h2>{title}</h2>"
+                self.add_highcharts(fig)
+                return
+            # Generic HTML
+            if title:
+                self.html_report += f"<h2>{title}</h2>"
+            self.add_html(fig)
+            return
+
+        raise TypeError(
+            f"add_graph() does not support type {type(fig).__name__}. "
+            "Supported: plotly Figure, matplotlib Figure/Axes, str (SVG / Highcharts HTML / raw HTML)."
+        )
+
     def add_many_plots_with_selection_box_to_report(self, figures_dict: dict, title: str, **kwargs):
         """
         Add many graphs to report
@@ -947,9 +1030,62 @@ class ScompLinkHTMLReport:
         self.html_report += f"<h2>{title}</h2>"
         logger.info("Added title to report!")
 
+    def add_subtitle(self, subtitle: str) -> None:
+        """
+        Add an <h3> subtitle to the report.
+
+        :param subtitle: str - subtitle text
+
+        ## example
+        report.add_subtitle("Model Details")
+        """
+        self.html_report += f"<h3>{subtitle}</h3>"
+        logger.info("Added subtitle to report!")
+
     def add_text(self, text: str) -> None:
         self.html_report += f"<p>{text}</p>"
         logger.info("Added text to report!")
+
+    def add_highcharts(self, html_snippet: str) -> None:
+        """
+        Add a Highcharts chart to the report.
+
+        Use this for HTML snippets returned by highcharts module functions:
+        streamgraphs(), calendar_heatmap(), calendar_gantt(), area_chart(), etc.
+
+        :param html_snippet: str - HTML string returned by a scomp_link.utils.highcharts function
+
+        ## example
+        from scomp_link.utils.highcharts import streamgraphs
+        html = streamgraphs("My Chart", dates, series_dict)
+        report.add_highcharts(html)
+        """
+        self.html_report += html_snippet
+        logger.info("Added Highcharts chart to report!")
+
+    def add_html(self, html: str) -> None:
+        """
+        Inject arbitrary HTML directly into the report body.
+
+        Use this only when no other method covers your use case.
+        Prefer the specific methods instead:
+        - Text content   → add_title(), add_subtitle(), add_text()
+        - Plotly charts  → add_graph_to_report()
+        - Highcharts     → add_highcharts()
+        - RAWGraphs SVG  → add_rawgraphs_to_report()
+        - DataFrames     → add_dataframe()
+        - Images         → add_image_to_report()
+
+        What this affects: the HTML is appended verbatim inside the <body>
+        of the report. Malformed HTML here can break the entire report layout.
+
+        :param html: str - raw HTML string to inject
+
+        ## example
+        report.add_html('<div class="custom-box">Custom content</div>')
+        """
+        self.html_report += html
+        logger.info("Added raw HTML to report!")
 
     def add_dataframe(self, df: pd.DataFrame, title: str, limit_max=2000) -> None:
         if len(df) < limit_max:
