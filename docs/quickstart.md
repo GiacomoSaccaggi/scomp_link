@@ -117,7 +117,7 @@ See [Agent Integration Guide](agent-integration.md) for full setup.
 
 - [CLI Reference](cli.md) — All 25 commands
 - [Python API](API_REFERENCE.md) — Programmatic usage
-- [Visualization Guide](visualization.md) — 39 chart types
+- [Visualization Guide](visualization.md) — 41 chart types
 - [Examples](examples.md) — 34 runnable examples
 
 

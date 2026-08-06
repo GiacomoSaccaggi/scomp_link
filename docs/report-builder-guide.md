@@ -125,8 +125,13 @@ scomp-link init-config --local
 | 2 | `report_add_section` | Open a collapsible section with a title |
 | 3 | `report_add_text` | Add paragraph, title, subtitle, or raw HTML |
 | 4 | `report_add_table` | Add an interactive data table (sortable, CSV-exportable) |
-| 5 | `report_add_chart` | Add a chart (39 types from 3 engines) |
-| 6 | `report_save` | Save to HTML file, close session |
+| 5 | `report_add_chart` | Add a chart (41 types from 3 engines) |
+| 6 | `report_add_kpi_cards` | Add KPI summary cards with trend/status coloring |
+| 7 | `report_add_tabs` | Add tabbed navigation (html/chart/table content) |
+| 8 | `report_add_comparison_table` | Add model/experiment comparison table with deltas |
+| 9 | `report_add_summary_stats` | Add auto-generated data profiling table |
+| 10 | `report_add_dark_mode_toggle` | Add floating dark/light mode toggle |
+| 11 | `report_save` | Save to HTML file, close session |
 
 ### Basic Example
 
@@ -196,7 +201,7 @@ Tables are interactive: sortable columns + CSV export button.
 
 ---
 
-## `report_add_chart` — The 39 Chart Types
+## `report_add_chart` — The 41 Chart Types
 
 ### Engine Selection Guide
 
@@ -208,7 +213,7 @@ Tables are interactive: sortable columns + CSV export button.
 
 ---
 
-### Plotly Charts (4 types)
+### Plotly Charts (6 types)
 
 | Type | Data Format |
 |------|------------|
@@ -216,6 +221,8 @@ Tables are interactive: sortable columns + CSV export button.
 | `barchart` | `{"categories": ["A","B","C"], "values": [[10,20,30]], "y_axis_titles": ["Points"]}` |
 | `linechart` | `{"dates": ["2024-01-01",...], "lines": [[100,120,...]], "y_labels": ["Sales"]}` |
 | `area_chart` | Same format as linechart (stacked area) |
+| `index_chart` | `{"series_dict": {"A": [100,110,95]}, "x_labels": ["Q1","Q2","Q3"], "baseline": 100}` |
+| `stacked_area_comparison` | `{"data_left": {"Cat": [30,70]}, "data_right": {"Cat": [40,60]}, "categories": ["Cat"], "x_labels": ["X","Y"]}` |
 
 **Multiple series** (linechart/area_chart):
 ```json
@@ -321,6 +328,8 @@ Optional: `"format_date": "%Y-%m"` if dates aren't `%Y-%m-%d`.
 | Distribution of one variable | `plotly` → `histogram` or `rawgraphs` → `violinplot` |
 | Compare categories | `rawgraphs` → `barchart` or `radarchart` |
 | Trends over time | `plotly` → `linechart` or `highcharts` → `streamgraphs` |
+| Indexed comparison (rebased) | `plotly` → `index_chart` |
+| Composition comparison | `plotly` → `stacked_area_comparison` |
 | Part-to-whole | `rawgraphs` → `piechart`, `sunburst`, or `treemap` |
 | Correlations | `rawgraphs` → `bubblechart` or `parallelcoordinates` |
 | Flows / journeys | `rawgraphs` → `sankey_diagram` or `alluvial_diagram` |
@@ -333,18 +342,115 @@ Optional: `"format_date": "%Y-%m"` if dates aren't `%Y-%m-%d`.
 
 ---
 
+---
+
+## `report_add_kpi_cards` — KPI Summary Cards
+
+Display key metrics as colored cards with optional trend indicators.
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `report_id` | str | Report ID from `report_create` |
+| `metrics` | JSON str | Metric name → config mapping (see below) |
+| `cols` | int | Grid columns (default 3) |
+
+**Metrics format:**
+```json
+{
+  "Accuracy": {"value": "94.2%", "trend": "+1.3%", "status": "good"},
+  "RMSE": {"value": "0.087", "status": "good"},
+  "Latency": {"value": "230ms", "trend": "+15ms", "status": "warning"},
+  "Drift Score": {"value": "0.31", "status": "critical"},
+  "Samples": 12450
+}
+```
+
+Status colors: `"good"` (green) | `"warning"` (orange) | `"critical"` (red/pink) | omitted (neutral).
+
+---
+
+## `report_add_tabs` — Tabbed Navigation
+
+Add horizontal tabs that switch visible content on click.
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `report_id` | str | Report ID from `report_create` |
+| `tabs` | JSON str | Tab label → content definition |
+| `title` | str | Optional title above tabs |
+
+**Tab content types:**
+```json
+{
+  "Overview": {"type": "html", "content": "<p>Summary text</p>"},
+  "Chart": {"type": "chart", "engine": "plotly", "chart_type": "barchart",
+            "data": {"categories": ["A","B"], "values": [[10,20]]}},
+  "Data": {"type": "table", "data": [{"col": "val"}]}
+}
+```
+
+Only `"plotly"` engine is supported for chart tabs. For rawgraphs/highcharts, use `"type": "html"`.
+
+---
+
+## `report_add_comparison_table` — Model Comparison
+
+Add a table showing deltas between a baseline and comparison columns.
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `report_id` | str | Report ID from `report_create` |
+| `data` | JSON str | Records format (list of dicts) |
+| `baseline_col` | str | Column name used as reference |
+| `compare_cols` | JSON str | Array of column names to compare: `'["v2","v3"]'` |
+| `metric_col` | str/null | Column with metric names (row labels) |
+| `higher_is_better` | JSON str/null | Dict: `'{"accuracy": true, "rmse": false}'` |
+| `title` | str | Table title (default "Comparison") |
+
+---
+
+## `report_add_summary_stats` — Data Profiling
+
+Add an auto-generated table with column statistics (type, null%, unique, distribution).
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `report_id` | str | Report ID from `report_create` |
+| `data` | JSON str | Records format |
+| `title` | str | Section title (default "Data Summary") |
+
+---
+
+## `report_add_dark_mode_toggle` — Dark Mode
+
+Add a floating button (top-right corner) that toggles dark/light mode.
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `report_id` | str | Report ID from `report_create` |
+
 ## Quick Setup Prompt for AI Agents
 
 Copy-paste this into your AI agent to enable scomp-link:
 
-> You have access to scomp-link, an ML toolkit with 22 MCP tools. Use them for:
+> You have access to scomp-link, an ML toolkit with 27 MCP tools. Use them for:
 > - **Data profiling**: `describe_data(path)` — always start here
 > - **Training**: `train_model(data, target, task)` with optional `tune=true` for Optuna
 > - **Validation**: `validate_model(artifact, data, target)` for test evaluation
 > - **Reports**: Use the report builder for custom dashboards:
 >   1. `report_create(title)` → get report_id
 >   2. `report_add_section(id, title)` → structure
->   3. `report_add_chart(id, engine, type, data, title)` → 39 chart types (plotly/rawgraphs/highcharts)
+>   3. `report_add_chart(id, engine, type, data, title)` → 41 chart types (plotly/rawgraphs/highcharts)
 >   4. `report_add_table(id, json_data, title)` → data tables
 >   5. `report_save(id, path)` → save HTML
 > - **Monitoring**: `detect_drift`, `detect_anomalies`, `check_fairness`

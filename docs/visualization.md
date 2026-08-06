@@ -1,6 +1,6 @@
 # Visualization Guide
 
-scomp-link provides 39 chart types across three engines plus an HTML report builder.
+scomp-link provides 41 chart types across three engines plus an HTML report builder.
 
 ## HTML Report Builder Pattern
 

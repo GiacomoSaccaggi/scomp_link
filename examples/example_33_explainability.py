@@ -77,6 +77,7 @@ with warnings.catch_warnings():
     warnings.simplefilter("ignore")
     try:
         import matplotlib
+
         matplotlib.use("Agg")  # non-interactive backend
         shap_exp.plot_beeswarm()
         print("  ✅ plot_beeswarm OK")
@@ -127,7 +128,7 @@ print("\n=== LimeExplainer (regression) ===")
 lime_reg = LimeExplainer(model_reg, X_train_r, task="regression")
 
 # explain_instance()
-exp = lime_reg.explain_instance(X_test_r.iloc[0], num_features=3)
+exp = lime_reg.explain_instance(X_test_r.iloc[0], num_features=3)  # type: ignore[union-attr]
 pairs = exp.as_list()
 print(f"  Explanation pairs: {len(pairs)}")
 assert len(pairs) == 3
@@ -151,10 +152,8 @@ print("  ✅ feature_importance aggregated OK")
 # LimeExplainer — classification
 # ---------------------------------------------------------------------------
 print("\n=== LimeExplainer (classification) ===")
-lime_clf = LimeExplainer(
-    model_clf, X_train_c, task="classification", feature_names=["x1", "x2", "x3"]
-)
-exp_clf = lime_clf.explain_instance(X_test_c.iloc[0], num_features=2)
+lime_clf = LimeExplainer(model_clf, X_train_c, task="classification", feature_names=["x1", "x2", "x3"])
+exp_clf = lime_clf.explain_instance(X_test_c.iloc[0], num_features=2)  # type: ignore[union-attr]
 assert len(exp_clf.as_list()) > 0
 print("  ✅ classification explain_instance OK")
 

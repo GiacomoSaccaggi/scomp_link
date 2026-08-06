@@ -328,7 +328,7 @@ Start the MCP (Model Context Protocol) server for AI agent integration.
 scomp-link mcp
 ```
 
-Compatible with Claude Desktop, Kiro, Cursor, VS Code Copilot. Exposes 22 tools, 3 resources, and 4 prompts. See [Agent Integration](agent-integration.md) for setup.
+Compatible with Claude Desktop, Kiro, Cursor, VS Code Copilot. Exposes 27 tools, 3 resources, and 4 prompts. See [Agent Integration](agent-integration.md) for setup.
 
 ### `init-config`
 

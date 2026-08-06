@@ -889,6 +889,55 @@ def report_add_table(report_id: str, data: str, title: str = "Table") -> str:
     return json.dumps({"status": "table_added", "title": title, "rows": len(df), "columns": len(df.columns)})
 
 
+def _build_plotly_figure(chart_type: str, chart_data: dict, title: str):
+    """Build a Plotly figure from chart_type + data dict. Raises ValueError on unknown type."""
+    from scomp_link.utils import plotly_utils
+
+    _PLOTLY_TYPES = {"histogram", "barchart", "linechart", "area_chart", "index_chart", "stacked_area_comparison"}
+    if chart_type not in _PLOTLY_TYPES:
+        raise ValueError(f"Unknown plotly chart_type '{chart_type}'. Valid: {sorted(_PLOTLY_TYPES)}")
+
+    if chart_type == "histogram":
+        return plotly_utils.histogram(chart_data["values"], chart_data.get("name", title))
+    elif chart_type == "barchart":
+        return plotly_utils.barchart(
+            chart_data["categories"], chart_data["values"], y_axis_titles=chart_data.get("y_axis_titles")
+        )
+    elif chart_type == "linechart":
+        return plotly_utils.linechart(
+            chart_data["dates"],
+            chart_data["lines"],
+            title_text=title,
+            y_labels=chart_data.get("y_labels", "value"),
+            format_date=chart_data.get("format_date", "%Y-%m-%d"),
+        )
+    elif chart_type == "area_chart":
+        return plotly_utils.area_chart(
+            chart_data["dates"],
+            chart_data["lines"],
+            title_text=title,
+            y_labels=chart_data.get("y_labels", "value"),
+            format_date=chart_data.get("format_date", "%Y-%m-%d"),
+        )
+    elif chart_type == "index_chart":
+        return plotly_utils.index_chart(
+            chart_data["series_dict"],
+            chart_data["x_labels"],
+            title,
+            baseline=chart_data.get("baseline", 100.0),
+        )
+    elif chart_type == "stacked_area_comparison":
+        return plotly_utils.stacked_area_comparison(
+            chart_data["data_left"],
+            chart_data["data_right"],
+            chart_data["categories"],
+            chart_data["x_labels"],
+            title,
+            subplot_titles=tuple(chart_data.get("subplot_titles", ("Left", "Right"))),
+        )
+    raise ValueError(f"Unhandled chart_type: {chart_type}")  # unreachable but satisfies type checker
+
+
 @mcp.tool()
 def report_add_chart(report_id: str, engine: str, chart_type: str, data: str, title: str = "Chart") -> str:
     """Add a chart to an open report. Supports 3 engines and 39 chart types.
@@ -908,7 +957,7 @@ def report_add_chart(report_id: str, engine: str, chart_type: str, data: str, ti
     • "highcharts" → Interactive time series & calendars. Best for monitoring dashboards.
 
     ═══════════════════════════════════════════════════════════════════════════
-    PLOTLY CHARTS (4 types — interactive with hover/zoom):
+    PLOTLY CHARTS (6 types — interactive with hover/zoom):
     ═══════════════════════════════════════════════════════════════════════════
     histogram   │ {"values": [1.2, 3.4, 5.6, ...], "name": "column_name"}
     barchart    │ {"categories": ["A","B","C"], "values": [[10, 20, 30]],
@@ -919,6 +968,13 @@ def report_add_chart(report_id: str, engine: str, chart_type: str, data: str, ti
                 │  "lines": [[100, 120, 140,...]], "y_labels": ["Sales"]}
                 │  Multiple lines: "lines": [[...], [...]], "y_labels": ["A","B"]
     area_chart  │ Same format as linechart (stacked area)
+    index_chart │ {"series_dict": {"A": [100,110,95], "B": [90,105,115]},
+                │  "x_labels": ["Jan","Feb","Mar"], "baseline": 100}
+                │  series_dict can also be paired: {"A": {"solid": [...], "dashed": [...]}}
+    stacked_area_comparison │ {"data_left": {"Cat A": [30,40], "Cat B": [70,60]},
+                │  "data_right": {"Cat A": [20,30], "Cat B": [80,70]},
+                │  "categories": ["Cat A","Cat B"], "x_labels": ["2024","2025"],
+                │  "subplot_titles": ["Source A", "Source B"]}
 
     ═══════════════════════════════════════════════════════════════════════════
     RAWGRAPHS CHARTS (31 types — static SVG, publication-quality):
@@ -987,6 +1043,8 @@ def report_add_chart(report_id: str, engine: str, chart_type: str, data: str, ti
     • Distribution of one variable       → plotly.histogram or rawgraphs.violinplot
     • Compare categories                 → rawgraphs.barchart or rawgraphs.radarchart
     • Trends over time                   → plotly.linechart or highcharts.streamgraphs
+    • Indexed comparison (rebased to 100) → plotly.index_chart
+    • Composition comparison (side-by-side) → plotly.stacked_area_comparison
     • Part-to-whole                      → rawgraphs.piechart, sunburst, or treemap
     • Relationships / correlations       → rawgraphs.bubblechart or parallelcoordinates
     • Flows / journeys / conversions     → rawgraphs.sankey_diagram or alluvial_diagram
@@ -1005,36 +1063,8 @@ def report_add_chart(report_id: str, engine: str, chart_type: str, data: str, ti
 
     try:
         if engine == "plotly":
-            from scomp_link.utils import plotly_utils
-
-            _PLOTLY_TYPES = {"histogram", "barchart", "linechart", "area_chart"}
-            if chart_type not in _PLOTLY_TYPES:
-                return json.dumps(
-                    {"error": f"Unknown plotly chart_type '{chart_type}'. Valid: {sorted(_PLOTLY_TYPES)}"}
-                )
-            if chart_type == "histogram":
-                fig = plotly_utils.histogram(chart_data["values"], chart_data.get("name", title))
-            elif chart_type == "barchart":
-                fig = plotly_utils.barchart(
-                    chart_data["categories"], chart_data["values"], y_axis_titles=chart_data.get("y_axis_titles")
-                )
-            elif chart_type == "linechart":
-                fig = plotly_utils.linechart(
-                    chart_data["dates"],
-                    chart_data["lines"],
-                    title_text=title,
-                    y_labels=chart_data.get("y_labels", "value"),
-                    format_date=chart_data.get("format_date", "%Y-%m-%d"),
-                )
-            elif chart_type == "area_chart":
-                fig = plotly_utils.area_chart(
-                    chart_data["dates"],
-                    chart_data["lines"],
-                    title_text=title,
-                    y_labels=chart_data.get("y_labels", "value"),
-                    format_date=chart_data.get("format_date", "%Y-%m-%d"),
-                )
-            report.add_graph_to_report(fig, title)
+            fig = _build_plotly_figure(chart_type, chart_data, title)
+            report.add_graph(fig, title)
 
         elif engine == "rawgraphs":
             from scomp_link.utils import rawgraphs
@@ -1094,6 +1124,225 @@ def report_save(report_id: str, output: str = "report.html") -> str:
 
     size_kb = os.path.getsize(output) / 1024
     return json.dumps({"status": "saved", "path": output, "size_kb": round(size_kb, 1)})
+
+
+@mcp.tool()
+def report_add_kpi_cards(report_id: str, metrics: str, cols: int = 3) -> str:
+    """Add a row of KPI summary cards to the report with optional trend indicators and status colors.
+
+    Parameters:
+        report_id: The report ID returned by report_create.
+        metrics: JSON string mapping metric names to their configuration.
+            Each value can be:
+            - A simple value (number or string): displayed as-is with no coloring
+            - A dict with keys:
+                - "value" (required): the displayed value
+                - "trend" (optional): trend text (e.g. "+1.3%", "-0.5")
+                - "status" (optional): "good" | "warning" | "critical" → card border color
+                - "subtitle" (optional): small text below the value
+            Example: '{"RMSE": {"value": 0.81, "trend": "-0.05", "status": "good"},
+                       "R2": {"value": 0.92, "status": "good"}, "Count": 1500}'
+        cols: Number of columns in the card grid (default 3).
+    """
+    report = _get_report(report_id)
+    if not report:
+        return json.dumps({"error": f"Report '{report_id}' not found. Use report_create first."})
+
+    try:
+        parsed = json.loads(metrics) if isinstance(metrics, str) else metrics
+    except (json.JSONDecodeError, TypeError) as e:
+        return json.dumps({"error": f"Invalid metrics JSON: {e}"})
+
+    try:
+        report.add_kpi_cards(parsed, cols=cols)
+    except Exception as e:
+        return json.dumps({"error": f"KPI cards generation failed: {type(e).__name__}: {e}"})
+
+    return json.dumps({"status": "kpi_cards_added", "n_metrics": len(parsed)})
+
+
+@mcp.tool()
+def report_add_tabs(report_id: str, tabs: str, title: str = "") -> str:
+    """Add tabbed content navigation to the report. Each tab can contain HTML, a chart, or a table.
+
+    Parameters:
+        report_id: The report ID returned by report_create.
+        tabs: JSON string mapping tab labels to their content definition.
+            Each tab value is a dict with "type" and type-specific keys:
+
+            - {"type": "html", "content": "<p>HTML content</p>"}
+            - {"type": "chart", "engine": "plotly", "chart_type": "barchart",
+               "data": {"categories": [...], "values": [...]}}
+            - {"type": "table", "data": [{"col": "val"}, ...]}
+
+            Only engine "plotly" is supported for chart tabs (6 types).
+            For rawgraphs/highcharts, generate the HTML and use type "html".
+
+            Example: '{"Overview": {"type": "html", "content": "<p>Summary</p>"},
+                       "Chart": {"type": "chart", "engine": "plotly", "chart_type": "barchart",
+                                 "data": {"categories": ["A","B"], "values": [[10,20]]}}}'
+        title: Optional title displayed above the tabs.
+    """
+    import pandas as pd
+    import plotly.io as pio
+
+    report = _get_report(report_id)
+    if not report:
+        return json.dumps({"error": f"Report '{report_id}' not found. Use report_create first."})
+
+    try:
+        parsed = json.loads(tabs) if isinstance(tabs, str) else tabs
+    except (json.JSONDecodeError, TypeError) as e:
+        return json.dumps({"error": f"Invalid tabs JSON: {e}"})
+
+    try:
+        tabs_dict: dict[str, str] = {}
+        for label, config in parsed.items():
+            tab_type = config.get("type", "html")
+
+            if tab_type == "html":
+                tabs_dict[label] = config.get("content", "")
+
+            elif tab_type == "chart":
+                engine = config.get("engine", "plotly")
+                if engine != "plotly":
+                    return json.dumps(
+                        {
+                            "error": f"Tab '{label}': only engine 'plotly' supported in tabs. Use type 'html' for rawgraphs/highcharts."
+                        }
+                    )
+                chart_type = config["chart_type"]
+                chart_data = config["data"]
+                if isinstance(chart_data, str):
+                    chart_data = json.loads(chart_data)
+                fig = _build_plotly_figure(chart_type, chart_data, label)
+                tabs_dict[label] = pio.to_html(
+                    fig, include_plotlyjs=False, full_html=False, config={"responsive": True}
+                )
+
+            elif tab_type == "table":
+                table_data = config["data"]
+                if isinstance(table_data, str):
+                    table_data = json.loads(table_data)
+                df = pd.DataFrame(table_data)
+                tabs_dict[label] = df.to_html(index=False, classes="scomp-table")
+
+            else:
+                return json.dumps({"error": f"Tab '{label}': unknown type '{tab_type}'. Valid: html, chart, table"})
+
+        report.add_tabs(tabs_dict, title=title)
+    except Exception as e:
+        return json.dumps({"error": f"Tabs generation failed: {type(e).__name__}: {e}"})
+
+    return json.dumps({"status": "tabs_added", "n_tabs": len(parsed)})
+
+
+@mcp.tool()
+def report_add_comparison_table(
+    report_id: str,
+    data: str,
+    baseline_col: str,
+    compare_cols: str,
+    metric_col: Optional[str] = None,
+    higher_is_better: Optional[str] = None,
+    title: str = "Comparison",
+) -> str:
+    """Add a comparison table with color-coded delta indicators between columns.
+
+    Shows a baseline column and comparison columns with arrows and colors showing
+    improvement or regression. Useful for model comparison or A/B test results.
+
+    Parameters:
+        report_id: The report ID returned by report_create.
+        data: JSON string in records format (list of dicts, one per row).
+            Example: '[{"metric": "accuracy", "v1": 0.92, "v2": 0.95, "v3": 0.94}]'
+        baseline_col: Column name to use as the reference (e.g. "v1").
+        compare_cols: JSON array of column names to compare against baseline.
+            Example: '["v2", "v3"]'
+        metric_col: Column containing metric names (used as row labels). If null, uses index.
+        higher_is_better: JSON dict mapping metric names to boolean.
+            Example: '{"accuracy": true, "rmse": false, "latency_ms": false}'
+            If null, assumes higher is better for all metrics.
+        title: Table title (default "Comparison").
+    """
+    import pandas as pd
+
+    report = _get_report(report_id)
+    if not report:
+        return json.dumps({"error": f"Report '{report_id}' not found. Use report_create first."})
+
+    try:
+        rows = json.loads(data) if isinstance(data, str) else data
+        df = pd.DataFrame(rows)
+        cols = json.loads(compare_cols) if isinstance(compare_cols, str) else compare_cols
+        hib = json.loads(higher_is_better) if isinstance(higher_is_better, str) and higher_is_better else None
+    except (json.JSONDecodeError, TypeError) as e:
+        return json.dumps({"error": f"Invalid JSON parameter: {e}"})
+
+    try:
+        report.add_comparison_table(
+            df, baseline_col=baseline_col, compare_cols=cols, metric_col=metric_col, higher_is_better=hib
+        )
+    except Exception as e:
+        return json.dumps({"error": f"Comparison table failed: {type(e).__name__}: {e}"})
+
+    return json.dumps({"status": "comparison_table_added", "title": title})
+
+
+@mcp.tool()
+def report_add_summary_stats(report_id: str, data: str, title: str = "Data Summary") -> str:
+    """Add an auto-generated data profiling summary table to the report.
+
+    Displays a compact table with column statistics: type, non-null count,
+    missing %, unique values, and distribution indicators.
+
+    Parameters:
+        report_id: The report ID returned by report_create.
+        data: JSON string in records format (list of dicts).
+            Example: '[{"age": 25, "name": "Alice"}, {"age": 30, "name": "Bob"}]'
+        title: Section title (default "Data Summary").
+    """
+    import pandas as pd
+
+    report = _get_report(report_id)
+    if not report:
+        return json.dumps({"error": f"Report '{report_id}' not found. Use report_create first."})
+
+    try:
+        rows = json.loads(data) if isinstance(data, str) else data
+        df = pd.DataFrame(rows)
+    except (json.JSONDecodeError, TypeError) as e:
+        return json.dumps({"error": f"Invalid data JSON: {e}"})
+
+    try:
+        report.add_summary_stats(df, title=title)
+    except Exception as e:
+        return json.dumps({"error": f"Summary stats failed: {type(e).__name__}: {e}"})
+
+    return json.dumps({"status": "summary_stats_added", "n_columns": len(df.columns)})
+
+
+@mcp.tool()
+def report_add_dark_mode_toggle(report_id: str) -> str:
+    """Add a floating dark/light mode toggle button to the report.
+
+    Inserts a fixed-position button in the top-right corner that switches
+    between light mode and dark mode by swapping CSS custom properties.
+    Call this once per report — typically after report_create or after the first section.
+
+    Parameters:
+        report_id: The report ID returned by report_create.
+    """
+    report = _get_report(report_id)
+    if not report:
+        return json.dumps({"error": f"Report '{report_id}' not found. Use report_create first."})
+
+    try:
+        report.add_dark_mode_toggle()
+    except Exception as e:
+        return json.dumps({"error": f"Dark mode toggle failed: {type(e).__name__}: {e}"})
+
+    return json.dumps({"status": "dark_mode_toggle_added"})
 
 
 # ═══════════════════════════════════════════════════════════════════

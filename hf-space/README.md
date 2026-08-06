@@ -12,7 +12,7 @@ tags:
   - data-science
 pinned: false
 license: mit
-short_description: End-to-end ML toolkit as MCP tool (15 tools)
+short_description: End-to-end ML toolkit as MCP tool (27 tools)
 ---
 
 # scomp-link MCP Server

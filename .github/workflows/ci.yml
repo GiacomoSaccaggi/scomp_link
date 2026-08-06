@@ -88,6 +88,9 @@ jobs:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     continue-on-error: true
+    concurrency:
+      group: pages
+      cancel-in-progress: true
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -100,6 +103,7 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v5
+        timeout-minutes: 5
 
   # ═══════════════════════════════════════════════════════════════
   # RELEASE — everything below runs ONLY on version tags
