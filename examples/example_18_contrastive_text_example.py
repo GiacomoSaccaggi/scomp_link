@@ -39,7 +39,7 @@ classifier.train_contrastive(df, text_col='text', label_col='category', epochs=3
 # Test predictions
 test_texts = ["Artificial intelligence transforms software development"]
 result = classifier.predict(test_texts[0], top_k=3, return_confidence=True)
-print(f"\nPrediction: {result['predictions'][0]} (confidence: {result['confidences'][0]:.3f})")
+print(f"\nPrediction: {result['predictions'][0]} (confidence: {result['confidences'][0]:.3f})")  # type: ignore[call-overload]
 
 # Save model
 classifier.save('./models/text_classifier')

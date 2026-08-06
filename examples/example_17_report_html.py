@@ -58,7 +58,7 @@ demo_report.close_section()
 
 # ── Add single graph ──
 fig = px.scatter(x=range(10), y=range(10))
-demo_report.add_graph_to_report(fig, 'My first Graph')
+demo_report.add_graph_to_report(fig, 'My first Graph')  # type: ignore[arg-type]
 
 # ── Add graphs with combobox selections ──
 fig1 = px.scatter(x=range(10), y=range(10))
@@ -105,12 +105,12 @@ demo_report.add_many_plots_with_selection_box_to_report(
 x1 = np.random.normal(85, 3, 1000)
 x2 = [['O', 'CO2', 'H'][i] for i in np.random.randint(0, 3, 1000)]
 fig = multiple_histograms(x1, x2, 'Comparison Gas')
-demo_report.add_graph_to_report(fig, 'multiple_histograms')
+demo_report.add_graph_to_report(fig, 'multiple_histograms')  # type: ignore[arg-type]
 
 # ── Single Histogram ──
 x1 = np.random.normal(45, 3, 1000)
 fig = histogram(x1, 'Panelist age')
-demo_report.add_graph_to_report(fig, 'histogram')
+demo_report.add_graph_to_report(fig, 'histogram')  # type: ignore[arg-type]
 
 # ── Barchart ──
 categorie = ['C', 'A', 'E', 'B', 'D']
@@ -127,7 +127,7 @@ fig = barchart(
     y_axis_titles='Valore (%)',
     y_line_axis_titles='Obiettivo'
 )
-demo_report.add_graph_to_report(fig, 'barchart')
+demo_report.add_graph_to_report(fig, 'barchart')  # type: ignore[arg-type]
 
 # ── Area chart ──
 date = ['2024-01-01', '2024-02-01', '2024-03-01', '2024-04-01', '2024-05-01']
@@ -140,7 +140,7 @@ fig = area_chart(
     y_labels=['Number of Views 1', 'Number of Views 2'],
     format_date='%Y-%m-%d'
 )
-demo_report.add_graph_to_report(fig, 'area_chart')
+demo_report.add_graph_to_report(fig, 'area_chart')  # type: ignore[arg-type]
 
 # ── Linechart ──
 date = ['2024-01-01', '2024-02-01', '2024-03-01', '2024-04-01', '2024-05-01']
@@ -153,7 +153,7 @@ fig = linechart(
     y_labels=['Number of Views 1', 'Number of Views 2'],
     format_date='%Y-%m-%d'
 )
-demo_report.add_graph_to_report(fig, 'linechart')
+demo_report.add_graph_to_report(fig, 'linechart')  # type: ignore[arg-type]
 
 # ── Matplotlib graph (base64) ──
 import matplotlib.pyplot as plt

@@ -170,7 +170,7 @@ if __name__ == '__main__':
 
     # === Summary ===
     print("\n" + "=" * 70)
-    best_name = max(accuracies, key=accuracies.get)
+    best_name = max(accuracies, key=accuracies.get)  # type: ignore[call-overload]
     print(f"✅ ClassifierOptimizer workflow complete!")
     print(f"   • Tested {len(clf_opt.model_results)} models with grid search")
     print(f"   • Best model: {best_name} (accuracy={accuracies[best_name]:.4f})")

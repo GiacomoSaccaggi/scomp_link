@@ -66,7 +66,7 @@ artifact.set_config(
     feature_cols=["temperature", "humidity", "pressure", "wind_speed"],
     model_params={"n_estimators": 100, "max_depth": 4},
 )
-artifact.set_metrics({"r2": round(r2, 4), "rmse": 1.98, "mae": 1.55})
+artifact.set_metrics({"r2": round(r2, 4), "rmse": 1.98, "mae": 1.55})  # type: ignore[call-overload]
 artifact.set_feature_schema(X_train)
 artifact.set_sample_data(X_train, max_rows=200)
 artifact.set_metadata(

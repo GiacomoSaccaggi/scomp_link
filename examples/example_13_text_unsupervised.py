@@ -50,7 +50,7 @@ try:
     from sentence_transformers import SentenceTransformer
     
     model = SentenceTransformer('all-MiniLM-L6-v2')
-    embeddings = model.encode(df['text'].values)
+    embeddings = model.encode(df['text'].values)  # type: ignore[arg-type]
     silhouette = silhouette_score(embeddings, clusters)
     
     print("\n" + "=" * 70)
@@ -63,7 +63,7 @@ try:
     # Show sample texts per cluster
     print("\nSample texts per cluster:")
     for cluster_id in range(5):
-        cluster_texts = df[df['predicted_cluster'] == cluster_id]['text'].head(2).tolist()
+        cluster_texts = df[df['predicted_cluster'] == cluster_id]['text'].head(2).tolist()  # type: ignore[union-attr]
         print(f"\nCluster {cluster_id}:")
         for text in cluster_texts:
             print(f"  - {text}")

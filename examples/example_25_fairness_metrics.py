@@ -32,7 +32,7 @@ qualified = ((income > 40000) & (credit_score > 650)).astype(int)
 # Train a classifier
 X = pd.DataFrame({'income': income, 'credit_score': credit_score, 'is_male': (gender == 'male').astype(int)})
 X_train, X_test, y_train, y_test = train_test_split(X, qualified, test_size=0.3, random_state=42)
-gender_test = gender[X_test.index]
+gender_test = gender[X_test.index]  # type: ignore[call-overload]
 
 clf = RandomForestClassifier(n_estimators=50, random_state=42)
 clf.fit(X_train, y_train)
