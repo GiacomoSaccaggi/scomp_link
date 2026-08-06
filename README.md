@@ -14,8 +14,8 @@
 [![Security: CodeQL](https://img.shields.io/badge/security-CodeQL-green?logo=github)](https://github.com/GiacomoSaccaggi/scomp_link/security)
 [![Docker](https://img.shields.io/docker/v/jack15121/scomp-link?label=docker&logo=docker)](https://hub.docker.com/r/jack15121/scomp-link)
 [![Docs](https://img.shields.io/badge/docs-GitHub%20Pages-blue?logo=github)](https://giacomosaccaggi.github.io/scomp_link/)
-[![MCP](https://img.shields.io/badge/MCP-22_tools-blue?logo=anthropic)](https://modelcontextprotocol.io)
-[![Smithery](https://smithery.ai/badge/giacomosaccaggi/scomp-link)](https://smithery.ai/servers/giacomosaccaggi/scomp-link)
+[![MCP](https://img.shields.io/badge/MCP-27_tools-blue?logo=anthropic)](https://modelcontextprotocol.io)
+[![Smithery](https://img.shields.io/badge/Smithery-scomp--link-purple)](https://smithery.ai/servers/giacomosaccaggi/scomp-link)
 [![HuggingFace](https://img.shields.io/badge/%F0%9F%A4%97-MCP%20Space-yellow)](https://huggingface.co/spaces/Euribor512/scomp-link)
 [![Claude](https://img.shields.io/badge/Works_with-Claude-blueviolet?logo=anthropic)](AGENT_INTEGRATION.md)
 [![Kiro](https://img.shields.io/badge/Works_with-Kiro-orange)](AGENT_INTEGRATION.md)
@@ -389,7 +389,7 @@ scomp_link/
 
 scomp-link works natively with AI agents via **MCP (Model Context Protocol)** and **Agent Skills**.
 
-### MCP Server (22 tools for structured agent calls)
+### MCP Server (27 tools for structured agent calls)
 
 ```bash
 pip install scomp-link[mcp]
@@ -421,20 +421,20 @@ docker pull jack15121/scomp-link:latest
 docker run -i jack15121/scomp-link mcp
 ```
 
-**Available tools:** `describe_data`, `train_model`, `predict`, `validate_model`, `detect_drift`, `detect_anomalies`, `check_fairness`, `forecast_series`, `engineer_features`, `cluster_data`, `generate_report`, `create_visualization`, `compare_models`, `export_model`, `embed_text`, `select_backbone`, `report_create`, `report_add_section`, `report_add_text`, `report_add_table`, `report_add_chart`, `report_save`
+**Available tools:** `describe_data`, `train_model`, `predict`, `validate_model`, `detect_drift`, `detect_anomalies`, `check_fairness`, `forecast_series`, `engineer_features`, `cluster_data`, `generate_report`, `create_visualization`, `compare_models`, `export_model`, `embed_text`, `select_backbone`, `report_create`, `report_add_section`, `report_add_text`, `report_add_table`, `report_add_chart`, `report_add_kpi_cards`, `report_add_tabs`, `report_add_comparison_table`, `report_add_summary_stats`, `report_add_dark_mode_toggle`, `report_save`
 
 ### Quick Setup Prompt for AI Agents
 
 Copy-paste this prompt into your AI agent (Claude, ChatGPT, Cursor, etc.) to enable scomp-link capabilities:
 
-> You have access to scomp-link, an ML toolkit with 22 MCP tools. Use them for:
+> You have access to scomp-link, an ML toolkit with 27 MCP tools. Use them for:
 > - **Data profiling**: `describe_data(path)` — always start here
 > - **Training**: `train_model(data, target, task)` with optional `tune=true` for Optuna
 > - **Validation**: `validate_model(artifact, data, target)` for test evaluation
 > - **Reports**: Use the report builder for custom dashboards:
 >   1. `report_create(title)` → get report_id
 >   2. `report_add_section(id, title)` → structure
->   3. `report_add_chart(id, engine, type, data, title)` → 39 chart types (plotly/rawgraphs/highcharts)
+>   3. `report_add_chart(id, engine, type, data, title)` → 41 chart types (plotly/rawgraphs/highcharts)
 >   4. `report_add_table(id, json_data, title)` → data tables
 >   5. `report_save(id, path)` → save HTML
 > - **Monitoring**: `detect_drift`, `detect_anomalies`, `check_fairness`

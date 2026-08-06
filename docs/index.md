@@ -18,7 +18,7 @@ It provides:
 - A **CLI** with 25 commands for zero-code ML workflows
 - A **Python API** for programmatic use and integration
 - A custom **`.scomp` format** for saving and loading complete pipelines
-- **39 chart types** across 3 visualization engines (Plotly, RAWGraphs, Highcharts)
+- **41 chart types** across 3 visualization engines (Plotly, RAWGraphs, Highcharts)
 - An **MCP server** for AI agent integration (Claude, Kiro, Cursor, VS Code Copilot)
 - A **REST API server** (`scomp-link serve`) for model deployment
 
@@ -39,7 +39,7 @@ It provides:
 | 💾 **Persistence** | Custom `.scomp` format + export to pickle, joblib, ONNX |
 | 📈 **Visualization** | 31 RAWGraphs SVG charts, Plotly interactive charts, Highcharts (streamgraph, heatmap, gantt) |
 | 📝 **Reporting** | Interactive HTML reports with embedded charts, data quality reports, validation reports |
-| 🤝 **Agent Integration** | MCP server (15 tools, 3 resources, 4 prompts) + Agent Skill (SKILL.md) |
+| 🤝 **Agent Integration** | MCP server (27 tools, 3 resources, 4 prompts) + Agent Skill (SKILL.md) |
 | 🚀 **Deployment** | REST API serving (Flask), YAML-driven pipelines |
 
 ---
@@ -73,7 +73,7 @@ scomp-link serve --artifact best.scomp --port 8080
 - [Python API](API_REFERENCE.md) — Programmatic usage
 - [Quick Start](quickstart.md) — Getting started guide
 - [Examples](examples.md) — 34 runnable example scripts
-- [Visualization Guide](visualization.md) — 39 chart types and HTML reporting
+- [Visualization Guide](visualization.md) — 41 chart types and HTML reporting
 - [Agent Integration](agent-integration.md) — MCP server + SKILL.md for AI agents
 - [Changelog](changelog.md) — Version history
 

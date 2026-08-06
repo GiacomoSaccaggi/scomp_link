@@ -134,7 +134,7 @@ report.save_html('output.html')
 
 ## MCP Server
 
-For structured tool calls (22 tools), start the MCP server:
+For structured tool calls (27 tools), start the MCP server:
 ```bash
 scomp-link mcp
 ```
@@ -148,11 +148,17 @@ For building custom branded HTML reports step-by-step:
 2. report_add_section(report_id, title) → opens collapsible section
 3. report_add_text(report_id, content, style) → paragraph/title/subtitle/html
 4. report_add_table(report_id, json_data, title) → interactive table
-5. report_add_chart(report_id, engine, chart_type, data, title) → 39 chart types
-6. report_save(report_id, output) → saves HTML, frees memory
+5. report_add_chart(report_id, engine, chart_type, data, title) → 41 chart types (6 plotly + 31 rawgraphs + 3 highcharts + 1 custom)
+6. report_add_kpi_cards(report_id, metrics_json, cols) → KPI cards with trend/status
+7. report_add_tabs(report_id, tabs_json, title) → tabbed navigation (html/chart/table)
+8. report_add_comparison_table(report_id, data, baseline_col, compare_cols, ...) → delta comparison
+9. report_add_summary_stats(report_id, data_json, title) → auto data profiling table
+10. report_add_dark_mode_toggle(report_id) → floating dark/light toggle
+11. report_save(report_id, output) → saves HTML, frees memory
 ```
 
 **Engines:** plotly (interactive), rawgraphs (SVG static), highcharts (time series)
+**New plotly charts:** `index_chart`, `stacked_area_comparison` (in addition to histogram, barchart, linechart, area_chart)
 **Config:** `scomp-link init-config` creates ~/.scomp-link/config.yaml with branding defaults
 
 ## Key Files

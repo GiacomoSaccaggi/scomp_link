@@ -2,15 +2,22 @@
 
 ## Unreleased
 
+## 2.1.1 (2026-08-06)
+
 ### Added
+- **MCP tools** (22 → 27): `report_add_kpi_cards`, `report_add_tabs`, `report_add_comparison_table`, `report_add_summary_stats`, `report_add_dark_mode_toggle`
+- **MCP `report_add_chart`**: new plotly types `index_chart` and `stacked_area_comparison`
 - **Report Builder**: `add_kpi_cards`, `add_plotly_grid`, `add_tabs`, `add_cascading_content`, `add_comparison_table`, `add_summary_stats`, `add_dark_mode_toggle`
 - **`add_dataframe()` thresholds**: conditional cell coloring
 - **Plotly utilities**: `fill_timeslots`, `normalize_to_index`, `index_chart`, `stacked_area_comparison`
 - **`add_graph()` smart dispatcher** + `add_subtitle`, `add_highcharts`, `add_html`
 - Explainability coverage 58% → 74%
 
+### Changed
+- `report_add_chart` plotly branch refactored: extracted `_build_plotly_figure` helper, migrated to `add_graph()`
+
 ### Fixed
-- Pyright 0 errors/warnings
+- Pyright 0 errors/warnings (suppressed `reportMissingImports` for optional deps)
 - CI workflow fix (duplicate continue-on-error)
 
 ## 2.1.0 (2026-08-03)
