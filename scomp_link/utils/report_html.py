@@ -979,138 +979,139 @@ class ScompLinkHTMLReport:
     def add_cascading_content(
         self, title: str, dimensions: list[dict], content_map: dict, cascade: bool = False
     ) -> None:
-        """
-        Add interactive content with cascading dropdown selectors.
+        """Add interactive content with cascading dropdown selectors.
 
-        Each combination of dropdown selections maps to a content block (HTML string
-        or Plotly Figure). Only one block is visible at a time.
+        Each combination of dropdown selections maps to a content block (HTML or
+        Plotly Figure). Only one block is visible at a time. Dropdowns update
+        the visible content instantly without page reload.
 
-        :param title: str - heading displayed above the dropdowns
-        :param dimensions: list[dict] - each dict has keys "label" (str) and "options" (list[str])
-        :param content_map: dict - keys are tuples of option strings, values are HTML strings or Plotly Figures
-        :param cascade: bool - if True, child dropdown options are filtered based on parent selection
+        :param title: section heading displayed above the dropdowns
+        :param dimensions: list of dicts, each with "label" (str) and "options" (list[str])
+        :param content_map: dict mapping option tuples to content.
+            Keys: tuple of strings matching the option values across dimensions.
+            Values: HTML string or plotly.graph_objects.Figure.
+        :param cascade: if True, each dropdown's available options are filtered
+            based on the combined selection of ALL preceding dropdowns.
+            The available options are inferred from content_map keys.
 
         ## example
-        import plotly.express as px
-        fig1 = px.scatter(x=[1,2,3], y=[1,2,3])
-        fig2 = px.scatter(x=[1,2,3], y=[3,2,1])
         report.add_cascading_content(
-            "My Charts",
-            [{"label": "Category", "options": ["A", "B"]}],
-            {("A",): fig1, ("B",): fig2},
+            "Performance",
+            [{"label": "Region", "options": ["US", "EU"]},
+             {"label": "Year", "options": ["2024", "2025"]}],
+            {("US", "2024"): fig1, ("US", "2025"): fig2,
+             ("EU", "2024"): fig3, ("EU", "2025"): fig4},
         )
         """
         import plotly.graph_objects as go
         import plotly.io as pio
+        from string import Template
+        import re
 
         uid = uuid.uuid4().hex[:8]
+        n_dims = len(dimensions)
 
         def _sanitize(s: str) -> str:
-            return s.replace("-", "_").replace(".", "_").replace(" ", "_")
+            """Make a string safe for use as an HTML ID fragment."""
+            return re.sub(r"[^a-zA-Z0-9_]", "_", str(s))
 
-        # Build content divs
-        content_divs = ""
+        def _render(content) -> str:
+            """Convert content to HTML string."""
+            if isinstance(content, go.Figure):
+                return pio.to_html(
+                    content, include_plotlyjs=False, full_html=False,
+                    config={"responsive": True},
+                )
+            return str(content)
+
+        def _key(key_tuple) -> str:
+            """Composite sanitized key from option tuple."""
+            return "___".join(_sanitize(k) for k in key_tuple)
+
+        # --- Content divs ---
+        divs_html = ""
         first = True
-        for key_tuple, content in content_map.items():
-            sanitized_key = "___".join(_sanitize(str(k)) for k in key_tuple)
-            div_id = f"wrap_{uid}_{sanitized_key}"
+        for key_tuple, val in content_map.items():
             display = "block" if first else "none"
             first = False
+            divs_html += (
+                f'<div id="wrap_{uid}_{_key(key_tuple)}" '
+                f'style="display:{display};overflow:visible;">'
+                f'{_render(val)}</div>\n'
+            )
 
-            if isinstance(content, go.Figure):
-                inner_html = pio.to_html(
-                    content, include_plotlyjs=False, full_html=False, config={"responsive": True}
-                )
-            else:
-                inner_html = str(content)
-
-            content_divs += f'<div id="{div_id}" style="display:{display};overflow:visible;">{inner_html}</div>\n'
-
-        # Build select elements
-        selects_html = ""
+        # --- Selects ---
+        selects_html = '<div style="display:flex;gap:1rem;align-items:center;flex-wrap:wrap;margin:1rem 0;">\n'
         for i, dim in enumerate(dimensions):
-            sel_id = f"sel_{i}_{uid}"
-            options_html = "".join(
-                f'<option value="{_sanitize(opt)}">{opt}</option>' for opt in dim["options"]
-            )
+            opts = "".join(f'<option value="{_sanitize(o)}">{o}</option>' for o in dim["options"])
             selects_html += (
-                f'<label for="{sel_id}" style="margin-right:6px;font-weight:600;">{dim["label"]}:</label>'
-                f'<select id="{sel_id}" onchange="update_{uid}()" '
-                f'style="margin-right:12px;padding:4px 8px;border-radius:4px;border:1px solid #ccc;">'
-                f"{options_html}</select>\n"
+                f'<div><label style="font-weight:600;margin-right:.4rem;">{dim["label"]}:</label>'
+                f'<select id="sel_{i}_{uid}" onchange="upd_{uid}()" '
+                f'style="padding:6px 12px;border-radius:6px;border:1px solid var(--border);'
+                f'font-size:14px;">{opts}</select></div>\n'
             )
+        selects_html += "</div>\n"
 
-        # Build cascade JS (filter child options based on parent selections)
-        cascade_js = ""
-        if cascade and len(dimensions) > 1:
-            # Build mapping: parent_value -> available child options for each child dimension
-            cascade_map: dict[int, dict[str, list[str]]] = {}
-            for child_idx in range(1, len(dimensions)):
-                parent_to_children: dict[str, set[str]] = {}
-                for key_tuple in content_map.keys():
-                    parent_key = "___".join(_sanitize(str(k)) for k in key_tuple[:child_idx])
-                    child_val = str(key_tuple[child_idx])
-                    if parent_key not in parent_to_children:
-                        parent_to_children[parent_key] = set()
-                    parent_to_children[parent_key].add(child_val)
-                cascade_map[child_idx] = {k: sorted(v) for k, v in parent_to_children.items()}
+        # --- Cascade filter map ---
+        cascade_json = ""
+        if cascade and n_dims > 1:
+            filter_map = {}
+            for child_idx in range(1, n_dims):
+                mapping = {}
+                for key_tuple in content_map:
+                    parent_key = _key(key_tuple[:child_idx])
+                    mapping.setdefault(parent_key, set()).add(str(key_tuple[child_idx]))
+                filter_map[child_idx] = {k: sorted(v) for k, v in mapping.items()}
+            cascade_json = json.dumps({str(k): v for k, v in filter_map.items()})
 
-            cascade_js = f"var cascade_{uid} = {json.dumps({str(k): v for k, v in cascade_map.items()})};\n"
-            cascade_js += f"""
-            function update_cascade_{uid}() {{
-                var cas = cascade_{uid};
-                for (var ci = 1; ci < {len(dimensions)}; ci++) {{
-                    var parentKey = '';
-                    for (var pi = 0; pi < ci; pi++) {{
-                        if (pi > 0) parentKey += '___';
-                        parentKey += document.getElementById('sel_' + pi + '_{uid}').value;
-                    }}
-                    var sel = document.getElementById('sel_' + ci + '_{uid}');
-                    var opts = (cas[String(ci)] && cas[String(ci)][parentKey]) || [];
-                    var curVal = sel.value;
-                    sel.innerHTML = '';
-                    for (var oi = 0; oi < opts.length; oi++) {{
-                        var o = document.createElement('option');
-                        o.value = opts[oi].replace(/-/g,'_').replace(/\\./g,'_').replace(/ /g,'_');
-                        o.textContent = opts[oi];
-                        sel.appendChild(o);
-                    }}
-                    if (opts.map(function(x){{return x.replace(/-/g,'_').replace(/\\./g,'_').replace(/ /g,'_');}}).indexOf(curVal) >= 0) {{
-                        sel.value = curVal;
-                    }}
-                }}
-            }}
-            """
+        # --- JS (Template avoids f-string/JS escape conflicts) ---
+        js_template = Template("""<script>
+var _fm_${uid}=${cascade_json};
+function upd_${uid}(){
+  ${cascade_call}
+  var parts=[];
+  for(var i=0;i<${n_dims};i++){parts.push(document.getElementById('sel_'+i+'_${uid}').value);}
+  var k=parts.join('___');
+  document.querySelectorAll('[id^="wrap_${uid}_"]').forEach(function(d){d.style.display='none';});
+  var tgt=document.getElementById('wrap_${uid}_'+k);
+  if(tgt){tgt.style.display='block';setTimeout(function(){window.dispatchEvent(new Event('resize'));},150);setTimeout(function(){window.dispatchEvent(new Event('resize'));},500);}
+}
+function _cascade_${uid}(){
+  if(!_fm_${uid})return;
+  var fm=_fm_${uid};
+  for(var ci=1;ci<${n_dims};ci++){
+    var pk=[];
+    for(var pi=0;pi<ci;pi++){pk.push(document.getElementById('sel_'+pi+'_${uid}').value);}
+    var key=pk.join('___');
+    var sel=document.getElementById('sel_'+ci+'_${uid}'),prev=sel.value;
+    var opts=(fm[String(ci)]&&fm[String(ci)][key])||[];
+    sel.innerHTML='';
+    opts.forEach(function(o){
+      var el=document.createElement('option');
+      el.value=o.replace(/[^a-zA-Z0-9_]/g,'_');el.textContent=o;sel.appendChild(el);
+    });
+    if([].slice.call(sel.options).some(function(x){return x.value===prev;}))sel.value=prev;
+  }
+}
+document.addEventListener('DOMContentLoaded',function(){upd_${uid}();});
+setTimeout(function(){upd_${uid}();},500);
+</script>
+""")
 
-        # Build update JS
-        key_parts = " + '___' + ".join(
-            f"document.getElementById('sel_{i}_{uid}').value" for i in range(len(dimensions))
+        cascade_call = f"_cascade_{uid}();" if cascade and n_dims > 1 else ""
+        if not cascade_json:
+            cascade_json = "null"
+
+        script = js_template.substitute(
+            uid=uid,
+            n_dims=n_dims,
+            cascade_json=cascade_json,
+            cascade_call=cascade_call,
         )
 
-        script = f"""
-<script>
-{cascade_js}
-function update_{uid}() {{
-    {"update_cascade_" + uid + "();" if cascade and len(dimensions) > 1 else ""}
-    var k = {key_parts};
-    document.querySelectorAll('[id^="wrap_{uid}_"]').forEach(function(d) {{ d.style.display = 'none'; }});
-    var tk = k.replace(/-/g, '_').replace(/\\./g, '_').replace(/ /g, '_');
-    var tgt = document.getElementById('wrap_{uid}_' + tk);
-    if (tgt) {{
-        tgt.style.display = 'block';
-        tgt.style.overflow = 'visible';
-        setTimeout(function() {{ window.dispatchEvent(new Event('resize')); }}, 150);
-        setTimeout(function() {{ window.dispatchEvent(new Event('resize')); }}, 500);
-    }}
-}}
-document.addEventListener('DOMContentLoaded', function() {{ update_{uid}(); }});
-setTimeout(function() {{ update_{uid}(); }}, 500);
-</script>
-"""
-
         self.html_report += f"<h2>{title}</h2>\n"
-        self.html_report += f'<div style="margin-bottom:12px;">{selects_html}</div>\n'
-        self.html_report += content_divs
+        self.html_report += selects_html
+        self.html_report += divs_html
         self.html_report += script
         logger.info("Added cascading content to report!")
 
