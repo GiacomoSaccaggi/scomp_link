@@ -1,5 +1,18 @@
 # Changelog
 
+## Unreleased
+
+### Added
+- **Report Builder**: `add_kpi_cards`, `add_plotly_grid`, `add_tabs`, `add_cascading_content`, `add_comparison_table`, `add_summary_stats`, `add_dark_mode_toggle`
+- **`add_dataframe()` thresholds**: conditional cell coloring
+- **Plotly utilities**: `fill_timeslots`, `normalize_to_index`, `index_chart`, `stacked_area_comparison`
+- **`add_graph()` smart dispatcher** + `add_subtitle`, `add_highcharts`, `add_html`
+- Explainability coverage 58% → 74%
+
+### Fixed
+- Pyright 0 errors/warnings
+- CI workflow fix (duplicate continue-on-error)
+
 ## 2.1.0 (2026-08-03)
 
 ### Added

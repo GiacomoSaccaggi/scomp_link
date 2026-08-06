@@ -58,7 +58,7 @@ Requires Python 3.10+. Import is near-instant (~6ms) thanks to lazy loading — 
 | **Fairness** | Demographic parity, disparate impact (4/5 rule), equalized odds |
 | **Persistence** | Custom `.scomp` format (model + preprocessor + config + metrics + sample data) |
 | **Visualization** | 31 RAWGraphs SVG charts, Plotly interactive, Highcharts, centralized color system |
-| **Reporting** | Interactive HTML reports with embedded charts, data quality reports |
+| **Reporting** | Interactive HTML reports: KPI cards, plotly grid, tabs, cascading dropdowns, comparison tables, dark mode, data profiling, threshold coloring |
 
 ---
 

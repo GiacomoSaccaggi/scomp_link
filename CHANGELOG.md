@@ -3,6 +3,23 @@
 All notable changes to scomp-link are documented here.
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
+## [Unreleased]
+
+### Added
+- **Report Builder interactive components**: `add_kpi_cards`, `add_plotly_grid`, `add_tabs`, `add_cascading_content`, `add_comparison_table`, `add_summary_stats`, `add_dark_mode_toggle` (by @elitedde)
+- **`add_dataframe()` thresholds**: conditional green/orange/red cell coloring per column
+- **Plotly utilities**: `fill_timeslots`, `normalize_to_index`, `index_chart`, `stacked_area_comparison`
+- **`add_graph()` smart dispatcher**: auto-detects plotly/matplotlib/seaborn/SVG/Highcharts/HTML
+- **`add_subtitle()`, `add_highcharts()`, `add_html()`**: typed alternatives to `html_report +=`
+- **Pipeline DSL steps**: `SubtitleStep`, `HighchartsStep`
+- **Explainability coverage**: `example_33_explainability.py` + 5 new tests (58% → 74%)
+
+### Fixed
+- Pyright: 0 errors, 0 warnings across `scomp_link/` and `examples/`
+- `zero_division=0` (int) for sklearn compatibility across Python 3.10–3.14
+- CI: duplicate `continue-on-error` in pages job broke workflow trigger
+- CI: `pages` job now has `continue-on-error: true` (deployment timeout)
+
 ## [2.1.0] - 2026-08-03
 
 ### Added

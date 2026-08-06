@@ -159,3 +159,30 @@ from scomp_link.utils.highcharts import streamgraphs, calendar_heatmap, calendar
         - streamgraphs
         - calendar_heatmap
         - calendar_gantt
+
+## Report Builder — Interactive Components
+
+New methods on `ScompLinkHTMLReport` (added in v2.1.0):
+
+| Method | Description |
+|--------|-------------|
+| `add_kpi_cards(metrics, cols=3)` | Colored KPI cards with trend + status badge |
+| `add_plotly_grid(figures, cols=2, titles, height)` | Multiple Plotly charts in CSS grid |
+| `add_tabs(tabs, title)` | Tabbed navigation (HTML, Plotly, DataFrame) |
+| `add_cascading_content(title, dimensions, content_map, cascade)` | N-dim dropdown navigator |
+| `add_comparison_table(df, baseline_col, compare_cols, ...)` | Delta comparison table |
+| `add_summary_stats(df, title)` | Auto data profiling table |
+| `add_dark_mode_toggle()` | Floating dark/light mode button |
+| `add_dataframe(..., thresholds)` | Conditional cell coloring (enhanced) |
+
+## Plotly Utilities — New Functions
+
+New functions in `scomp_link.utils.plotly_utils` (added in v2.1.0):
+
+| Function | Description |
+|----------|-------------|
+| `fill_timeslots(values, n_slots, fill_value)` | Pad/truncate array to exact length |
+| `normalize_to_index(values, baseline=100)` | Normalize so mean == baseline |
+| `index_chart(series_dict, x_labels, title)` | Index chart with toggle buttons |
+| `stacked_area_comparison(left, right, categories, x_labels, title)` | Side-by-side 100% stacked areas |
+
