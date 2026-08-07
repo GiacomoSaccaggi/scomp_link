@@ -57,7 +57,7 @@ _FOOTER_JS_BLOCK = """
                                 }
                                 csv.push(row.join(separator));
                             }
-                            var csv_string = csv.join('\n');
+                            var csv_string = csv.join('\\n');
                             var filename = 'export_' + table_id + '_' + new Date().toLocaleDateString() + '.csv';
                             var link = document.createElement('a');
                             link.style.display = 'none';
@@ -80,23 +80,28 @@ _FOOTER_JS_BLOCK = """
 
                         // Collapsible sections with Plotly resize on open
                         var coll = document.getElementsByClassName("collapsiblemygs");
+                        // Collapse all sections immediately (do not rely on DOMContentLoaded which may have already fired)
+                        for (var ci = 0; ci < coll.length; ci++) {
+                            var sibling = coll[ci].nextElementSibling;
+                            if (sibling) sibling.style.display = 'none';
+                        }
                         for (var i = 0; i < coll.length; i++) {
                           coll[i].addEventListener("click", function() {
                             this.classList.toggle("active");
                             var content = this.nextElementSibling;
-                            if (content.style.display === "block") {
-                              content.style.display = "none";
-                            } else {
+                            if (content.style.display === "none") {
                               content.style.display = "block";
                               // Resize Plotly charts after section becomes visible
                               setTimeout(function() { resizePlotsIn(content); }, 50);
                               setTimeout(function() { resizePlotsIn(content); }, 300);
+                            } else {
+                              content.style.display = "none";
                             }
                           });
                         }
 
                         document.addEventListener("DOMContentLoaded", function() {
-                            // Collapse all sections initially
+                            // Collapse all sections (fallback)
                             var contents = document.querySelectorAll('.content');
                             contents.forEach(function(content) {
                                 content.style.display = 'none';
