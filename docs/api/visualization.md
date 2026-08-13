@@ -174,6 +174,8 @@ New methods on `ScompLinkHTMLReport` (added in v2.1.0):
 | `add_summary_stats(df, title)` | Auto data profiling table |
 | `add_dark_mode_toggle()` | Floating dark/light mode button |
 | `add_dataframe(..., thresholds)` | Conditional cell coloring (enhanced) |
+| `add_code_block(code, language, title, output, line_numbers, collapsed)` | Syntax-highlighted code with copy button |
+| `add_diff(old_code, new_code, language, title, old_label, new_label, collapsed)` | Side-by-side diff view (GitHub-style) |
 
 ## Plotly Utilities — New Functions
 
