@@ -2,6 +2,18 @@
 
 ## Unreleased
 
+### Added
+- **`report_add_code` MCP tool**: syntax-highlighted code blocks with Prism.js (Tomorrow Night theme), copy-to-clipboard button, optional line numbers, collapsible blocks, terminal-style output box
+- **`report_add_diff` MCP tool**: side-by-side diff view with diff2html (GitHub-style), red deletions / green additions, syntax highlighting, collapsible
+- **`add_code_block()` method** on `ScompLinkHTMLReport`: Python API for code blocks (language, title, output, line_numbers, collapsed)
+- **`add_diff()` method** on `ScompLinkHTMLReport`: Python API for diff views (old/new code, language, labels, collapsed)
+- **Pipeline DSL steps**: `CodeStep` and `DiffStep` for declarative `>>` pipelines
+- **CDN deps**: Prism.js 1.29.0 (autoloader + line-numbers plugin) + diff2html 3.4.48 (pinned)
+- **Prism.highlightAll()** in footer JS for dynamic section toggling
+
+### Fixed
+- Collapsible sections not toggling due to JS syntax error (merged upstream fix)
+
 ## 2.1.1 (2026-08-06)
 
 ### Added

@@ -19,12 +19,12 @@
 import base64
 import io
 import json
-import uuid
-import warnings
-from typing import Any
 
 # Read constants from encrypted file
 import os
+import uuid
+import warnings
+from typing import Any
 
 import jwt
 import pandas as pd
@@ -94,6 +94,8 @@ _FOOTER_JS_BLOCK = """
                               // Resize Plotly charts after section becomes visible
                               setTimeout(function() { resizePlotsIn(content); }, 50);
                               setTimeout(function() { resizePlotsIn(content); }, 300);
+                              // Highlight code blocks that were hidden
+                              if (window.Prism) { setTimeout(function() { Prism.highlightAllUnder(content); }, 50); }
                             } else {
                               content.style.display = "none";
                             }
@@ -145,6 +147,23 @@ _FOOTER_JS_BLOCK = """
                                 if (!window.Plotly) return;
                                 document.querySelectorAll('.js-plotly-plot').forEach(function(plot) {
                                     Plotly.Plots.resize(plot);
+                                });
+                            });
+
+                            // Prism.js: highlight all visible code blocks
+                            if (window.Prism) { Prism.highlightAll(); }
+
+                            // Copy-to-clipboard buttons
+                            document.querySelectorAll('.scomp-copy-btn').forEach(function(btn) {
+                                btn.addEventListener('click', function() {
+                                    var codeEl = this.closest('.scomp-code-card').querySelector('code');
+                                    if (codeEl) {
+                                        navigator.clipboard.writeText(codeEl.textContent).then(function() {
+                                            btn.textContent = '✓ Copied';
+                                            btn.classList.add('copied');
+                                            setTimeout(function() { btn.textContent = '⧉ Copy'; btn.classList.remove('copied'); }, 2000);
+                                        });
+                                    }
                                 });
                             });
                         });
@@ -212,6 +231,16 @@ class ScompLinkHTMLReport:
             <script src="https://code.highcharts.com/gantt/modules/accessibility.js"></script>
             <script>const colors = Highcharts.getOptions().colors;</script>
 
+            <!-- Prism.js syntax highlighting (Tomorrow Night theme) -->
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" />
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/line-numbers/prism-line-numbers.min.css" />
+            <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js" data-manual></script>
+            <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
+            <!-- diff2html (side-by-side diff with syntax highlight) -->
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/diff2html@3.4.48/bundles/css/diff2html.min.css" />
+            <script src="https://cdn.jsdelivr.net/npm/diff2html@3.4.48/bundles/js/diff2html-ui.min.js"></script>
+
             <style>
             :root {
               --bg: #ffffff;
@@ -381,6 +410,18 @@ class ScompLinkHTMLReport:
               .print-grid-item{display:block !important;width:48% !important;page-break-inside:avoid}
               body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
             }
+            .scomp-code-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.2rem;margin:1rem 0;position:relative}
+            .scomp-code-card h4{margin-bottom:.6rem;color:var(--accent)}
+            .scomp-code-card pre[class*="language-"]{border-radius:6px;margin:0;font-size:.82rem}
+            .scomp-code-card .scomp-copy-btn{position:absolute;top:.6rem;right:.6rem;background:rgba(255,255,255,.1);border:1px solid var(--border);border-radius:4px;padding:4px 8px;cursor:pointer;font-size:.7rem;color:var(--dim);transition:all .2s;z-index:10}
+            .scomp-code-card .scomp-copy-btn:hover{background:var(--accent);color:white;border-color:var(--accent)}
+            .scomp-code-card .scomp-copy-btn.copied{background:var(--accent3);color:white;border-color:var(--accent3)}
+            .scomp-output-block{background:#1e1e2e;border:1px solid #313244;border-radius:6px;padding:.8rem 1rem;margin-top:.6rem;overflow-x:auto}
+            .scomp-output-block pre{margin:0;color:#cdd6f4;font-family:'Fira Code',Consolas,monospace;font-size:.78rem;white-space:pre-wrap;word-break:break-word}
+            .scomp-output-block .scomp-output-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.05em;color:#6c7086;margin-bottom:.3rem;font-weight:600}
+            .scomp-diff-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.2rem;margin:1rem 0}
+            .scomp-diff-card h4{margin-bottom:.6rem;color:var(--accent)}
+            .scomp-diff-card .d2h-wrapper{border-radius:6px;overflow:hidden}
             </style>
             <script src="https://cdn.plot.ly/plotly-2.9.0.min.js"></script>
         """.replace("{font_family}", font_family)
@@ -448,6 +489,16 @@ class ScompLinkHTMLReport:
             <script src="https://code.highcharts.com/gantt/modules/accessibility.js"></script>
             <script>const colors = Highcharts.getOptions().colors;</script>
 
+            <!-- Prism.js syntax highlighting (Tomorrow Night theme) -->
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" />
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/line-numbers/prism-line-numbers.min.css" />
+            <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js" data-manual></script>
+            <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
+            <!-- diff2html (side-by-side diff with syntax highlight) -->
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/diff2html@3.4.48/bundles/css/diff2html.min.css" />
+            <script src="https://cdn.jsdelivr.net/npm/diff2html@3.4.48/bundles/js/diff2html-ui.min.js"></script>
+
             <style>
             :root {
               --bg: #ffffff;
@@ -617,6 +668,18 @@ class ScompLinkHTMLReport:
               .print-grid-item{display:block !important;width:48% !important;page-break-inside:avoid}
               body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
             }
+            .scomp-code-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.2rem;margin:1rem 0;position:relative}
+            .scomp-code-card h4{margin-bottom:.6rem;color:var(--accent)}
+            .scomp-code-card pre[class*="language-"]{border-radius:6px;margin:0;font-size:.82rem}
+            .scomp-code-card .scomp-copy-btn{position:absolute;top:.6rem;right:.6rem;background:rgba(255,255,255,.1);border:1px solid var(--border);border-radius:4px;padding:4px 8px;cursor:pointer;font-size:.7rem;color:var(--dim);transition:all .2s;z-index:10}
+            .scomp-code-card .scomp-copy-btn:hover{background:var(--accent);color:white;border-color:var(--accent)}
+            .scomp-code-card .scomp-copy-btn.copied{background:var(--accent3);color:white;border-color:var(--accent3)}
+            .scomp-output-block{background:#1e1e2e;border:1px solid #313244;border-radius:6px;padding:.8rem 1rem;margin-top:.6rem;overflow-x:auto}
+            .scomp-output-block pre{margin:0;color:#cdd6f4;font-family:'Fira Code',Consolas,monospace;font-size:.78rem;white-space:pre-wrap;word-break:break-word}
+            .scomp-output-block .scomp-output-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.05em;color:#6c7086;margin-bottom:.3rem;font-weight:600}
+            .scomp-diff-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.2rem;margin:1rem 0}
+            .scomp-diff-card h4{margin-bottom:.6rem;color:var(--accent)}
+            .scomp-diff-card .d2h-wrapper{border-radius:6px;overflow:hidden}
             </style>
             <script src="https://cdn.plot.ly/plotly-2.9.0.min.js"></script>
         """.replace("{font_family}", font_family)
@@ -695,7 +758,7 @@ class ScompLinkHTMLReport:
             if isinstance(labels, (list, tuple)) and len(labels) == n_filters:
                 dim_labels = list(labels)
             else:
-                dim_labels = [f"Choose a label"] * n_filters
+                dim_labels = ["Choose a label"] * n_filters
 
             # Gather unique options per dimension
             options_per_dim: list[list[str]] = [[] for _ in range(n_filters)]
@@ -704,9 +767,7 @@ class ScompLinkHTMLReport:
                     if k not in options_per_dim[i]:
                         options_per_dim[i].append(k)
 
-            dimensions = [
-                {"label": dim_labels[i], "options": options_per_dim[i]} for i in range(n_filters)
-            ]
+            dimensions = [{"label": dim_labels[i], "options": options_per_dim[i]} for i in range(n_filters)]
             content_map = {k: v for k, v in figures_dict.items()}
         else:
             dim_label = labels if isinstance(labels, str) else labels[0]
@@ -829,6 +890,7 @@ class ScompLinkHTMLReport:
         # --- Plotly ---
         try:
             import plotly.graph_objs as _go
+
             if isinstance(fig, _go.Figure):
                 self.add_graph_to_report(fig, title)
                 return
@@ -838,6 +900,7 @@ class ScompLinkHTMLReport:
         # --- Matplotlib Figure ---
         try:
             import matplotlib.figure as _mfig
+
             if isinstance(fig, _mfig.Figure):
                 self.add_matplotlib_graph_to_report(fig, title, **kwargs)
                 return
@@ -847,6 +910,7 @@ class ScompLinkHTMLReport:
         # --- Matplotlib Axes (seaborn returns Axes) ---
         try:
             import matplotlib.axes as _maxes
+
             if isinstance(fig, _maxes.Axes):
                 self.add_matplotlib_graph_to_report(fig.figure, title, **kwargs)
                 return
@@ -981,6 +1045,149 @@ class ScompLinkHTMLReport:
         self.html_report += html
         logger.info("Added raw HTML to report!")
 
+    def add_code_block(
+        self,
+        code: str,
+        language: str = "python",
+        title: str = "",
+        output: str | None = None,
+        line_numbers: bool = False,
+        collapsed: bool = False,
+    ) -> None:
+        """
+        Add a syntax-highlighted code block to the report.
+
+        Uses Prism.js for client-side highlighting. Supports any language
+        that Prism's autoloader can resolve (python, rust, javascript, sql, bash, etc.).
+
+        :param code: str - the source code to display
+        :param language: str - language identifier for highlighting (default: "python")
+        :param title: str - optional title displayed above the code block
+        :param output: str | None - optional program output shown in a terminal-style box below
+        :param line_numbers: bool - show line numbers (default: False)
+        :param collapsed: bool - wrap in collapsible <details> element (default: False)
+
+        ## example
+        report.add_code_block("print('hello')", "python", title="Example", output="hello")
+        report.add_code_block(long_code, "rust", line_numbers=True, collapsed=True)
+        """
+        import html as html_mod
+
+        escaped_code = html_mod.escape(code)
+        escaped_title = html_mod.escape(title) if title else ""
+        pre_class = 'class="line-numbers"' if line_numbers else ""
+
+        parts = ['<div class="scomp-code-card">']
+        parts.append('<button class="scomp-copy-btn">⧉ Copy</button>')
+        if title and not collapsed:
+            parts.append(f"<h4>{escaped_title}</h4>")
+        if collapsed:
+            summary_text = escaped_title or f"Code ({language})"
+            parts.append(f"<details><summary>{summary_text}</summary>")
+        parts.append(f'<pre {pre_class}><code class="language-{html_mod.escape(language)}">{escaped_code}</code></pre>')
+        if output is not None:
+            escaped_output = html_mod.escape(output)
+            parts.append('<div class="scomp-output-block">')
+            parts.append('<div class="scomp-output-label">▶ Output</div>')
+            parts.append(f"<pre>{escaped_output}</pre>")
+            parts.append("</div>")
+        if collapsed:
+            parts.append("</details>")
+        parts.append("</div>")
+        self.html_report += "\n".join(parts)
+        logger.info("Added code block to report!")
+
+    def add_diff(
+        self,
+        old_code: str,
+        new_code: str,
+        language: str = "python",
+        title: str = "",
+        old_label: str = "before",
+        new_label: str = "after",
+        collapsed: bool = False,
+    ) -> None:
+        """
+        Add a side-by-side diff view to the report.
+
+        Uses diff2html for GitHub-style rendering. The diff is computed server-side
+        with Python's difflib and rendered client-side by diff2html.
+
+        :param old_code: str - the original code (left side, deletions in red)
+        :param new_code: str - the modified code (right side, additions in green)
+        :param language: str - language for syntax highlighting (default: "python")
+        :param title: str - optional title above the diff
+        :param old_label: str - label for the old version (default: "before")
+        :param new_label: str - label for the new version (default: "after")
+        :param collapsed: bool - wrap in collapsible <details> element (default: False)
+
+        ## example
+        report.add_diff("x = 1", "x = 2", "python", title="Variable update")
+        """
+        import difflib
+        import html as html_mod
+        import json as json_mod
+        import uuid
+
+        # Generate unified diff
+        old_lines = old_code.splitlines(keepends=True)
+        new_lines = new_code.splitlines(keepends=True)
+        # Ensure last line has newline for clean diff
+        if old_lines and not old_lines[-1].endswith("\n"):
+            old_lines[-1] += "\n"
+        if new_lines and not new_lines[-1].endswith("\n"):
+            new_lines[-1] += "\n"
+
+        diff_lines = list(
+            difflib.unified_diff(
+                old_lines,
+                new_lines,
+                fromfile=f"{old_label}.{language}",
+                tofile=f"{new_label}.{language}",
+            )
+        )
+
+        div_id = f"scomp-diff-{uuid.uuid4().hex[:8]}"
+        escaped_title = html_mod.escape(title) if title else ""
+
+        parts = ['<div class="scomp-diff-card">']
+        if title and not collapsed:
+            parts.append(f"<h4>{escaped_title}</h4>")
+        if collapsed:
+            summary_text = escaped_title or "Diff view"
+            parts.append(f"<details><summary>{summary_text}</summary>")
+
+        if not diff_lines:
+            parts.append('<p style="color:var(--dim);font-size:.85rem">No differences found.</p>')
+        else:
+            diff_string = "".join(diff_lines)
+            # Use json.dumps for bulletproof JS string escaping
+            js_safe = json_mod.dumps(diff_string)
+            parts.append(f'<div id="{div_id}"></div>')
+            parts.append(f"""<script>
+(function() {{
+  var el = document.getElementById("{div_id}");
+  var diffString = {js_safe};
+  var diff2htmlUi = new Diff2HtmlUI(el, diffString, {{
+    outputFormat: 'side-by-side',
+    matching: 'lines',
+    highlight: true,
+    drawFileList: false,
+    fileContentToggle: false,
+    stickyFileHeaders: false,
+    renderNothingWhenEmpty: false
+  }});
+  diff2htmlUi.draw();
+  diff2htmlUi.highlightCode();
+}})();
+</script>""")
+
+        if collapsed:
+            parts.append("</details>")
+        parts.append("</div>")
+        self.html_report += "\n".join(parts)
+        logger.info("Added diff view to report!")
+
     def add_cascading_content(
         self, title: str, dimensions: list[dict], content_map: dict, cascade: bool = False
     ) -> None:
@@ -1023,9 +1230,7 @@ class ScompLinkHTMLReport:
             first = False
 
             if isinstance(content, go.Figure):
-                inner_html = pio.to_html(
-                    content, include_plotlyjs=False, full_html=False, config={"responsive": True}
-                )
+                inner_html = pio.to_html(content, include_plotlyjs=False, full_html=False, config={"responsive": True})
             else:
                 inner_html = str(content)
 
@@ -1035,9 +1240,7 @@ class ScompLinkHTMLReport:
         selects_html = ""
         for i, dim in enumerate(dimensions):
             sel_id = f"sel_{i}_{uid}"
-            options_html = "".join(
-                f'<option value="{_sanitize(opt)}">{opt}</option>' for opt in dim["options"]
-            )
+            options_html = "".join(f'<option value="{_sanitize(opt)}">{opt}</option>' for opt in dim["options"])
             selects_html += (
                 f'<label for="{sel_id}" style="margin-right:6px;font-weight:600;">{dim["label"]}:</label>'
                 f'<select id="{sel_id}" onchange="update_{uid}()" '
@@ -1138,9 +1341,7 @@ setTimeout(function() {{ update_{uid}(); }}, 500);
         if len(df) < limit_max:
             table_id = title.replace(" ", "")
             self.html_report += (
-                '<a href="#" onclick="download_table_as_csv('
-                + f"'{table_id}'"
-                + ');">Download as CSV</a>'
+                '<a href="#" onclick="download_table_as_csv(' + f"'{table_id}'" + ');">Download as CSV</a>'
             )
 
             if thresholds is not None:
@@ -1219,7 +1420,6 @@ setTimeout(function() {{ update_{uid}(); }}, 500);
         else:
             logger.info("The DataFrame is to big!")
 
-
     # ═══════════════════════════════════════════════════════════════════
     # Advanced report components
     # ═══════════════════════════════════════════════════════════════════
@@ -1248,9 +1448,9 @@ setTimeout(function() {{ update_{uid}(); }}, 500);
         })
         """
         status_colors = {
-            "good": "var(--accent3)",       # green
-            "warning": "var(--accent4)",    # orange
-            "critical": "var(--accent5)",   # red/pink
+            "good": "var(--accent3)",  # green
+            "warning": "var(--accent4)",  # orange
+            "critical": "var(--accent5)",  # red/pink
         }
         trend_colors = {
             "good": "#0f9d58",
@@ -1323,22 +1523,21 @@ setTimeout(function() {{ update_{uid}(); }}, 500);
 
         height_style = f"min-height:{height}px;" if height else "min-height:300px;"
 
-        html = (
-            f'<div style="display:grid;grid-template-columns:repeat({cols},1fr);'
-            f'gap:1rem;margin:1rem 0;">'
-        )
+        html = f'<div style="display:grid;grid-template-columns:repeat({cols},1fr);' f'gap:1rem;margin:1rem 0;">'
 
         for i, fig in enumerate(figures):
             title = titles[i] if titles and i < len(titles) else ""
             fig_html = pio.to_html(
-                fig, include_plotlyjs=False, full_html=False,
+                fig,
+                include_plotlyjs=False,
+                full_html=False,
                 config={"responsive": True},
             )
             title_html = f'<h3 style="margin-bottom:.5rem;font-size:.9rem;">{title}</h3>' if title else ""
             html += (
                 f'<div style="background:var(--card);border:1px solid var(--border);'
                 f'border-radius:var(--radius);padding:1rem;{height_style}overflow:hidden;">'
-                f'{title_html}{fig_html}</div>'
+                f"{title_html}{fig_html}</div>"
             )
 
         html += "</div>"
@@ -1376,7 +1575,9 @@ setTimeout(function() {{ update_{uid}(); }}, 500);
         uid = uuid.uuid4().hex[:8]
 
         # Build tab buttons and content panels
-        buttons_html = f'<div id="tabs_{uid}" style="display:flex;gap:0;border-bottom:2px solid var(--border);margin:1rem 0 0;">'
+        buttons_html = (
+            f'<div id="tabs_{uid}" style="display:flex;gap:0;border-bottom:2px solid var(--border);margin:1rem 0 0;">'
+        )
         panels_html = ""
 
         for i, (label, content) in enumerate(tabs.items()):
@@ -1387,10 +1588,11 @@ setTimeout(function() {{ update_{uid}(); }}, 500);
             # Tab button
             active_style = (
                 f"border-bottom:3px solid {self.main_color};color:{self.main_color};font-weight:700;"
-                if active else "border-bottom:3px solid transparent;color:var(--dim);"
+                if active
+                else "border-bottom:3px solid transparent;color:var(--dim);"
             )
             buttons_html += (
-                f'<button onclick="switchTab_{uid}(\'{safe_label}\')" '
+                f"<button onclick=\"switchTab_{uid}('{safe_label}')\" "
                 f'id="tabbtn_{uid}_{safe_label}" '
                 f'style="padding:.6rem 1.2rem;background:none;border:none;cursor:pointer;'
                 f'font-size:.85rem;transition:all .2s;{active_style}">{label}</button>'
@@ -1402,7 +1604,9 @@ setTimeout(function() {{ update_{uid}(); }}, 500);
             # Convert content to HTML (check Plotly Figure first — it also has to_html)
             if hasattr(content, "data") and hasattr(content, "layout"):  # Plotly Figure
                 content_html = pio.to_html(
-                    content, include_plotlyjs=False, full_html=False,
+                    content,
+                    include_plotlyjs=False,
+                    full_html=False,
                     config={"responsive": True},
                 )
             elif hasattr(content, "to_html") and hasattr(content, "columns"):  # DataFrame
@@ -1410,10 +1614,7 @@ setTimeout(function() {{ update_{uid}(); }}, 500);
             else:
                 content_html = str(content)
 
-            panels_html += (
-                f'<div id="{panel_id}" style="display:{display};padding:1rem 0;">'
-                f'{content_html}</div>'
-            )
+            panels_html += f'<div id="{panel_id}" style="display:{display};padding:1rem 0;">' f"{content_html}</div>"
 
         buttons_html += "</div>"
 
@@ -1497,7 +1698,7 @@ function switchTab_{uid}(tab) {{
         html += f'<th style="padding:.6rem;text-align:center;color:var(--dim);font-size:.75rem;text-transform:uppercase;">{baseline_col}<br><span style="font-size:.65rem;font-weight:400;">(baseline)</span></th>'
         for col in compare_cols:
             html += f'<th style="padding:.6rem;text-align:center;color:var(--dim);font-size:.75rem;text-transform:uppercase;">{col}<br><span style="font-size:.65rem;font-weight:400;">vs baseline</span></th>'
-        html += '</tr></thead><tbody>'
+        html += "</tr></thead><tbody>"
 
         # Rows
         for i, metric_name in enumerate(metrics):
@@ -1536,12 +1737,12 @@ function switchTab_{uid}(tab) {{
                     f'<td style="padding:.5rem;text-align:center;">'
                     f'<span style="font-family:monospace;">{self._format_num(comp_val)}</span> '
                     f'<span style="font-size:.75rem;color:{color};font-weight:600;">'
-                    f'{arrow} {delta_str}</span></td>'
+                    f"{arrow} {delta_str}</span></td>"
                 )
 
-            html += '</tr>'
+            html += "</tr>"
 
-        html += '</tbody></table></div>'
+        html += "</tbody></table></div>"
         self.html_report += html
         logger.info("Added comparison table to report!")
 
@@ -1563,7 +1764,7 @@ function switchTab_{uid}(tab) {{
             df = df.to_pandas()
 
         n_rows = len(df)
-        html = f'<h2>{title}</h2>'
+        html = f"<h2>{title}</h2>"
         html += f'<p style="color:var(--dim);font-size:.85rem;margin-bottom:.75rem;">{n_rows:,} rows × {len(df.columns)} columns</p>'
         html += '<div style="overflow-x:auto;">'
         html += '<table style="width:100%;border-collapse:collapse;font-size:.8rem;font-family:inherit;">'
@@ -1572,7 +1773,7 @@ function switchTab_{uid}(tab) {{
         html += '<thead><tr style="background:var(--card);border-bottom:2px solid var(--border);">'
         for col_header in ["Column", "Type", "Non-Null", "Missing %", "Unique", "Sample Values"]:
             html += f'<th style="padding:.5rem .6rem;text-align:left;color:var(--dim);font-size:.7rem;text-transform:uppercase;letter-spacing:.03em;">{col_header}</th>'
-        html += '</tr></thead><tbody>'
+        html += "</tr></thead><tbody>"
 
         for col in df.columns:
             series = df[col]
@@ -1616,9 +1817,9 @@ function switchTab_{uid}(tab) {{
             html += f'<td style="padding:.4rem .6rem;color:{miss_color};font-weight:600;">{missing_pct:.1f}%</td>'
             html += f'<td style="padding:.4rem .6rem;font-family:monospace;">{n_unique:,}</td>'
             html += f'<td style="padding:.4rem .6rem;color:var(--dim);font-size:.75rem;">{sample_str}</td>'
-            html += '</tr>'
+            html += "</tr>"
 
-        html += '</tbody></table></div>'
+        html += "</tbody></table></div>"
         self.html_report += html
         logger.info("Added summary stats to report!")
 
@@ -1676,6 +1877,7 @@ function switchTab_{uid}(tab) {{
     def _format_num(val) -> str:
         """Format a numeric value for table display."""
         import pandas as pd
+
         if pd.isna(val):
             return "—"
         if isinstance(val, float):
@@ -1732,7 +1934,7 @@ function switchTab_{uid}(tab) {{
                         el.style.pageBreakAfter = 'avoid';
                         el.style.breakAfter = 'avoid';
                     });
-                    
+
                     // Hide UI elements (combo boxes, labels, buttons, select2 widgets)
                     document.querySelectorAll('select, input[type="submit"], input[type="button"], label, br, .form-control, .select2-container').forEach(el => {
                         el.style.display = 'none';
@@ -1740,12 +1942,12 @@ function switchTab_{uid}(tab) {{
                         el.style.height = '0';
                         el.style.overflow = 'hidden';
                     });
-                    
+
                     // Open all collapsed sections
                     document.querySelectorAll('.content').forEach(el => {
                         el.style.display = 'block';
                     });
-                    
+
                     // Grid: show all items, equal columns
                     document.querySelectorAll('.print-grid-container').forEach(container => {
                         container.style.display = 'grid';
@@ -1755,13 +1957,13 @@ function switchTab_{uid}(tab) {{
                     document.querySelectorAll('.print-grid-item').forEach(el => {
                         el.style.display = 'block';
                     });
-                    
+
                     // Constrain all Plotly graphs to container
                     document.querySelectorAll('.plotly-graph-div').forEach(el => {
                         el.style.maxWidth = '100%';
                         el.style.overflow = 'hidden';
                     });
-                    
+
                     // Remove report padding to use full page width
                     var report = document.querySelector('.report');
                     if (report) {
@@ -1777,7 +1979,7 @@ function switchTab_{uid}(tab) {{
                         // Get the report content width
                         var report = document.querySelector('.report');
                         var reportWidth = report ? report.clientWidth : 800;
-                        
+
                         document.querySelectorAll('.js-plotly-plot').forEach(el => {
                             var container = el.closest('.plotly-graph-div');
                             var inGrid = el.closest('.print-grid-item');
@@ -1818,13 +2020,13 @@ function switchTab_{uid}(tab) {{
                             {self.html_title}
                             {self.html_layout}
                             </head>
-                        <body>    
+                        <body>
                             {self.header}
                             <div class="report" style="background-color:WHITE">
                                 {self.html_report}
                             </div>
                             {self.footer}
-                            
+
                             {js}
                         </body>
                         </html>

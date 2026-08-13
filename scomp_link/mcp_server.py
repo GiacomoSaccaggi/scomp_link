@@ -1345,6 +1345,84 @@ def report_add_dark_mode_toggle(report_id: str) -> str:
     return json.dumps({"status": "dark_mode_toggle_added"})
 
 
+@mcp.tool()
+def report_add_code(
+    report_id: str,
+    code: str,
+    language: str = "python",
+    title: str = "",
+    output: str = "",
+    line_numbers: bool = False,
+    collapsed: bool = False,
+) -> str:
+    """Add a syntax-highlighted code block to the report.
+
+    Renders code with Prism.js highlighting. Supports any language (python, rust,
+    javascript, sql, bash, etc.). Optionally shows program output in a terminal-style box.
+    Includes a copy-to-clipboard button.
+
+    Parameters:
+        report_id: The report ID returned by report_create.
+        code: The source code to display.
+        language: Language for syntax highlighting (default: "python").
+                  Common values: python, rust, javascript, typescript, sql, bash, json, yaml, html, css
+        title: Optional title displayed above the code block.
+        output: Optional program output shown below the code in a terminal-style box.
+                Pass empty string for no output.
+        line_numbers: Show line numbers (default: false).
+        collapsed: Wrap in collapsible element — useful for long code (default: false).
+    """
+    report = _get_report(report_id)
+    if not report:
+        return json.dumps({"error": f"Report '{report_id}' not found. Use report_create first."})
+
+    out = output if output else None
+    report.add_code_block(code, language, title, out, line_numbers=line_numbers, collapsed=collapsed)
+    return json.dumps(
+        {
+            "status": "code_added",
+            "language": language,
+            "has_output": bool(output),
+            "line_numbers": line_numbers,
+            "collapsed": collapsed,
+        }
+    )
+
+
+@mcp.tool()
+def report_add_diff(
+    report_id: str,
+    old_code: str,
+    new_code: str,
+    language: str = "python",
+    title: str = "",
+    old_label: str = "before",
+    new_label: str = "after",
+    collapsed: bool = False,
+) -> str:
+    """Add a side-by-side diff view to the report (GitHub-style).
+
+    Shows old code on the left (deletions in red) and new code on the right (additions in green).
+    Uses diff2html for professional rendering with syntax highlighting.
+
+    Parameters:
+        report_id: The report ID returned by report_create.
+        old_code: The original code (left side).
+        new_code: The modified code (right side).
+        language: Language for syntax highlighting (default: "python").
+        title: Optional title above the diff.
+        old_label: Label for the old version (default: "before").
+        new_label: Label for the new version (default: "after").
+        collapsed: Wrap in collapsible element — useful for large diffs (default: false).
+    """
+    report = _get_report(report_id)
+    if not report:
+        return json.dumps({"error": f"Report '{report_id}' not found. Use report_create first."})
+
+    report.add_diff(old_code, new_code, language, title, old_label, new_label, collapsed=collapsed)
+    return json.dumps({"status": "diff_added", "language": language, "collapsed": collapsed})
+
+
 # ═══════════════════════════════════════════════════════════════════
 # RESOURCES
 # ═══════════════════════════════════════════════════════════════════
@@ -1516,6 +1594,8 @@ WORKFLOW:
    → report_add_text(report_id, "Explanation...", style="paragraph")
    → report_add_table(report_id, '[{{"col": "val"}}]', "Table Title")
    → report_add_chart(report_id, "plotly", "linechart", data_json, "Trend")
+   → report_add_code(report_id, "code_string", "python", "Title", "output")
+   → report_add_diff(report_id, "old_code", "new_code", "python", "Diff Title")
 
 4. Save:                    report_save(report_id, "{title.lower().replace(' ', '_')}.html")
    → Closes open sections, writes file, frees memory.

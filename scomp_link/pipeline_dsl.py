@@ -438,6 +438,102 @@ class HighchartsStep(ReportStep):
         return report
 
 
+class CodeStep(ReportStep):
+    """
+    Adds a syntax-highlighted code block to the report.
+
+    Parameters
+    ----------
+    code : str
+        Source code to display.
+    language : str
+        Language for highlighting (default: "python").
+    title : str
+        Optional title above the code.
+    output : str | None
+        Optional program output shown below in terminal-style box.
+    line_numbers : bool
+        Show line numbers (default: False).
+    collapsed : bool
+        Wrap in collapsible element (default: False).
+    """
+
+    def __init__(
+        self,
+        code: str,
+        language: str = "python",
+        title: str = "",
+        output: str | None = None,
+        line_numbers: bool = False,
+        collapsed: bool = False,
+    ):
+        self.code = code
+        self.language = language
+        self.title = title
+        self.output = output
+        self.line_numbers = line_numbers
+        self.collapsed = collapsed
+
+    def execute(self, report: "ScompLinkHTMLReport") -> "ScompLinkHTMLReport":
+        report.add_code_block(
+            self.code, self.language, self.title, self.output, line_numbers=self.line_numbers, collapsed=self.collapsed
+        )
+        return report
+
+
+class DiffStep(ReportStep):
+    """
+    Adds a side-by-side diff view to the report.
+
+    Parameters
+    ----------
+    old_code : str
+        Original code (left side, deletions in red).
+    new_code : str
+        Modified code (right side, additions in green).
+    language : str
+        Language for highlighting (default: "python").
+    title : str
+        Optional title above the diff.
+    old_label : str
+        Label for old version (default: "before").
+    new_label : str
+        Label for new version (default: "after").
+    collapsed : bool
+        Wrap in collapsible element (default: False).
+    """
+
+    def __init__(
+        self,
+        old_code: str,
+        new_code: str,
+        language: str = "python",
+        title: str = "",
+        old_label: str = "before",
+        new_label: str = "after",
+        collapsed: bool = False,
+    ):
+        self.old_code = old_code
+        self.new_code = new_code
+        self.language = language
+        self.title = title
+        self.old_label = old_label
+        self.new_label = new_label
+        self.collapsed = collapsed
+
+    def execute(self, report: "ScompLinkHTMLReport") -> "ScompLinkHTMLReport":
+        report.add_diff(
+            self.old_code,
+            self.new_code,
+            self.language,
+            self.title,
+            self.old_label,
+            self.new_label,
+            collapsed=self.collapsed,
+        )
+        return report
+
+
 class SaveStep(ReportStep):
     """
     Saves the report as HTML. Automatically closes any open section before saving.

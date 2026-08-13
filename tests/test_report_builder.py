@@ -23,9 +23,10 @@ class TestConfig:
         assert _HARDCODED_DEFAULTS["report"]["font_family"] == "Baloo 2"
 
     def test_load_config_returns_defaults(self):
-        from scomp_link.config import load_config
-        from pathlib import Path
         import unittest.mock as mock
+        from pathlib import Path
+
+        from scomp_link.config import load_config
 
         # Mock config paths to ensure only hardcoded defaults are used
         with mock.patch("scomp_link.config._GLOBAL_CONFIG_PATH", Path("/nonexistent/cfg.yaml")):
@@ -36,9 +37,10 @@ class TestConfig:
                 assert cfg["report"]["author"] == "scomp-link toolkit"
 
     def test_get_report_defaults(self):
-        from scomp_link.config import get_report_defaults
-        from pathlib import Path
         import unittest.mock as mock
+        from pathlib import Path
+
+        from scomp_link.config import get_report_defaults
 
         with mock.patch("scomp_link.config._GLOBAL_CONFIG_PATH", Path("/nonexistent/cfg.yaml")):
             with mock.patch("scomp_link.config._LOCAL_CONFIG_PATH", Path("/nonexistent/.scomp-link.yaml")):
@@ -81,9 +83,9 @@ class TestConfig:
     def test_local_config_overrides_defaults(self):
         """Test that a local .scomp-link.yaml overrides defaults."""
         import unittest.mock as mock
+        from pathlib import Path
 
         import yaml
-        from pathlib import Path
 
         from scomp_link.config import _LOCAL_CONFIG_PATH, load_config
 
@@ -211,9 +213,10 @@ class TestReportCreate:
 
     def test_create_uses_config_defaults(self):
         """report_create with None params should use config defaults."""
-        from scomp_link.mcp_server import report_create
-        from pathlib import Path
         import unittest.mock as mock
+        from pathlib import Path
+
+        from scomp_link.mcp_server import report_create
 
         with mock.patch("scomp_link.config._GLOBAL_CONFIG_PATH", Path("/nonexistent/cfg.yaml")):
             with mock.patch("scomp_link.config._LOCAL_CONFIG_PATH", Path("/nonexistent/.scomp-link.yaml")):
@@ -1235,3 +1238,285 @@ class TestMCPPrompts:
 
         result = build_custom_report("data.csv")
         assert "Report" in result
+
+
+# ═══════════════════════════════════════════════════════════════════
+# Code Block & Diff View Tests
+# ═══════════════════════════════════════════════════════════════════
+
+
+class TestCodeBlock:
+    """Tests for add_code_block method."""
+
+    def _make_report(self):
+        from scomp_link.utils.report_html import ScompLinkHTMLReport
+
+        return ScompLinkHTMLReport(title="Test")
+
+    def test_basic_code_block(self):
+        r = self._make_report()
+        r.add_code_block("x = 1", "python")
+        assert 'class="language-python"' in r.html_report
+        assert "x = 1" in r.html_report
+        assert "scomp-code-card" in r.html_report
+
+    def test_code_block_with_title(self):
+        r = self._make_report()
+        r.add_code_block("x = 1", "python", title="My Code")
+        assert "<h4>My Code</h4>" in r.html_report
+
+    def test_code_block_with_output(self):
+        r = self._make_report()
+        r.add_code_block("print('hi')", "python", output="hi")
+        assert "scomp-output-block" in r.html_report
+        assert "▶ Output" in r.html_report
+        assert "hi" in r.html_report
+
+    def test_code_block_no_output(self):
+        r = self._make_report()
+        r.add_code_block("x = 1", "python")
+        assert "scomp-output-block" not in r.html_report
+
+    def test_code_block_escapes_html(self):
+        r = self._make_report()
+        r.add_code_block("<script>alert('xss')</script>", "html")
+        assert "<script>alert" not in r.html_report
+        assert "&lt;script&gt;" in r.html_report
+
+    def test_code_block_with_line_numbers(self):
+        r = self._make_report()
+        r.add_code_block("a = 1\nb = 2", "python", line_numbers=True)
+        assert "line-numbers" in r.html_report
+
+    def test_code_block_without_line_numbers(self):
+        r = self._make_report()
+        r.add_code_block("a = 1", "python", line_numbers=False)
+        assert 'class="line-numbers"' not in r.html_report
+
+    def test_code_block_collapsed(self):
+        r = self._make_report()
+        r.add_code_block("x = 1", "python", title="Hidden", collapsed=True)
+        assert "<details>" in r.html_report
+        assert "<summary>Hidden</summary>" in r.html_report
+        assert "</details>" in r.html_report
+
+    def test_code_block_collapsed_no_title(self):
+        r = self._make_report()
+        r.add_code_block("x = 1", "rust", collapsed=True)
+        assert "<summary>Code (rust)</summary>" in r.html_report
+
+    def test_code_block_copy_button(self):
+        r = self._make_report()
+        r.add_code_block("x = 1", "python")
+        assert "scomp-copy-btn" in r.html_report
+        assert "⧉ Copy" in r.html_report
+
+    def test_code_block_different_languages(self):
+        r = self._make_report()
+        r.add_code_block("fn main() {}", "rust")
+        assert 'class="language-rust"' in r.html_report
+
+    def test_code_block_multiline(self):
+        r = self._make_report()
+        code = "def foo():\n    return 42\n\nresult = foo()"
+        r.add_code_block(code, "python", output="42")
+        assert "def foo():" in r.html_report
+        assert "42" in r.html_report
+
+
+class TestDiffView:
+    """Tests for add_diff method."""
+
+    def _make_report(self):
+        from scomp_link.utils.report_html import ScompLinkHTMLReport
+
+        return ScompLinkHTMLReport(title="Test")
+
+    def test_basic_diff(self):
+        r = self._make_report()
+        r.add_diff("x = 1", "x = 2", "python")
+        assert "scomp-diff-card" in r.html_report
+        assert "Diff2HtmlUI" in r.html_report
+        assert "side-by-side" in r.html_report
+
+    def test_diff_with_title(self):
+        r = self._make_report()
+        r.add_diff("a", "b", "python", title="Changes")
+        assert "<h4>Changes</h4>" in r.html_report
+
+    def test_diff_no_changes(self):
+        r = self._make_report()
+        r.add_diff("same", "same", "python")
+        assert "No differences found" in r.html_report
+        assert "Diff2HtmlUI" not in r.html_report
+
+    def test_diff_labels(self):
+        r = self._make_report()
+        r.add_diff("x=1", "x=2", "python", old_label="v1", new_label="v2")
+        assert "v1.python" in r.html_report
+        assert "v2.python" in r.html_report
+
+    def test_diff_collapsed(self):
+        r = self._make_report()
+        r.add_diff("x=1", "x=2", "python", title="Review", collapsed=True)
+        assert "<details>" in r.html_report
+        assert "<summary>Review</summary>" in r.html_report
+        assert "</details>" in r.html_report
+
+    def test_diff_collapsed_no_title(self):
+        r = self._make_report()
+        r.add_diff("x=1", "x=2", "python", collapsed=True)
+        assert "<summary>Diff view</summary>" in r.html_report
+
+    def test_diff_unique_ids(self):
+        r = self._make_report()
+        r.add_diff("a", "b", "python")
+        r.add_diff("c", "d", "python")
+        # Both should have unique scomp-diff-* IDs
+        import re
+
+        ids = re.findall(r'id="(scomp-diff-[a-f0-9]+)"', r.html_report)
+        assert len(ids) == 2
+        assert ids[0] != ids[1]
+
+    def test_diff_multiline(self):
+        old = "def greet():\n    print('hello')\n    return True"
+        new = "def greet(name):\n    print(f'hello {name}')\n    return True"
+        r = self._make_report()
+        r.add_diff(old, new, "python", title="Refactor")
+        assert "Diff2HtmlUI" in r.html_report
+
+    def test_diff_js_escaping_special_chars(self):
+        """Ensure special chars in code don't break JS embedding."""
+        r = self._make_report()
+        old_code = 'msg = "hello\\nworld"'
+        new_code = 'msg = f"hello\\n{name}"'
+        r.add_diff(old_code, new_code, "python")
+        # Should not crash and should contain the diff div
+        assert "scomp-diff-card" in r.html_report
+
+
+class TestCodeDiffMCP:
+    """Tests for MCP report_add_code and report_add_diff tools."""
+
+    def _create_report(self):
+        from scomp_link.mcp_server import report_add_code, report_add_diff, report_create
+
+        result = json.loads(report_create("Test Report"))
+        return result["report_id"], report_add_code, report_add_diff
+
+    def test_report_add_code_basic(self):
+        rid, add_code, _ = self._create_report()
+        result = json.loads(add_code(rid, "x = 1", "python", "Test", ""))
+        assert result["status"] == "code_added"
+        assert result["language"] == "python"
+        assert result["has_output"] is False
+
+    def test_report_add_code_with_output(self):
+        rid, add_code, _ = self._create_report()
+        result = json.loads(add_code(rid, "print(1)", "python", "", "1"))
+        assert result["has_output"] is True
+
+    def test_report_add_code_line_numbers(self):
+        rid, add_code, _ = self._create_report()
+        result = json.loads(add_code(rid, "x = 1", "python", "", "", True, False))
+        assert result["line_numbers"] is True
+
+    def test_report_add_code_collapsed(self):
+        rid, add_code, _ = self._create_report()
+        result = json.loads(add_code(rid, "x = 1", "python", "Code", "", False, True))
+        assert result["collapsed"] is True
+
+    def test_report_add_code_invalid_report(self):
+        from scomp_link.mcp_server import report_add_code
+
+        result = json.loads(report_add_code("nonexistent", "x=1"))
+        assert "error" in result
+
+    def test_report_add_diff_basic(self):
+        rid, _, add_diff = self._create_report()
+        result = json.loads(add_diff(rid, "x=1", "x=2", "python", "Change"))
+        assert result["status"] == "diff_added"
+        assert result["language"] == "python"
+
+    def test_report_add_diff_collapsed(self):
+        rid, _, add_diff = self._create_report()
+        result = json.loads(add_diff(rid, "x=1", "x=2", "python", "", "old", "new", True))
+        assert result["collapsed"] is True
+
+    def test_report_add_diff_invalid_report(self):
+        from scomp_link.mcp_server import report_add_diff
+
+        result = json.loads(report_add_diff("nonexistent", "a", "b"))
+        assert "error" in result
+
+
+class TestCodeDiffDSL:
+    """Tests for CodeStep and DiffStep pipeline DSL."""
+
+    def test_code_step_basic(self):
+        from scomp_link import CodeStep, SectionStep
+        from scomp_link.utils.report_html import ScompLinkHTMLReport
+
+        report = ScompLinkHTMLReport("Test")
+        chain = SectionStep("Code") >> CodeStep("x = 1", "python", "Example", "1")
+        chain.run(report)
+        assert "language-python" in report.html_report
+        assert "scomp-output-block" in report.html_report
+
+    def test_code_step_with_options(self):
+        from scomp_link import CodeStep, SectionStep
+        from scomp_link.utils.report_html import ScompLinkHTMLReport
+
+        report = ScompLinkHTMLReport("Test")
+        chain = SectionStep("Code") >> CodeStep("x = 1", "python", "Title", line_numbers=True, collapsed=True)
+        chain.run(report)
+        assert "line-numbers" in report.html_report
+        assert "<details>" in report.html_report
+
+    def test_diff_step_basic(self):
+        from scomp_link import DiffStep, SectionStep
+        from scomp_link.utils.report_html import ScompLinkHTMLReport
+
+        report = ScompLinkHTMLReport("Test")
+        chain = SectionStep("Review") >> DiffStep("x=1", "x=2", "python", "Diff")
+        chain.run(report)
+        assert "Diff2HtmlUI" in report.html_report
+        assert "scomp-diff-card" in report.html_report
+
+    def test_diff_step_with_options(self):
+        from scomp_link import DiffStep, SectionStep
+        from scomp_link.utils.report_html import ScompLinkHTMLReport
+
+        report = ScompLinkHTMLReport("Test")
+        chain = SectionStep("Review") >> DiffStep("a", "b", "rust", "Change", "old.rs", "new.rs", collapsed=True)
+        chain.run(report)
+        assert "<details>" in report.html_report
+
+    def test_full_pipeline_with_code_and_diff(self):
+        import os
+        import tempfile
+
+        from scomp_link import CodeStep, DiffStep, SaveStep, SectionStep
+        from scomp_link.utils.report_html import ScompLinkHTMLReport
+
+        report = ScompLinkHTMLReport("Full Test")
+        with tempfile.NamedTemporaryFile(suffix=".html", delete=False) as f:
+            path = f.name
+        try:
+            chain = (
+                SectionStep("Code Examples")
+                >> CodeStep("print('hello')", "python", "Hello World", "hello")
+                >> DiffStep("x = 1", "x = 2", "python", "Variable Change")
+                >> SaveStep(path)
+            )
+            chain.run(report)
+            assert os.path.exists(path)
+            with open(path) as f:
+                html = f.read()
+            assert "language-python" in html
+            assert "Diff2HtmlUI" in html
+            assert "prismjs" in html
+            assert "diff2html" in html
+        finally:
+            os.unlink(path)

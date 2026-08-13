@@ -50,6 +50,8 @@ markdown_extensions:
 nav:
   - Home: index.md
   - Quick Start: quickstart.md
+  - Pipeline DSL: pipeline-dsl.md
+  - Report Builder: report-builder-guide.md
   - CLI Reference: cli.md
   - API Reference:
     - Pipeline: api/pipeline.md
@@ -61,5 +63,6 @@ nav:
     - Persistence: api/persistence.md
     - Tuning: api/tuning.md
     - Visualization: api/visualization.md
+  - Agent Integration: agent-integration.md
   - Examples: examples.md
   - Changelog: changelog.md
