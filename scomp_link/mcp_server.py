@@ -25,7 +25,7 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Literal, Optional, cast
 
-from mcp.server.fastmcp import FastMCP
+from mcp.server.mcpserver import MCPServer
 
 # ═══════════════════════════════════════════════════════════════════
 # AUTO-UPDATE SYSTEM
@@ -151,7 +151,7 @@ def _maybe_auto_update() -> Optional[dict]:
     return update_result
 
 
-mcp = FastMCP(
+mcp = MCPServer(
     "scomp-link",
     instructions="End-to-end ML toolkit: train models, tune hyperparameters, detect drift, "
     "generate HTML reports with 39 chart types, detect anomalies, forecast time series, "
@@ -1421,6 +1421,71 @@ def report_add_diff(
 
     report.add_diff(old_code, new_code, language, title, old_label, new_label, collapsed=collapsed)
     return json.dumps({"status": "diff_added", "language": language, "collapsed": collapsed})
+
+
+@mcp.tool()
+def report_add_mermaid(report_id: str, diagram: str, title: str = "", collapsed: bool = False) -> str:
+    """Add a Mermaid.js diagram to the report.
+
+    Renders flowcharts, sequence diagrams, class diagrams, gantt charts, state diagrams,
+    ER diagrams, and more. Uses Mermaid.js syntax.
+
+    Parameters:
+        report_id: The report ID returned by report_create.
+        diagram: Mermaid diagram definition string.
+                 Example: "graph TD; A[Start]-->B[Train]; B-->C[Validate]; C-->D[Deploy];"
+        title: Optional title above the diagram.
+        collapsed: Wrap in collapsible element (default: false).
+
+    Common diagram types:
+        - graph TD (top-down flowchart)
+        - graph LR (left-right flowchart)
+        - sequenceDiagram
+        - classDiagram
+        - gantt
+        - stateDiagram-v2
+        - erDiagram
+        - pie
+    """
+    report = _get_report(report_id)
+    if not report:
+        return json.dumps({"error": f"Report '{report_id}' not found. Use report_create first."})
+
+    report.add_mermaid(diagram, title, collapsed=collapsed)
+    return json.dumps({"status": "mermaid_added", "collapsed": collapsed})
+
+
+@mcp.tool()
+def report_add_terminal(
+    report_id: str,
+    cast_data: str,
+    title: str = "",
+    cols: int = 80,
+    rows: int = 24,
+    theme: str = "dracula",
+    collapsed: bool = False,
+) -> str:
+    """Add an embedded terminal replay (asciinema player) to the report.
+
+    Embeds an interactive terminal session that plays back recorded commands and output.
+    The user can play/pause/seek through the recording.
+
+    Parameters:
+        report_id: The report ID returned by report_create.
+        cast_data: Content of an asciinema .cast file (v2 format, JSON lines).
+                   Generate with: asciinema rec demo.cast
+        title: Optional title above the terminal.
+        cols: Terminal width in columns (default: 80).
+        rows: Terminal height in rows (default: 24).
+        theme: Player theme — "dracula", "monokai", "solarized-dark", "tango" (default: "dracula").
+        collapsed: Wrap in collapsible element (default: false).
+    """
+    report = _get_report(report_id)
+    if not report:
+        return json.dumps({"error": f"Report '{report_id}' not found. Use report_create first."})
+
+    report.add_terminal(cast_data, title, cols=cols, rows=rows, theme=theme, collapsed=collapsed)
+    return json.dumps({"status": "terminal_added", "cols": cols, "rows": rows, "collapsed": collapsed})
 
 
 # ═══════════════════════════════════════════════════════════════════

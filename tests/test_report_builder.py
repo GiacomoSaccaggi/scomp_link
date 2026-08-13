@@ -1520,3 +1520,127 @@ class TestCodeDiffDSL:
             assert "diff2html" in html
         finally:
             os.unlink(path)
+
+
+# ═══════════════════════════════════════════════════════════════════
+# Mermaid & Terminal Tests
+# ═══════════════════════════════════════════════════════════════════
+
+
+class TestMermaid:
+    """Tests for add_mermaid method."""
+
+    def _make_report(self):
+        from scomp_link.utils.report_html import ScompLinkHTMLReport
+
+        return ScompLinkHTMLReport(title="Test")
+
+    def test_basic_mermaid(self):
+        r = self._make_report()
+        r.add_mermaid("graph TD; A-->B;")
+        assert "scomp-mermaid-card" in r.html_report
+        assert "A-->B" in r.html_report
+        assert '<pre class="mermaid">' in r.html_report
+
+    def test_mermaid_with_title(self):
+        r = self._make_report()
+        r.add_mermaid("graph LR; X-->Y;", title="Pipeline")
+        assert "<h4>Pipeline</h4>" in r.html_report
+
+    def test_mermaid_collapsed(self):
+        r = self._make_report()
+        r.add_mermaid("graph TD; A-->B;", title="Hidden", collapsed=True)
+        assert "<details>" in r.html_report
+        assert "<summary>Hidden</summary>" in r.html_report
+
+    def test_mermaid_preserves_arrows(self):
+        r = self._make_report()
+        r.add_mermaid("graph TD; A-->B; B-->C; C-->D;")
+        assert "A-->B" in r.html_report
+        assert "-->" in r.html_report
+
+    def test_mermaid_sequence_diagram(self):
+        r = self._make_report()
+        r.add_mermaid("sequenceDiagram\n    Alice->>Bob: Hello")
+        assert "Alice->>Bob" in r.html_report
+
+    def test_mermaid_mcp_tool(self):
+        from scomp_link.mcp_server import report_add_mermaid, report_create
+
+        rid = json.loads(report_create("Test"))["report_id"]
+        result = json.loads(report_add_mermaid(rid, "graph TD; A-->B;", "Flow"))
+        assert result["status"] == "mermaid_added"
+
+    def test_mermaid_dsl_step(self):
+        from scomp_link import MermaidStep, SectionStep
+        from scomp_link.utils.report_html import ScompLinkHTMLReport
+
+        report = ScompLinkHTMLReport("Test")
+        chain = SectionStep("Diagram") >> MermaidStep("graph TD; A-->B;", "Flow")
+        chain.run(report)
+        assert "mermaid" in report.html_report
+
+
+class TestTerminal:
+    """Tests for add_terminal method."""
+
+    SAMPLE_CAST = '{"version":2,"width":80,"height":24}\n[0.1,"o","$ hello\\r\\n"]'
+
+    def _make_report(self):
+        from scomp_link.utils.report_html import ScompLinkHTMLReport
+
+        return ScompLinkHTMLReport(title="Test")
+
+    def test_basic_terminal(self):
+        r = self._make_report()
+        r.add_terminal(self.SAMPLE_CAST)
+        assert "AsciinemaPlayer" in r.html_report
+        assert "scomp-terminal-card" in r.html_report
+
+    def test_terminal_with_title(self):
+        r = self._make_report()
+        r.add_terminal(self.SAMPLE_CAST, title="Demo")
+        assert "<h4>Demo</h4>" in r.html_report
+
+    def test_terminal_collapsed(self):
+        r = self._make_report()
+        r.add_terminal(self.SAMPLE_CAST, title="Hidden", collapsed=True)
+        assert "<details>" in r.html_report
+        assert "<summary>Hidden</summary>" in r.html_report
+
+    def test_terminal_custom_dimensions(self):
+        r = self._make_report()
+        r.add_terminal(self.SAMPLE_CAST, cols=120, rows=40)
+        assert "120" in r.html_report
+        assert "40" in r.html_report
+
+    def test_terminal_custom_theme(self):
+        r = self._make_report()
+        r.add_terminal(self.SAMPLE_CAST, theme="monokai")
+        assert "monokai" in r.html_report
+
+    def test_terminal_unique_ids(self):
+        import re
+
+        r = self._make_report()
+        r.add_terminal(self.SAMPLE_CAST)
+        r.add_terminal(self.SAMPLE_CAST)
+        ids = re.findall(r'id="(scomp-term-[a-f0-9]+)"', r.html_report)
+        assert len(ids) == 2
+        assert ids[0] != ids[1]
+
+    def test_terminal_mcp_tool(self):
+        from scomp_link.mcp_server import report_add_terminal, report_create
+
+        rid = json.loads(report_create("Test"))["report_id"]
+        result = json.loads(report_add_terminal(rid, self.SAMPLE_CAST, "Term"))
+        assert result["status"] == "terminal_added"
+
+    def test_terminal_dsl_step(self):
+        from scomp_link import SectionStep, TerminalStep
+        from scomp_link.utils.report_html import ScompLinkHTMLReport
+
+        report = ScompLinkHTMLReport("Test")
+        chain = SectionStep("Terminal") >> TerminalStep(self.SAMPLE_CAST, "Demo")
+        chain.run(report)
+        assert "AsciinemaPlayer" in report.html_report

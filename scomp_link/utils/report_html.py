@@ -150,6 +150,9 @@ _FOOTER_JS_BLOCK = """
                                 });
                             });
 
+                            // Mermaid.js: initialize diagrams
+                            if (window.mermaid) { mermaid.initialize({startOnLoad:true, theme:"neutral", securityLevel:"loose"}); }
+
                             // Prism.js: highlight all visible code blocks
                             if (window.Prism) { Prism.highlightAll(); }
 
@@ -237,6 +240,11 @@ class ScompLinkHTMLReport:
             <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js" data-manual></script>
             <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
             <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
+            <!-- Mermaid.js diagrams -->
+            <script src="https://cdn.jsdelivr.net/npm/mermaid@11.4.0/dist/mermaid.min.js"></script>
+            <!-- Asciinema player (terminal replay) -->
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/asciinema-player@3.8.0/dist/bundle/asciinema-player.css" />
+            <script src="https://cdn.jsdelivr.net/npm/asciinema-player@3.8.0/dist/bundle/asciinema-player.min.js"></script>
             <!-- diff2html (side-by-side diff with syntax highlight) -->
             <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/diff2html@3.4.48/bundles/css/diff2html.min.css" />
             <script src="https://cdn.jsdelivr.net/npm/diff2html@3.4.48/bundles/js/diff2html-ui.min.js"></script>
@@ -422,6 +430,11 @@ class ScompLinkHTMLReport:
             .scomp-diff-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.2rem;margin:1rem 0}
             .scomp-diff-card h4{margin-bottom:.6rem;color:var(--accent)}
             .scomp-diff-card .d2h-wrapper{border-radius:6px;overflow:hidden}
+            .scomp-mermaid-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.2rem;margin:1rem 0;text-align:center}
+            .scomp-mermaid-card h4{margin-bottom:.6rem;color:var(--accent);text-align:left}
+            .scomp-mermaid-card .mermaid{font-size:.85rem}
+            .scomp-terminal-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.2rem;margin:1rem 0}
+            .scomp-terminal-card h4{margin-bottom:.6rem;color:var(--accent)}
             </style>
             <script src="https://cdn.plot.ly/plotly-2.9.0.min.js"></script>
         """.replace("{font_family}", font_family)
@@ -495,6 +508,11 @@ class ScompLinkHTMLReport:
             <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js" data-manual></script>
             <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
             <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
+            <!-- Mermaid.js diagrams -->
+            <script src="https://cdn.jsdelivr.net/npm/mermaid@11.4.0/dist/mermaid.min.js"></script>
+            <!-- Asciinema player (terminal replay) -->
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/asciinema-player@3.8.0/dist/bundle/asciinema-player.css" />
+            <script src="https://cdn.jsdelivr.net/npm/asciinema-player@3.8.0/dist/bundle/asciinema-player.min.js"></script>
             <!-- diff2html (side-by-side diff with syntax highlight) -->
             <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/diff2html@3.4.48/bundles/css/diff2html.min.css" />
             <script src="https://cdn.jsdelivr.net/npm/diff2html@3.4.48/bundles/js/diff2html-ui.min.js"></script>
@@ -680,6 +698,11 @@ class ScompLinkHTMLReport:
             .scomp-diff-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.2rem;margin:1rem 0}
             .scomp-diff-card h4{margin-bottom:.6rem;color:var(--accent)}
             .scomp-diff-card .d2h-wrapper{border-radius:6px;overflow:hidden}
+            .scomp-mermaid-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.2rem;margin:1rem 0;text-align:center}
+            .scomp-mermaid-card h4{margin-bottom:.6rem;color:var(--accent);text-align:left}
+            .scomp-mermaid-card .mermaid{font-size:.85rem}
+            .scomp-terminal-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.2rem;margin:1rem 0}
+            .scomp-terminal-card h4{margin-bottom:.6rem;color:var(--accent)}
             </style>
             <script src="https://cdn.plot.ly/plotly-2.9.0.min.js"></script>
         """.replace("{font_family}", font_family)
@@ -1188,6 +1211,102 @@ class ScompLinkHTMLReport:
         self.html_report += "\n".join(parts)
         logger.info("Added diff view to report!")
 
+    def add_mermaid(self, diagram: str, title: str = "", collapsed: bool = False) -> None:
+        """
+        Add a Mermaid.js diagram to the report.
+
+        Renders flowcharts, sequence diagrams, class diagrams, gantt charts, etc.
+        using Mermaid.js client-side rendering.
+
+        :param diagram: str - Mermaid diagram definition (e.g. "graph TD; A-->B;")
+        :param title: str - optional title above the diagram
+        :param collapsed: bool - wrap in collapsible element (default: False)
+
+        ## example
+        report.add_mermaid("graph TD; A[Start]-->B[Process]; B-->C[End];", title="Pipeline Flow")
+        """
+        import html as html_mod
+
+        escaped_title = html_mod.escape(title) if title else ""
+
+        parts = ['<div class="scomp-mermaid-card">']
+        if title and not collapsed:
+            parts.append(f"<h4>{escaped_title}</h4>")
+        if collapsed:
+            summary_text = escaped_title or "Diagram"
+            parts.append(f"<details><summary>{summary_text}</summary>")
+        # Mermaid parses raw text from pre.mermaid elements — do NOT html-escape
+        parts.append(f'<pre class="mermaid">{diagram}</pre>')
+        if collapsed:
+            parts.append("</details>")
+        parts.append("</div>")
+        self.html_report += "\n".join(parts)
+        logger.info("Added mermaid diagram to report!")
+
+    def add_terminal(
+        self,
+        cast_data: str,
+        title: str = "",
+        cols: int = 80,
+        rows: int = 24,
+        theme: str = "dracula",
+        collapsed: bool = False,
+    ) -> None:
+        """
+        Add an embedded terminal replay (asciinema player) to the report.
+
+        Embeds an interactive terminal session that plays back recorded commands
+        and output. The cast_data is the content of an asciinema .cast file (v2 format).
+
+        :param cast_data: str - asciinema cast file content (JSON lines, v2 format)
+        :param title: str - optional title above the terminal
+        :param cols: int - terminal width in columns (default: 80)
+        :param rows: int - terminal height in rows (default: 24)
+        :param theme: str - player theme (default: "dracula")
+        :param collapsed: bool - wrap in collapsible element (default: False)
+
+        ## example
+        with open("demo.cast") as f:
+            cast = f.read()
+        report.add_terminal(cast, title="Installation Demo")
+        """
+        import html as html_mod
+        import json as json_mod
+        import uuid
+
+        escaped_title = html_mod.escape(title) if title else ""
+        div_id = f"scomp-term-{uuid.uuid4().hex[:8]}"
+
+        parts = ['<div class="scomp-terminal-card">']
+        if title and not collapsed:
+            parts.append(f"<h4>{escaped_title}</h4>")
+        if collapsed:
+            summary_text = escaped_title or "Terminal"
+            parts.append(f"<details><summary>{summary_text}</summary>")
+        parts.append(f'<div id="{div_id}" style="width:100%"></div>')
+        # Embed cast data as inline JSON and create player
+        js_safe_cast = json_mod.dumps(cast_data)
+        parts.append(f"""<script>
+(function() {{
+  var el = document.getElementById("{div_id}");
+  var castData = {js_safe_cast};
+  AsciinemaPlayer.create("data:application/json," + encodeURIComponent(castData), el, {{
+    cols: {cols},
+    rows: {rows},
+    theme: "{html_mod.escape(theme)}",
+    fit: "width",
+    autoPlay: false,
+    speed: 1.5,
+    idleTimeLimit: 2
+  }});
+}})();
+</script>""")
+        if collapsed:
+            parts.append("</details>")
+        parts.append("</div>")
+        self.html_report += "\n".join(parts)
+        logger.info("Added terminal replay to report!")
+
     def add_cascading_content(
         self, title: str, dimensions: list[dict], content_map: dict, cascade: bool = False
     ) -> None:
@@ -1296,25 +1415,25 @@ class ScompLinkHTMLReport:
         )
 
         script = f"""
-<script>
-{cascade_js}
-function update_{uid}() {{
-    {"update_cascade_" + uid + "();" if cascade and len(dimensions) > 1 else ""}
-    var k = {key_parts};
-    document.querySelectorAll('[id^="wrap_{uid}_"]').forEach(function(d) {{ d.style.display = 'none'; }});
-    var tk = k.replace(/-/g, '_').replace(/\\./g, '_').replace(/ /g, '_');
-    var tgt = document.getElementById('wrap_{uid}_' + tk);
-    if (tgt) {{
-        tgt.style.display = 'block';
-        tgt.style.overflow = 'visible';
-        setTimeout(function() {{ window.dispatchEvent(new Event('resize')); }}, 150);
-        setTimeout(function() {{ window.dispatchEvent(new Event('resize')); }}, 500);
-    }}
-}}
-document.addEventListener('DOMContentLoaded', function() {{ update_{uid}(); }});
-setTimeout(function() {{ update_{uid}(); }}, 500);
-</script>
-"""
+            <script>
+            {cascade_js}
+            function update_{uid}() {{
+                {"update_cascade_" + uid + "();" if cascade and len(dimensions) > 1 else ""}
+                var k = {key_parts};
+                document.querySelectorAll('[id^="wrap_{uid}_"]').forEach(function(d) {{ d.style.display = 'none'; }});
+                var tk = k.replace(/-/g, '_').replace(/\\./g, '_').replace(/ /g, '_');
+                var tgt = document.getElementById('wrap_{uid}_' + tk);
+                if (tgt) {{
+                    tgt.style.display = 'block';
+                    tgt.style.overflow = 'visible';
+                    setTimeout(function() {{ window.dispatchEvent(new Event('resize')); }}, 150);
+                    setTimeout(function() {{ window.dispatchEvent(new Event('resize')); }}, 500);
+                }}
+            }}
+            document.addEventListener('DOMContentLoaded', function() {{ update_{uid}(); }});
+            setTimeout(function() {{ update_{uid}(); }}, 500);
+            </script>
+            """
 
         self.html_report += f"<h2>{title}</h2>\n"
         self.html_report += f'<div style="margin-bottom:12px;">{selects_html}</div>\n'

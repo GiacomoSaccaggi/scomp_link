@@ -134,7 +134,7 @@ report.save_html('output.html')
 
 ## MCP Server
 
-For structured tool calls (29 tools), start the MCP server:
+For structured tool calls (31 tools), start the MCP server:
 ```bash
 scomp-link mcp
 ```
@@ -156,7 +156,9 @@ For building custom branded HTML reports step-by-step:
 10. report_add_dark_mode_toggle(report_id) → floating dark/light toggle
 11. report_add_code(report_id, code, language, title, output, line_numbers, collapsed) → syntax-highlighted code block with copy button
 12. report_add_diff(report_id, old_code, new_code, language, title, old_label, new_label, collapsed) → side-by-side diff view
-13. report_save(report_id, output) → saves HTML, frees memory
+13. report_add_mermaid(report_id, diagram, title, collapsed) → Mermaid.js diagram (flowchart, sequence, gantt, etc.)
+14. report_add_terminal(report_id, cast_data, title, cols, rows, theme, collapsed) → embedded terminal replay (asciinema)
+15. report_save(report_id, output) → saves HTML, frees memory
 ```
 
 **Engines:** plotly (interactive), rawgraphs (SVG static), highcharts (time series)

@@ -534,6 +534,73 @@ class DiffStep(ReportStep):
         return report
 
 
+class MermaidStep(ReportStep):
+    """
+    Adds a Mermaid.js diagram to the report.
+
+    Parameters
+    ----------
+    diagram : str
+        Mermaid diagram definition.
+    title : str
+        Optional title above the diagram.
+    collapsed : bool
+        Wrap in collapsible element (default: False).
+    """
+
+    def __init__(self, diagram: str, title: str = "", collapsed: bool = False):
+        self.diagram = diagram
+        self.title = title
+        self.collapsed = collapsed
+
+    def execute(self, report: "ScompLinkHTMLReport") -> "ScompLinkHTMLReport":
+        report.add_mermaid(self.diagram, self.title, collapsed=self.collapsed)
+        return report
+
+
+class TerminalStep(ReportStep):
+    """
+    Adds an embedded terminal replay (asciinema) to the report.
+
+    Parameters
+    ----------
+    cast_data : str
+        Asciinema cast file content (v2 format).
+    title : str
+        Optional title above the terminal.
+    cols : int
+        Terminal width (default: 80).
+    rows : int
+        Terminal height (default: 24).
+    theme : str
+        Player theme (default: "dracula").
+    collapsed : bool
+        Wrap in collapsible element (default: False).
+    """
+
+    def __init__(
+        self,
+        cast_data: str,
+        title: str = "",
+        cols: int = 80,
+        rows: int = 24,
+        theme: str = "dracula",
+        collapsed: bool = False,
+    ):
+        self.cast_data = cast_data
+        self.title = title
+        self.cols = cols
+        self.rows = rows
+        self.theme = theme
+        self.collapsed = collapsed
+
+    def execute(self, report: "ScompLinkHTMLReport") -> "ScompLinkHTMLReport":
+        report.add_terminal(
+            self.cast_data, self.title, cols=self.cols, rows=self.rows, theme=self.theme, collapsed=self.collapsed
+        )
+        return report
+
+
 class SaveStep(ReportStep):
     """
     Saves the report as HTML. Automatically closes any open section before saving.
