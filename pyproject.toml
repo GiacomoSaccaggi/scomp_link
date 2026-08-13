@@ -174,7 +174,7 @@ shap = [
 
 # MCP server for AI agent integration
 mcp = [
-    "mcp>=1.0.0,<2.0.0",
+    "mcp>=1.0.0,<3.0.0",
 ]
 
 # REST API serving
