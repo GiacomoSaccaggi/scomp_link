@@ -9,7 +9,7 @@ on first access, keeping `import scomp_link` near-instant.
 
 from .utils.logger import set_verbosity
 
-__version__ = "2.1.2"
+__version__ = "2.2.0"
 
 __all__ = [
     "set_verbosity",
@@ -48,6 +48,8 @@ __all__ = [
     "SaveStep",
     "CodeStep",
     "DiffStep",
+    "MermaidStep",
+    "TerminalStep",
 ]
 
 _LAZY_IMPORTS = {
@@ -96,6 +98,8 @@ _LAZY_IMPORTS = {
     "LogStep": (".pipeline_dsl", "LogStep"),
     "CodeStep": (".pipeline_dsl", "CodeStep"),
     "DiffStep": (".pipeline_dsl", "DiffStep"),
+    "MermaidStep": (".pipeline_dsl", "MermaidStep"),
+    "TerminalStep": (".pipeline_dsl", "TerminalStep"),
 }
 
 
