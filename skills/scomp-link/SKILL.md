@@ -246,7 +246,7 @@ describe → (understand columns) → engineer → (engineered.csv) → tune →
 
 ## MCP Server
 
-scomp-link includes an MCP server (29 tools) for agent integration:
+scomp-link includes an MCP server (31 tools) for agent integration:
 
 ```bash
 # Start the MCP server (stdio mode for Claude Desktop / Kiro / Cursor)
