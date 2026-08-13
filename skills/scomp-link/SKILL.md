@@ -246,7 +246,7 @@ describe → (understand columns) → engineer → (engineered.csv) → tune →
 
 ## MCP Server
 
-scomp-link includes an MCP server (27 tools) for agent integration:
+scomp-link includes an MCP server (29 tools) for agent integration:
 
 ```bash
 # Start the MCP server (stdio mode for Claude Desktop / Kiro / Cursor)
@@ -271,7 +271,9 @@ For building custom branded HTML reports step-by-step:
 8. report_add_comparison_table(report_id, data, baseline_col, compare_cols, ...) → delta comparison
 9. report_add_summary_stats(report_id, data_json, title) → auto data profiling table
 10. report_add_dark_mode_toggle(report_id) → floating dark/light toggle
-11. report_save(report_id, output) → saves HTML, frees memory
+11. report_add_code(report_id, code, language, title, output, line_numbers, collapsed) → syntax-highlighted code block with copy button
+12. report_add_diff(report_id, old_code, new_code, language, title, old_label, new_label, collapsed) → side-by-side diff view
+13. report_save(report_id, output) → saves HTML, frees memory
 ```
 
 **Engines:** plotly (interactive), rawgraphs (SVG static), highcharts (time series)

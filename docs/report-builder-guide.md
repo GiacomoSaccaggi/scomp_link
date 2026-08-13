@@ -131,7 +131,9 @@ scomp-link init-config --local
 | 8 | `report_add_comparison_table` | Add model/experiment comparison table with deltas |
 | 9 | `report_add_summary_stats` | Add auto-generated data profiling table |
 | 10 | `report_add_dark_mode_toggle` | Add floating dark/light mode toggle |
-| 11 | `report_save` | Save to HTML file, close session |
+| 11 | `report_add_code` | Add syntax-highlighted code block with copy button |
+| 12 | `report_add_diff` | Add side-by-side diff view (GitHub-style) |
+| 13 | `report_save` | Save to HTML file, close session |
 
 ### Basic Example
 
@@ -548,6 +550,147 @@ report.close_section()
 
 # Save
 report.save_html("inter_season_report.html")
+```
+
+---
+
+## `report_add_code` — Code Blocks
+
+Add syntax-highlighted code blocks to the report. Uses **Prism.js** for client-side highlighting with the Tomorrow Night theme. Supports any language Prism autoloader can resolve.
+
+### Parameters
+
+| Parameter | Default | Description |
+|-----------|---------|-------------|
+| `report_id` | *required* | Report ID from `report_create` |
+| `code` | *required* | Source code to display |
+| `language` | `"python"` | Language for highlighting (python, rust, javascript, sql, bash, json, yaml, html, css, etc.) |
+| `title` | `""` | Title above the code block |
+| `output` | `""` | Program output shown in a terminal-style box below (empty = no output) |
+| `line_numbers` | `false` | Show line numbers alongside the code |
+| `collapsed` | `false` | Wrap in collapsible `<details>` element (useful for long code) |
+
+### Features
+
+- **Copy-to-clipboard button** — appears automatically on every code block
+- **Line numbers** — toggle with `line_numbers: true`
+- **Collapsible** — auto-collapses long code when `collapsed: true`
+- **Terminal-style output** — separate dark box with monospace font when `output` is provided
+- **Auto-detect languages** — Prism autoloader fetches grammars on demand
+
+### Example
+
+```
+report_add_code("a3f8b2c1",
+  "import pandas as pd\ndf = pd.read_csv('data.csv')\nprint(df.shape)",
+  "python",
+  "Data Loading",
+  "(1000, 15)")
+```
+
+### Python API equivalent
+
+```python
+report.add_code_block(
+    code="import pandas as pd\ndf = pd.read_csv('data.csv')\nprint(df.shape)",
+    language="python",
+    title="Data Loading",
+    output="(1000, 15)",
+    line_numbers=True,
+    collapsed=False,
+)
+```
+
+---
+
+## `report_add_diff` — Diff View
+
+Add a side-by-side diff view to the report. Uses **diff2html** for GitHub-style rendering with syntax highlighting. Old code on the left (deletions in red), new code on the right (additions in green).
+
+### Parameters
+
+| Parameter | Default | Description |
+|-----------|---------|-------------|
+| `report_id` | *required* | Report ID from `report_create` |
+| `old_code` | *required* | The original code (left side) |
+| `new_code` | *required* | The modified code (right side) |
+| `language` | `"python"` | Language for syntax highlighting |
+| `title` | `""` | Title above the diff |
+| `old_label` | `"before"` | Label for the old version |
+| `new_label` | `"after"` | Label for the new version |
+| `collapsed` | `false` | Wrap in collapsible element (useful for large diffs) |
+
+### Features
+
+- **Side-by-side view** — old code on left, new code on right
+- **Color-coded changes** — red for deletions, green for additions
+- **Syntax highlighting** — powered by highlight.js inside diff2html
+- **Line matching** — intelligently matches similar lines
+- **Handles identical code** — shows "No differences found" message
+- **Collapsible** — hides large diffs behind a toggle
+
+### Example
+
+```
+report_add_diff("a3f8b2c1",
+  "def greet():\n    print('hello')",
+  "def greet(name):\n    print(f'hello {name}')",
+  "python",
+  "Greeting Refactored",
+  "v1.0",
+  "v2.0")
+```
+
+### Python API equivalent
+
+```python
+report.add_diff(
+    old_code="def greet():\n    print('hello')",
+    new_code="def greet(name):\n    print(f'hello {name}')",
+    language="python",
+    title="Greeting Refactored",
+    old_label="v1.0",
+    new_label="v2.0",
+    collapsed=False,
+)
+```
+
+---
+
+## Pipeline DSL — Code & Diff Steps
+
+Use the `>>` operator to build reports declaratively with `CodeStep` and `DiffStep`:
+
+```python
+from scomp_link import CodeStep, DiffStep, SectionStep, SaveStep
+from scomp_link.utils.report_html import ScompLinkHTMLReport
+
+report = ScompLinkHTMLReport("Code Review Report")
+
+(
+    SectionStep("Implementation")
+    >> CodeStep("def train(X, y):\n    return model.fit(X, y)", "python", "Training Function", line_numbers=True)
+    >> CodeStep("model.predict(X_test)", "python", "Prediction", output="[0.91, 0.87, 0.94]")
+    >> SectionStep("Changes")
+    >> DiffStep(
+        "model = Ridge(alpha=1.0)",
+        "model = GradientBoostingRegressor(n_estimators=200)",
+        "python", "Model Upgrade", "v1", "v2"
+    )
+    >> SaveStep("code_review.html")
+).run(report)
+```
+
+### `CodeStep` Parameters
+
+```python
+CodeStep(code, language="python", title="", output=None, line_numbers=False, collapsed=False)
+```
+
+### `DiffStep` Parameters
+
+```python
+DiffStep(old_code, new_code, language="python", title="", old_label="before", new_label="after", collapsed=False)
 ```
 
 ---
