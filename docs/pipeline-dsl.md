@@ -100,6 +100,8 @@ report = ScompLinkHTMLReport("Q4 Report")
 | `HighchartsStep(html, title)` | HTML snippet + title | Adds Highcharts chart |
 | `CodeStep(...)` | Code + options | Adds syntax-highlighted code block |
 | `DiffStep(...)` | Old/new code + options | Adds side-by-side diff view |
+| `MermaidStep(...)` | Diagram + options | Adds Mermaid.js diagram |
+| `TerminalStep(...)` | Cast data + options | Adds terminal replay (asciinema) |
 | `SaveStep(path)` | Output file path | Saves report to HTML file |
 | `LogStep(label)` | Debug label | Prints intermediate state (no-op in output) |
 
@@ -323,3 +325,93 @@ report_save(report_id, "out.html")
 ```
 
 All three produce identical HTML output.
+
+---
+
+## Mermaid Diagrams (`MermaidStep`)
+
+Add Mermaid.js diagrams to reports — flowcharts, sequence diagrams, gantt charts, etc.
+
+```python
+from scomp_link import MermaidStep, SectionStep, SaveStep
+from scomp_link.utils.report_html import ScompLinkHTMLReport
+
+report = ScompLinkHTMLReport("Architecture Report")
+
+(
+    SectionStep("Pipeline Flow")
+    >> MermaidStep("graph TD; A[Input]-->B[Train]; B-->C[Validate]; C-->D[Deploy];", "ML Pipeline")
+    >> MermaidStep("sequenceDiagram\n  User->>Agent: train model\n  Agent->>scomp: run --task regression\n  scomp-->>Agent: model.scomp", "Agent Flow", collapsed=True)
+    >> SaveStep("architecture.html")
+).run(report)
+```
+
+### `MermaidStep` Parameters
+
+```python
+MermaidStep(
+    diagram: str,           # Mermaid diagram definition
+    title: str = "",        # Optional title above the diagram
+    collapsed: bool = False # Wrap in collapsible element
+)
+```
+
+### Supported Diagram Types
+
+- `graph TD` / `graph LR` — flowcharts
+- `sequenceDiagram` — sequence diagrams
+- `classDiagram` — class diagrams
+- `gantt` — Gantt charts
+- `stateDiagram-v2` — state diagrams
+- `erDiagram` — entity-relationship diagrams
+- `pie` — pie charts
+
+---
+
+## Terminal Replay (`TerminalStep`)
+
+Embed interactive terminal recordings (asciinema .cast files) in reports.
+
+```python
+from scomp_link import TerminalStep, SectionStep, SaveStep
+from scomp_link.utils.report_html import ScompLinkHTMLReport
+
+report = ScompLinkHTMLReport("CLI Demo Report")
+
+with open("demo.cast") as f:
+    cast = f.read()
+
+(
+    SectionStep("Live Demo")
+    >> TerminalStep(cast, "scomp-link CLI Demo", cols=100, rows=30, theme="dracula")
+    >> SaveStep("demo_report.html")
+).run(report)
+```
+
+### `TerminalStep` Parameters
+
+```python
+TerminalStep(
+    cast_data: str,         # asciinema .cast file content (v2 JSON lines format)
+    title: str = "",        # Optional title above the terminal
+    cols: int = 80,         # Terminal width in columns
+    rows: int = 24,         # Terminal height in rows
+    theme: str = "dracula", # Player theme: dracula, monokai, solarized-dark, tango
+    collapsed: bool = False # Wrap in collapsible element
+)
+```
+
+### Creating a .cast File
+
+```bash
+# Record a real terminal session
+asciinema rec demo.cast
+
+# Or create programmatically (v2 format — JSON lines)
+cat > demo.cast << 'EOF'
+{"version": 2, "width": 100, "height": 30}
+[0.0, "o", "$ scomp-link describe --data train.csv\r\n"]
+[0.5, "o", "  column  dtype  missing%\r\n"]
+[0.6, "o", "    age   int64     0.0%\r\n"]
+EOF
+```

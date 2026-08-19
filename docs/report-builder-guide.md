@@ -117,7 +117,7 @@ scomp-link init-config --local
 
 ## Report Builder Workflow
 
-### The 6 Tools
+### The 15 Tools
 
 | Step | Tool | What it does |
 |------|------|-------------|
@@ -133,7 +133,9 @@ scomp-link init-config --local
 | 10 | `report_add_dark_mode_toggle` | Add floating dark/light mode toggle |
 | 11 | `report_add_code` | Add syntax-highlighted code block with copy button |
 | 12 | `report_add_diff` | Add side-by-side diff view (GitHub-style) |
-| 13 | `report_save` | Save to HTML file, close session |
+| 13 | `report_add_mermaid` | Add Mermaid.js diagram (flowchart, sequence, gantt, etc.) |
+| 14 | `report_add_terminal` | Add embedded terminal replay (asciinema player) |
+| 15 | `report_save` | Save to HTML file, close session |
 
 ### Basic Example
 
@@ -445,7 +447,7 @@ Add a floating button (top-right corner) that toggles dark/light mode.
 
 Copy-paste this into your AI agent to enable scomp-link:
 
-> You have access to scomp-link, an ML toolkit with 27 MCP tools. Use them for:
+> You have access to scomp-link, an ML toolkit with 33 MCP tools. Use them for:
 > - **Data profiling**: `describe_data(path)` — always start here
 > - **Training**: `train_model(data, target, task)` with optional `tune=true` for Optuna
 > - **Validation**: `validate_model(artifact, data, target)` for test evaluation
@@ -691,6 +693,75 @@ CodeStep(code, language="python", title="", output=None, line_numbers=False, col
 
 ```python
 DiffStep(old_code, new_code, language="python", title="", old_label="before", new_label="after", collapsed=False)
+```
+
+---
+
+## `report_add_mermaid` — Mermaid.js Diagrams
+
+Add interactive diagrams using Mermaid.js syntax:
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `report_id` | str | Report ID from `report_create` |
+| `diagram` | str | Mermaid diagram definition |
+| `title` | str | Optional title above the diagram |
+| `collapsed` | bool | Wrap in collapsible element (default: false) |
+
+### Example
+
+```
+report_add_mermaid("a3f8b2c1", "graph TD; A[Start]-->B[Train]; B-->C[Validate]; C-->D[Deploy];", "ML Pipeline Flow")
+```
+
+### Supported Diagram Types
+
+- `graph TD` — top-down flowchart
+- `graph LR` — left-right flowchart
+- `sequenceDiagram` — sequence diagrams
+- `classDiagram` — class diagrams
+- `gantt` — Gantt charts
+- `stateDiagram-v2` — state diagrams
+- `erDiagram` — entity-relationship diagrams
+- `pie` — pie charts
+
+---
+
+## `report_add_terminal` — Terminal Replay (Asciinema)
+
+Embed an interactive terminal recording that plays back commands and output:
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `report_id` | str | Report ID from `report_create` |
+| `cast_data` | str | Content of an asciinema .cast file (v2 format, JSON lines) |
+| `title` | str | Optional title above the terminal |
+| `cols` | int | Terminal width in columns (default: 80) |
+| `rows` | int | Terminal height in rows (default: 24) |
+| `theme` | str | Player theme: "dracula", "monokai", "solarized-dark", "tango" (default: "dracula") |
+| `collapsed` | bool | Wrap in collapsible element (default: false) |
+
+### Creating a .cast File
+
+```bash
+# Record a terminal session
+asciinema rec demo.cast
+
+# Or create programmatically (v2 format)
+cat > demo.cast << 'EOF'
+{"version": 2, "width": 100, "height": 30}
+[0.0, "o", "$ scomp-link describe --data train.csv\r\n"]
+[0.5, "o", "  column  dtype  missing%\r\n"]
+[0.6, "o", "    age   int64     0.0%\r\n"]
+EOF
+```
+
+### Example
+
+```python
+with open("demo.cast") as f:
+    cast = f.read()
+report_add_terminal("a3f8b2c1", cast, "CLI Demo", cols=100, rows=30, theme="dracula")
 ```
 
 ---

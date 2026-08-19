@@ -15,7 +15,7 @@
 [![Security: CodeQL](https://img.shields.io/badge/security-CodeQL-green?logo=github)](https://github.com/GiacomoSaccaggi/scomp_link/security)
 [![Docker](https://img.shields.io/docker/v/jack15121/scomp-link?label=docker&logo=docker)](https://hub.docker.com/r/jack15121/scomp-link)
 [![Docs](https://img.shields.io/badge/docs-GitHub%20Pages-blue?logo=github)](https://giacomosaccaggi.github.io/scomp_link/)
-[![MCP](https://img.shields.io/badge/MCP-31_tools-blue?logo=anthropic)](https://modelcontextprotocol.io)
+[![MCP](https://img.shields.io/badge/MCP-33_tools-blue?logo=anthropic)](https://modelcontextprotocol.io)
 [![Smithery](https://img.shields.io/badge/Smithery-scomp--link-purple)](https://smithery.ai/servers/giacomosaccaggi/scomp-link)
 [![HuggingFace](https://img.shields.io/badge/%F0%9F%A4%97-MCP%20Space-yellow)](https://huggingface.co/spaces/Euribor512/scomp-link)
 [![Claude](https://img.shields.io/badge/Works_with-Claude-blueviolet?logo=anthropic)](AGENT_INTEGRATION.md)
@@ -390,7 +390,7 @@ scomp_link/
 
 scomp-link works natively with AI agents via **MCP (Model Context Protocol)** and **Agent Skills**.
 
-### MCP Server (31 tools for structured agent calls)
+### MCP Server (33 tools for structured agent calls)
 
 ```bash
 pip install scomp-link[mcp]
@@ -428,7 +428,7 @@ docker run -i jack15121/scomp-link mcp
 
 Copy-paste this prompt into your AI agent (Claude, ChatGPT, Cursor, etc.) to enable scomp-link capabilities:
 
-> You have access to scomp-link, an ML toolkit with 31 MCP tools. Use them for:
+> You have access to scomp-link, an ML toolkit with 33 MCP tools. Use them for:
 > - **Data profiling**: `describe_data(path)` — always start here
 > - **Training**: `train_model(data, target, task)` with optional `tune=true` for Optuna
 > - **Validation**: `validate_model(artifact, data, target)` for test evaluation

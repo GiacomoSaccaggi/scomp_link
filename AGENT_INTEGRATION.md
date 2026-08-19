@@ -44,7 +44,7 @@ cp -r /path/to/scomp_link/skills/scomp-link .github/copilot/skills/
 
 ## 2. MCP Server — Model Context Protocol (Structured Tools)
 
-The MCP server exposes 27 tools, 3 resources, and 4 prompts over the standard MCP protocol. Any MCP-compatible client can discover and call them with typed inputs.
+The MCP server exposes 33 tools, 3 resources, and 4 prompts over the standard MCP protocol. Any MCP-compatible client can discover and call them with typed inputs.
 
 ### Install
 
@@ -197,6 +197,23 @@ docker run -i jack15121/scomp-link mcp
 | `compare_models` | Side-by-side model comparison |
 | `export_model` | Convert .scomp to pickle/joblib/ONNX |
 | `tune_model` | Hyperparameter optimization (via train_model with tune=true) |
+| `embed_text` | Generate embeddings from trained contrastive model |
+| `select_backbone` | Find best pretrained backbone for text data |
+| `report_create` | Create a new report session with optional branding |
+| `report_add_section` | Add a collapsible section to the report |
+| `report_add_text` | Add text content (paragraph, title, subtitle, raw HTML) |
+| `report_add_table` | Add an interactive data table from JSON |
+| `report_add_chart` | Add a chart (41 types across plotly/rawgraphs/highcharts) |
+| `report_add_kpi_cards` | Add KPI summary cards with trend/status coloring |
+| `report_add_tabs` | Add tabbed navigation (html/chart/table content) |
+| `report_add_comparison_table` | Add model comparison table with color-coded deltas |
+| `report_add_summary_stats` | Add auto-generated data profiling table |
+| `report_add_dark_mode_toggle` | Add floating dark/light mode toggle button |
+| `report_add_code` | Add syntax-highlighted code block with copy button |
+| `report_add_diff` | Add side-by-side diff view (GitHub-style) |
+| `report_add_mermaid` | Add Mermaid.js diagram (flowchart, sequence, gantt, etc.) |
+| `report_add_terminal` | Add embedded terminal replay (asciinema player) |
+| `report_save` | Save the report to HTML file and free memory |
 
 ## Available MCP Resources
 
@@ -238,7 +255,7 @@ scomp-link supports the emerging `.well-known/mcp/server-card.json` standard (SE
 GET https://Euribor512-scomp-link.hf.space/.well-known/mcp/server-card.json
 ```
 
-The server card advertises all 27 tools, transport type, and connection URL — enabling auto-configuration without manual setup.
+The server card advertises all 33 tools, transport type, and connection URL — enabling auto-configuration without manual setup.
 
 ---
 

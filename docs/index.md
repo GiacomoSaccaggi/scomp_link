@@ -39,7 +39,7 @@ It provides:
 | 💾 **Persistence** | Custom `.scomp` format + export to pickle, joblib, ONNX |
 | 📈 **Visualization** | 31 RAWGraphs SVG charts, Plotly interactive charts, Highcharts (streamgraph, heatmap, gantt) |
 | 📝 **Reporting** | Interactive HTML reports with embedded charts, data quality reports, validation reports |
-| 🤝 **Agent Integration** | MCP server (27 tools, 3 resources, 4 prompts) + Agent Skill (SKILL.md) |
+| 🤝 **Agent Integration** | MCP server (33 tools, 3 resources, 4 prompts) + Agent Skill (SKILL.md) |
 | 🚀 **Deployment** | REST API serving (Flask), YAML-driven pipelines |
 
 ---
