@@ -7,6 +7,7 @@
 [![PyPI](https://img.shields.io/pypi/v/scomp-link)](https://pypi.org/project/scomp-link/)
 [![Python](https://img.shields.io/pypi/pyversions/scomp-link)](https://pypi.org/project/scomp-link/)
 [![Downloads](https://img.shields.io/pypi/dm/scomp-link)](https://pypi.org/project/scomp-link/)
+[![Total Downloads](https://static.pepy.tech/badge/scomp-link)](https://pepy.tech/project/scomp-link)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/GiacomoSaccaggi/scomp_link/blob/main/LICENSE)
 [![Code style: ruff](https://img.shields.io/badge/code%20style-ruff-000000.svg)](https://github.com/astral-sh/ruff)
 [![Typed: pyright](https://img.shields.io/badge/typing-pyright-blue)](https://github.com/microsoft/pyright)
