@@ -5,7 +5,7 @@ license: "MIT"
 compatibility: "Python 3.10+. Core: numpy, pandas, scikit-learn, plotly. Optional: torch, transformers, spacy (NLP), tensorflow (images), optuna (tuning), shap/lime (explainability), flask (serving)."
 metadata:
   author: "Giacomo Saccaggi"
-  version: "2.1.0"
+  version: "2.2.1"
   repository: "https://github.com/GiacomoSaccaggi/scomp_link"
   pypi: "https://pypi.org/project/scomp-link/"
 allowed-tools: "Bash(scomp-link:*) Bash(python:*) Python(scomp_link:*)"
@@ -246,7 +246,7 @@ describe → (understand columns) → engineer → (engineered.csv) → tune →
 
 ## MCP Server
 
-scomp-link includes an MCP server (31 tools) for agent integration:
+scomp-link includes an MCP server (33 tools) for agent integration:
 
 ```bash
 # Start the MCP server (stdio mode for Claude Desktop / Kiro / Cursor)
@@ -273,7 +273,9 @@ For building custom branded HTML reports step-by-step:
 10. report_add_dark_mode_toggle(report_id) → floating dark/light toggle
 11. report_add_code(report_id, code, language, title, output, line_numbers, collapsed) → syntax-highlighted code block with copy button
 12. report_add_diff(report_id, old_code, new_code, language, title, old_label, new_label, collapsed) → side-by-side diff view
-13. report_save(report_id, output) → saves HTML, frees memory
+13. report_add_mermaid(report_id, diagram, title, collapsed) → Mermaid.js diagram (flowchart, sequence, gantt, etc.)
+14. report_add_terminal(report_id, cast_data, title, cols, rows, theme, collapsed) → embedded terminal replay (asciinema)
+15. report_save(report_id, output) → saves HTML, frees memory
 ```
 
 **Engines:** plotly (interactive), rawgraphs (SVG static), highcharts (time series)
