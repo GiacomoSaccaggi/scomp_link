@@ -134,7 +134,7 @@ report.save_html('output.html')
 
 ## MCP Server
 
-For structured tool calls (31 tools), start the MCP server:
+For structured tool calls (33 tools), start the MCP server:
 ```bash
 scomp-link mcp
 ```

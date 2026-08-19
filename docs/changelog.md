@@ -1,5 +1,21 @@
 # Changelog
 
+## 2.2.1 (2026-08-19)
+
+### Added
+- **`report_add_mermaid` MCP tool**: embed Mermaid.js diagrams (flowchart, sequence, gantt, state, ER, pie charts) with optional collapsible wrapper
+- **`report_add_terminal` MCP tool**: embed asciinema terminal recordings as interactive players (play/pause/seek), customizable theme, dimensions, and collapsible wrapper
+- **`add_mermaid()` method** on `ScompLinkHTMLReport`: Python API for Mermaid diagrams
+- **`add_terminal()` method** on `ScompLinkHTMLReport`: Python API for terminal replays
+- **CDN deps**: asciinema-player 3.8.0 (CSS + JS), Mermaid 10.x via ESM
+
+### Fixed
+- CLI `--version` now correctly reports 2.2.1 (was hardcoded to 2.1.0)
+
+### Changed
+- MCP tool count: 31 → 33
+- Report builder: 13 → 15 tools
+
 ## Unreleased
 
 ### Added

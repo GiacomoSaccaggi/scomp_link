@@ -16,7 +16,7 @@
 | **Time series** | ✅ ARIMA + ETS + auto | ❌ | ✅ | ✅ |
 | **Text classification** | ✅ TF-IDF + BERT contrastive | ❌ | ✅ Basic | ✅ |
 | **REST API deploy** | ✅ `scomp-link serve` | ❌ | ❌ | ❌ |
-| **MCP server (AI agents)** | ✅ 27 tools | ❌ | ❌ | ❌ |
+| **MCP server (AI agents)** | ✅ 33 tools | ❌ | ❌ | ❌ |
 | **YAML pipelines** | ✅ `scomp-link pipeline` | ❌ | ❌ | ❌ |
 | **Agent Skill** | ✅ SKILL.md | ❌ | ❌ | ❌ |
 | **Feature engineering** | ✅ Auto (interactions, log, encoding) | ❌ Manual | ✅ | ✅ |
