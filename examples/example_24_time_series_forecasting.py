@@ -15,6 +15,7 @@ Requirements:
 
 import numpy as np
 import pandas as pd
+
 from scomp_link import TimeSeriesForecaster
 
 np.random.seed(42)
@@ -33,7 +34,7 @@ print(f"Series length: {len(series)}, range: [{series.min():.1f}, {series.max():
 
 # === 1. ARIMA ===
 print("\n--- 1. ARIMA Forecasting ---")
-fc_arima = TimeSeriesForecaster(method='arima', horizon=20)
+fc_arima = TimeSeriesForecaster(method="arima", horizon=20)
 fc_arima.fit(series[:180])
 pred_arima = fc_arima.predict()
 actual = series[180:200].values  # type: ignore[union-attr]
@@ -42,7 +43,7 @@ print(f"  Forecast MAE: {mae_arima:.2f}")
 
 # === 2. Exponential Smoothing ===
 print("\n--- 2. Exponential Smoothing ---")
-fc_ets = TimeSeriesForecaster(method='exp_smoothing', horizon=20, seasonal_period=12)
+fc_ets = TimeSeriesForecaster(method="exp_smoothing", horizon=20, seasonal_period=12)
 fc_ets.fit(series[:180])
 pred_ets = fc_ets.predict()
 mae_ets = np.abs(actual - pred_ets.values).mean()
@@ -55,7 +56,7 @@ print(ci.head().to_string())
 
 # === 4. Walk-Forward CV ===
 print("\n--- 4. Walk-Forward Cross-Validation ---")
-fc_cv = TimeSeriesForecaster(method='arima', horizon=12)
+fc_cv = TimeSeriesForecaster(method="arima", horizon=12)
 cv_results = fc_cv.walk_forward_cv(series, n_splits=5, horizon=12)
 print(f"  Mean MAE:  {cv_results['mean_mae']:.2f}")
 print(f"  Mean RMSE: {cv_results['mean_rmse']:.2f}")
@@ -63,7 +64,7 @@ print(f"  Mean MAPE: {cv_results['mean_mape']:.1f}%")
 
 # === 5. Auto Method Selection ===
 print("\n--- 5. Auto Method Selection ---")
-fc_auto = TimeSeriesForecaster(method='auto', horizon=10)
+fc_auto = TimeSeriesForecaster(method="auto", horizon=10)
 fc_auto.fit(series[:180])
 pred_auto = fc_auto.predict()
 print(f"  Auto-selected method, forecast mean: {pred_auto.mean():.2f}")

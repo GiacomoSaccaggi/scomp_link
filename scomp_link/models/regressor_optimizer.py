@@ -246,9 +246,9 @@ class Boruta(BaseEstimator, TransformerMixin):
         return self
 
     def _transform(self, X, weak=False):
-        # sanity check
+        # sanity check: attribute access raises AttributeError when unfitted
         try:
-            self.ranking_
+            _ = self.ranking_
         except AttributeError:
             raise ValueError("You need to call the fit(X, y) method first.")
 
@@ -260,7 +260,7 @@ class Boruta(BaseEstimator, TransformerMixin):
 
     def _get_tree_num(self, n_feat):
         depth = self.estimator.get_params()["max_depth"]
-        if depth == None:
+        if depth is None:
             depth = 10
         # how many times a feature should be considered on average
         f_repr = 100
@@ -559,7 +559,7 @@ class RegressorOptimizer:
 
                     try:
                         r_xy = (a * d - b * c) / ((a + b) * (c + d) * (a + c) * (b + d)) ** (1 / 2)
-                    except:
+                    except ZeroDivisionError:
                         r_xy = -1 if a == 0 and c == 0 else 1
                     fisher_p_value = fisher_exact([[a, b], [c, d]])[1]
 
@@ -857,8 +857,13 @@ if __name__ == "__main__":
     import hashlib
 
     size_df = 2000
-    random_from_string = lambda x: int(hashlib.sha256(str(x).encode("utf-8")).hexdigest(), 16) % 11
-    epon = lambda x, a, b, c: a * np.exp(b * x) + c
+
+    def random_from_string(x):
+        return int(hashlib.sha256(str(x).encode("utf-8")).hexdigest(), 16) % 11
+
+    def epon(x, a, b, c):
+        return a * np.exp(b * x) + c
+
     a, b, c = [0.4, 0.3, 0.2]
     x = np.linspace(1, 20, size_df)
     p = [1.36, 1.21]

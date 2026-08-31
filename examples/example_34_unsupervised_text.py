@@ -20,7 +20,7 @@ Requirements:
 import numpy as np
 from sklearn.metrics import silhouette_score
 
-from scomp_link.utils.decorators import timer, memory_usage
+from scomp_link.utils.decorators import memory_usage, timer
 
 
 @memory_usage
@@ -30,7 +30,7 @@ def generate_text_corpus():
 
     # 4 topic clusters (the model should discover them without labels)
     topics = {
-        'sports': [
+        "sports": [
             "The football match ended in a dramatic penalty shootout",
             "Tennis champion wins third consecutive grand slam title",
             "Basketball team breaks scoring record in overtime victory",
@@ -44,7 +44,7 @@ def generate_text_corpus():
             "Rugby world cup final attracts record viewership",
             "Volleyball team wins gold medal at asian games",
         ],
-        'technology': [
+        "technology": [
             "New artificial intelligence model achieves human-level performance",
             "Quantum computer solves problem in record time",
             "Startup launches revolutionary battery technology for electric vehicles",
@@ -58,7 +58,7 @@ def generate_text_corpus():
             "Virtual reality headset achieves photorealistic graphics",
             "Robotics company demonstrates general purpose humanoid robot",
         ],
-        'cooking': [
+        "cooking": [
             "Chef prepares traditional Italian pasta with fresh ingredients",
             "Baking sourdough bread requires patience and proper fermentation",
             "Grilled vegetables taste better with olive oil and herbs",
@@ -72,7 +72,7 @@ def generate_text_corpus():
             "Homemade pizza dough needs overnight cold fermentation",
             "Wok cooking requires very high heat and fast movement",
         ],
-        'finance': [
+        "finance": [
             "Stock market reaches all time high amid strong earnings",
             "Central bank raises interest rates to combat inflation",
             "Cryptocurrency market experiences significant volatility",
@@ -104,12 +104,12 @@ def generate_text_corpus():
 
 
 @timer
-def cluster_texts(corpus, n_clusters: int = 4, method: str = 'kmeans'):
+def cluster_texts(corpus, n_clusters: int = 4, method: str = "kmeans"):
     """Fit and predict text clusters."""
     from scomp_link.models.unsupervised_text import TextEmbeddingClustering
 
     clusterer = TextEmbeddingClustering(
-        model_name='all-MiniLM-L6-v2',
+        model_name="all-MiniLM-L6-v2",
         n_clusters=n_clusters,
         method=method,
     )
@@ -120,7 +120,7 @@ def cluster_texts(corpus, n_clusters: int = 4, method: str = 'kmeans'):
 
 # --- Main execution ---
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     print("=" * 70)
     print("UNSUPERVISED TEXT CLUSTERING — TextEmbeddingClustering")
     print("=" * 70)
@@ -130,13 +130,13 @@ if __name__ == '__main__':
     corpus, true_labels = generate_text_corpus()
     print(f"  Total documents: {len(corpus)}")
     print(f"  True topics (hidden): {sorted(set(true_labels))}")
-    print(f"\n  Sample documents:")
+    print("\n  Sample documents:")
     for i in range(4):
-        print(f"    \"{corpus[i][:60]}...\"")
+        print(f'    "{corpus[i][:60]}..."')
 
     # === 2. KMeans clustering ===
     print("\n--- 2. KMeans Clustering (k=4) ---")
-    clusterer_km, labels_km = cluster_texts(corpus, n_clusters=4, method='kmeans')
+    clusterer_km, labels_km = cluster_texts(corpus, n_clusters=4, method="kmeans")
 
     sil_km = silhouette_score(
         clusterer_km.model.encode(corpus),
@@ -147,7 +147,7 @@ if __name__ == '__main__':
 
     # === 3. Hierarchical clustering ===
     print("\n--- 3. Hierarchical Clustering (k=4) ---")
-    clusterer_hc, labels_hc = cluster_texts(corpus, n_clusters=4, method='hierarchical')
+    clusterer_hc, labels_hc = cluster_texts(corpus, n_clusters=4, method="hierarchical")
 
     sil_hc = silhouette_score(
         clusterer_hc.model.encode(corpus),
@@ -164,26 +164,27 @@ if __name__ == '__main__':
 
         # Dominant topic in this cluster
         from collections import Counter
+
         topic_counts = Counter(cluster_true)
         dominant = topic_counts.most_common(1)[0]
 
         print(f"\n  Cluster {cluster_id} ({len(cluster_docs)} docs, dominant topic: {dominant[0]})")
         for doc in cluster_docs[:3]:
-            print(f"    • \"{doc[:55]}...\"")
+            print(f'    • "{doc[:55]}..."')
 
     # === 5. Evaluate cluster-topic alignment ===
     print("\n--- 5. Cluster-Topic Alignment ---")
     from sklearn.metrics import adjusted_rand_score, normalized_mutual_info_score
 
     # Map true labels to integers for comparison
-    label_map = {l: i for i, l in enumerate(sorted(set(true_labels)))}
-    true_int = [label_map[l] for l in true_labels]
+    label_map = {name: i for i, name in enumerate(sorted(set(true_labels)))}
+    true_int = [label_map[name] for name in true_labels]
 
     ari = adjusted_rand_score(true_int, labels_km)
     nmi = normalized_mutual_info_score(true_int, labels_km)
     print(f"  Adjusted Rand Index: {ari:.4f}")
     print(f"  Normalized Mutual Information: {nmi:.4f}")
-    print(f"  (1.0 = perfect alignment, 0.0 = random)")
+    print("  (1.0 = perfect alignment, 0.0 = random)")
 
     # === 6. Predict on new texts ===
     print("\n--- 6. Predict on new unseen texts ---")
@@ -195,7 +196,7 @@ if __name__ == '__main__':
     ]
     new_labels = clusterer_km.predict(new_texts)
     for text, label in zip(new_texts, new_labels):
-        print(f"  Cluster {label}: \"{text[:50]}...\"")
+        print(f'  Cluster {label}: "{text[:50]}..."')
 
     # === Summary ===
     print("\n" + "=" * 70)

@@ -15,6 +15,7 @@ Requirements:
 
 import numpy as np
 import pandas as pd
+
 from scomp_link import AnomalyDetector
 
 # --- Generate synthetic data with known anomalies ---
