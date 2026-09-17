@@ -53,7 +53,7 @@ class OptunaOptimizer:
         scoring: str = "r2",
         cv: int = 5,
         n_trials: int = 100,
-        direction: Literal["minimize", "maximize"] = "maximize",
+        direction: Literal["maximize", "minimize"] = "maximize",
         random_state: int = 42,
     ):
         self.estimator_class = estimator_class

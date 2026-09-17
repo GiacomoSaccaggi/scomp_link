@@ -38,7 +38,7 @@ df = pd.DataFrame(
         "category": np.random.choice(["A", "B", "C"], N),
         "status": "active",  # constant
         "email": [f"user_{i}@example.com" for i in range(N)],  # near-unique
-        "notes": np.where(np.random.rand(N) > 0.15, np.nan, "some text"),  # 85% missing
+        "notes": [None if r > 0.15 else "some text" for r in np.random.rand(N)],  # 85% missing
         "score_pct": np.random.rand(N) * 100,
     }
 )
