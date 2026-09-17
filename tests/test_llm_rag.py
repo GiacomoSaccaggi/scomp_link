@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """Tests for scomp_link/llm/rag.py — chunking, guardrails, and RAGPipeline."""
 
-import tempfile
-from pathlib import Path
+import sys
+from unittest.mock import MagicMock, patch
 
 import pytest
 
@@ -23,13 +23,6 @@ from scomp_link.llm.rag import (
     validate_response,
 )
 
-try:
-    import chromadb  # noqa: F401
-
-    _has_chromadb = True
-except ImportError:
-    _has_chromadb = False
-
 # ---------------------------------------------------------------------------
 # MockEmbedder (no sentence-transformers needed)
 # ---------------------------------------------------------------------------
@@ -44,13 +37,74 @@ class MockEmbedder:
 
 
 # ---------------------------------------------------------------------------
+# Fake ChromaDB (no real chromadb package needed)
+# ---------------------------------------------------------------------------
+
+
+class _FakeCollection:
+    """In-memory ChromaDB collection replacement."""
+
+    def __init__(self, name):
+        self.name = name
+        self._docs = {}  # id -> (doc, metadata, embedding)
+
+    def upsert(self, ids, embeddings, documents, metadatas):
+        for i, id_ in enumerate(ids):
+            self._docs[id_] = (documents[i], metadatas[i], embeddings[i])
+
+    def query(self, query_embeddings, n_results, where_document=None):
+        items = list(self._docs.values())
+        if where_document and "$contains" in where_document:
+            kw = where_document["$contains"]
+            items = [it for it in items if kw in it[0]]
+        items = items[:n_results]
+        if not items:
+            return {"documents": [[]], "metadatas": [[]], "distances": [[]]}
+        docs = [it[0] for it in items]
+        metas = [it[1] for it in items]
+        dists = [0.1 * (i + 1) for i in range(len(items))]
+        return {"documents": [docs], "metadatas": [metas], "distances": [dists]}
+
+    def count(self):
+        return len(self._docs)
+
+
+class _FakeChromaClient:
+    """In-memory ChromaDB client replacement."""
+
+    def __init__(self, path=None):
+        self._collections = {}
+
+    def get_or_create_collection(self, name):
+        if name not in self._collections:
+            self._collections[name] = _FakeCollection(name)
+        return self._collections[name]
+
+    def get_collection(self, name):
+        if name not in self._collections:
+            raise ValueError(f"Collection {name} not found")
+        return self._collections[name]
+
+    def delete_collection(self, name):
+        self._collections.pop(name, None)
+
+
+def _patch_chromadb():
+    """Context manager that injects a fake 'chromadb' module into sys.modules."""
+    mod = MagicMock()
+    mod.PersistentClient = _FakeChromaClient
+    return patch.dict("sys.modules", {"chromadb": mod})
+
+
+# ---------------------------------------------------------------------------
 # Fixtures
 # ---------------------------------------------------------------------------
 
 
 @pytest.fixture
 def rag(tmp_path):
-    return RAGPipeline(persist_dir=str(tmp_path / "chroma"), embed_fn=MockEmbedder())
+    with _patch_chromadb():
+        yield RAGPipeline(persist_dir=str(tmp_path / "chroma"), embed_fn=MockEmbedder())
 
 
 @pytest.fixture
@@ -59,9 +113,10 @@ def indexed_rag(tmp_path):
     src.mkdir()
     (src / "main.py").write_text("def greet(name):\n    return f'Hello {name}'\n\ndef add(a, b):\n    return a + b\n")
     (src / "readme.txt").write_text("This project greets people and adds numbers.")
-    pipe = RAGPipeline(persist_dir=str(tmp_path / "chroma"), embed_fn=MockEmbedder())
-    pipe.build_index("test_idx", str(src))
-    return pipe
+    with _patch_chromadb():
+        pipe = RAGPipeline(persist_dir=str(tmp_path / "chroma"), embed_fn=MockEmbedder())
+        pipe.build_index("test_idx", str(src))
+        yield pipe
 
 
 # ---------------------------------------------------------------------------
@@ -266,21 +321,18 @@ class TestGuardrails:
 # ---------------------------------------------------------------------------
 
 
-@pytest.mark.skipif(
-    not _has_chromadb,
-    reason="chromadb not installed (pip install scomp-link[llm])",
-)
 class TestRAGPipeline:
     def test_build_index(self, tmp_path):
         src = tmp_path / "src"
         src.mkdir()
         (src / "main.py").write_text("def hello(): pass\n")
         (src / "notes.txt").write_text("Some notes here.")
-        pipe = RAGPipeline(persist_dir=str(tmp_path / "db"), embed_fn=MockEmbedder())
-        result = pipe.build_index("proj", str(src))
-        assert result["status"] == "ok"
-        assert result["chunks"] > 0
-        assert result["files"] > 0
+        with _patch_chromadb():
+            pipe = RAGPipeline(persist_dir=str(tmp_path / "db"), embed_fn=MockEmbedder())
+            result = pipe.build_index("proj", str(src))
+            assert result["status"] == "ok"
+            assert result["chunks"] > 0
+            assert result["files"] > 0
 
     def test_query(self, indexed_rag):
         results = indexed_rag.query("test_idx", "greet function", top_k=3)
@@ -339,10 +391,6 @@ class TestRAGPipeline:
 # ---------------------------------------------------------------------------
 
 
-@pytest.mark.skipif(
-    not _has_chromadb,
-    reason="chromadb not installed (pip install scomp-link[llm])",
-)
 class TestDSL:
     def test_rag_build_step(self, tmp_path):
         src = tmp_path / "src"
@@ -350,14 +398,13 @@ class TestDSL:
         (src / "code.py").write_text("x = 1\n")
         persist = str(tmp_path / "db")
 
-        from unittest.mock import patch
-
         from scomp_link.llm.dsl import LLMRAGBuildStep
 
         with (
-            patch("scomp_link.llm.rag.RAGPipeline.__init__", return_value=None) as mock_init,
+            patch("scomp_link.llm.rag.pipeline.RAGPipeline.__init__", return_value=None) as mock_init,
             patch(
-                "scomp_link.llm.rag.RAGPipeline.build_index", return_value={"status": "ok", "chunks": 1, "files": 1}
+                "scomp_link.llm.rag.pipeline.RAGPipeline.build_index",
+                return_value={"status": "ok", "chunks": 1, "files": 1},
             ) as mock_build,
         ):
             step = LLMRAGBuildStep(name="test", path=str(src), persist_dir=persist)

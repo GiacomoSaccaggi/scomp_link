@@ -2,6 +2,8 @@
 """Tests for scomp_link.llm.data (formatting, dedup) and serving.convert."""
 
 import json
+import sys
+from unittest.mock import MagicMock, patch
 
 import pytest
 
@@ -14,12 +16,41 @@ from scomp_link.llm.serving.convert import (
     _validate_quantization,
 )
 
-try:
-    import datasets  # noqa: F401
+# ---------------------------------------------------------------------------
+# Fake HuggingFace Dataset (no real 'datasets' package needed)
+# ---------------------------------------------------------------------------
 
-    _has_datasets = True
-except ImportError:
-    _has_datasets = False
+
+class _FakeDataset:
+    """Mimics a HuggingFace Dataset just enough for load_dataset tests."""
+
+    def __init__(self, data: dict):
+        self._data = data
+        self._len = len(next(iter(data.values()))) if data else 0
+
+    def __len__(self):
+        return self._len
+
+    def __getitem__(self, idx):
+        if isinstance(idx, int):
+            return {k: v[idx] for k, v in self._data.items()}
+        return self._data.get(idx, [])
+
+    @property
+    def column_names(self):
+        return list(self._data.keys())
+
+    @classmethod
+    def from_pandas(cls, df):
+        return cls({col: df[col].tolist() for col in df.columns})
+
+
+def _patch_datasets():
+    """Context manager that injects a fake 'datasets' module into sys.modules."""
+    mod = MagicMock()
+    mod.Dataset = _FakeDataset
+    return patch.dict("sys.modules", {"datasets": mod})
+
 
 # ── TestFormatting ───────────────────────────────────────────────────────────
 
@@ -289,47 +320,47 @@ class TestModelConverter:
 # ── TestLoader ───────────────────────────────────────────────────────────────
 
 
-@pytest.mark.skipif(
-    not _has_datasets,
-    reason="datasets package not installed (pip install scomp-link[llm])",
-)
 class TestLoader:
     def test_load_csv(self, tmp_path):
         import pandas as pd
 
+        from scomp_link.llm.data.loader import load_dataset
+
         p = tmp_path / "data.csv"
         pd.DataFrame({"text": ["hello", "world", "foo"]}).to_csv(p, index=False)
-        from scomp_link.llm.data.loader import load_dataset
-
-        ds = load_dataset(str(p), text_field="text")
-        assert len(ds) == 3
-        assert "text" in ds.column_names
+        with _patch_datasets():
+            ds = load_dataset(str(p), text_field="text")
+            assert len(ds) == 3
+            assert "text" in ds.column_names
 
     def test_load_json(self, tmp_path):
+        from scomp_link.llm.data.loader import load_dataset
+
         p = tmp_path / "data.json"
         p.write_text(json.dumps([{"text": "a"}, {"text": "b"}]))
-        from scomp_link.llm.data.loader import load_dataset
-
-        ds = load_dataset(str(p), text_field="text")
-        assert len(ds) == 2
+        with _patch_datasets():
+            ds = load_dataset(str(p), text_field="text")
+            assert len(ds) == 2
 
     def test_load_jsonl(self, tmp_path):
-        p = tmp_path / "data.jsonl"
-        p.write_text('{"text":"hello"}\n{"text":"world"}\n')
         from scomp_link.llm.data.loader import load_dataset
 
-        ds = load_dataset(str(p), text_field="text")
-        assert len(ds) == 2
+        p = tmp_path / "data.jsonl"
+        p.write_text('{"text":"hello"}\n{"text":"world"}\n')
+        with _patch_datasets():
+            ds = load_dataset(str(p), text_field="text")
+            assert len(ds) == 2
 
     def test_load_parquet(self, tmp_path):
         import pandas as pd
 
-        p = tmp_path / "data.parquet"
-        pd.DataFrame({"text": ["a", "b", "c"]}).to_parquet(p)
         from scomp_link.llm.data.loader import load_dataset
 
-        ds = load_dataset(str(p))
-        assert len(ds) == 3
+        p = tmp_path / "data.parquet"
+        pd.DataFrame({"text": ["a", "b", "c"]}).to_parquet(p)
+        with _patch_datasets():
+            ds = load_dataset(str(p))
+            assert len(ds) == 3
 
     def test_load_dataframe(self):
         import pandas as pd
@@ -337,41 +368,47 @@ class TestLoader:
         from scomp_link.llm.data.loader import load_dataset
 
         df = pd.DataFrame({"text": ["hello", "world"]})
-        ds = load_dataset(df, text_field="text")
-        assert len(ds) == 2
+        with _patch_datasets():
+            ds = load_dataset(df, text_field="text")
+            assert len(ds) == 2
 
     def test_load_unsupported_format(self, tmp_path):
+        from scomp_link.llm.data.loader import load_dataset
+
         p = tmp_path / "data.xlsx"
         p.write_text("fake")
-        from scomp_link.llm.data.loader import load_dataset
-
-        with pytest.raises(DataValidationError, match="Unsupported file format"):
-            load_dataset(str(p))
+        with _patch_datasets():
+            with pytest.raises(DataValidationError, match="Unsupported file format"):
+                load_dataset(str(p))
 
     def test_load_empty_csv(self, tmp_path):
+        from scomp_link.llm.data.loader import load_dataset
+
         p = tmp_path / "empty.csv"
         p.write_text("text\n")
-        from scomp_link.llm.data.loader import load_dataset
-
-        with pytest.raises(DataValidationError, match="empty"):
-            load_dataset(str(p))
+        with _patch_datasets():
+            with pytest.raises(DataValidationError, match="empty"):
+                load_dataset(str(p))
 
     def test_load_missing_column(self, tmp_path):
-        p = tmp_path / "data.csv"
-        p.write_text("col_a,col_b\n1,2\n3,4\n")
         from scomp_link.llm.data.loader import load_dataset
 
-        with pytest.raises(DataValidationError, match="missing required column"):
-            load_dataset(str(p), text_field="text")
+        p = tmp_path / "data.csv"
+        p.write_text("col_a,col_b\n1,2\n3,4\n")
+        with _patch_datasets():
+            with pytest.raises(DataValidationError, match="missing required column"):
+                load_dataset(str(p), text_field="text")
 
     def test_load_file_not_found(self):
         from scomp_link.llm.data.loader import load_dataset
 
-        with pytest.raises(DataValidationError, match="not found"):
-            load_dataset("/nonexistent/data.csv")
+        with _patch_datasets():
+            with pytest.raises(DataValidationError, match="not found"):
+                load_dataset("/nonexistent/data.csv")
 
     def test_load_unsupported_type(self):
         from scomp_link.llm.data.loader import load_dataset
 
-        with pytest.raises(DataValidationError, match="Unsupported dataset type"):
-            load_dataset(12345)  # type: ignore[arg-type]
+        with _patch_datasets():
+            with pytest.raises(DataValidationError, match="Unsupported dataset type"):
+                load_dataset(12345)  # type: ignore[arg-type]
