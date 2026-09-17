@@ -61,7 +61,7 @@ class OptunaOptimizer:
         self.scoring = scoring
         self.cv = cv
         self.n_trials = n_trials
-        self.direction = direction
+        self.direction: Literal["maximize", "minimize"] = direction
         self.random_state = random_state
         self.study_ = None
         self.best_model_ = None

@@ -219,7 +219,7 @@ def cmd_explain(args):
             enc_names = list(inner.get_feature_names_out())
         except Exception:
             enc_names = [f"f{i}" for i in range(X_enc.shape[1])]
-        X = pd.DataFrame(X_enc, columns=enc_names)
+        X = pd.DataFrame(X_enc, columns=enc_names)  # type: ignore[arg-type]
         model = model.named_steps["model"]
 
     explainer = scomp_link.ShapExplainer(model, X[: min(100, len(X))])
