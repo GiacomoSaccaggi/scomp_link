@@ -1581,6 +1581,356 @@ def cmd_mcp(args):
 
 
 # ═══════════════════════════════════════════════════════════════════
+# LLM SUBCOMMANDS
+# ═══════════════════════════════════════════════════════════════════
+
+
+def cmd_llm_finetune(args):
+    """Fine-tune a pretrained HuggingFace model."""
+    from scomp_link.exceptions import DataValidationError, ModelTrainingError
+
+    try:
+        from scomp_link.llm import FineTuneConfig, FineTuner
+    except ImportError as exc:
+        print(str(exc), file=sys.stderr)
+        sys.exit(1)
+
+    data_path = Path(args.data)
+    if not data_path.exists():
+        print(f"Error: data file not found: {args.data}", file=sys.stderr)
+        sys.exit(1)
+
+    try:
+        config = FineTuneConfig(
+            method=args.method,
+            output_dir=args.output_dir,
+        )
+        ft = FineTuner(args.model, method=args.method, config=config)
+        result = ft.train(
+            dataset=str(data_path),
+            epochs=args.epochs,
+            batch_size=args.batch_size,
+            learning_rate=args.learning_rate,
+        )
+    except (DataValidationError, ModelTrainingError) as exc:
+        print(f"Error [{type(exc).__name__}]: {exc}", file=sys.stderr)
+        sys.exit(1)
+    except ImportError as exc:
+        print(str(exc), file=sys.stderr)
+        sys.exit(1)
+
+    print(f"model: {args.model}")
+    print(f"method: {args.method}")
+    print(f"epochs: {args.epochs}")
+    print(f"final_loss: {result.loss_history[-1]:.6f}")
+    print(f"total_steps: {result.total_steps}")
+    print(f"training_time_seconds: {result.training_time_seconds:.1f}")
+    print(f"peak_memory_gb: {result.peak_memory_gb:.2f}")
+    print(f"output_path: {result.model_path}")
+    if result.adapter_path:
+        print(f"adapter_path: {result.adapter_path}")
+    if result.eval_loss is not None:
+        print(f"eval_loss: {result.eval_loss:.6f}")
+
+
+def cmd_llm_convert(args):
+    """Convert a HuggingFace model to GGUF format."""
+    from scomp_link.exceptions import DataValidationError, ModelTrainingError
+
+    try:
+        from scomp_link.llm import ModelConverter
+    except ImportError as exc:
+        print(str(exc), file=sys.stderr)
+        sys.exit(1)
+
+    model_path = Path(args.model)
+    if not model_path.exists():
+        print(f"Error: model path not found: {args.model}", file=sys.stderr)
+        sys.exit(1)
+
+    try:
+        mc = ModelConverter(str(model_path))
+        result = mc.to_gguf(
+            output_dir=args.output_dir,
+            quantization=args.quantization,
+            importance_matrix=args.importance_matrix,
+        )
+    except (DataValidationError, ModelTrainingError) as exc:
+        print(f"Error [{type(exc).__name__}]: {exc}", file=sys.stderr)
+        sys.exit(1)
+    except ImportError as exc:
+        print(str(exc), file=sys.stderr)
+        sys.exit(1)
+
+    print(f"input_model: {model_path}")
+    print(f"quantization: {result.quantization}")
+    print(f"gguf_path: {result.gguf_path}")
+    print(f"original_size_gb: {result.original_size_gb:.2f}")
+    print(f"quantized_size_gb: {result.quantized_size_gb:.2f}")
+    print(f"compression_ratio: {result.compression_ratio:.2f}")
+    print(f"output_size_bytes: {result.gguf_path.stat().st_size}")
+
+
+def cmd_llm_scratch(args):
+    """Build and train a transformer model from scratch."""
+    from scomp_link.exceptions import DataValidationError, ModelTrainingError
+
+    try:
+        from scomp_link.llm import TransformerBuilder, TransformerConfig
+    except ImportError as exc:
+        print(str(exc), file=sys.stderr)
+        sys.exit(1)
+
+    config_path = Path(args.config)
+    if not config_path.exists():
+        print(f"Error: config file not found: {args.config}", file=sys.stderr)
+        sys.exit(1)
+
+    data_path = Path(args.data)
+    if not data_path.exists():
+        print(f"Error: data file not found: {args.data}", file=sys.stderr)
+        sys.exit(1)
+
+    try:
+        import yaml
+
+        with open(config_path) as f:
+            cfg_dict = yaml.safe_load(f)
+        config = TransformerConfig(**cfg_dict)
+    except (TypeError, KeyError) as exc:
+        print(f"Error: invalid config file: {exc}", file=sys.stderr)
+        sys.exit(1)
+    except ImportError:
+        print(
+            "Error: PyYAML is required for --config. " "Install with: pip install pyyaml",
+            file=sys.stderr,
+        )
+        sys.exit(1)
+
+    try:
+        builder = TransformerBuilder(config)
+        builder.train_tokenizer(str(data_path), vocab_size=config.vocab_size)
+        result = builder.train(
+            dataset=str(data_path),
+            epochs=args.epochs,
+            batch_size=args.batch_size,
+        )
+    except (DataValidationError, ModelTrainingError) as exc:
+        print(f"Error [{type(exc).__name__}]: {exc}", file=sys.stderr)
+        sys.exit(1)
+    except ImportError as exc:
+        print(str(exc), file=sys.stderr)
+        sys.exit(1)
+
+    print(f"config: {config_path}")
+    print(f"epochs: {args.epochs}")
+    print(f"final_loss: {result.loss_history[-1]:.6f}")
+    print(f"total_steps: {result.total_steps}")
+    print(f"training_time_seconds: {result.training_time_seconds:.1f}")
+    print(f"peak_memory_gb: {result.peak_memory_gb:.2f}")
+    print(f"output_path: {result.model_path}")
+
+
+def cmd_llm_estimate(args):
+    """Estimate GGUF output size without performing conversion."""
+    from scomp_link.exceptions import DataValidationError
+
+    try:
+        from scomp_link.llm import ModelConverter
+    except ImportError as exc:
+        print(str(exc), file=sys.stderr)
+        sys.exit(1)
+
+    model_path = Path(args.model)
+    if not model_path.exists():
+        print(f"Error: model path not found: {args.model}", file=sys.stderr)
+        sys.exit(1)
+
+    try:
+        mc = ModelConverter(str(model_path))
+        size_gb = mc.estimate_size(args.quantization)
+    except DataValidationError as exc:
+        print(f"Error [{type(exc).__name__}]: {exc}", file=sys.stderr)
+        sys.exit(1)
+    except ImportError as exc:
+        print(str(exc), file=sys.stderr)
+        sys.exit(1)
+
+    size_bytes = int(size_gb * (1024**3))
+    print(f"model: {model_path}")
+    print(f"quantization: {args.quantization}")
+    print(f"estimated_size_gb: {size_gb:.2f}")
+    print(f"estimated_size_bytes: {size_bytes}")
+
+
+def cmd_llm_evaluate(args):
+    """Evaluate text quality metrics."""
+    from scomp_link.exceptions import DataValidationError
+
+    try:
+        from scomp_link.llm.evaluation.quality import TextQualityMetrics
+    except ImportError as exc:
+        print(str(exc), file=sys.stderr)
+        sys.exit(1)
+
+    generated = args.generated
+    if Path(generated).is_file():
+        generated = Path(generated).read_text(encoding="utf-8").strip()
+
+    references = args.references
+    if references and Path(references).is_file():
+        references = Path(references).read_text(encoding="utf-8").strip()
+
+    try:
+        metrics = TextQualityMetrics.evaluate(
+            generated=generated,
+            references=references,
+        )
+    except DataValidationError as exc:
+        print(f"Error [{type(exc).__name__}]: {exc}", file=sys.stderr)
+        sys.exit(1)
+
+    for k, v in metrics.items():
+        print(f"{k}: {v:.6f}" if isinstance(v, float) else f"{k}: {v}")
+
+
+def cmd_llm_dedup(args):
+    """Deduplicate a text file."""
+    from scomp_link.exceptions import DataValidationError
+
+    try:
+        from scomp_link.llm.data.dedup import TextDeduplicator
+    except ImportError as exc:
+        print(str(exc), file=sys.stderr)
+        sys.exit(1)
+
+    data_path = Path(args.data)
+    if not data_path.exists():
+        print(f"Error: data file not found: {args.data}", file=sys.stderr)
+        sys.exit(1)
+
+    texts = [line for line in data_path.read_text(encoding="utf-8").splitlines() if line.strip()]
+
+    try:
+        if args.method == "exact":
+            deduped, result = TextDeduplicator.exact_dedup(texts)
+        else:
+            deduped, result = TextDeduplicator.ngram_dedup(texts, threshold=args.threshold)
+    except DataValidationError as exc:
+        print(f"Error [{type(exc).__name__}]: {exc}", file=sys.stderr)
+        sys.exit(1)
+
+    print(f"original_count: {result.original_count}")
+    print(f"deduplicated_count: {result.deduplicated_count}")
+    print(f"duplicates_removed: {result.duplicates_removed}")
+    print(f"duplicate_ratio: {result.duplicate_ratio:.4f}")
+
+    if args.output:
+        out = Path(args.output)
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_text("\n".join(deduped) + "\n", encoding="utf-8")
+        print(f"output: {out}")
+
+
+def cmd_llm_merge(args):
+    """Merge multiple models."""
+    from scomp_link.exceptions import DataValidationError, ModelTrainingError
+
+    try:
+        from scomp_link.llm.serving.merge import ModelMerger
+    except ImportError as exc:
+        print(str(exc), file=sys.stderr)
+        sys.exit(1)
+
+    model_paths = [p.strip() for p in args.models.split(",")]
+
+    try:
+        merger = ModelMerger(args.base)
+        method = args.method
+        if method == "linear":
+            result_path = merger.linear_merge(model_paths, output_dir=args.output_dir)
+        elif method == "slerp":
+            if len(model_paths) != 2:
+                print("Error: slerp requires exactly 2 models", file=sys.stderr)
+                sys.exit(1)
+            result_path = merger.slerp_merge(model_paths[0], model_paths[1], output_dir=args.output_dir)
+        elif method == "ties":
+            result_path = merger.ties_merge(model_paths, density=args.density, output_dir=args.output_dir)
+        elif method == "dare":
+            result_path = merger.dare_merge(model_paths, density=args.density, output_dir=args.output_dir)
+        else:
+            print(f"Error: unsupported merge method: {method}", file=sys.stderr)
+            sys.exit(1)
+    except (DataValidationError, ModelTrainingError) as exc:
+        print(f"Error [{type(exc).__name__}]: {exc}", file=sys.stderr)
+        sys.exit(1)
+    except ImportError as exc:
+        print(str(exc), file=sys.stderr)
+        sys.exit(1)
+
+    print(f"method: {method}")
+    print(f"base: {args.base}")
+    print(f"models: {model_paths}")
+    print(f"output_path: {result_path}")
+
+
+def cmd_llm_serve(args):
+    """Serve a model via REST API."""
+    try:
+        from scomp_link.llm.serving.serve import InferenceServer
+    except ImportError as exc:
+        print(str(exc), file=sys.stderr)
+        sys.exit(1)
+
+    model_path = Path(args.model)
+    if not model_path.exists():
+        print(f"Error: model path not found: {args.model}", file=sys.stderr)
+        sys.exit(1)
+
+    try:
+        server = InferenceServer(
+            model_path=str(model_path),
+            load_in_4bit=args.load_in_4bit,
+        )
+        server.start(port=args.port)
+    except ImportError as exc:
+        print(str(exc), file=sys.stderr)
+        sys.exit(1)
+
+
+def cmd_llm_format(args):
+    """Convert between instruction-tuning dataset formats."""
+    from scomp_link.exceptions import DataValidationError
+
+    try:
+        from scomp_link.llm.data.formatting import DatasetFormatter
+    except ImportError as exc:
+        print(str(exc), file=sys.stderr)
+        sys.exit(1)
+
+    input_path = Path(args.input)
+    if not input_path.exists():
+        print(f"Error: input file not found: {args.input}", file=sys.stderr)
+        sys.exit(1)
+
+    try:
+        count = DatasetFormatter.convert_file(
+            input_path=input_path,
+            output_path=args.output,
+            source_format=args.source,
+            target_format=args.target,
+        )
+    except DataValidationError as exc:
+        print(f"Error [{type(exc).__name__}]: {exc}", file=sys.stderr)
+        sys.exit(1)
+
+    print(f"source_format: {args.source}")
+    print(f"target_format: {args.target}")
+    print(f"records_converted: {count}")
+    print(f"output: {args.output}")
+
+
+# ═══════════════════════════════════════════════════════════════════
 # PARSER
 # ═══════════════════════════════════════════════════════════════════
 
@@ -2032,6 +2382,202 @@ Examples:
     )
     p_exp2.add_argument("--output", "-o", default=None, help="Output file path (default: auto-named)")
     p_exp2.set_defaults(func=cmd_export)
+
+    # ── llm (subcommand group) ──
+    p_llm = subparsers.add_parser(
+        "llm",
+        help="LLM fine-tuning, training, and conversion",
+        description="LLM Toolkit: fine-tune pretrained models, build transformers from "
+        "scratch, convert to GGUF, and estimate model sizes.",
+    )
+    llm_sub = p_llm.add_subparsers(dest="llm_command", help="LLM subcommands")
+
+    # llm finetune
+    p_ft = llm_sub.add_parser(
+        "finetune",
+        help="Fine-tune a pretrained HuggingFace model",
+        description="Fine-tune a HuggingFace model with LoRA, QLoRA, or full fine-tuning.",
+    )
+    p_ft.add_argument("--model", required=True, help="HuggingFace model identifier or local path")
+    p_ft.add_argument(
+        "--method",
+        choices=["lora", "qlora", "full"],
+        default="lora",
+        help="Fine-tuning method (default: lora)",
+    )
+    p_ft.add_argument("--data", required=True, help="Path to training data (CSV, JSON, JSONL, Parquet)")
+    p_ft.add_argument("--epochs", type=int, default=3, help="Number of training epochs (default: 3)")
+    p_ft.add_argument("--batch-size", type=int, default=4, help="Training batch size (default: 4)")
+    p_ft.add_argument("--learning-rate", type=float, default=2e-4, help="Learning rate (default: 2e-4)")
+    p_ft.add_argument("--output-dir", default="./llm_output", help="Output directory (default: ./llm_output)")
+    p_ft.set_defaults(func=cmd_llm_finetune)
+
+    # llm convert
+    p_conv = llm_sub.add_parser(
+        "convert",
+        help="Convert a model to GGUF format",
+        description="Convert a HuggingFace model to quantized GGUF for llama.cpp inference.",
+    )
+    p_conv.add_argument("--model", required=True, help="Path to HuggingFace model directory")
+    p_conv.add_argument(
+        "--quantization",
+        default="Q4_K_M",
+        help="Quantization level (default: Q4_K_M). Options: f16, Q2_K, Q3_K_S, "
+        "Q3_K_M, Q3_K_L, Q4_0, Q4_K_S, Q4_K_M, Q5_0, Q5_K_S, Q5_K_M, Q6_K, "
+        "Q8_0, IQ2_XXS, IQ2_XS",
+    )
+    p_conv.add_argument("--output-dir", default=None, help="Output directory (default: same as model)")
+    p_conv.add_argument(
+        "--importance-matrix", default=None, help="Path to importance matrix file for improved quantization"
+    )
+    p_conv.set_defaults(func=cmd_llm_convert)
+
+    # llm scratch
+    p_scr = llm_sub.add_parser(
+        "scratch",
+        help="Build and train a transformer from scratch",
+        description="Build a GPT-style transformer from a YAML config and train on a text corpus.",
+    )
+    p_scr.add_argument("--config", required=True, help="Path to YAML config file with TransformerConfig parameters")
+    p_scr.add_argument("--data", required=True, help="Path to training corpus (text file)")
+    p_scr.add_argument("--epochs", type=int, default=10, help="Number of training epochs (default: 10)")
+    p_scr.add_argument("--batch-size", type=int, default=8, help="Training batch size (default: 8)")
+    p_scr.add_argument("--output-dir", default="./llm_output", help="Output directory (default: ./llm_output)")
+    p_scr.set_defaults(func=cmd_llm_scratch)
+
+    # llm estimate
+    p_est = llm_sub.add_parser(
+        "estimate",
+        help="Estimate GGUF output size without conversion",
+        description="Estimate the output file size for a given quantization level without "
+        "performing the conversion.",
+    )
+    p_est.add_argument("--model", required=True, help="Path to HuggingFace model directory")
+    p_est.add_argument(
+        "--quantization",
+        default="Q4_K_M",
+        help="Quantization level (default: Q4_K_M). Options: f16, Q2_K, Q3_K_S, "
+        "Q3_K_M, Q3_K_L, Q4_0, Q4_K_S, Q4_K_M, Q5_0, Q5_K_S, Q5_K_M, Q6_K, "
+        "Q8_0, IQ2_XXS, IQ2_XS",
+    )
+    p_est.set_defaults(func=cmd_llm_estimate)
+
+    # llm evaluate
+    p_eval = llm_sub.add_parser(
+        "evaluate",
+        help="Evaluate text quality metrics (BLEU, ROUGE, diversity)",
+        description="Compute reference-based (BLEU, ROUGE) and intrinsic (diversity, "
+        "repetition) text quality metrics on generated text.",
+    )
+    p_eval.add_argument(
+        "--generated",
+        required=True,
+        help="Generated text string or path to a text file",
+    )
+    p_eval.add_argument(
+        "--references",
+        default=None,
+        help="Reference text string or path to a text file (optional)",
+    )
+    p_eval.set_defaults(func=cmd_llm_evaluate)
+
+    # llm format
+    p_fmt = llm_sub.add_parser(
+        "format",
+        help="Convert between instruction-tuning dataset formats",
+        description="Convert instruction-tuning datasets between formats: "
+        "alpaca, sharegpt, openai → chatml, llama, alpaca, plain.",
+    )
+    p_fmt.add_argument("--input", required=True, help="Path to input data file (JSON or JSONL)")
+    p_fmt.add_argument("--output", required=True, help="Path to output file (JSONL)")
+    p_fmt.add_argument(
+        "--source",
+        required=True,
+        choices=["alpaca", "sharegpt", "openai"],
+        help="Source dataset format",
+    )
+    p_fmt.add_argument(
+        "--target",
+        required=True,
+        choices=["chatml", "llama", "alpaca", "plain"],
+        help="Target dataset format",
+    )
+    p_fmt.set_defaults(func=cmd_llm_format)
+
+    # llm dedup
+    p_dd = llm_sub.add_parser(
+        "dedup",
+        help="Deduplicate a text dataset",
+        description="Remove duplicate or near-duplicate texts from a file (one text per line).",
+    )
+    p_dd.add_argument("--data", required=True, help="Path to text file (one text per line)")
+    p_dd.add_argument(
+        "--method",
+        choices=["exact", "ngram"],
+        default="exact",
+        help="Deduplication method (default: exact)",
+    )
+    p_dd.add_argument(
+        "--threshold",
+        type=float,
+        default=0.8,
+        help="Similarity threshold for ngram method (default: 0.8)",
+    )
+    p_dd.add_argument("--output", default=None, help="Write deduplicated texts to file")
+    p_dd.set_defaults(func=cmd_llm_dedup)
+
+    # llm merge
+    p_mrg = llm_sub.add_parser(
+        "merge",
+        help="Merge multiple models (TIES, DARE, SLERP, linear)",
+        description="Merge multiple HuggingFace models using various strategies: "
+        "ties, dare, slerp, or linear averaging.",
+    )
+    p_mrg.add_argument("--base", required=True, help="Path to base model directory")
+    p_mrg.add_argument(
+        "--models",
+        required=True,
+        help="Comma-separated paths to models to merge",
+    )
+    p_mrg.add_argument(
+        "--method",
+        choices=["ties", "dare", "slerp", "linear"],
+        default="ties",
+        help="Merge method (default: ties)",
+    )
+    p_mrg.add_argument(
+        "--density",
+        type=float,
+        default=0.5,
+        help="Density parameter for ties/dare (default: 0.5)",
+    )
+    p_mrg.add_argument(
+        "--output-dir",
+        default="./merged",
+        help="Output directory for merged model (default: ./merged)",
+    )
+    p_mrg.set_defaults(func=cmd_llm_merge)
+
+    # llm serve
+    p_lsrv = llm_sub.add_parser(
+        "serve",
+        help="Serve a model as REST API for inference",
+        description="Start a Flask server exposing a HuggingFace model for text "
+        "generation via REST API. Endpoints: /generate, /health, /info.",
+    )
+    p_lsrv.add_argument("--model", required=True, help="Path to HuggingFace model directory")
+    p_lsrv.add_argument("--port", type=int, default=8080, help="Port number (default: 8080)")
+    p_lsrv.add_argument(
+        "--load-in-4bit",
+        action="store_true",
+        help="Load model in 4-bit quantization (requires bitsandbytes)",
+    )
+    p_lsrv.set_defaults(func=cmd_llm_serve)
+
+    def _llm_help(args):
+        p_llm.print_help()
+
+    p_llm.set_defaults(func=_llm_help)
 
     return parser
 
