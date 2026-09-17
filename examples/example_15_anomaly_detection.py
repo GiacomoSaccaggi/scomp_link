@@ -18,6 +18,15 @@ import pandas as pd
 
 from scomp_link import AnomalyDetector
 
+# Use all 4 methods if pytorch-tabnet is available, otherwise just the sklearn ones
+try:
+    import pytorch_tabnet  # noqa: F401
+
+    ALL_METHODS = ["iforest", "lof", "tabnet", "transformer"]
+except ImportError:
+    ALL_METHODS = ["iforest", "lof"]
+    print("Note: pytorch-tabnet not installed, using sklearn methods only")
+
 # --- Generate synthetic data with known anomalies ---
 np.random.seed(42)
 N = 5000
@@ -35,10 +44,10 @@ df = pd.DataFrame(data, columns=["frequency", "duration", "panelists"])
 # --- Run AnomalyDetector ---
 detector = AnomalyDetector(
     contamination=0.02,
-    methods=["iforest", "lof", "tabnet", "transformer"],
+    methods=ALL_METHODS,
     tabnet_epochs=30,
     transformer_epochs=50,
-    consensus_threshold=2,
+    consensus_threshold=min(2, len(ALL_METHODS)),
 )
 
 results = detector.fit_predict(df, features=["frequency", "duration", "panelists"])
