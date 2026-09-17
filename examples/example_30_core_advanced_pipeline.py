@@ -15,38 +15,42 @@ Requirements:
 
 import os
 import tempfile
+
 import numpy as np
 import pandas as pd
-from sklearn.linear_model import Ridge, Lasso
 from sklearn.ensemble import (
-    GradientBoostingRegressor, GradientBoostingClassifier,
+    GradientBoostingClassifier,
+    GradientBoostingRegressor,
     RandomForestClassifier,
 )
+from sklearn.linear_model import Lasso, Ridge
 from sklearn.neighbors import KNeighborsClassifier
 
 from scomp_link import ScompLinkPipeline
-from scomp_link.utils.decorators import timer, log_call, memory_usage
-
+from scomp_link.utils.decorators import log_call, memory_usage, timer
 
 # --- Helper functions with decorators ---
+
 
 @memory_usage
 def generate_regression_dataset(n: int = 800) -> pd.DataFrame:
     """Generate a regression dataset for pipeline testing."""
     np.random.seed(42)
-    df = pd.DataFrame({
-        'temperature': np.random.normal(20, 8, n),
-        'humidity': np.random.normal(60, 15, n),
-        'pressure': np.random.normal(1013, 10, n),
-        'wind_speed': np.random.exponential(5, n),
-        'elevation': np.random.uniform(0, 3000, n),
-    })
-    df['energy_output'] = (
-        2.5 * df['temperature']
-        - 0.8 * df['humidity']
-        + 0.1 * df['pressure']
-        + 1.5 * df['wind_speed']
-        + 0.01 * df['elevation']
+    df = pd.DataFrame(
+        {
+            "temperature": np.random.normal(20, 8, n),
+            "humidity": np.random.normal(60, 15, n),
+            "pressure": np.random.normal(1013, 10, n),
+            "wind_speed": np.random.exponential(5, n),
+            "elevation": np.random.uniform(0, 3000, n),
+        }
+    )
+    df["energy_output"] = (
+        2.5 * df["temperature"]
+        - 0.8 * df["humidity"]
+        + 0.1 * df["pressure"]
+        + 1.5 * df["wind_speed"]
+        + 0.01 * df["elevation"]
         + np.random.randn(n) * 5
     )
     return df
@@ -56,13 +60,15 @@ def generate_regression_dataset(n: int = 800) -> pd.DataFrame:
 def generate_classification_dataset(n: int = 600) -> pd.DataFrame:
     """Generate a binary classification dataset for pipeline testing."""
     np.random.seed(123)
-    df = pd.DataFrame({
-        'score_a': np.random.randn(n),
-        'score_b': np.random.randn(n),
-        'score_c': np.random.randn(n) * 0.5,
-        'metric_x': np.random.uniform(0, 10, n),
-    })
-    df['outcome'] = ((df['score_a'] + 0.7 * df['score_b'] + 0.3 * df['metric_x']) > 2).astype(int)
+    df = pd.DataFrame(
+        {
+            "score_a": np.random.randn(n),
+            "score_b": np.random.randn(n),
+            "score_c": np.random.randn(n) * 0.5,
+            "metric_x": np.random.uniform(0, 10, n),
+        }
+    )
+    df["outcome"] = ((df["score_a"] + 0.7 * df["score_b"] + 0.3 * df["metric_x"]) > 2).astype(int)
     return df
 
 
@@ -73,14 +79,14 @@ def run_regression_pipeline(df, models_to_test):
     pipe = ScompLinkPipeline("Energy Output Prediction")
     pipe.set_objectives(["Minimize RMSE", "Maximize R²"])
     pipe.import_and_clean_data(df)
-    pipe.select_variables(target_col='energy_output')
+    pipe.select_variables(target_col="energy_output")
     pipe.choose_model("numerical_prediction")
 
     results = pipe.run_pipeline(
         task_type="regression",
         models_to_test=models_to_test,
         use_ensemble=True,
-        ensemble_strategy='voting',
+        ensemble_strategy="voting",
         test_size=0.25,
     )
     return pipe, results
@@ -93,14 +99,14 @@ def run_classification_pipeline(df, models_to_test):
     pipe = ScompLinkPipeline("Outcome Classification")
     pipe.set_objectives(["Maximize F1"])
     pipe.import_and_clean_data(df)
-    pipe.select_variables(target_col='outcome')
+    pipe.select_variables(target_col="outcome")
     pipe.choose_model("categorical_known")
 
     results = pipe.run_pipeline(
         task_type="classification",
         models_to_test=models_to_test,
         use_ensemble=True,
-        ensemble_strategy='stacking',
+        ensemble_strategy="stacking",
         test_size=0.25,
     )
     return pipe, results
@@ -112,13 +118,13 @@ def run_simple_with_advanced_cv(df):
     pipe = ScompLinkPipeline("Simple + Advanced CV")
     pipe.set_objectives(["Minimize RMSE"])
     pipe.import_and_clean_data(df)
-    pipe.select_variables(target_col='energy_output')
+    pipe.select_variables(target_col="energy_output")
     pipe.choose_model("numerical_prediction")
 
     results = pipe.run_pipeline(
         task_type="regression",
         advanced_cv=True,
-        cv_methods=['bootstrap'],
+        cv_methods=["bootstrap"],
         bootstrap_iterations=100,
         test_size=0.25,
     )
@@ -127,7 +133,7 @@ def run_simple_with_advanced_cv(df):
 
 # --- Main execution ---
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     print("=" * 70)
     print("SCOMP-LINK PIPELINE — ADVANCED FEATURES")
     print("=" * 70)
@@ -144,19 +150,19 @@ if __name__ == '__main__':
     print(f"\n  Dataset: {df_reg.shape}")
 
     reg_models = {
-        'Ridge': {
-            'model': Ridge(),
-            'params_grid': {'alpha': [0.1, 1.0, 10.0]},
+        "Ridge": {
+            "model": Ridge(),
+            "params_grid": {"alpha": [0.1, 1.0, 10.0]},
         },
-        'Lasso': {
-            'model': Lasso(max_iter=5000),
-            'params_grid': {'alpha': [0.01, 0.1, 1.0]},
+        "Lasso": {
+            "model": Lasso(max_iter=5000),
+            "params_grid": {"alpha": [0.01, 0.1, 1.0]},
         },
-        'GBR': {
-            'model': GradientBoostingRegressor(random_state=42),
-            'params_grid': {
-                'n_estimators': [50, 100],
-                'max_depth': [3, 5],
+        "GBR": {
+            "model": GradientBoostingRegressor(random_state=42),
+            "params_grid": {
+                "n_estimators": [50, 100],
+                "max_depth": [3, 5],
             },
         },
     }
@@ -164,10 +170,10 @@ if __name__ == '__main__':
     pipe_reg, results_reg = run_regression_pipeline(df_reg, reg_models)
 
     print("\n  --- Regression Results ---")
-    if 'optimizer_results' in results_reg:
+    if "optimizer_results" in results_reg:
         print(f"  Models tested: {list(results_reg['optimizer_results'].keys())}")
-    if 'ensemble_scores' in results_reg:
-        ens = results_reg['ensemble_scores']
+    if "ensemble_scores" in results_reg:
+        ens = results_reg["ensemble_scores"]
         print(f"  🎯 Ensemble CV Score: {ens['mean_score']:.4f} (±{ens['std_score']:.4f})")
 
     # ═══════════════════════════════════════════════════════
@@ -183,24 +189,24 @@ if __name__ == '__main__':
     print(f"  Class distribution: {df_cls['outcome'].value_counts().to_dict()}")
 
     cls_models = {
-        'RandomForest': {
-            'model': RandomForestClassifier(random_state=42),
-            'params_grid': {
-                'n_estimators': [30, 60],
-                'max_depth': [5, 10],
+        "RandomForest": {
+            "model": RandomForestClassifier(random_state=42),
+            "params_grid": {
+                "n_estimators": [30, 60],
+                "max_depth": [5, 10],
             },
         },
-        'GradientBoosting': {
-            'model': GradientBoostingClassifier(random_state=42),
-            'params_grid': {
-                'n_estimators': [30, 60],
-                'learning_rate': [0.05, 0.1],
+        "GradientBoosting": {
+            "model": GradientBoostingClassifier(random_state=42),
+            "params_grid": {
+                "n_estimators": [30, 60],
+                "learning_rate": [0.05, 0.1],
             },
         },
-        'KNeighbors': {
-            'model': KNeighborsClassifier(),
-            'params_grid': {
-                'n_neighbors': [3, 5, 7],
+        "KNeighbors": {
+            "model": KNeighborsClassifier(),
+            "params_grid": {
+                "n_neighbors": [3, 5, 7],
             },
         },
     }
@@ -208,10 +214,10 @@ if __name__ == '__main__':
     pipe_cls, results_cls = run_classification_pipeline(df_cls, cls_models)
 
     print("\n  --- Classification Results ---")
-    if 'optimizer_results' in results_cls:
+    if "optimizer_results" in results_cls:
         print(f"  Models tested: {list(results_cls['optimizer_results'].keys())}")
-    if 'ensemble_scores' in results_cls:
-        ens_cls = results_cls['ensemble_scores']
+    if "ensemble_scores" in results_cls:
+        ens_cls = results_cls["ensemble_scores"]
         print(f"  🎯 Stacking Ensemble CV Score: {ens_cls['mean_score']:.4f} (±{ens_cls['std_score']:.4f})")
 
     # ═══════════════════════════════════════════════════════
@@ -228,8 +234,8 @@ if __name__ == '__main__':
     print(f"  Status: {results_adv['status']}")
     print(f"  Model type: {results_adv['model_type']}")
     print(f"  Metrics: {results_adv['metrics']}")
-    if results_adv.get('advanced_cv'):
-        for key, cv_result in results_adv['advanced_cv'].items():
+    if results_adv.get("advanced_cv"):
+        for key, cv_result in results_adv["advanced_cv"].items():
             print(f"  {cv_result['method']}: {cv_result['mean_score']:.4f} (±{cv_result['std_score']:.4f})")
 
     # ═══════════════════════════════════════════════════════
@@ -263,5 +269,6 @@ if __name__ == '__main__':
 
     # Cleanup generated report file
     import glob
+
     for f in glob.glob("ScompLink_Validation_Report*.html"):
         os.unlink(f)

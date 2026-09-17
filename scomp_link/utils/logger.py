@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 """
-██╗      ██████╗  ██████╗  ██████╗ ███████╗██████╗ 
+██╗      ██████╗  ██████╗  ██████╗ ███████╗██████╗
 ██║     ██╔═══██╗██╔════╝ ██╔════╝ ██╔════╝██╔══██╗
 ██║     ██║   ██║██║  ██╗ ██║  ██╗ █████╗  ██████╔╝
 ██║     ██║   ██║██║  ╚██╗██║  ╚██╗██╔══╝  ██╔══██╗
 ███████╗╚██████╔╝╚██████╔╝╚██████╔╝███████╗██║  ██║
 ╚══════╝ ╚═════╝  ╚═════╝  ╚═════╝ ╚══════╝╚═╝  ╚═╝
 """
+
 import logging
 import sys
 
@@ -46,7 +47,9 @@ def set_verbosity(level: str = "info"):
 
     # Ensure handler exists
     if _handler is None:
-        _handler = logging.StreamHandler(sys.stdout)
+        # stderr, not stdout: stdout is reserved for command output/data, so that
+        # `scomp-link ... > out.json` and stdio-based transports stay uncorrupted.
+        _handler = logging.StreamHandler(sys.stderr)
         _handler.setFormatter(logging.Formatter("%(message)s"))
         logger.addHandler(_handler)
 

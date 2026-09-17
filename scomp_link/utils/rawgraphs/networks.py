@@ -153,7 +153,7 @@ def arc_diagram(
     xs = [margin["left"] + i * spacing for i in range(n)]
 
     # Max value for scaling stroke width
-    max_val = max((l["value"] for l in links), default=1)
+    max_val = max((link["value"] for link in links), default=1)
 
     parts = [_svg_start(width, height)]
 
@@ -168,7 +168,6 @@ def arc_diagram(
         x1, x2 = xs[src], xs[tgt]
         if x1 > x2:
             x1, x2 = x2, x1
-        mid_x = (x1 + x2) / 2
         radius = (x2 - x1) / 2
         sw = max(1, (val / max_val) * 6)
         color = _color(i, colors)
@@ -314,9 +313,9 @@ def sankey_diagram(
         # Simple topological assignment: BFS from nodes with no incoming links
         incoming = defaultdict(set)
         outgoing = defaultdict(set)
-        for l in links:
-            incoming[l["target"]].add(l["source"])
-            outgoing[l["source"]].add(l["target"])
+        for link in links:
+            incoming[link["target"]].add(link["source"])
+            outgoing[link["source"]].add(link["target"])
         assigned = {}
         queue = [i for i in range(len(nodes_list)) if i not in incoming or len(incoming[i]) == 0]
         for i in queue:
@@ -324,9 +323,9 @@ def sankey_diagram(
         while queue:
             nxt = []
             for src in queue:
-                for l in links:
-                    if l["source"] == src:
-                        t = l["target"]
+                for link in links:
+                    if link["source"] == src:
+                        t = link["target"]
                         new_x = assigned[src] + 1
                         if t not in assigned or assigned[t] < new_x:
                             assigned[t] = new_x
@@ -345,15 +344,15 @@ def sankey_diagram(
 
     # Calculate total flow per node
     node_totals = [0.0] * len(nodes_list)
-    for l in links:
-        node_totals[l["source"]] = max(node_totals[l["source"]], node_totals[l["source"]])
-        node_totals[l["target"]] = max(node_totals[l["target"]], node_totals[l["target"]])
+    for link in links:
+        node_totals[link["source"]] = max(node_totals[link["source"]], node_totals[link["source"]])
+        node_totals[link["target"]] = max(node_totals[link["target"]], node_totals[link["target"]])
     # Recompute: total = max(sum_in, sum_out)
     sum_out = [0.0] * len(nodes_list)
     sum_in = [0.0] * len(nodes_list)
-    for l in links:
-        sum_out[l["source"]] += l["value"]
-        sum_in[l["target"]] += l["value"]
+    for link in links:
+        sum_out[link["source"]] += link["value"]
+        sum_in[link["target"]] += link["value"]
     for i in range(len(nodes_list)):
         node_totals[i] = max(sum_out[i], sum_in[i])
 
@@ -387,8 +386,8 @@ def sankey_diagram(
     in_offset = [0.0] * len(nodes_list)
 
     # Draw flow paths
-    for i, l in enumerate(links):
-        src, tgt, val = l["source"], l["target"], l["value"]
+    for i, link in enumerate(links):
+        src, tgt, val = link["source"], link["target"], link["value"]
         # Band height at source and target
         band_src = (val / node_totals[src]) * node_h[src] if node_totals[src] > 0 else 0
         band_tgt = (val / node_totals[tgt]) * node_h[tgt] if node_totals[tgt] > 0 else 0

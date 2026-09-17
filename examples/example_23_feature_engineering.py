@@ -17,25 +17,41 @@ Requirements:
 import numpy as np
 import pandas as pd
 from sklearn.linear_model import LinearRegression
-from sklearn.model_selection import train_test_split, cross_val_score
+from sklearn.model_selection import cross_val_score, train_test_split
+
 from scomp_link import FeatureEngineer
 
 # --- Generate realistic data ---
 np.random.seed(42)
 N = 2000
 
-df = pd.DataFrame({
-    'salary': np.random.exponential(50000, N),       # skewed
-    'experience_years': np.random.exponential(5, N), # skewed
-    'age': np.random.normal(38, 10, N),
-    'dept': np.random.choice(['eng', 'sales', 'hr', 'marketing', 'finance',
-                               'ops', 'legal', 'design', 'data', 'product',
-                               'support', 'qa'], N),
-    'hire_date': pd.date_range('2015-01-01', periods=N, freq='D'),
-    'satisfaction': np.random.uniform(1, 10, N),
-})
-y = (0.6 * df['salary'] + 5000 * df['experience_years'] +
-     200 * df['age'] + np.random.randn(N) * 10000)
+df = pd.DataFrame(
+    {
+        "salary": np.random.exponential(50000, N),  # skewed
+        "experience_years": np.random.exponential(5, N),  # skewed
+        "age": np.random.normal(38, 10, N),
+        "dept": np.random.choice(
+            [
+                "eng",
+                "sales",
+                "hr",
+                "marketing",
+                "finance",
+                "ops",
+                "legal",
+                "design",
+                "data",
+                "product",
+                "support",
+                "qa",
+            ],
+            N,
+        ),
+        "hire_date": pd.date_range("2015-01-01", periods=N, freq="D"),
+        "satisfaction": np.random.uniform(1, 10, N),
+    }
+)
+y = 0.6 * df["salary"] + 5000 * df["experience_years"] + 200 * df["age"] + np.random.randn(N) * 10000
 
 print("=" * 60)
 print("AUTOMATED FEATURE ENGINEERING")
@@ -70,12 +86,12 @@ print("\n--- Model Comparison ---")
 X_raw_num = df.select_dtypes(include=[np.number])
 X_tr_raw, X_te_raw, y_tr, y_te = train_test_split(X_raw_num, y, test_size=0.2, random_state=42)
 model_raw = LinearRegression()
-score_raw = cross_val_score(model_raw, X_tr_raw, y_tr, cv=5, scoring='r2').mean()
+score_raw = cross_val_score(model_raw, X_tr_raw, y_tr, cv=5, scoring="r2").mean()
 
 # With feature engineering
 X_eng_num = X_train_eng.select_dtypes(include=[np.number])
 model_eng = LinearRegression()
-score_eng = cross_val_score(model_eng, X_eng_num, y_train, cv=5, scoring='r2').mean()
+score_eng = cross_val_score(model_eng, X_eng_num, y_train, cv=5, scoring="r2").mean()
 
 print(f"  Raw features R²:        {score_raw:.4f}")
 print(f"  Engineered features R²: {score_eng:.4f}")

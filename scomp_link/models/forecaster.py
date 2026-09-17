@@ -216,11 +216,11 @@ class TimeSeriesForecaster:
             n_lags = min(len(series) // 2, 100)
             if n_lags < 4:
                 return 1
-            acf_vals = acf(series.dropna(), nlags=n_lags, fft=True)
+            acf_vals: np.ndarray = acf(series.dropna(), nlags=n_lags, fft=True)  # type: ignore[assignment]
             # Find first significant peak after lag 1
             peaks = []
             for i in range(2, len(acf_vals) - 1):
-                if acf_vals[i] > acf_vals[i - 1] and acf_vals[i] > acf_vals[i + 1] and acf_vals[i] > 0.1:  # type: ignore[operator]  # pyright: ignore[reportOptionalOperand]
+                if acf_vals[i] > acf_vals[i - 1] and acf_vals[i] > acf_vals[i + 1] and acf_vals[i] > 0.1:
                     peaks.append((i, acf_vals[i]))
             if peaks:
                 return peaks[0][0]

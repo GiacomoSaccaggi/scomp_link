@@ -38,7 +38,7 @@ css = """
         height: auto;
         max-width: 90000px;
     }
-    
+
     .highcharts-figure {width: 100%;
         height: auto;
         max-width: 90000px;}
@@ -286,13 +286,13 @@ def calendar_heatmap(title, series_dict: dict, min=0, max=1):  # type: ignore[ty
     data_init += f"\n const weekdays_{id_name} = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];"
     data_init += (
         """
-                    
+
                 // The function takes in a dataset and calculates how many empty tiles needed
                 // before and after the dataset is plotted.
                 function generateChartData_"""
         + id_name
         + """(data) {
-                
+
                     // Calculate the starting weekday index (0-6 of the first date in the given
                     // array)
                     const firstWeekday = new Date(data[0].date).getDay(),
@@ -302,7 +302,7 @@ def calendar_heatmap(title, series_dict: dict, min=0, max=1):  # type: ignore[ty
                         lengthOfWeek = 6,
                         emptyTilesFirst = firstWeekday,
                         chartData = [];
-                
+
                     // Add the empty tiles before the first day of the month with null values to
                     // take up space in the chart
                     for (let emptyDay = 0; emptyDay < emptyTilesFirst; emptyDay++) {
@@ -316,7 +316,7 @@ def calendar_heatmap(title, series_dict: dict, min=0, max=1):  # type: ignore[ty
                             }
                         });
                     }
-                
+
                     // Loop through and populate with values and dates from the dataset
                     for (let day = 1; day <= monthLength; day++) {
                         // Get date from the given data array
@@ -325,10 +325,10 @@ def calendar_heatmap(title, series_dict: dict, min=0, max=1):  # type: ignore[ty
                         const xCoordinate = (emptyTilesFirst + day - 1) % 7;
                         const yCoordinate = Math.floor((firstWeekday + day - 1) / 7);
                         const id = day;
-                
+
                         // Get the corresponding percentage value for the current day from the given array
-                        const percentageValue = data[day - 1].value; 
-                
+                        const percentageValue = data[day - 1].value;
+
                         chartData.push({
                             x: xCoordinate,
                             y: 5 - yCoordinate,
@@ -339,7 +339,7 @@ def calendar_heatmap(title, series_dict: dict, min=0, max=1):  # type: ignore[ty
                             }
                         });
                     }
-                
+
                     // Fill in the missing values when dataset is looped through.
                     const emptyTilesLast = lengthOfWeek - lastWeekday;
                     for (let emptyDay = 1; emptyDay <= emptyTilesLast; emptyDay++) {
@@ -367,23 +367,23 @@ def calendar_heatmap(title, series_dict: dict, min=0, max=1):  # type: ignore[ty
                 chart: {
                     type: 'heatmap'
                 },
-            
+
                 title: {
                     text: '"""
         + title
         + """',
                     align: 'left'
                 },
-            
+
                 subtitle: {
                     text: 'Percentage variation at day',
                     align: 'left'
                 },
-            
+
                 accessibility: {
                     landmarkVerbosity: 'one'
                 },
-            
+
                 tooltip: {
                     enabled: true,
                     outside: true,
@@ -392,7 +392,7 @@ def calendar_heatmap(title, series_dict: dict, min=0, max=1):  # type: ignore[ty
                     pointFormat: '{#unless point.custom.empty}{point.date:%A, %b %e, %Y}{/unless}',
                     nullFormat: 'No data'
                 },
-            
+
                 xAxis: {
                     categories: weekdays_"""
         + id_name
@@ -414,7 +414,7 @@ def calendar_heatmap(title, series_dict: dict, min=0, max=1):  # type: ignore[ty
                         rangeDescription: 'X Axis is showing all 7 days of the week, starting with Sunday.'
                     }
                 },
-            
+
                 yAxis: {
                     min: """
         + qmin
@@ -425,13 +425,13 @@ def calendar_heatmap(title, series_dict: dict, min=0, max=1):  # type: ignore[ty
                     },
                     visible: false
                 },
-            
+
                 legend: {
                     align: 'right',
                     layout: 'vertical',
                     verticalAlign: 'middle'
                 },
-            
+
                 colorAxis: {
                     min: """
         + str(round(min, 2))
@@ -454,7 +454,7 @@ def calendar_heatmap(title, series_dict: dict, min=0, max=1):  # type: ignore[ty
                         format: '{value} %'
                     }
                 },
-            
+
                 series: [{
                     keys: ['x', 'y', 'value', 'date', 'id'],
                     data: chartData_"""
@@ -489,7 +489,7 @@ def calendar_heatmap(title, series_dict: dict, min=0, max=1):  # type: ignore[ty
                         y: 1
                     }]
                 }]
-            });    
+            });
     """
     )
 
@@ -531,7 +531,7 @@ def calendar_gantt(title, series_dict: list, min_date: str, max_date: str, color
                     plotBorderColor: 'rgba(128,128,128,0.1)',
                     plotBorderWidth: 1
                 },
-            
+
                 plotOptions: {
                     series: {
                         borderRadius: '50%',
@@ -596,7 +596,7 @@ def calendar_gantt(title, series_dict: list, min_date: str, max_date: str, color
     )
     data_init += (
         """
-    
+
                 ],
              tooltip: {
                     pointFormat: '<span style="font-weight: bold">{point.name}</span><br>' +
@@ -605,7 +605,7 @@ def calendar_gantt(title, series_dict: list, min_date: str, max_date: str, color
                         '<br>' +
                         '{#if point.completed}' +
                         'Completed: {multiply point.completed.amount 100}%<br>' +
-                        '{/if}' 
+                        '{/if}'
                 },
                 title: {
                     text: '"""
@@ -669,7 +669,7 @@ def calendar_gantt(title, series_dict: list, min_date: str, max_date: str, color
                                 dependency = point.dependency &&
                                     point.series.chart.get(point.dependency).name,
                                 dependsOn = dependency ? ' Depends on ' + dependency + '.' : '';
-            
+
                             return Highcharts.format(
                                 point.milestone ?
                                     '{point.yCategory}. Milestone at {point.x:%Y-%m-%d}. Owner: {point.owner}.{dependsOn}' :
@@ -698,11 +698,11 @@ def calendar_gantt(title, series_dict: list, min_date: str, max_date: str, color
                         categories: []
                     }
                 },
-            
+
                 scrollbar: {
                     enabled: true
                 },
-            
+
                 rangeSelector: {
                     enabled: true,
                     selected: 5
@@ -729,9 +729,9 @@ def calendar_gantt(title, series_dict: list, min_date: str, max_date: str, color
                         day = 24 * 36e5,
                         isWeekend = t => /[06]/.test(chart.time.dateFormat('%w', t)),
                         plotBands = [];
-            
+
                     let inWeekend = false;
-            
+
                     for (
                         let x = Math.floor(axis.min / day) * day;
                         x <= Math.ceil(axis.max / day) * day;
@@ -752,7 +752,7 @@ def calendar_gantt(title, series_dict: list, min_date: str, max_date: str, color
                             });
                             inWeekend = true;
                         }
-            
+
                         if (!isWeekend(x) && inWeekend && last) {
                             last.to = x;
                             inWeekend = false;

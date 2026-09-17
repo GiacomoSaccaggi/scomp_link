@@ -3,14 +3,17 @@
 Smoke tests for scomp-link serve REST API.
 Tests the Flask app using Flask's test client (no server needed).
 """
+
 import json
 import tempfile
-import pytest
+
 import numpy as np
 import pandas as pd
+import pytest
 
 try:
     from flask import Flask
+
     flask_available = True
 except ImportError:
     flask_available = False
@@ -22,11 +25,11 @@ pytestmark = pytest.mark.skipif(not flask_available, reason="flask not installed
 def trained_artifact(tmp_path):
     """Create a trained .scomp artifact for testing."""
     import scomp_link
+
     scomp_link.set_verbosity("silent")
 
     np.random.seed(42)
-    df = pd.DataFrame({"x1": np.random.randn(100), "x2": np.random.randn(100),
-                       "y": np.random.randn(100)})
+    df = pd.DataFrame({"x1": np.random.randn(100), "x2": np.random.randn(100), "y": np.random.randn(100)})
     pipe = scomp_link.ScompLinkPipeline("test_serve")
     pipe.import_and_clean_data(df)
     pipe.select_variables(target_col="y")
@@ -46,8 +49,9 @@ def trained_artifact(tmp_path):
 @pytest.fixture
 def serve_app(trained_artifact):
     """Create the Flask app from a trained artifact (mirrors cmd_serve logic)."""
-    import scomp_link
     from flask import Flask, jsonify, request
+
+    import scomp_link
 
     scomp_link.set_verbosity("silent")
     artifact = scomp_link.ScompArtifact.load(trained_artifact)

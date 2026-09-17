@@ -33,6 +33,7 @@ from typing import Any, Dict, Optional, Union
 import numpy as np
 import pandas as pd
 
+from scomp_link.exceptions import ArtifactError
 from scomp_link.utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -208,11 +209,24 @@ class ScompArtifact:
 
         artifact = cls()
 
-        with zipfile.ZipFile(path, "r") as zf:
+        try:
+            zf_ctx = zipfile.ZipFile(path, "r")
+        except zipfile.BadZipFile as exc:
+            raise ArtifactError(
+                f"'{path}' is not a valid .scomp artifact (not a zip container). "
+                "It may be truncated, corrupted, or a different file type."
+            ) from exc
+
+        with zf_ctx as zf:
             # Verify magic
-            magic = zf.read("__magic__")
+            try:
+                magic = zf.read("__magic__")
+            except KeyError as exc:
+                raise ArtifactError(
+                    f"'{path}' is a zip archive but not a .scomp artifact (missing magic entry)."
+                ) from exc
             if magic != MAGIC_BYTES:
-                raise ValueError("Invalid .scomp file: bad magic bytes")
+                raise ArtifactError(f"Invalid .scomp file: bad magic bytes in '{path}'.")
 
             manifest = json.loads(zf.read("manifest.json"))
 

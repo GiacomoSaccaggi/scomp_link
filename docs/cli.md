@@ -1,6 +1,6 @@
 # Command-Line Interface
 
-scomp-link provides a full-featured CLI with **26 commands** for zero-code ML workflows. After installation (`pip install scomp-link`), the `scomp-link` command is available globally.
+scomp-link provides a full-featured CLI with **27 commands** for zero-code ML workflows. After installation (`pip install scomp-link`), the `scomp-link` command is available globally.
 
 ```bash
 scomp-link --help
@@ -269,10 +269,35 @@ scomp-link serve --artifact model.scomp --port 8080
 ```
 
 **Endpoints:**
-- `GET /health` — Server status
+- `GET /health` — Server status (never requires a token, so liveness probes keep working)
 - `GET /info` — Model metadata
 - `GET /schema` — Feature schema
 - `POST /predict` — Generate predictions (JSON body: `{"instances": [...]}`)
+
+The artifact carries its own preprocessing, so `/predict` accepts raw records —
+categorical values and missing fields included — with no client-side encoding.
+
+**Binding and authentication.** The server binds to `127.0.0.1` by default, so it
+is not reachable from other machines. Exposing it requires an explicit choice:
+
+```bash
+# Require a token (preferred: env var keeps the secret out of shell history)
+SCOMP_SERVE_TOKEN=my-secret scomp-link serve --artifact model.scomp --host 0.0.0.0
+
+# Equivalent, less safe on shared machines
+scomp-link serve --artifact model.scomp --host 0.0.0.0 --token my-secret
+```
+
+Clients then send either header:
+
+```bash
+curl -H "Authorization: Bearer my-secret" http://host:8080/info
+curl -H "X-API-Key: my-secret"            http://host:8080/info
+```
+
+Requests without a valid token get `401`. Binding to a public address *without* a
+token prints a warning — the built-in Flask server has no TLS, rate limiting, or
+request size limits, so put it behind a reverse proxy for real deployments.
 
 ### `export`
 

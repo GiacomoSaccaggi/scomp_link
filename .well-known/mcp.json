@@ -1,6 +1,6 @@
 {
   "name": "scomp-link",
-  "description": "End-to-end ML toolkit with 15 MCP tools for training, tuning, monitoring, visualization, and deployment.",
+  "description": "End-to-end ML toolkit with 33 MCP tools for training, tuning, monitoring, visualization, and deployment.",
   "version": "2.2.1",
   "transport": "stdio",
   "install": "pip install scomp-link[mcp]",

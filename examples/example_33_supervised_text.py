@@ -19,7 +19,8 @@ Requirements:
 """
 
 import numpy as np
-from scomp_link.utils.decorators import timer, memory_usage
+
+from scomp_link.utils.decorators import memory_usage, timer
 
 
 @memory_usage
@@ -29,7 +30,7 @@ def generate_text_dataset():
 
     # Simulated tech support tickets with 3 categories
     templates = {
-        'billing': [
+        "billing": [
             "I was charged twice for my subscription",
             "My invoice shows incorrect amount",
             "Please refund my last payment",
@@ -46,7 +47,7 @@ def generate_text_dataset():
             "Need invoice for tax purposes",
             "Double charge on my account",
         ],
-        'technical': [
+        "technical": [
             "Application crashes on startup",
             "Cannot connect to the server",
             "Error 500 when loading dashboard",
@@ -63,7 +64,7 @@ def generate_text_dataset():
             "Notifications not being delivered",
             "Database connection timeout",
         ],
-        'account': [
+        "account": [
             "How to reset my password",
             "Cannot change my email address",
             "Need to add team members",
@@ -125,18 +126,21 @@ def exercise_model_methods(model, texts):
 
     # 3. get_opt_params
     print("  Testing get_opt_params...")
-    params = model.get_opt_params({
-        "learn_rate": 0.01,
-        "b1": 0.9,
-        "b2_ratio": 0.999,
-        "adam_eps": 1e-8,
-        "L2": 0.0001,
-        "grad_norm_clip": 1.0,
-    })
-    results['opt_params'] = params
+    params = model.get_opt_params(
+        {
+            "learn_rate": 0.01,
+            "b1": 0.9,
+            "b2_ratio": 0.999,
+            "adam_eps": 1e-8,
+            "L2": 0.0001,
+            "grad_norm_clip": 1.0,
+        }
+    )
+    results["opt_params"] = params
 
     # 4. configure_optimizer (mock optimizer object)
     print("  Testing configure_optimizer...")
+
     class MockOptimizer:
         alpha = 0.0
         b1 = 0.0
@@ -147,16 +151,16 @@ def exercise_model_methods(model, texts):
 
     mock_opt = MockOptimizer()
     model.configure_optimizer(mock_opt, params)
-    results['optimizer_configured'] = {
-        'alpha': mock_opt.alpha,
-        'b1': mock_opt.b1,
-        'max_grad_norm': mock_opt.max_grad_norm,
+    results["optimizer_configured"] = {
+        "alpha": mock_opt.alpha,
+        "b1": mock_opt.b1,
+        "max_grad_norm": mock_opt.max_grad_norm,
     }
 
     # 5. _select_language with invalid language (error path)
     print("  Testing _select_language error path...")
-    bad_result = model._select_language('xx', 'md')
-    results['bad_language'] = bad_result
+    bad_result = model._select_language("xx", "md")
+    results["bad_language"] = bad_result
 
     return results
 
@@ -174,7 +178,7 @@ def try_training(model, texts, labels, categories):
 
 # --- Main execution ---
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     print("=" * 70)
     print("SUPERVISED TEXT CLASSIFICATION — SpacyEmbeddingModel")
     print("=" * 70)
@@ -191,19 +195,19 @@ if __name__ == '__main__':
     try:
         from scomp_link.models.supervised_text import SpacyEmbeddingModel
 
-        model = SpacyEmbeddingModel(lan='en', model_name='bert-base-uncased')
-        print(f"  ✅ Model initialized")
-        print(f"  Language: en")
+        model = SpacyEmbeddingModel(lan="en", model_name="bert-base-uncased")
+        print("  ✅ Model initialized")
+        print("  Language: en")
         print(f"  Spacy pipeline: {model.nlp.pipe_names}")
 
         # === 3. Exercise individual methods ===
         print("\n--- 3. Exercising model methods ---")
         results = exercise_model_methods(model, texts)
 
-        print(f"\n  Word extraction results:")
+        print("\n  Word extraction results:")
         for text_key, words in results.items():
-            if text_key not in ('opt_params', 'optimizer_configured', 'bad_language'):
-                print(f"    \"{text_key}\" → {words[:5]}")
+            if text_key not in ("opt_params", "optimizer_configured", "bad_language"):
+                print(f'    "{text_key}" → {words[:5]}')
 
         print(f"\n  Optimizer params: {results['opt_params']}")
         print(f"  Optimizer configured: {results['optimizer_configured']}")
@@ -213,18 +217,18 @@ if __name__ == '__main__':
         print("\n--- 4. Attempting full training pipeline ---")
         scores = try_training(model, texts, labels, categories)
         if scores:
-            print(f"  ✅ Training succeeded!")
+            print("  ✅ Training succeeded!")
             print(f"  Test report: {scores.get('classification_report_te', 'N/A')[:100]}")
         else:
-            print(f"  Training skipped (spaCy v3 API incompatibility with legacy textcat config)")
+            print("  Training skipped (spaCy v3 API incompatibility with legacy textcat config)")
 
         # === Summary ===
         print("\n" + "=" * 70)
         print("✅ Supervised text classification example complete!")
-        print(f"   • Model initialized with spaCy + BERT")
+        print("   • Model initialized with spaCy + BERT")
         print(f"   • __extract_words: tested on {len(results) - 3} texts")
-        print(f"   • report_progress, get_opt_params, configure_optimizer: all exercised")
-        print(f"   • _select_language error path: tested")
+        print("   • report_progress, get_opt_params, configure_optimizer: all exercised")
+        print("   • _select_language error path: tested")
         print("=" * 70)
 
     except (ImportError, ModuleNotFoundError, OSError, ValueError, Exception) as e:

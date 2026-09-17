@@ -30,10 +30,11 @@ VERSION_FILES = [
     (ROOT / ".well-known" / "mcp" / "server-card.json", r'"version": "\d+\.\d+\.\d+"', '"version": "{v}"', 0),
     # Docker / HF Space
     (ROOT / "Dockerfile", r'org\.opencontainers\.image\.version="[^"]+"', 'org.opencontainers.image.version="{v}"', 0),
-    (ROOT / "hf-space" / "Dockerfile", r'scomp-link\[mcp\]>=[^"]+', 'scomp-link[mcp]>={v}', 0),
+    (ROOT / "hf-space" / "Dockerfile", r'scomp-link\[mcp\]>=[^"]+', "scomp-link[mcp]>={v}", 0),
     (ROOT / "hf-space" / "app.py", r'"version": "\d+\.\d+\.\d+"', '"version": "{v}"', 0),
     # Plugins
     (ROOT / ".cursor-plugin" / "plugin.json", r'"version": "[^"]+"', '"version": "{v}"', 0),
+    (ROOT / "mcpb" / "manifest.json", r'"version": "[^"]+"', '"version": "{v}"', 0),
     # Skills
     (ROOT / "skills" / "scomp-link" / "SKILL.md", r'version: "[^"]+"', 'version: "{v}"', 0),
     # Wiki (What's New header)
@@ -84,4 +85,6 @@ if __name__ == "__main__":
 
     print(f"\n  {current} -> {new_version}\n")
     update_files(new_version)
-    print(f"\n  Next: git add -A && git commit -m 'chore: bump to {new_version}' && git tag v{new_version} && git push --follow-tags")
+    print(
+        f"\n  Next: git add -A && git commit -m 'chore: bump to {new_version}' && git tag v{new_version} && git push --follow-tags"
+    )

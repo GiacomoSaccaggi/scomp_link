@@ -62,7 +62,7 @@ def multiple_histograms(
         num = np.asarray(variable_float_for_distribution).astype(float)
         categ = np.asarray(category_variable).astype(str)
         logger.info("\x1b[0;37;42m Correct import of varibles \x1b[0m")
-    except:
+    except Exception:
         logger.info("\x1b[0;37;41m Error in importing variables \x1b[0m")
 
     # find categories and split the dataset
@@ -71,7 +71,7 @@ def multiple_histograms(
         sizes = np.asarray([len(np.where(categ == i)[0]) for i in labels]).astype(int)
         location = [np.where(categ == i)[0] for i in labels]
         logger.info("\x1b[0;37;42m Correct categorisation of the dataset \x1b[0m")
-    except:
+    except Exception:
         logger.info("\x1b[0;37;41m Error in the categorisation of the dataset \x1b[0m")
 
     # Troppe categorie
@@ -82,7 +82,7 @@ def multiple_histograms(
     try:
         fig = make_subplots(rows=len(location), cols=1)
         logger.info("\x1b[0;37;42m Correct initialisation of the image \x1b[0m")
-    except:
+    except Exception:
         logger.info("\x1b[0;37;41m Image initialisation error \x1b[0m")
 
     # creo grafici
@@ -225,13 +225,13 @@ def barchart(
 
     sorted_categories = [categories[i] for i in sorted_indices]
     list_tmp = []
-    for l in metric_values_list:
-        list_tmp.append([l[i] for i in sorted_indices])
+    for series in metric_values_list:
+        list_tmp.append([series[i] for i in sorted_indices])
     metric_values_list = list_tmp
-    if type(metric_values_line_list) == list:
+    if isinstance(metric_values_line_list, list):
         list_tmp = []
-        for l in metric_values_line_list:
-            list_tmp.append([l[i] for i in sorted_indices])
+        for series in metric_values_line_list:
+            list_tmp.append([series[i] for i in sorted_indices])
         metric_values_line_list = list_tmp
 
     num_subplots = len(metric_values_list)
@@ -407,7 +407,7 @@ def fill_timeslots(values, n_slots: int, fill_value: float = 0.0) -> np.ndarray:
     if len(arr) >= n_slots:
         return arr[:n_slots]
     padded = np.full(n_slots, fill_value, dtype=float)
-    padded[:len(arr)] = arr
+    padded[: len(arr)] = arr
     return padded
 
 
@@ -480,28 +480,43 @@ def index_chart(
 
     for i, (name, data) in enumerate(series_dict.items()):
         color = palette[i % len(palette)]
-        visible = (i == 0)
+        visible = i == 0
 
         if is_paired:
             solid_vals = normalize_to_index(data["solid"], baseline)
             dashed_vals = normalize_to_index(data["dashed"], baseline)
-            fig.add_trace(go.Scatter(
-                x=x_labels, y=solid_vals.tolist(),
-                name=f"{name} (solid)", line=dict(color=color, width=3),
-                mode="lines", visible=visible,
-            ))
-            fig.add_trace(go.Scatter(
-                x=x_labels, y=dashed_vals.tolist(),
-                name=f"{name} (dashed)", line=dict(color=color, width=3, dash="dash"),
-                mode="lines", visible=visible,
-            ))
+            fig.add_trace(
+                go.Scatter(
+                    x=x_labels,
+                    y=solid_vals.tolist(),
+                    name=f"{name} (solid)",
+                    line=dict(color=color, width=3),
+                    mode="lines",
+                    visible=visible,
+                )
+            )
+            fig.add_trace(
+                go.Scatter(
+                    x=x_labels,
+                    y=dashed_vals.tolist(),
+                    name=f"{name} (dashed)",
+                    line=dict(color=color, width=3, dash="dash"),
+                    mode="lines",
+                    visible=visible,
+                )
+            )
         else:
             vals = normalize_to_index(data, baseline)
-            fig.add_trace(go.Scatter(
-                x=x_labels, y=vals.tolist(),
-                name=name, line=dict(color=color, width=3),
-                mode="lines", visible=visible,
-            ))
+            fig.add_trace(
+                go.Scatter(
+                    x=x_labels,
+                    y=vals.tolist(),
+                    name=name,
+                    line=dict(color=color, width=3),
+                    mode="lines",
+                    visible=visible,
+                )
+            )
 
     fig.add_hline(y=baseline, line_dash="dot", line_color="rgba(128,128,128,0.4)")
 
@@ -512,28 +527,41 @@ def index_chart(
         vis = [False] * total_traces
         for j in range(traces_per_group):
             vis[i * traces_per_group + j] = True
-        buttons.append(dict(
-            label=f"  {name}  ", method="update",
-            args=[{"visible": vis}, {"title": f"{title} — {name}"}],
-        ))
+        buttons.append(
+            dict(
+                label=f"  {name}  ",
+                method="update",
+                args=[{"visible": vis}, {"title": f"{title} — {name}"}],
+            )
+        )
 
     # "All" button
-    buttons.append(dict(
-        label="  All  ", method="update",
-        args=[{"visible": [True] * total_traces}, {"title": title}],
-    ))
+    buttons.append(
+        dict(
+            label="  All  ",
+            method="update",
+            args=[{"visible": [True] * total_traces}, {"title": title}],
+        )
+    )
 
     fig.update_layout(
         title=f"{title} — {group_names[0]}" if group_names else title,
         height=height,
-        xaxis_title="", yaxis_title=f"Index ({baseline} = average)",
+        xaxis_title="",
+        yaxis_title=f"Index ({baseline} = average)",
         xaxis=dict(tickangle=45),
         legend=dict(orientation="h", yanchor="bottom", y=1.05, xanchor="center", x=0.5),
-        updatemenus=[dict(
-            type="buttons", direction="right",
-            x=0.5, xanchor="center", y=-0.2, yanchor="top",
-            buttons=buttons,
-        )],
+        updatemenus=[
+            dict(
+                type="buttons",
+                direction="right",
+                x=0.5,
+                xanchor="center",
+                y=-0.2,
+                yanchor="top",
+                buttons=buttons,
+            )
+        ],
         margin=dict(b=100),
     )
     return fig
@@ -602,18 +630,25 @@ def stacked_area_comparison(
     for data_pct, col_idx in [(left_pct, 1), (right_pct, 2)]:
         for i, cat in enumerate(categories):
             color = palette[i % len(palette)]
-            fig.add_trace(go.Scatter(
-                x=x_labels, y=data_pct[cat],
-                name=cat if col_idx == 1 else None,
-                legendgroup=cat, showlegend=(col_idx == 1),
-                stackgroup="one",
-                fillcolor=color,
-                line=dict(width=0.5, color=color),
-                mode="lines",
-            ), row=1, col=col_idx)
+            fig.add_trace(
+                go.Scatter(
+                    x=x_labels,
+                    y=data_pct[cat],
+                    name=cat if col_idx == 1 else None,
+                    legendgroup=cat,
+                    showlegend=(col_idx == 1),
+                    stackgroup="one",
+                    fillcolor=color,
+                    line=dict(width=0.5, color=color),
+                    mode="lines",
+                ),
+                row=1,
+                col=col_idx,
+            )
 
     fig.update_layout(
-        title=title, height=height,
+        title=title,
+        height=height,
         legend=dict(orientation="h", yanchor="bottom", y=1.05, xanchor="center", x=0.5),
     )
     fig.update_xaxes(tickangle=45)

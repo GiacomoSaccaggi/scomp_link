@@ -18,7 +18,7 @@ SERVER_CARD = {
     "serverInfo": {
         "name": "scomp-link",
         "version": "2.2.1",
-        "description": "End-to-end ML toolkit: 15 MCP tools for zero-code machine learning.",
+        "description": "End-to-end ML toolkit: 33 MCP tools for zero-code machine learning.",
         "homepage": "https://github.com/GiacomoSaccaggi/scomp_link",
     },
     "transport": {"type": "streamable-http", "url": "https://Euribor512-scomp-link.hf.space/sse"},

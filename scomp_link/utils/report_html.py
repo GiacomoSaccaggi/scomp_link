@@ -2117,7 +2117,8 @@ function switchTab_{uid}(tab) {{
         # Auto-install Chromium if not present
         try:
             with sync_playwright() as p:
-                p.chromium.executable_path
+                # Touch the property to force a lookup: raises if Chromium is absent.
+                _ = p.chromium.executable_path
         except Exception:
             logger.info("Chromium not found. Installing automatically...")
             subprocess.run(["playwright", "install", "chromium"], check=True)
