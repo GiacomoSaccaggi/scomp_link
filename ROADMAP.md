@@ -359,6 +359,30 @@ For long-running tools (`train_model`, `tune`), expose a `timeout_seconds` param
 ## Non-Goals
 
 These are explicitly out of scope for this roadmap:
+
+---
+
+## LLM Toolkit ✅ (v2.3.0)
+
+- [x] Fine-tuning (LoRA, QLoRA, full)
+- [x] Build transformers from scratch
+- [x] GGUF quantization (15 levels)
+- [x] RAG pipeline with code-aware chunking
+- [x] Model merging (TIES, DARE, SLERP, linear)
+- [x] Inference server (Flask REST API)
+- [x] Evaluation metrics (BLEU, ROUGE, n-gram, self-BLEU)
+- [x] Data dedup, formatting, quality filtering
+- [x] CLI, MCP, DSL integration
+- [x] KaTeX math in reports
+- [ ] Multi-GPU / DeepSpeed support
+- [ ] Evaluation benchmarks (MMLU, HellaSwag)
+- [ ] LLM-as-judge evaluation
+
+---
+
+## Non-Goals (Production Readiness Roadmap)
+
+These are explicitly out of scope for the production readiness roadmap:
 - Changing the public API surface (breaking changes)
 - Migrating from FastMCP to a custom MCP server
 - Replacing scikit-learn with a different ML backend

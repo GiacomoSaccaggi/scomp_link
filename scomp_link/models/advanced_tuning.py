@@ -8,7 +8,7 @@
    ╚═╝    ╚═════╝ ╚═╝  ╚══╝╚═╝╚═╝  ╚══╝ ╚═════╝
 """
 
-from typing import Any, Callable, Dict, List, Optional, Union
+from typing import Any, Callable, Dict, List, Literal, Optional, Union
 
 import numpy as np
 import pandas as pd
@@ -53,7 +53,7 @@ class OptunaOptimizer:
         scoring: str = "r2",
         cv: int = 5,
         n_trials: int = 100,
-        direction: str = "maximize",
+        direction: Literal["minimize", "maximize"] = "maximize",
         random_state: int = 42,
     ):
         self.estimator_class = estimator_class
@@ -81,7 +81,7 @@ class OptunaOptimizer:
             return scores.mean()
 
         sampler = optuna.samplers.TPESampler(seed=self.random_state)
-        self.study_ = optuna.create_study(direction=self.direction, sampler=sampler)  # type: ignore[arg-type]
+        self.study_ = optuna.create_study(direction=self.direction, sampler=sampler)
         self.study_.optimize(objective, n_trials=self.n_trials, show_progress_bar=verbose)
 
         # Refit best model on full data

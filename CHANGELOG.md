@@ -3,6 +3,35 @@
 All notable changes to scomp-link are documented here.
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
+## [2.3.0] - 2026-09-17
+
+### Added
+- **LLM Toolkit** (`scomp_link/llm/`): new package for end-to-end large language model workflows
+  - `FineTuner`: LoRA, QLoRA, and full fine-tuning with mixed precision, gradient accumulation
+  - `TransformerBuilder`: build and train GPT-style transformers from scratch with RoPE and KV-cache
+  - `ModelConverter`: GGUF conversion with 15 quantization levels (IQ2_XXS through f16)
+  - `RAGPipeline`: code-aware chunking (Python AST, YAML, Markdown, SQL), ChromaDB vector store, hybrid retrieval, prompt injection guardrails
+  - `ModelMerger`: Linear, SLERP, TIES (Yadav et al. 2023), DARE (Yu et al. 2023) strategies
+  - `InferenceServer`: Flask REST API for local model serving with 4-bit loading support
+  - Evaluation: `BLEUScore`, `ROUGEScore`, `NGramAnalyzer`, `TextQualityMetrics`, self-BLEU, Zipf coefficient
+  - Data: `DatasetFormatter` (Alpaca/ShareGPT/OpenAI → ChatML/Llama/Plain), `TextDeduplicator` (SHA-256 + MinHash LSH), `TextFilter`
+  - `LocalEmbedder` with 12 model profiles (Qwen3, E5, BGE, Nomic, Jina v5) and Matryoshka support
+  - 9 CLI subcommands under `scomp-link llm`
+  - 9 MCP tools (`llm_finetune`, `llm_convert`, `llm_evaluate`, etc.)
+  - 8 DSL pipeline steps with `>>` operator and cross-category type safety
+  - `.scomp` artifact persistence with SHA-256 weight integrity verification
+  - All heavy dependencies optional via `pip install scomp-link[llm]`
+- **KaTeX math rendering**: `add_math()` method for LaTeX formulas in HTML reports
+- **Report `add_math`** registered in MCP report builder workflow
+
+### Fixed
+- Mermaid diagrams not rendering inside collapsed report sections (render-then-collapse timing fix)
+- Auto-sanitize `<` and `>` in LaTeX formulas to prevent HTML parsing before KaTeX
+
+### Changed
+- Package structured into 6 subpackages: `core/`, `training/`, `data/`, `evaluation/`, `rag/`, `serving/`
+- 164 new tests (real data, minimal mocking)
+
 ## [Unreleased]
 
 ### Added

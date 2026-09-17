@@ -361,3 +361,85 @@ branding:
   secondary_color: "#1A1A1A"
   footer_html: "<p>© 2026 Pirelli S.p.A. — Confidential</p>"
 ```
+
+---
+
+## LLM Commands
+
+All LLM commands live under the `scomp-link llm` subcommand. They require `pip install scomp-link[llm]`.
+
+### `llm finetune`
+
+Fine-tune a HuggingFace model with LoRA, QLoRA, or full fine-tuning.
+
+```bash
+scomp-link llm finetune --model meta-llama/Llama-3-8B --method lora --data train.json --epochs 3
+scomp-link llm finetune --model mistralai/Mistral-7B --method qlora --data alpaca.json --epochs 5 --save-artifact ft.scomp
+```
+
+### `llm convert`
+
+Convert a model to GGUF format for efficient local inference.
+
+```bash
+scomp-link llm convert --model ./merged --quantization Q4_K_M
+scomp-link llm convert --model ./merged --quantization Q8_0 --output model.gguf
+```
+
+### `llm scratch`
+
+Build and train a GPT-style transformer from scratch.
+
+```bash
+scomp-link llm scratch --config model.yaml --data corpus.txt --epochs 10
+```
+
+### `llm estimate`
+
+Estimate VRAM and disk requirements for a given model + quantization.
+
+```bash
+scomp-link llm estimate --model ./merged --quantization Q4_K_M
+```
+
+### `llm evaluate`
+
+Evaluate generated text quality (BLEU, ROUGE, n-gram diversity).
+
+```bash
+scomp-link llm evaluate --generated output.txt --references ref.txt
+```
+
+### `llm dedup`
+
+Deduplicate a text corpus using SHA-256 or MinHash LSH.
+
+```bash
+scomp-link llm dedup --data corpus.txt --method ngram --threshold 0.8
+```
+
+### `llm merge`
+
+Merge multiple models with different strategies.
+
+```bash
+scomp-link llm merge --base base_model --models m1,m2 --method ties
+scomp-link llm merge --base base_model --models m1,m2 --method slerp --weights 0.6,0.4
+```
+
+### `llm serve`
+
+Serve a GGUF or HuggingFace model as a REST API.
+
+```bash
+scomp-link llm serve --model ./merged --port 8080
+scomp-link llm serve --model model.gguf --port 8080 --load-in-4bit
+```
+
+### `llm format`
+
+Convert datasets between formats (Alpaca, ShareGPT, ChatML, etc.).
+
+```bash
+scomp-link llm format --input data.json --output out.jsonl --source alpaca --target chatml
+```

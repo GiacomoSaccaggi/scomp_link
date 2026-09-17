@@ -93,7 +93,7 @@ class ModelFactory:
         elif "Classification Tree" in model_type:
             return DecisionTreeClassifier()
         elif "SVC" in model_type:
-            return SVC(probability=True)  # type: ignore[arg-type]
+            return SVC(probability=True)  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
         elif "K-Neighbors" in model_type:
             return KNeighborsClassifier()
         elif "SGD" in model_type and "Classifier" in model_type:

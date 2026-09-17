@@ -220,7 +220,7 @@ class TimeSeriesForecaster:
             # Find first significant peak after lag 1
             peaks = []
             for i in range(2, len(acf_vals) - 1):
-                if acf_vals[i] > acf_vals[i - 1] and acf_vals[i] > acf_vals[i + 1] and acf_vals[i] > 0.1:  # type: ignore[operator]
+                if acf_vals[i] > acf_vals[i - 1] and acf_vals[i] > acf_vals[i + 1] and acf_vals[i] > 0.1:  # type: ignore[operator]  # pyright: ignore[reportOptionalOperand]
                     peaks.append((i, acf_vals[i]))
             if peaks:
                 return peaks[0][0]

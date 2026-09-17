@@ -42,6 +42,11 @@ pip install scomp-link
 
 Requires Python 3.10+. Import is near-instant (~6ms) thanks to lazy loading — heavy dependencies load only when needed. Python 3.14 is supported experimentally (TensorFlow not yet available on 3.14).
 
+```bash
+# With LLM support (torch, transformers, peft, chromadb)
+pip install scomp-link[llm]
+```
+
 ---
 
 ## Key Features
@@ -60,6 +65,35 @@ Requires Python 3.10+. Import is near-instant (~6ms) thanks to lazy loading — 
 | **Persistence** | Custom `.scomp` format (model + preprocessor + config + metrics + sample data) |
 | **Visualization** | 31 RAWGraphs SVG charts, Plotly interactive, Highcharts, centralized color system |
 | **Reporting** | Interactive HTML reports: KPI cards, plotly grid, tabs, cascading dropdowns, comparison tables, dark mode, data profiling, threshold coloring |
+
+### 🤖 LLM Toolkit (`scomp_link/llm/`)
+
+Fine-tune, build, evaluate, and deploy large language models:
+
+```python
+from scomp_link.llm import FineTuner, ModelConverter, TextQualityMetrics
+
+# Fine-tune with LoRA in 3 lines
+ft = FineTuner("meta-llama/Llama-3-8B", method="lora")
+result = ft.train("alpaca.json", epochs=3)
+ft.merge_and_save("./merged")
+
+# Convert to GGUF for efficient inference
+mc = ModelConverter("./merged")
+mc.to_gguf(quantization="Q4_K_M")
+
+# Evaluate text quality
+metrics = TextQualityMetrics.evaluate(generated, references=ground_truth)
+```
+
+- **Training**: LoRA, QLoRA, full fine-tuning, build GPT from scratch
+- **RAG**: code-aware chunking, ChromaDB, hybrid retrieval, guardrails
+- **Evaluation**: BLEU, ROUGE, n-gram diversity, self-BLEU, perplexity
+- **Data**: dedup (MinHash), format conversion (Alpaca/ShareGPT/ChatML)
+- **Serving**: GGUF quantization (15 levels), Flask inference server
+- **Merging**: Linear, SLERP, TIES, DARE model combination
+- **CLI**: `scomp-link llm finetune|convert|evaluate|merge|serve|...`
+- **All deps optional**: `pip install scomp-link[llm]`
 
 ---
 

@@ -239,3 +239,81 @@ scomp-link check-deps
 scomp-link mcp
 ```
 Starts the Model Context Protocol server for agent integration (stdio transport).
+
+
+
+## LLM Commands
+
+All LLM commands require `pip install scomp-link[llm]`.
+
+### `llm finetune` — Fine-tune a HuggingFace model
+```bash
+scomp-link llm finetune --model <hf_id> --data PATH
+  [--method {lora,qlora,full}]   # Training method (default: lora)
+  [--epochs N]                   # Training epochs (default: 3)
+  [--batch-size N]               # Batch size (default: 4)
+  [--learning-rate F]            # Learning rate (default: 2e-4)
+  [--lora-r N]                   # LoRA rank (default: 16)
+  [--lora-alpha N]               # LoRA alpha (default: 32)
+  [--max-seq-length N]           # Max sequence length (default: 2048)
+  [--save-artifact PATH]         # Save as .scomp file
+  [--output-dir PATH]            # Output directory
+```
+
+### `llm convert` — Convert to GGUF
+```bash
+scomp-link llm convert --model PATH
+  [--quantization LEVEL]         # Q4_K_M, Q8_0, f16, etc.
+  [--output PATH]                # Output GGUF file
+```
+
+### `llm scratch` — Build transformer from scratch
+```bash
+scomp-link llm scratch --config PATH.yaml --data PATH
+  [--epochs N]                   # Training epochs
+  [--batch-size N]               # Batch size
+  [--learning-rate F]            # Learning rate
+```
+
+### `llm estimate` — Estimate VRAM/disk requirements
+```bash
+scomp-link llm estimate --model PATH
+  [--quantization LEVEL]         # Target quantization level
+```
+
+### `llm evaluate` — Evaluate generated text
+```bash
+scomp-link llm evaluate --generated PATH --references PATH
+  [--output PATH]                # Results JSON
+```
+
+### `llm dedup` — Deduplicate text corpus
+```bash
+scomp-link llm dedup --data PATH
+  [--method {exact,ngram,minhash}]  # Dedup method
+  [--threshold F]                # Similarity threshold (default: 0.8)
+  [--output PATH]                # Deduplicated output
+```
+
+### `llm merge` — Merge models
+```bash
+scomp-link llm merge --base PATH --models M1,M2[,M3...]
+  [--method {linear,slerp,ties,dare}]  # Merge strategy
+  [--weights W1,W2[,W3...]]     # Per-model weights
+  [--output PATH]                # Output directory
+```
+
+### `llm serve` — Serve model as REST API
+```bash
+scomp-link llm serve --model PATH
+  [--port N]                     # Port (default: 8080)
+  [--host ADDR]                  # Bind address (default: 127.0.0.1)
+  [--load-in-4bit]               # Load with 4-bit quantization
+```
+
+### `llm format` — Convert dataset formats
+```bash
+scomp-link llm format --input PATH --output PATH
+  [--source {alpaca,sharegpt,openai}]  # Source format
+  [--target {chatml,llama,plain}]      # Target format
+```
