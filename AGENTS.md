@@ -64,6 +64,12 @@ scomp-link init my_project
 scomp-link list-models
 scomp-link check-deps
 
+# LLM
+scomp-link llm evaluate --generated text.txt --references ref.txt
+scomp-link llm dedup --data corpus.txt --method ngram --threshold 0.8
+scomp-link llm merge --base base_model --models model1,model2 --method ties
+scomp-link llm serve --model ./merged --port 8080
+
 # Configuration
 scomp-link init-config              # Create global config (~/.scomp-link/config.yaml)
 scomp-link init-config --local      # Create project-level config (.scomp-link.yaml)
@@ -158,7 +164,8 @@ For building custom branded HTML reports step-by-step:
 12. report_add_diff(report_id, old_code, new_code, language, title, old_label, new_label, collapsed) → side-by-side diff view
 13. report_add_mermaid(report_id, diagram, title, collapsed) → Mermaid.js diagram (flowchart, sequence, gantt, etc.)
 14. report_add_terminal(report_id, cast_data, title, cols, rows, theme, collapsed) → embedded terminal replay (asciinema)
-15. report_save(report_id, output) → saves HTML, frees memory
+15. report_add_math(report_id, latex, title, display, collapsed) → KaTeX-rendered LaTeX formula
+16. report_save(report_id, output) → saves HTML, frees memory
 ```
 
 **Engines:** plotly (interactive), rawgraphs (SVG static), highcharts (time series)

@@ -73,15 +73,31 @@ class Chain:
     def __init__(self, steps: list[Step]):
         if not steps:
             raise ValueError("Chain must contain at least one step.")
-        # Validate homogeneity: cannot mix MLStep and ReportStep in the same chain
-        has_ml = any(isinstance(s, MLStep) for s in steps if not isinstance(s, LogStep))
-        has_report = any(isinstance(s, ReportStep) for s in steps if not isinstance(s, LogStep))
-        if has_ml and has_report:
-            ml_names = [type(s).__name__ for s in steps if isinstance(s, MLStep)]
-            rep_names = [type(s).__name__ for s in steps if isinstance(s, ReportStep)]
+
+        # Lazy import LLMStep to avoid circular dependency (llm.dsl imports Step from here)
+        try:
+            from scomp_link.llm.dsl import LLMStep
+        except ImportError:
+            LLMStep = None  # type: ignore[assignment,misc]
+
+        # Validate homogeneity: cannot mix MLStep, ReportStep, and LLMStep
+        typed = [s for s in steps if not isinstance(s, LogStep)]
+        has_ml = any(isinstance(s, MLStep) for s in typed)
+        has_report = any(isinstance(s, ReportStep) for s in typed)
+        has_llm = LLMStep is not None and any(isinstance(s, LLMStep) for s in typed)
+
+        conflicts: list[tuple[str, list[str]]] = []
+        if has_ml:
+            conflicts.append(("MLStep", [type(s).__name__ for s in typed if isinstance(s, MLStep)]))
+        if has_report:
+            conflicts.append(("ReportStep", [type(s).__name__ for s in typed if isinstance(s, ReportStep)]))
+        if has_llm:
+            conflicts.append(("LLMStep", [type(s).__name__ for s in typed if isinstance(s, LLMStep)]))  # type: ignore[arg-type]
+
+        if len(conflicts) > 1:
+            parts = [f"{cat} ({names})" for cat, names in conflicts]
             raise TypeError(
-                f"Cannot mix MLStep ({ml_names}) and ReportStep ({rep_names}) in the same chain. "
-                "Use separate chains for ML and report building."
+                f"Cannot mix {' and '.join(parts)} in the same chain. " "Use separate chains for each step category."
             )
         self._steps = steps
 
@@ -94,10 +110,12 @@ class Chain:
         """
         Execute the chain.
 
-        For ML chains:   pass a pd.DataFrame or ScompLinkPipeline (or nothing — uses CleanStep's df).
+        For ML chains:    pass a pd.DataFrame or ScompLinkPipeline (or nothing — uses CleanStep's df).
         For Report chains: pass a ScompLinkHTMLReport (or nothing — a default report is created).
+        For LLM chains:   pass an initial target or nothing.
 
-        Returns the final result: results dict for ML chains, ScompLinkHTMLReport for report chains.
+        Returns the final result: results dict for ML chains, ScompLinkHTMLReport for report chains,
+        or the last step's return value for LLM chains.
         """
         # Infer chain type from the first non-LogStep step
         typed_step = next((s for s in self._steps if not isinstance(s, LogStep)), None)
@@ -107,6 +125,15 @@ class Chain:
             return self._run_ml(target)
         if isinstance(typed_step, ReportStep):
             return self._run_report(target)
+
+        # Check for LLMStep (lazy import to avoid hard dependency on llm package)
+        try:
+            from scomp_link.llm.dsl import LLMStep
+        except ImportError:
+            LLMStep = None  # type: ignore[assignment,misc]
+        if LLMStep is not None and isinstance(typed_step, LLMStep):
+            return self._run_llm(target)
+
         raise TypeError(f"Cannot infer chain type from first typed step {type(typed_step).__name__}")
 
     def _run_ml(self, target: Any) -> Any:
@@ -152,8 +179,11 @@ class Chain:
             raise TypeError(f"ML chain expects DataFrame or ScompLinkPipeline, got {type(target)}")
 
         result: Any = pipeline
-        for step in steps_to_run:
-            result = step.execute(result)
+        for i, step in enumerate(steps_to_run):
+            try:
+                result = step.execute(result)
+            except Exception as exc:
+                raise type(exc)(f"Step {type(step).__name__} (index {self._steps.index(step)}): {exc}") from exc
 
         return result
 
@@ -167,10 +197,22 @@ class Chain:
         else:
             raise TypeError(f"Report chain expects ScompLinkHTMLReport, got {type(target)}")
 
-        for step in self._steps:
-            step.execute(report)
+        for i, step in enumerate(self._steps):
+            try:
+                step.execute(report)
+            except Exception as exc:
+                raise type(exc)(f"Step {type(step).__name__} (index {i}): {exc}") from exc
 
         return report
+
+    def _run_llm(self, target: Any) -> Any:
+        result = target
+        for i, step in enumerate(self._steps):
+            try:
+                result = step.execute(result)
+            except Exception as exc:
+                raise type(exc)(f"Step {type(step).__name__} (index {i}): {exc}") from exc
+        return result
 
     def __repr__(self) -> str:
         names = " >> ".join(type(s).__name__ for s in self._steps)
