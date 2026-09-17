@@ -73,7 +73,7 @@ def beeswarm(
         ax.scatter(x, vals, color=palette[i % len(palette)], alpha=0.7, edgecolors="white", linewidth=0.5, s=30)
 
     ax.set_xticks(range(len(unique_groups)))
-    ax.set_xticklabels(unique_groups)
+    ax.set_xticklabels([str(g) for g in unique_groups])
     ax.set_title(title)
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)
