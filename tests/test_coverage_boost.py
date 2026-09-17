@@ -2,76 +2,86 @@
 """
 Tests targeting low-coverage modules: core.py, regressor_optimizer, decorators, highcharts
 """
-import pytest
+
 import numpy as np
 import pandas as pd
-from sklearn.linear_model import LinearRegression
+import pytest
 from sklearn.ensemble import GradientBoostingRegressor
-
+from sklearn.linear_model import LinearRegression
 
 # ===================== CORE.PY (57%) =====================
 
-class TestCorePipeline:
 
+class TestCorePipeline:
     @pytest.fixture
     def medium_data(self):
         np.random.seed(42)
         n = 200
-        df = pd.DataFrame({
-            'x1': np.random.randn(n),
-            'x2': np.random.randn(n),
-            'x3': np.random.randn(n),
-            'y': 2 * np.random.randn(n) + 0.5,
-        })
+        df = pd.DataFrame(
+            {
+                "x1": np.random.randn(n),
+                "x2": np.random.randn(n),
+                "x3": np.random.randn(n),
+                "y": 2 * np.random.randn(n) + 0.5,
+            }
+        )
         return df
 
     @pytest.fixture
     def classification_data(self):
         np.random.seed(42)
         n = 200
-        df = pd.DataFrame({
-            'x1': np.random.randn(n),
-            'x2': np.random.randn(n),
-            'y': np.random.choice([0, 1], n),
-        })
+        df = pd.DataFrame(
+            {
+                "x1": np.random.randn(n),
+                "x2": np.random.randn(n),
+                "y": np.random.choice([0, 1], n),
+            }
+        )
         return df
 
     def test_full_regression_with_ensemble(self, medium_data):
         from scomp_link import ScompLinkPipeline
+
         pipe = ScompLinkPipeline("Ensemble Test")
         pipe.set_objectives(["Minimize RMSE"])
         pipe.import_and_clean_data(medium_data)
-        pipe.select_variables(target_col='y')
+        pipe.select_variables(target_col="y")
         pipe.choose_model("numerical_prediction")
         results = pipe.run_pipeline(task_type="regression", use_ensemble=True, test_size=0.3)
-        assert results['status'] == 'success'
+        assert results["status"] == "success"
 
     def test_full_regression_with_advanced_cv(self, medium_data):
         from scomp_link import ScompLinkPipeline
+
         pipe = ScompLinkPipeline("CV Test")
         pipe.set_objectives(["Minimize RMSE"])
         pipe.import_and_clean_data(medium_data)
-        pipe.select_variables(target_col='y')
+        pipe.select_variables(target_col="y")
         pipe.choose_model("numerical_prediction")
         results = pipe.run_pipeline(task_type="regression", advanced_cv=True, test_size=0.3)
-        assert results['status'] == 'success'
+        assert results["status"] == "success"
 
     def test_classification_pipeline(self, classification_data):
         from scomp_link import ScompLinkPipeline
+
         pipe = ScompLinkPipeline("Classification Test")
         pipe.set_objectives(["Maximize Accuracy"])
         pipe.import_and_clean_data(classification_data)
-        pipe.select_variables(target_col='y')
+        pipe.select_variables(target_col="y")
         pipe.choose_model("categorical_known")
         results = pipe.run_pipeline(task_type="classification", test_size=0.3)
-        assert results['status'] == 'success'
+        assert results["status"] == "success"
 
     def test_save_and_load_model(self, medium_data):
-        import tempfile, os
+        import os
+        import tempfile
+
         from scomp_link import ScompLinkPipeline
+
         pipe = ScompLinkPipeline("Save Test")
         pipe.import_and_clean_data(medium_data)
-        pipe.select_variables(target_col='y')
+        pipe.select_variables(target_col="y")
         pipe.choose_model("numerical_prediction")
         pipe.run_pipeline(task_type="regression")
 
@@ -83,79 +93,85 @@ class TestCorePipeline:
 
     def test_predict_after_training(self, medium_data):
         from scomp_link import ScompLinkPipeline
+
         pipe = ScompLinkPipeline("Predict Test")
         pipe.import_and_clean_data(medium_data)
-        pipe.select_variables(target_col='y')
+        pipe.select_variables(target_col="y")
         pipe.choose_model("numerical_prediction")
         pipe.run_pipeline(task_type="regression")
-        preds = pipe.predict(medium_data[['x1', 'x2', 'x3']].head(10))
+        preds = pipe.predict(medium_data[["x1", "x2", "x3"]].head(10))
         assert len(preds) == 10
 
 
 # ===================== REGRESSOR OPTIMIZER (24%) =====================
 
-class TestRegressorOptimizerDetailed:
 
+class TestRegressorOptimizerDetailed:
     @pytest.fixture
     def setup(self):
         np.random.seed(42)
         n = 200
-        df = pd.DataFrame({
-            'x1': np.random.randn(n),
-            'x2': np.random.randn(n),
-            'y': 3 * np.random.randn(n) + 1,
-        })
+        df = pd.DataFrame(
+            {
+                "x1": np.random.randn(n),
+                "x2": np.random.randn(n),
+                "y": 3 * np.random.randn(n) + 1,
+            }
+        )
         models = {
-            'LinearRegression': {'model': LinearRegression(), 'params_grid': {'fit_intercept': [True, False]}},
-            'GBR': {'model': GradientBoostingRegressor(n_estimators=10),
-                    'params_grid': {'max_depth': [2, 3]}},
+            "LinearRegression": {"model": LinearRegression(), "params_grid": {"fit_intercept": [True, False]}},
+            "GBR": {"model": GradientBoostingRegressor(n_estimators=10), "params_grid": {"max_depth": [2, 3]}},
         }
         return df, models
 
     def test_full_optimization_flow(self, setup):
         from scomp_link import RegressorOptimizer
+
         df, models = setup
-        opt = RegressorOptimizer(df, 'y', ['x1', 'x2'], 'x1', models_to_test=models)
+        opt = RegressorOptimizer(df, "y", ["x1", "x2"], "x1", models_to_test=models)
         opt.test_models_regression()
-        assert 'LinearRegression' in opt.model_results
-        assert 'GBR' in opt.model_results
+        assert "LinearRegression" in opt.model_results
+        assert "GBR" in opt.model_results
         # Check fitted models exist
         for name, result in opt.model_results.items():
-            assert result['Model'] is not None
-            assert 'Fitted_Test' in result
-            assert len(result['Fitted_Test']) > 0
+            assert result["Model"] is not None
+            assert "Fitted_Test" in result
+            assert len(result["Fitted_Test"]) > 0
 
     def test_train_test_split_correct(self, setup):
         from scomp_link import RegressorOptimizer
+
         df, models = setup
-        opt = RegressorOptimizer(df, 'y', ['x1', 'x2'], 'x1', models_to_test=models)
+        opt = RegressorOptimizer(df, "y", ["x1", "x2"], "x1", models_to_test=models)
         total = len(opt.X_train) + len(opt.X_test)
         assert total == len(df)
 
     def test_preprocessor_transforms(self, setup):
         from scomp_link import RegressorOptimizer
+
         df, models = setup
-        opt = RegressorOptimizer(df, 'y', ['x1', 'x2'], 'x1', models_to_test=models)
+        opt = RegressorOptimizer(df, "y", ["x1", "x2"], "x1", models_to_test=models)
         # Preprocessor should work without error
         X_transformed = opt.preprocessor.fit_transform(opt.X_train)
         assert X_transformed.shape[0] == len(opt.X_train)
 
     def test_multiple_models_produces_results(self, setup):
         from scomp_link import RegressorOptimizer
+
         df, models = setup
-        opt = RegressorOptimizer(df, 'y', ['x1', 'x2'], 'x1', models_to_test=models)
+        opt = RegressorOptimizer(df, "y", ["x1", "x2"], "x1", models_to_test=models)
         opt.test_models_regression()
         # Both models should have predictions
         for name in models:
             assert name in opt.model_results
-            preds = opt.model_results[name]['Fitted_Test']
+            preds = opt.model_results[name]["Fitted_Test"]
             assert len(preds) == len(opt.y_test)
 
 
 # ===================== DECORATORS (31%) =====================
 
-class TestDecorators:
 
+class TestDecorators:
     def test_timer(self):
         from scomp_link.utils.decorators import timer
 
@@ -168,6 +184,7 @@ class TestDecorators:
 
     def test_retry_success(self):
         from scomp_link.utils.decorators import retry
+
         call_count = [0]
 
         @retry(max_attempts=3, delay=0)
@@ -192,6 +209,7 @@ class TestDecorators:
 
     def test_cache(self):
         from scomp_link.utils.decorators import cache
+
         call_count = [0]
 
         @cache
@@ -207,8 +225,9 @@ class TestDecorators:
         assert call_count[0] == 2
 
     def test_deprecated(self):
-        from scomp_link.utils.decorators import deprecated
         import warnings
+
+        from scomp_link.utils.decorators import deprecated
 
         @deprecated("Use new_func instead")
         def old_func():
@@ -245,6 +264,7 @@ class TestDecorators:
 
     def test_run_once(self):
         from scomp_link.utils.decorators import run_once
+
         call_count = [0]
 
         @run_once
@@ -279,10 +299,11 @@ class TestDecorators:
 
 # ===================== HIGHCHARTS (0%) =====================
 
-class TestHighcharts:
 
+class TestHighcharts:
     def test_streamgraphs(self):
         from scomp_link.utils.highcharts import streamgraphs
+
         dates = ["2024-01", "2024-02", "2024-03"]
         series = {"A": [10, 20, 30], "B": [5, 15, 25]}
         html = streamgraphs("Test", dates, series)
@@ -291,6 +312,7 @@ class TestHighcharts:
 
     def test_streamgraphs_area(self):
         from scomp_link.utils.highcharts import streamgraphs
+
         dates = ["2024-01", "2024-02"]
         series = {"X": [1, 2]}
         html = streamgraphs("Area", dates, series, area=True)
@@ -298,6 +320,7 @@ class TestHighcharts:
 
     def test_calendar_heatmap(self):
         from scomp_link.utils.highcharts import calendar_heatmap
+
         series = {"2024-01-01": 50, "2024-01-02": 80, "2024-01-03": 30}
         html = calendar_heatmap("Heatmap", series, min=0, max=100)
         assert "Heatmap" in html
@@ -305,11 +328,13 @@ class TestHighcharts:
 
     def test_calendar_gantt(self):
         from scomp_link.utils.highcharts import calendar_gantt
+
         # Just verify function exists and is callable
         assert callable(calendar_gantt)
 
 
 # ===================== CORE.PY — choose_model branches =====================
+
 
 class TestChooseModelBranches:
     """Exercise all choose_model branches in core.py."""
@@ -318,15 +343,18 @@ class TestChooseModelBranches:
     def pipeline_with_data(self):
         np.random.seed(42)
         n = 200
-        df = pd.DataFrame({
-            'x1': np.random.randn(n),
-            'x2': np.random.randn(n),
-            'y': np.random.randn(n),
-        })
+        df = pd.DataFrame(
+            {
+                "x1": np.random.randn(n),
+                "x2": np.random.randn(n),
+                "y": np.random.randn(n),
+            }
+        )
         from scomp_link import ScompLinkPipeline
+
         pipe = ScompLinkPipeline("Branch Test")
         pipe.import_and_clean_data(df)
-        pipe.select_variables(target_col='y')
+        pipe.select_variables(target_col="y")
         return pipe
 
     def test_categorical_known_image_pretrained(self, pipeline_with_data):
@@ -374,11 +402,12 @@ class TestChooseModelBranches:
     def test_numerical_prediction_econometric(self):
         """Line 107: numerical_prediction with < 1000 records."""
         np.random.seed(42)
-        df = pd.DataFrame({'x': np.random.randn(500), 'y': np.random.randn(500)})
+        df = pd.DataFrame({"x": np.random.randn(500), "y": np.random.randn(500)})
         from scomp_link import ScompLinkPipeline
+
         pipe = ScompLinkPipeline("Small Data")
         pipe.import_and_clean_data(df)
-        pipe.select_variables(target_col='y')
+        pipe.select_variables(target_col="y")
         pipe.choose_model("numerical_prediction")
         assert pipe.model_type == "Econometric Model"
 

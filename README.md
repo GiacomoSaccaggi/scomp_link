@@ -54,7 +54,7 @@ pip install scomp-link[llm]
 | Category | Features |
 |----------|----------|
 | **Pipeline** | Automated model selection, training, validation, HTML reports |
-| **CLI** | 26 commands — `run`, `predict`, `text`, `embed`, `cluster`, `tune`, `validate`, `explain`, `engineer`, `forecast`, `anomaly`, `drift`, `fairness`, `quality`, `describe`, `report`, `compare`, `monitor`, `serve`, `export`, `pipeline`, `info`, `init`, `init-config`, `list-models`, `check-deps` |
+| **CLI** | 27 commands — `run`, `predict`, `text`, `embed`, `cluster`, `tune`, `validate`, `explain`, `engineer`, `forecast`, `anomaly`, `drift`, `fairness`, `quality`, `describe`, `report`, `compare`, `monitor`, `serve`, `export`, `pipeline`, `info`, `init`, `init-config`, `list-models`, `check-deps` |
 | **Preprocessing** | Data cleaning, feature engineering (Polars backend — interactions, log, dates, target encoding, binning), data quality profiling |
 | **Models** | Regression, classification, clustering, time series forecasting, anomaly detection, text (BERT contrastive + weak learner head), images (CNN) |
 | **Tuning** | Optuna (Bayesian), Halving Grid Search, Early Stopping CV |
@@ -378,7 +378,7 @@ results = detector.fit_predict(df, features=['col1', 'col2', 'col3'])
 
 ```
 scomp_link/
-├── cli.py                    # CLI (24 commands)
+├── cli.py                    # CLI (27 commands)
 ├── core.py                   # ScompLinkPipeline orchestrator
 ├── preprocessing/
 │   ├── data_processor.py     # Preprocessor (polars backend)

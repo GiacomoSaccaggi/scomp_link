@@ -154,6 +154,37 @@ class ScompLinkPipeline:
         assert self.model_type is not None
         self.model = ModelFactory.get_model(self.model_type, **metadata)
 
+    @staticmethod
+    def _wrap_with_preprocessing(model, X_train: "pd.DataFrame | Any"):
+        """
+        Wrap an estimator in a sklearn Pipeline with an inferred ColumnTransformer.
+
+        Without this, categorical columns reach the estimator as raw strings and
+        fitting fails, and NaNs are left unhandled. Wrapping also makes the fitted
+        object accept raw DataFrames at predict time, which is what keeps .scomp
+        artifacts self-contained.
+
+        Models that already carry their own preprocessing (any sklearn Pipeline)
+        and estimators without a scikit-learn ``fit``/``predict`` surface are
+        returned untouched.
+        """
+        from sklearn.pipeline import Pipeline as SkPipeline
+
+        if isinstance(model, SkPipeline):
+            return model
+        if not (hasattr(model, "fit") and hasattr(model, "predict")):
+            return model
+
+        from .preprocessing.data_processor import build_feature_pipeline
+
+        try:
+            preprocessor = build_feature_pipeline(X_train)
+        except ValueError as exc:
+            logger.warning(f"Skipping automatic preprocessing: {exc}")
+            return model
+
+        return SkPipeline([("preprocessor", preprocessor), ("model", model)])
+
     @timer
     def run_pipeline(
         self,
@@ -193,8 +224,13 @@ class ScompLinkPipeline:
             logger.info("MODELLAZIONE: Running Clustering...")
             from sklearn.cluster import KMeans, MeanShift, estimate_bandwidth
             from sklearn.metrics import silhouette_score
+            from sklearn.pipeline import Pipeline as SkPipeline
 
-            X = self.df[self.feature_cols].values
+            from .preprocessing.data_processor import build_feature_pipeline
+
+            X_raw = self.df[self.feature_cols]
+            preprocessor = build_feature_pipeline(X_raw)
+            X = preprocessor.fit_transform(X_raw)
 
             assert self.model_type is not None
             if "KMeans" in self.model_type or n_clusters:
@@ -205,12 +241,24 @@ class ScompLinkPipeline:
                 metric_value = model.inertia_
             else:  # Mean-Shift
                 bandwidth = estimate_bandwidth(X, quantile=0.2, n_samples=min(500, len(X)))
+                if not bandwidth or bandwidth <= 0:
+                    # Happens when all retained rows are identical; any positive
+                    # bandwidth then yields the single cluster that is correct here.
+                    logger.warning("Estimated bandwidth was 0 (degenerate data); falling back to 1.0.")
+                    bandwidth = 1.0
                 model = MeanShift(bandwidth=bandwidth)
                 clusters = model.fit_predict(X)
                 metric_name = "Clusters Found"
                 metric_value = len(np.unique(clusters))
 
-            silhouette = silhouette_score(X, clusters)
+            # Silhouette is only defined for 2..n_samples-1 distinct labels.
+            n_labels = len(np.unique(clusters))
+            if 2 <= n_labels < len(X):
+                silhouette = silhouette_score(X, clusters)
+            else:
+                silhouette = None
+                logger.warning(f"Silhouette score undefined for {n_labels} cluster(s); reporting None.")
+            self.model = SkPipeline([("preprocessor", preprocessor), ("model", model)])
 
             self.results = {
                 "status": "success",
@@ -395,7 +443,9 @@ class ScompLinkPipeline:
         # STANDARD REGRESSION/CLASSIFICATION PATH
         logger.info("P12: Preparing datasets...")
         assert self.preprocessor is not None
-        X_train, X_test, y_train, y_test = self.preprocessor.prepare_datasets(self.target_col, test_size=test_size)
+        X_train, X_test, y_train, y_test = self.preprocessor.prepare_datasets(
+            self.target_col, test_size=test_size, feature_cols=self.feature_cols
+        )
 
         if task_type == "regression" and models_to_test:
             logger.info("MODELLAZIONE: Running RegressorOptimizer...")
@@ -463,6 +513,7 @@ class ScompLinkPipeline:
             raise ValueError("Model must be chosen before running the pipeline.")
 
         logger.info(f"MODELLAZIONE: Training {self.model_type}...")
+        self.model = self._wrap_with_preprocessing(self.model, X_train)
         self.model.fit(X_train, y_train)  # type: ignore[union-attr]
 
         logger.info("VALUTAZIONE: Evaluating results...")
@@ -500,7 +551,11 @@ class ScompLinkPipeline:
                 logger.info(f"  {result['method']}: {result['mean_score']:.4f} (±{result['std_score']:.4f})")
 
         validator.generate_validation_report(
-            y_test, y_pred, task_type=task_type, y_proba=y_proba, report_name="ScompLink_Validation_Report.html"  # type: ignore[arg-type]
+            y_test,
+            y_pred,
+            task_type=task_type,
+            y_proba=y_proba,
+            report_name="ScompLink_Validation_Report.html",  # type: ignore[arg-type]
         )
 
         self.results = {

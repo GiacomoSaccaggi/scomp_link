@@ -16,6 +16,8 @@ import sys
 from pathlib import Path
 from typing import Optional
 
+from scomp_link.exceptions import ScompLinkError
+
 
 def _load_data(path: str, target: Optional[str] = None):
     """Load data from CSV/Parquet file."""
@@ -202,7 +204,25 @@ def cmd_explain(args):
 
         X = pd.DataFrame(artifact.preprocessor.transform(X), columns=feature_cols)  # type: ignore[call-overload]
 
-    explainer = scomp_link.ShapExplainer(artifact.model, X[: min(100, len(X))])
+    # A trained artifact is a Pipeline(preprocessor, model). SHAP needs a bare
+    # estimator plus already-transformed data, so split the two here and label the
+    # columns with the encoded feature names.
+    model = artifact.model
+    from sklearn.pipeline import Pipeline as SkPipeline
+
+    if isinstance(model, SkPipeline) and "preprocessor" in model.named_steps:
+        import pandas as pd
+
+        inner = model.named_steps["preprocessor"]
+        X_enc = inner.transform(X)
+        try:
+            enc_names = list(inner.get_feature_names_out())
+        except Exception:
+            enc_names = [f"f{i}" for i in range(X_enc.shape[1])]
+        X = pd.DataFrame(X_enc, columns=enc_names)  # type: ignore[arg-type]
+        model = model.named_steps["model"]
+
+    explainer = scomp_link.ShapExplainer(model, X[: min(100, len(X))])
     explainer.explain(X[: min(args.n_samples, len(X))])
     importance = explainer.feature_importance()
 
@@ -900,6 +920,14 @@ def cmd_tune(args):
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=args.test_size, random_state=42)
 
+    # Encode/impute before tuning: the tuners fit estimators directly, so raw
+    # categorical columns and NaNs would otherwise reach them untouched.
+    from scomp_link.preprocessing.data_processor import build_feature_pipeline
+
+    preprocessor = build_feature_pipeline(X_train)
+    X_train_enc = preprocessor.fit_transform(X_train)
+    X_test_enc = preprocessor.transform(X_test)
+
     if args.method == "optuna":
         from sklearn.ensemble import GradientBoostingClassifier, GradientBoostingRegressor
 
@@ -921,7 +949,7 @@ def cmd_tune(args):
             }
 
         optimizer = OptunaOptimizer(base_model, param_space, scoring=scoring, n_trials=args.n_trials)
-        best_model = optimizer.optimize(X_train, y_train)
+        best_model = optimizer.optimize(X_train_enc, y_train)
 
     elif args.method == "halving":
         from sklearn.ensemble import GradientBoostingClassifier, GradientBoostingRegressor
@@ -942,12 +970,12 @@ def cmd_tune(args):
         }
 
         halving_opt = HalvingSearchOptimizer(model, param_grid, scoring=scoring)
-        best_model = halving_opt.optimize(X_train, y_train)
+        best_model = halving_opt.optimize(X_train_enc, y_train)
     else:
         sys.exit(f"Error: unsupported tuning method '{args.method}'. Use: optuna, halving")
 
     # Evaluate best model
-    y_pred = best_model.predict(X_test)
+    y_pred = best_model.predict(X_test_enc)
     if args.task == "regression":
         from sklearn.metrics import mean_squared_error, r2_score
 
@@ -969,8 +997,12 @@ def cmd_tune(args):
         _format_output(tune_output, fmt)
 
     if args.save_artifact:
+        from sklearn.pipeline import Pipeline as SkPipeline
+
+        # Ship preprocessing with the model so the artifact accepts raw data.
+        tuned_pipeline = SkPipeline([("preprocessor", preprocessor), ("model", best_model)])
         artifact = scomp_link.ScompArtifact()
-        artifact.set_model(best_model)
+        artifact.set_model(tuned_pipeline)
         artifact.set_config(task_type=args.task, target_col=args.target)
         artifact.set_metrics(metrics)
         artifact.set_feature_schema(X_train)
@@ -1243,6 +1275,9 @@ def _format_output(data, fmt: str, output_path: str | None = None):
 
 def cmd_serve(args):
     """Serve a .scomp artifact as a REST API."""
+    import hmac
+    import os
+
     import scomp_link
 
     if not Path(args.artifact).exists():
@@ -1257,6 +1292,36 @@ def cmd_serve(args):
     artifact = scomp_link.ScompArtifact.load(args.artifact)
 
     app = Flask("scomp-link-serve")
+
+    # Auth token from --token or the SCOMP_SERVE_TOKEN env var (env preferred, so
+    # the secret does not end up in shell history or the process list).
+    auth_token = os.environ.get("SCOMP_SERVE_TOKEN") or getattr(args, "token", None)
+    public_bind = args.host not in ("127.0.0.1", "localhost", "::1")
+
+    if public_bind and not auth_token:
+        print(
+            f"⚠️  WARNING: binding to {args.host} exposes this model on every network "
+            "interface with NO authentication.\n"
+            "    Anyone who can reach this host can call /predict and read /info and /schema.\n"
+            "    Use --host 127.0.0.1 for local use, or set a token via "
+            "SCOMP_SERVE_TOKEN / --token.",
+            file=sys.stderr,
+        )
+
+    @app.before_request
+    def _require_token():
+        if not auth_token:
+            return None
+        if request.path == "/health":  # keep liveness probes unauthenticated
+            return None
+        provided = request.headers.get("Authorization", "")
+        if provided.startswith("Bearer "):
+            provided = provided[len("Bearer ") :]
+        if not provided:
+            provided = request.headers.get("X-API-Key", "")
+        if not hmac.compare_digest(provided, auth_token):
+            return jsonify({"error": "unauthorized"}), 401
+        return None
 
     @app.route("/health", methods=["GET"])
     def health():
@@ -1941,7 +2006,7 @@ def build_parser() -> argparse.ArgumentParser:
         description="scomp-link: End-to-end ML toolkit CLI",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
-Commands (25 total):
+Commands (27 total):
 
   Training & Prediction:
     run             Train a model (regression, classification, text, clustering, image)
@@ -2335,8 +2400,19 @@ Examples:
         "Endpoints: GET /health, GET /info, GET /schema, POST /predict.",
     )
     p_serve.add_argument("--artifact", required=True, help="Path to .scomp artifact to serve")
-    p_serve.add_argument("--host", default="0.0.0.0", help="Bind address (default: 0.0.0.0)")
+    p_serve.add_argument(
+        "--host",
+        default="127.0.0.1",
+        help="Bind address (default: 127.0.0.1, local only). Use 0.0.0.0 to expose on all "
+        "interfaces — only do this behind a proxy or with --token set.",
+    )
     p_serve.add_argument("--port", type=int, default=8080, help="Port number (default: 8080)")
+    p_serve.add_argument(
+        "--token",
+        default=None,
+        help="Require this bearer token on all endpoints except /health. Prefer the "
+        "SCOMP_SERVE_TOKEN env var so the secret stays out of shell history.",
+    )
     p_serve.add_argument("--debug", action="store_true", help="Enable Flask debug mode")
     p_serve.set_defaults(func=cmd_serve)
 
@@ -2583,14 +2659,35 @@ Examples:
 
 
 def main():
+    # Handled before argparse so it works in any position, without having to
+    # register the flag on all ~27 subparsers.
+    show_traceback = "--traceback" in sys.argv
+    argv = [a for a in sys.argv[1:] if a != "--traceback"]
+
     parser = build_parser()
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
 
     if not args.command:
         parser.print_help()
         sys.exit(0)
 
-    args.func(args)
+    try:
+        args.func(args)
+    except KeyboardInterrupt:
+        sys.exit(130)
+    except ScompLinkError as exc:
+        # Expected, actionable failures: report the message, not the traceback.
+        if show_traceback:
+            raise
+        sys.exit(f"Error [{type(exc).__name__}]: {exc}")
+    except Exception as exc:
+        if show_traceback:
+            raise
+        sys.exit(
+            f"Error [{type(exc).__name__}]: {exc}\n"
+            "Re-run with --traceback for the full stack trace, or report it at "
+            "https://github.com/GiacomoSaccaggi/scomp_link/issues"
+        )
 
 
 if __name__ == "__main__":

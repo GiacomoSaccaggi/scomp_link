@@ -35,6 +35,14 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 ## [Unreleased]
 
 ### Added
+- **Automatic feature preprocessing**: `build_feature_pipeline()` builds a `ColumnTransformer`
+  (median-impute + scale numerics, mode-impute + one-hot encode categoricals with
+  `handle_unknown="ignore"`, pass through booleans). `run_pipeline()` now wraps the chosen
+  estimator in a `Pipeline([preprocessor, model])`, so trained models and `.scomp` artifacts
+  accept raw DataFrames at predict time
+- **`serve` authentication**: `--token` / `SCOMP_SERVE_TOKEN` enforce a bearer token
+  (`Authorization: Bearer …` or `X-API-Key`) on every endpoint except `/health`
+- **`--traceback` CLI flag**: opt into full stack traces; accepted in any argv position
 - **Report Builder interactive components**: `add_kpi_cards`, `add_plotly_grid`, `add_tabs`, `add_cascading_content`, `add_comparison_table`, `add_summary_stats`, `add_dark_mode_toggle` (by @elitedde)
 - **`add_dataframe()` thresholds**: conditional green/orange/red cell coloring per column
 - **Plotly utilities**: `fill_timeslots`, `normalize_to_index`, `index_chart`, `stacked_area_comparison`
@@ -44,10 +52,38 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 - **Explainability coverage**: `example_33_explainability.py` + 5 new tests (58% → 74%)
 
 ### Fixed
+- **Training on categorical features**: `run` / `train_model` / `run_pipeline` raised
+  `ValueError: could not convert string to float` on any dataset with a string column,
+  because no encoding step existed. Affected clustering too
+- **`feature_cols` was silently ignored**: `prepare_datasets()` dropped only the target and fed
+  every remaining column to the model, so columns excluded via `select_variables(feature_cols=…)`
+  still reached the estimator — a silent data-leakage path. It now honours the whitelist and
+  validates that the requested columns exist
+- **Missing values** are now imputed instead of being silently dropped by outlier filtering
+- **`silhouette_score` crash** when a clustering run produced a single label (metric is undefined
+  there); reported as `None` with a warning
+- **CLI error reporting**: unexpected failures printed raw Python tracebacks. They now surface as
+  a single actionable line; `ScompArtifact.load()` raises `ArtifactError` instead of leaking
+  `BadZipFile` / `ValueError`
+- **`serve` bound to `0.0.0.0` by default with no authentication**, exposing `/predict`, `/info`
+  and `/schema` on every network interface. Default is now `127.0.0.1`, and binding publicly
+  without a token prints a warning
+- **Logging went to stdout**, mixing diagnostics with command output when piping. Logs now go to
+  stderr; stdout carries data only
+- Lint: 146 ruff violations resolved (bare `except`, ambiguous names, `type()` comparison, dead
+  expressions); `ruff check` and `pyright` are now blocking CI gates
+- Coverage gate raised from 25% to 70% (actual: 74%), and `examples/` no longer run with `|| true`
+- Version drift: `mcpb/manifest.json` was pinned at 2.1.0 and is now covered by
+  `scripts/bump_version.py`; stale "15 MCP tools" and command-count claims corrected
 - Pyright: 0 errors, 0 warnings across `scomp_link/` and `examples/`
 - `zero_division=0` (int) for sklearn compatibility across Python 3.10–3.14
 - CI: duplicate `continue-on-error` in pages job broke workflow trigger
 - CI: `pages` job now has `continue-on-error: true` (deployment timeout)
+
+### Changed
+- **Clustering now standardizes features** before fitting (correct for distance-based
+  algorithms). Cluster assignments and silhouette scores may differ from 2.2.x for
+  unscaled inputs
 
 ## [2.1.0] - 2026-08-03
 

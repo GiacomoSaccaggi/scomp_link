@@ -26,7 +26,7 @@ Use `scomp-link` CLI commands when the user asks to:
 - Serve a model as REST API
 - Compare multiple models
 
-## CLI Quick Reference (26 commands)
+## CLI Quick Reference (27 commands)
 
 ```bash
 # Data understanding

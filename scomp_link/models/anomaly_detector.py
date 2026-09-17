@@ -217,7 +217,6 @@ class AnomalyDetector(BaseEstimator):
             raise ImportError("PyTorch required for Transformer anomaly detection. " "Install with: pip install torch")
 
         X_float = X.astype(np.float32)
-        n_features = X_float.shape[1]
         d_model = self.transformer_d_model
         nhead = self.transformer_nhead
         num_layers = self.transformer_num_layers

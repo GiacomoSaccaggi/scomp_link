@@ -3,31 +3,33 @@
 Tests for MCP server tools.
 Tests the tool functions directly without starting the MCP transport.
 """
+
 import json
 import os
 import tempfile
-import pytest
+
 import numpy as np
 import pandas as pd
+import pytest
 
 mcp_available = True
 try:
     from scomp_link.mcp_server import (
-        describe_data,
-        train_model,
-        predict,
-        validate_model,
-        detect_drift,
-        detect_anomalies,
-        check_fairness,
-        forecast_series,
-        engineer_features,
-        cluster_data,
-        generate_report,
-        create_visualization,
-        compare_models,
-        export_model,
         _load_df,
+        check_fairness,
+        cluster_data,
+        compare_models,
+        create_visualization,
+        describe_data,
+        detect_anomalies,
+        detect_drift,
+        engineer_features,
+        export_model,
+        forecast_series,
+        generate_report,
+        predict,
+        train_model,
+        validate_model,
     )
 except ImportError:
     mcp_available = False
@@ -39,14 +41,17 @@ pytestmark = pytest.mark.skipif(not mcp_available, reason="mcp package not insta
 # Fixtures
 # ---------------------------------------------------------------------------
 
+
 @pytest.fixture
 def regression_csv(tmp_path):
     np.random.seed(42)
-    df = pd.DataFrame({
-        "x1": np.random.randn(100),
-        "x2": np.random.randn(100),
-        "y": np.random.randn(100),
-    })
+    df = pd.DataFrame(
+        {
+            "x1": np.random.randn(100),
+            "x2": np.random.randn(100),
+            "y": np.random.randn(100),
+        }
+    )
     path = str(tmp_path / "regression.csv")
     df.to_csv(path, index=False)
     return path
@@ -55,11 +60,13 @@ def regression_csv(tmp_path):
 @pytest.fixture
 def classification_csv(tmp_path):
     np.random.seed(42)
-    df = pd.DataFrame({
-        "f1": np.random.randn(100),
-        "f2": np.random.randn(100),
-        "label": np.random.choice(["A", "B"], 100),
-    })
+    df = pd.DataFrame(
+        {
+            "f1": np.random.randn(100),
+            "f2": np.random.randn(100),
+            "label": np.random.choice(["A", "B"], 100),
+        }
+    )
     path = str(tmp_path / "classification.csv")
     df.to_csv(path, index=False)
     return path
@@ -78,11 +85,13 @@ def time_series_csv(tmp_path):
 def fairness_csv(tmp_path):
     np.random.seed(42)
     n = 200
-    df = pd.DataFrame({
-        "y_true": np.random.choice([0, 1], n),
-        "y_pred": np.random.choice([0, 1], n),
-        "gender": np.random.choice(["M", "F"], n),
-    })
+    df = pd.DataFrame(
+        {
+            "y_true": np.random.choice([0, 1], n),
+            "y_pred": np.random.choice([0, 1], n),
+            "gender": np.random.choice(["M", "F"], n),
+        }
+    )
     path = str(tmp_path / "fairness.csv")
     df.to_csv(path, index=False)
     return path
@@ -91,6 +100,7 @@ def fairness_csv(tmp_path):
 # ---------------------------------------------------------------------------
 # Tests
 # ---------------------------------------------------------------------------
+
 
 class TestLoadDf:
     def test_csv(self, regression_csv):
@@ -125,8 +135,9 @@ class TestTrainModel:
 
     def test_regression_with_tuning(self, regression_csv, tmp_path):
         artifact_path = str(tmp_path / "tuned.scomp")
-        result = json.loads(train_model(regression_csv, "y", task="regression",
-                                        tune=True, n_trials=5, save_artifact=artifact_path))
+        result = json.loads(
+            train_model(regression_csv, "y", task="regression", tune=True, n_trials=5, save_artifact=artifact_path)
+        )
         assert result["status"] == "success"
         assert "r2" in result["metrics"]
 
@@ -136,8 +147,9 @@ class TestTrainModel:
 
     def test_with_feature_engineering(self, regression_csv, tmp_path):
         artifact_path = str(tmp_path / "eng.scomp")
-        result = json.loads(train_model(regression_csv, "y", task="regression",
-                                        engineer=True, save_artifact=artifact_path))
+        result = json.loads(
+            train_model(regression_csv, "y", task="regression", engineer=True, save_artifact=artifact_path)
+        )
         assert result["status"] == "success"
 
 
@@ -210,7 +222,7 @@ class TestForecastSeries:
 
     def test_with_plot(self, time_series_csv, tmp_path):
         plot_path = str(tmp_path / "forecast.html")
-        result = json.loads(forecast_series(time_series_csv, "value", horizon=5, plot=plot_path))
+        json.loads(forecast_series(time_series_csv, "value", horizon=5, plot=plot_path))
         assert os.path.exists(plot_path)
 
 
@@ -288,7 +300,7 @@ class TestExportModel:
         artifact_path = str(tmp_path / "model.scomp")
         train_model(regression_csv, "y", task="regression", save_artifact=artifact_path)
         out_path = str(tmp_path / "model.joblib")
-        result = json.loads(export_model(artifact_path, format="joblib", output=out_path))
+        json.loads(export_model(artifact_path, format="joblib", output=out_path))
         assert os.path.exists(out_path)
 
     def test_unsupported_format(self, regression_csv, tmp_path):
@@ -302,10 +314,12 @@ class TestExportModel:
 # MCP: embed_text + select_backbone
 # ═══════════════════════════════════════════════════════════════════
 
+
 class TestEmbedText:
     def test_embed_text_non_contrastive_artifact(self, tmp_path, regression_csv):
         """embed_text returns error for non-contrastive artifacts."""
         from scomp_link.mcp_server import embed_text, train_model
+
         # Train a regression model (not contrastive)
         artifact_path = str(tmp_path / "reg.scomp")
         train_model(regression_csv, target="y", task="regression", save_artifact=artifact_path)
@@ -315,6 +329,7 @@ class TestEmbedText:
     def test_embed_text_missing_column(self, tmp_path, regression_csv):
         """embed_text returns error when column doesn't exist."""
         from scomp_link.mcp_server import embed_text, train_model
+
         artifact_path = str(tmp_path / "reg2.scomp")
         train_model(regression_csv, target="y", task="regression", save_artifact=artifact_path)
         result = json.loads(embed_text(artifact_path, regression_csv, text_col="nonexistent"))
@@ -325,24 +340,29 @@ class TestSelectBackbone:
     def test_select_backbone_missing_columns(self, regression_csv):
         """select_backbone returns error for missing columns."""
         from scomp_link.mcp_server import select_backbone
+
         result = json.loads(select_backbone(regression_csv, text_col="text", label_col="label"))
         assert "error" in result
 
     def test_select_backbone_with_valid_data(self, tmp_path):
         """select_backbone works with valid text+label data (uses precomputed in EmbeddingSelector)."""
-        from scomp_link.mcp_server import select_backbone
         import numpy as np
 
+        from scomp_link.mcp_server import select_backbone
+
         # Create a simple text dataset
-        df = pd.DataFrame({
-            'text': ['machine learning'] * 10 + ['football game'] * 10,
-            'label': ['tech'] * 10 + ['sports'] * 10,
-        })
+        df = pd.DataFrame(
+            {
+                "text": ["machine learning"] * 10 + ["football game"] * 10,
+                "label": ["tech"] * 10 + ["sports"] * 10,
+            }
+        )
         csv_path = str(tmp_path / "text_data.csv")
         df.to_csv(csv_path, index=False)
 
         # This will try to download models — use a non-existent model to test error handling
-        result = json.loads(select_backbone(csv_path, text_col="text", label_col="label",
-                                           candidates="nonexistent-model-xyz"))
+        result = json.loads(
+            select_backbone(csv_path, text_col="text", label_col="label", candidates="nonexistent-model-xyz")
+        )
         # Should either succeed with inf loss or have ranking with error
         assert "ranking" in result or "error" in result

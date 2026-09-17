@@ -254,7 +254,7 @@ omit = [
 
 [tool.coverage.report]
 show_missing = true
-fail_under = 25
+fail_under = 70
 
 # ── Ruff configuration ──
 

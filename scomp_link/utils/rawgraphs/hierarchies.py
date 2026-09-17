@@ -101,12 +101,11 @@ def circlepacking(data: dict, title: str = "", width: int = 700, height: int = 7
     """Circle packing visualization for hierarchical data."""
     palette = _get_colors(colors)
     leaves = _flatten_leaves(data)
-    names = [l[0] for l in leaves]
-    values = [l[1] for l in leaves]
+    names = [leaf[0] for leaf in leaves]
+    values = [leaf[1] for leaf in leaves]
 
     # Radius proportional to sqrt(value)
     radii = [math.sqrt(v) for v in values]
-    max_r = max(radii) if radii else 1
 
     fig, ax = plt.subplots(1, 1, figsize=(width / 100, height / 100))
     ax.set_aspect("equal")
@@ -239,7 +238,7 @@ def dendrogram(
     fig, ax = plt.subplots(1, 1, figsize=(width / 100, height / 100))
 
     # Use scipy dendrogram with color threshold to get colored clusters
-    ddata = scipy_dendrogram(
+    scipy_dendrogram(
         linkage_matrix,
         labels=labels,
         ax=ax,
@@ -408,7 +407,6 @@ def voronoi_treemap(
     names = [c.get("name", "") for c in children]
     values = np.array([_get_node_value(c) for c in children], dtype=float)
     n = len(values)
-    weights = values / values.sum()
 
     # Initialize points with weighted random placement
     rng = np.random.default_rng(42)
