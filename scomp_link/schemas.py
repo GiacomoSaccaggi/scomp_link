@@ -148,3 +148,104 @@ class ClusterConfig(BaseModel):
         None, description="Comma-separated list of feature columns. Defaults to all numeric columns."
     )
     output: Optional[str] = Field(None, description="Path to save the dataset with cluster labels appended.")
+
+
+# ── LLM tool schemas ─────────────────────────────────────────────────────────
+
+
+class LLMFineTuneConfig(BaseModel):
+    """Configuration for the llm_finetune MCP tool."""
+
+    model_config = _cfg
+
+    model: str = Field(..., description="HuggingFace model identifier or local path.")
+    method: Literal["lora", "qlora", "full"] = Field("lora", description="Fine-tuning method.")
+    data: str = Field(..., description="Path to the training dataset.")
+    epochs: int = Field(3, ge=1, description="Number of training epochs.")
+    batch_size: int = Field(4, ge=1, description="Per-device batch size.")
+    learning_rate: float = Field(2e-4, gt=0, description="Learning rate.")
+
+
+class LLMConvertConfig(BaseModel):
+    """Configuration for the llm_convert MCP tool."""
+
+    model_config = _cfg
+
+    model_path: str = Field(..., description="Path to the HuggingFace model directory.")
+    quantization: str = Field("Q4_K_M", description="GGUF quantization level.")
+    output_dir: Optional[str] = Field(None, description="Output directory for the GGUF file.")
+    importance_matrix: Optional[str] = Field(None, description="Path to an importance matrix file.")
+
+
+class LLMScratchConfig(BaseModel):
+    """Configuration for the llm_scratch MCP tool."""
+
+    model_config = _cfg
+
+    vocab_size: int = Field(32_000, ge=1, description="Vocabulary size.")
+    d_model: int = Field(768, ge=1, description="Model embedding dimension.")
+    n_heads: int = Field(12, ge=1, description="Number of attention heads.")
+    n_layers: int = Field(12, ge=1, description="Number of transformer layers.")
+    data: str = Field(..., description="Path to the training corpus.")
+    epochs: int = Field(10, ge=1, description="Number of training epochs.")
+
+
+class LLMEstimateConfig(BaseModel):
+    """Configuration for the llm_estimate MCP tool."""
+
+    model_config = _cfg
+
+    model_path: str = Field(..., description="Path to the HuggingFace model directory.")
+    quantization: str = Field("Q4_K_M", description="GGUF quantization level to estimate.")
+
+
+class LLMEvaluateConfig(BaseModel):
+    """Configuration for the llm_evaluate MCP tool."""
+
+    model_config = _cfg
+
+    generated: str = Field(..., description="Path to generated text file, or the text itself.")
+    references: Optional[str] = Field(None, description="Path to reference text file, or the text itself.")
+
+
+class LLMFormatConfig(BaseModel):
+    """Configuration for the llm_format MCP tool."""
+
+    model_config = _cfg
+
+    input_path: str = Field(..., description="Path to input dataset (JSON or JSONL).")
+    output_path: str = Field(..., description="Path to output JSONL file.")
+    source_format: str = Field(..., description="Source format: alpaca, sharegpt, or openai.")
+    target_format: str = Field("chatml", description="Target format: chatml, llama, alpaca, or plain.")
+
+
+class LLMDedupConfig(BaseModel):
+    """Configuration for the llm_dedup MCP tool."""
+
+    model_config = _cfg
+
+    data: str = Field(..., description="Path to text file (one text per line) or JSON/JSONL.")
+    method: str = Field("exact", description="Dedup method: exact or ngram.")
+    threshold: float = Field(0.8, ge=0.0, le=1.0, description="Jaccard similarity threshold for ngram dedup.")
+
+
+class LLMMergeConfig(BaseModel):
+    """Configuration for the llm_merge MCP tool."""
+
+    model_config = _cfg
+
+    base_model: str = Field(..., description="Path to base model (shared pretrained ancestor).")
+    models: str = Field(..., description="Comma-separated paths to fine-tuned models to merge.")
+    method: str = Field("ties", description="Merge method: linear, slerp, ties, or dare.")
+    density: float = Field(0.5, gt=0.0, le=1.0, description="Density for TIES/DARE (fraction to keep).")
+    output_dir: str = Field("./merged", description="Output directory for merged model.")
+
+
+class LLMServeConfig(BaseModel):
+    """Configuration for the llm_serve MCP tool (info only — does not start the server)."""
+
+    model_config = _cfg
+
+    model_path: str = Field(..., description="Path to HuggingFace model directory.")
+    port: int = Field(8080, ge=1, le=65535, description="Port for the inference server.")
+    load_in_4bit: bool = Field(False, description="Load model in 4-bit quantization.")

@@ -172,6 +172,23 @@ shap = [
     "lime>=0.2.0,<1.0.0",
 ]
 
+# LLM: fine-tuning, training from scratch, GGUF conversion
+llm = [
+    "torch>=2.0.0,<3.0.0",
+    "transformers>=4.38.0,<6.0.0",
+    "peft>=0.8.0,<1.0.0",
+    "bitsandbytes>=0.42.0,<1.0.0",
+    "datasets>=2.16.0,<4.0.0",
+    "accelerate>=0.25.0,<2.0.0",
+    "trl>=0.7.0,<1.0.0",
+    "tokenizers>=0.15.0,<1.0.0",
+    "llama-cpp-python>=0.2.0,<1.0.0",
+    "safetensors>=0.4.0,<1.0.0",
+    "wandb>=0.16.0,<1.0.0",
+    "chromadb>=0.4.0,<1.0.0",
+    "sentence-transformers>=2.2.0,<4.0.0",
+]
+
 # MCP server for AI agent integration
 mcp = [
     "mcp>=2.0.0,<3.0.0",
@@ -183,7 +200,7 @@ serve = [
 ]
 
 # All optional extras
-all = ["scomp-link[nlp,cv,anomaly,reports,shap,mcp,serve]"]
+all = ["scomp-link[nlp,cv,anomaly,reports,shap,mcp,serve,llm]"]
 
 # Development and testing
 dev = [
@@ -224,7 +241,16 @@ addopts = "-v --tb=short"
 
 [tool.coverage.run]
 source = ["scomp_link"]
-omit = ["tests/*", "examples/*"]
+omit = [
+    "tests/*",
+    "examples/*",
+    # LLM modules requiring torch/transformers (not installed in CI without [llm] extra)
+    "scomp_link/llm/training/finetune.py",
+    "scomp_link/llm/training/scratch.py",
+    "scomp_link/llm/serving/serve.py",
+    "scomp_link/llm/serving/merge.py",
+    "scomp_link/llm/rag/embedder.py",
+]
 
 [tool.coverage.report]
 show_missing = true

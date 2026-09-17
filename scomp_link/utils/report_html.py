@@ -78,13 +78,22 @@ _FOOTER_JS_BLOCK = """
                             });
                         }
 
-                        // Collapsible sections with Plotly resize on open
-                        var coll = document.getElementsByClassName("collapsiblemygs");
-                        // Collapse all sections immediately (do not rely on DOMContentLoaded which may have already fired)
-                        for (var ci = 0; ci < coll.length; ci++) {
-                            var sibling = coll[ci].nextElementSibling;
-                            if (sibling) sibling.style.display = 'none';
+                        // ── Mermaid helper: re-render unrendered diagrams when section opens ──
+                        function renderMermaidIn(container) {
+                            if (!window.mermaid) return;
+                            var pres = container.querySelectorAll('pre.mermaid:not([data-processed])');
+                            if (pres.length > 0) { mermaid.run({ nodes: pres }); }
                         }
+
+                        // ── Collapse helper (deferred — called AFTER Mermaid renders) ──
+                        function collapseAllSections() {
+                            var coll = document.getElementsByClassName("collapsiblemygs");
+                            for (var ci = 0; ci < coll.length; ci++) {
+                                var sibling = coll[ci].nextElementSibling;
+                                if (sibling) sibling.style.display = 'none';
+                            }
+                        }
+                        var coll = document.getElementsByClassName("collapsiblemygs");
                         for (var i = 0; i < coll.length; i++) {
                           coll[i].addEventListener("click", function() {
                             this.classList.toggle("active");
@@ -94,6 +103,10 @@ _FOOTER_JS_BLOCK = """
                               // Resize Plotly charts after section becomes visible
                               setTimeout(function() { resizePlotsIn(content); }, 50);
                               setTimeout(function() { resizePlotsIn(content); }, 300);
+                              // Re-render Mermaid diagrams that were hidden during initial render
+                              setTimeout(function() { renderMermaidIn(content); }, 50);
+                              // Render KaTeX in newly visible section
+                              if (window.renderMathInElement) { setTimeout(function() { renderMathInElement(content, { delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}, {left: '\\\\[', right: '\\\\]', display: true}, {left: '\\\\(', right: '\\\\)', display: false}], throwOnError: false, trust: true }); }, 50); }
                               // Highlight code blocks that were hidden
                               if (window.Prism) { setTimeout(function() { Prism.highlightAllUnder(content); }, 50); }
                             } else {
@@ -103,11 +116,6 @@ _FOOTER_JS_BLOCK = """
                         }
 
                         document.addEventListener("DOMContentLoaded", function() {
-                            // Collapse all sections (fallback)
-                            var contents = document.querySelectorAll('.content');
-                            contents.forEach(function(content) {
-                                content.style.display = 'none';
-                            });
 
                             // Highcharts containers: ensure 100% width
                             document.querySelectorAll('.highcharts-container').forEach(function(item) {
@@ -150,8 +158,32 @@ _FOOTER_JS_BLOCK = """
                                 });
                             });
 
-                            // Mermaid.js: initialize diagrams
-                            if (window.mermaid) { mermaid.initialize({startOnLoad:true, theme:"neutral", securityLevel:"loose"}); }
+                            // Mermaid.js: render ALL diagrams while sections are still visible,
+                            // THEN collapse sections. This ensures Mermaid has correct dimensions.
+                            if (window.mermaid) {
+                                mermaid.initialize({startOnLoad: false, theme: "neutral", securityLevel: "loose"});
+                                mermaid.run().then(function() {
+                                    collapseAllSections();
+                                }).catch(function() {
+                                    collapseAllSections();
+                                });
+                            } else {
+                                collapseAllSections();
+                            }
+
+                            // KaTeX: auto-render math expressions in the document
+                            if (window.renderMathInElement) {
+                                renderMathInElement(document.body, {
+                                    delimiters: [
+                                        {left: '$$', right: '$$', display: true},
+                                        {left: '$', right: '$', display: false},
+                                        {left: '\\\\[', right: '\\\\]', display: true},
+                                        {left: '\\\\(', right: '\\\\)', display: false},
+                                    ],
+                                    throwOnError: false,
+                                    trust: true,
+                                });
+                            }
 
                             // Prism.js: highlight all visible code blocks
                             if (window.Prism) { Prism.highlightAll(); }
@@ -242,6 +274,10 @@ class ScompLinkHTMLReport:
             <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
             <!-- Mermaid.js diagrams -->
             <script src="https://cdn.jsdelivr.net/npm/mermaid@11.4.0/dist/mermaid.min.js"></script>
+            <!-- KaTeX math rendering -->
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css" />
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"></script>
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js"></script>
             <!-- Asciinema player (terminal replay) -->
             <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/asciinema-player@3.8.0/dist/bundle/asciinema-player.css" />
             <script src="https://cdn.jsdelivr.net/npm/asciinema-player@3.8.0/dist/bundle/asciinema-player.min.js"></script>
@@ -433,6 +469,9 @@ class ScompLinkHTMLReport:
             .scomp-mermaid-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.2rem;margin:1rem 0;text-align:center}
             .scomp-mermaid-card h4{margin-bottom:.6rem;color:var(--accent);text-align:left}
             .scomp-mermaid-card .mermaid{font-size:.85rem}
+            .scomp-math-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.2rem;margin:1rem 0}
+            .scomp-math-card h4{margin-bottom:.6rem;color:var(--accent)}
+            .scomp-math-card .katex-display{margin:1rem 0;overflow-x:auto}
             .scomp-terminal-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.2rem;margin:1rem 0}
             .scomp-terminal-card h4{margin-bottom:.6rem;color:var(--accent)}
             </style>
@@ -510,6 +549,10 @@ class ScompLinkHTMLReport:
             <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
             <!-- Mermaid.js diagrams -->
             <script src="https://cdn.jsdelivr.net/npm/mermaid@11.4.0/dist/mermaid.min.js"></script>
+            <!-- KaTeX math rendering -->
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css" />
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"></script>
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js"></script>
             <!-- Asciinema player (terminal replay) -->
             <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/asciinema-player@3.8.0/dist/bundle/asciinema-player.css" />
             <script src="https://cdn.jsdelivr.net/npm/asciinema-player@3.8.0/dist/bundle/asciinema-player.min.js"></script>
@@ -701,6 +744,9 @@ class ScompLinkHTMLReport:
             .scomp-mermaid-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.2rem;margin:1rem 0;text-align:center}
             .scomp-mermaid-card h4{margin-bottom:.6rem;color:var(--accent);text-align:left}
             .scomp-mermaid-card .mermaid{font-size:.85rem}
+            .scomp-math-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.2rem;margin:1rem 0}
+            .scomp-math-card h4{margin-bottom:.6rem;color:var(--accent)}
+            .scomp-math-card .katex-display{margin:1rem 0;overflow-x:auto}
             .scomp-terminal-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.2rem;margin:1rem 0}
             .scomp-terminal-card h4{margin-bottom:.6rem;color:var(--accent)}
             </style>
@@ -1242,6 +1288,53 @@ class ScompLinkHTMLReport:
         parts.append("</div>")
         self.html_report += "\n".join(parts)
         logger.info("Added mermaid diagram to report!")
+
+    def add_math(self, latex: str, title: str = "", display: bool = True, collapsed: bool = False) -> None:
+        """
+        Add a LaTeX math formula to the report using KaTeX.
+
+        Supports both display mode (centered, large) and inline mode.
+        You can also use $...$ (inline) and $$...$$ (display) directly in
+        any text added via add_text() or html_report += — KaTeX auto-render
+        will pick them up.
+
+        :param latex: str - LaTeX expression (without delimiters)
+        :param title: str - optional title above the formula
+        :param display: bool - True for display mode (centered), False for inline
+        :param collapsed: bool - wrap in collapsible element
+
+        ## example
+        report.add_math(r"\\tau = \\theta_{\\text{finetuned}} - \\theta_{\\text{base}}", title="Task Vector")
+        report.add_math(r"\\text{BLEU} = \\text{BP} \\cdot \\exp\\left(\\sum_n w_n \\log p_n\\right)")
+        """
+        # Sanitize < and > that are not part of LaTeX commands.
+        # The browser parses raw < as HTML tag openings before KaTeX runs.
+        import re
+
+        latex = re.sub(r"(?<!\\)<", r"\\lt ", latex)
+        latex = re.sub(r"(?<!\\)>", r"\\gt ", latex)
+
+        import html as html_mod
+
+        escaped_title = html_mod.escape(title) if title else ""
+
+        if display:
+            delimiter_open, delimiter_close = "$$", "$$"
+        else:
+            delimiter_open, delimiter_close = "$", "$"
+
+        parts = ['<div class="scomp-math-card">']
+        if title and not collapsed:
+            parts.append(f"<h4>{escaped_title}</h4>")
+        if collapsed:
+            summary_text = escaped_title or "Formula"
+            parts.append(f"<details><summary>{summary_text}</summary>")
+        parts.append(f"{delimiter_open}{latex}{delimiter_close}")
+        if collapsed:
+            parts.append("</details>")
+        parts.append("</div>")
+        self.html_report += "\n".join(parts)
+        logger.info("Added math formula to report!")
 
     def add_terminal(
         self,

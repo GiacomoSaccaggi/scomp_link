@@ -1489,6 +1489,508 @@ def report_add_terminal(
 
 
 # ═══════════════════════════════════════════════════════════════════
+# LLM TOOLS
+# ═══════════════════════════════════════════════════════════════════
+
+
+@mcp.tool()
+def llm_finetune(
+    model: str,
+    data: str,
+    method: str = "lora",
+    epochs: int = 3,
+    batch_size: int = 4,
+    learning_rate: float = 2e-4,
+) -> str:
+    """Fine-tune a pretrained HuggingFace model using LoRA, QLoRA, or full fine-tuning.
+
+    Parameters:
+        model: HuggingFace model identifier or local path.
+        data: Path to the training dataset.
+        method: Fine-tuning method — "lora", "qlora", or "full".
+        epochs: Number of training epochs.
+        batch_size: Per-device batch size.
+        learning_rate: Learning rate.
+
+    Returns JSON with TrainResult (loss_history, eval_metrics, model_path, total_steps, etc.)
+    or an error object with status, error description, and exception type.
+    """
+    from scomp_link import exceptions as exc
+    from scomp_link.schemas import LLMFineTuneConfig
+
+    try:
+        from typing import Literal, cast
+
+        _method = cast(Literal["lora", "qlora", "full"], method)
+        cfg = LLMFineTuneConfig(
+            model=model,
+            method=_method,
+            data=data,
+            epochs=epochs,
+            batch_size=batch_size,
+            learning_rate=learning_rate,
+        )
+        from scomp_link.llm.core.configs import FineTuneConfig
+        from scomp_link.llm.training.finetune import FineTuner
+
+        ft_config = FineTuneConfig(method=cfg.method)
+        ft = FineTuner(cfg.model, method=cfg.method, config=ft_config)
+        result = ft.train(cfg.data, epochs=cfg.epochs, batch_size=cfg.batch_size, learning_rate=cfg.learning_rate)
+        return json.dumps(
+            {
+                "status": "success",
+                "loss_history": result.loss_history,
+                "eval_loss": result.eval_loss,
+                "eval_metrics": result.eval_metrics,
+                "model_path": str(result.model_path),
+                "adapter_path": str(result.adapter_path) if result.adapter_path else None,
+                "total_steps": result.total_steps,
+                "training_time_seconds": result.training_time_seconds,
+                "peak_memory_gb": result.peak_memory_gb,
+            },
+            indent=2,
+            default=str,
+        )
+    except ImportError as e:
+        return json.dumps({"status": "error", "error": str(e), "type": "ImportError"})
+    except exc.DataValidationError as e:
+        return json.dumps({"status": "error", "error": str(e), "type": "DataValidationError"})
+    except exc.ModelTrainingError as e:
+        return json.dumps({"status": "error", "error": str(e), "type": "ModelTrainingError"})
+    except exc.ScompLinkError as e:
+        return json.dumps({"status": "error", "error": str(e), "type": type(e).__name__})
+
+
+@mcp.tool()
+def llm_convert(
+    model_path: str,
+    quantization: str = "Q4_K_M",
+    output_dir: Optional[str] = None,
+    importance_matrix: Optional[str] = None,
+) -> str:
+    """Convert a HuggingFace model to quantized GGUF format for efficient inference with llama.cpp.
+
+    Parameters:
+        model_path: Path to the HuggingFace model directory.
+        quantization: GGUF quantization level (e.g. "Q4_K_M", "Q8_0", "f16").
+        output_dir: Output directory for the GGUF file.
+        importance_matrix: Path to an importance matrix file for improved quantization quality.
+
+    Returns JSON with ConvertResult (gguf_path, original_size_gb, quantized_size_gb, compression_ratio)
+    or an error object with status, error description, and exception type.
+    """
+    from scomp_link import exceptions as exc
+    from scomp_link.schemas import LLMConvertConfig
+
+    try:
+        cfg = LLMConvertConfig(
+            model_path=model_path,
+            quantization=quantization,
+            output_dir=output_dir,
+            importance_matrix=importance_matrix,
+        )
+        from scomp_link.llm.serving.convert import ModelConverter
+
+        mc = ModelConverter(cfg.model_path)
+        result = mc.to_gguf(
+            output_dir=cfg.output_dir,
+            quantization=cfg.quantization,
+            importance_matrix=cfg.importance_matrix,
+        )
+        return json.dumps(
+            {
+                "status": "success",
+                "gguf_path": str(result.gguf_path),
+                "quantization": result.quantization,
+                "original_size_gb": result.original_size_gb,
+                "quantized_size_gb": result.quantized_size_gb,
+                "compression_ratio": result.compression_ratio,
+            },
+            indent=2,
+            default=str,
+        )
+    except ImportError as e:
+        return json.dumps({"status": "error", "error": str(e), "type": "ImportError"})
+    except exc.DataValidationError as e:
+        return json.dumps({"status": "error", "error": str(e), "type": "DataValidationError"})
+    except exc.ModelTrainingError as e:
+        return json.dumps({"status": "error", "error": str(e), "type": "ModelTrainingError"})
+    except exc.ScompLinkError as e:
+        return json.dumps({"status": "error", "error": str(e), "type": type(e).__name__})
+
+
+@mcp.tool()
+def llm_scratch(
+    data: str,
+    vocab_size: int = 32000,
+    d_model: int = 768,
+    n_heads: int = 12,
+    n_layers: int = 12,
+    epochs: int = 10,
+) -> str:
+    """Build and train a GPT-style transformer model from scratch.
+
+    Parameters:
+        data: Path to the training corpus.
+        vocab_size: Vocabulary size.
+        d_model: Model embedding dimension.
+        n_heads: Number of attention heads.
+        n_layers: Number of transformer layers.
+        epochs: Number of training epochs.
+
+    Returns JSON with TrainResult (loss_history, eval_metrics, model_path, total_steps, etc.)
+    or an error object with status, error description, and exception type.
+    """
+    from scomp_link import exceptions as exc
+    from scomp_link.schemas import LLMScratchConfig
+
+    try:
+        cfg = LLMScratchConfig(
+            vocab_size=vocab_size,
+            d_model=d_model,
+            n_heads=n_heads,
+            n_layers=n_layers,
+            data=data,
+            epochs=epochs,
+        )
+        from scomp_link.llm.core.configs import TransformerConfig
+        from scomp_link.llm.training.scratch import TransformerBuilder
+
+        tc = TransformerConfig(
+            vocab_size=cfg.vocab_size,
+            d_model=cfg.d_model,
+            n_heads=cfg.n_heads,
+            n_layers=cfg.n_layers,
+        )
+        builder = TransformerBuilder(tc)
+        result = builder.train(cfg.data, epochs=cfg.epochs)
+        return json.dumps(
+            {
+                "status": "success",
+                "loss_history": result.loss_history,
+                "eval_loss": result.eval_loss,
+                "eval_metrics": result.eval_metrics,
+                "model_path": str(result.model_path),
+                "total_steps": result.total_steps,
+                "training_time_seconds": result.training_time_seconds,
+                "peak_memory_gb": result.peak_memory_gb,
+            },
+            indent=2,
+            default=str,
+        )
+    except ImportError as e:
+        return json.dumps({"status": "error", "error": str(e), "type": "ImportError"})
+    except exc.DataValidationError as e:
+        return json.dumps({"status": "error", "error": str(e), "type": "DataValidationError"})
+    except exc.ModelTrainingError as e:
+        return json.dumps({"status": "error", "error": str(e), "type": "ModelTrainingError"})
+    except exc.ScompLinkError as e:
+        return json.dumps({"status": "error", "error": str(e), "type": type(e).__name__})
+
+
+@mcp.tool()
+def llm_estimate(model_path: str, quantization: str = "Q4_K_M") -> str:
+    """Estimate the GGUF output size for a model and quantization level without performing the conversion.
+
+    Parameters:
+        model_path: Path to the HuggingFace model directory.
+        quantization: GGUF quantization level to estimate (e.g. "Q4_K_M", "Q8_0", "f16").
+
+    Returns JSON with estimated size in gigabytes
+    or an error object with status, error description, and exception type.
+    """
+    from scomp_link import exceptions as exc
+    from scomp_link.schemas import LLMEstimateConfig
+
+    try:
+        cfg = LLMEstimateConfig(model_path=model_path, quantization=quantization)
+        from scomp_link.llm.serving.convert import ModelConverter
+
+        mc = ModelConverter(cfg.model_path)
+        estimate = mc.estimate_size(cfg.quantization)
+        return json.dumps(
+            {
+                "status": "success",
+                "model_path": cfg.model_path,
+                "quantization": cfg.quantization,
+                "estimated_size_gb": estimate,
+            },
+            indent=2,
+            default=str,
+        )
+    except ImportError as e:
+        return json.dumps({"status": "error", "error": str(e), "type": "ImportError"})
+    except exc.DataValidationError as e:
+        return json.dumps({"status": "error", "error": str(e), "type": "DataValidationError"})
+    except exc.ScompLinkError as e:
+        return json.dumps({"status": "error", "error": str(e), "type": type(e).__name__})
+
+
+@mcp.tool()
+def llm_evaluate(
+    generated: str,
+    references: str = "",
+) -> str:
+    """Evaluate generated text quality using n-gram metrics (BLEU, ROUGE, diversity, Zipf).
+
+    Parameters:
+        generated: Generated text or path to a text file.
+        references: Reference text or path to a text file (optional — for BLEU/ROUGE).
+
+    Returns JSON with quality metrics (bleu, rouge_1_f1, diversity_1-4, repetition_rate, vocabulary_richness, zipf_coefficient).
+    """
+    from scomp_link import exceptions as exc
+
+    try:
+        from pathlib import Path as _Path
+
+        def _read_if_file(s: str) -> str:
+            if s and ("/" in s or "\\" in s):
+                p = _Path(s)
+                if p.is_file():
+                    return p.read_text(encoding="utf-8")
+            return s
+
+        gen_text = _read_if_file(generated)
+        ref_text = _read_if_file(references) if references else None
+
+        from scomp_link.llm.evaluation import TextQualityMetrics
+
+        metrics = TextQualityMetrics.evaluate(gen_text, ref_text if ref_text else None)
+        return json.dumps({"status": "success", **metrics}, indent=2, default=str)
+    except exc.DataValidationError as e:
+        return json.dumps({"status": "error", "error": str(e), "type": "DataValidationError"})
+    except exc.ScompLinkError as e:
+        return json.dumps({"status": "error", "error": str(e), "type": type(e).__name__})
+
+
+@mcp.tool()
+def llm_format(
+    input_path: str,
+    output_path: str,
+    source_format: str,
+    target_format: str = "chatml",
+) -> str:
+    """Convert an instruction-tuning dataset between formats (Alpaca, ShareGPT, OpenAI → ChatML, Llama, Plain).
+
+    Parameters:
+        input_path: Path to input JSON or JSONL file.
+        output_path: Path to output JSONL file.
+        source_format: Source format (alpaca, sharegpt, openai).
+        target_format: Target format (chatml, llama, alpaca, plain).
+
+    Returns JSON with number of records converted.
+    """
+    from scomp_link import exceptions as exc
+
+    try:
+        from pathlib import Path as _Path
+
+        from scomp_link.llm.formatting import DatasetFormatter
+
+        if not _Path(input_path).is_file():
+            raise exc.DataValidationError(f"Input file not found: {input_path}")
+
+        count = DatasetFormatter.convert_file(input_path, output_path, source_format, target_format)
+        return json.dumps(
+            {
+                "status": "success",
+                "input_path": input_path,
+                "output_path": output_path,
+                "source_format": source_format,
+                "target_format": target_format,
+                "records_converted": count,
+            },
+            indent=2,
+            default=str,
+        )
+    except exc.DataValidationError as e:
+        return json.dumps({"status": "error", "error": str(e), "type": "DataValidationError"})
+    except exc.ScompLinkError as e:
+        return json.dumps({"status": "error", "error": str(e), "type": type(e).__name__})
+
+
+@mcp.tool()
+def llm_dedup(
+    data: str,
+    method: str = "exact",
+    threshold: float = 0.8,
+) -> str:
+    """Deduplicate a text dataset using exact hashing or MinHash near-duplicate detection.
+
+    Parameters:
+        data: Path to text file (one text per line) or JSON/JSONL file.
+        method: Dedup method (exact or ngram).
+        threshold: Jaccard similarity threshold for ngram dedup (0.0-1.0).
+
+    Returns JSON with dedup results (original_count, deduplicated_count, duplicates_removed, duplicate_ratio).
+    """
+    from scomp_link import exceptions as exc
+
+    try:
+        import json as _json
+        from pathlib import Path as _Path
+
+        path = _Path(data)
+        if not path.is_file():
+            raise exc.DataValidationError(f"File not found: {data}")
+
+        raw = path.read_text(encoding="utf-8")
+        texts: list[str] = []
+
+        # Try JSON array first
+        try:
+            parsed = _json.loads(raw)
+            if isinstance(parsed, list):
+                for item in parsed:
+                    if isinstance(item, str):
+                        texts.append(item)
+                    elif isinstance(item, dict):
+                        texts.append(item.get("text", _json.dumps(item)))
+            else:
+                texts = [line.strip() for line in raw.splitlines() if line.strip()]
+        except _json.JSONDecodeError:
+            # Try JSONL
+            for line in raw.splitlines():
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    record = _json.loads(line)
+                    if isinstance(record, dict):
+                        texts.append(record.get("text", _json.dumps(record)))
+                    elif isinstance(record, str):
+                        texts.append(record)
+                    else:
+                        texts.append(line)
+                except _json.JSONDecodeError:
+                    texts.append(line)
+
+        from scomp_link.llm.dedup import TextDeduplicator
+
+        if method == "exact":
+            _, result = TextDeduplicator.exact_dedup(texts)
+        elif method == "ngram":
+            _, result = TextDeduplicator.ngram_dedup(texts, threshold=threshold)
+        else:
+            raise exc.DataValidationError(f"Unknown dedup method '{method}', expected 'exact' or 'ngram'")
+
+        return json.dumps(
+            {
+                "status": "success",
+                "original_count": result.original_count,
+                "deduplicated_count": result.deduplicated_count,
+                "duplicates_removed": result.duplicates_removed,
+                "duplicate_ratio": round(result.duplicate_ratio, 4),
+            },
+            indent=2,
+            default=str,
+        )
+    except exc.DataValidationError as e:
+        return json.dumps({"status": "error", "error": str(e), "type": "DataValidationError"})
+    except exc.ScompLinkError as e:
+        return json.dumps({"status": "error", "error": str(e), "type": type(e).__name__})
+
+
+@mcp.tool()
+def llm_merge(
+    base_model: str,
+    models: str,
+    method: str = "ties",
+    density: float = 0.5,
+    output_dir: str = "./merged",
+) -> str:
+    """Merge multiple fine-tuned models using Linear, SLERP, TIES, or DARE strategies.
+
+    Parameters:
+        base_model: Path to base model (shared pretrained ancestor).
+        models: Comma-separated paths to fine-tuned models.
+        method: Merge method (linear, slerp, ties, dare).
+        density: Density for TIES/DARE (fraction of task vector to keep).
+        output_dir: Output directory for merged model.
+
+    Returns JSON with output_dir and method used.
+    """
+    from scomp_link import exceptions as exc
+
+    try:
+        model_list = [m.strip() for m in models.split(",") if m.strip()]
+        if not model_list:
+            raise exc.DataValidationError("No models provided. Pass comma-separated paths.")
+
+        from scomp_link.llm.merge import ModelMerger
+
+        merger = ModelMerger(base_model)
+
+        if method == "linear":
+            result_path = merger.linear_merge(model_list, output_dir=output_dir)
+        elif method == "slerp":
+            if len(model_list) != 2:
+                raise exc.DataValidationError(f"SLERP requires exactly 2 models, got {len(model_list)}")
+            result_path = merger.slerp_merge(model_list[0], model_list[1], output_dir=output_dir)
+        elif method == "ties":
+            result_path = merger.ties_merge(model_list, density=density, output_dir=output_dir)
+        elif method == "dare":
+            result_path = merger.dare_merge(model_list, density=density, output_dir=output_dir)
+        else:
+            raise exc.DataValidationError(
+                f"Unknown merge method '{method}', expected one of: linear, slerp, ties, dare"
+            )
+
+        return json.dumps(
+            {
+                "status": "success",
+                "method": method,
+                "base_model": base_model,
+                "models": model_list,
+                "output_dir": str(result_path),
+            },
+            indent=2,
+            default=str,
+        )
+    except ImportError as e:
+        return json.dumps({"status": "error", "error": str(e), "type": "ImportError"})
+    except exc.DataValidationError as e:
+        return json.dumps({"status": "error", "error": str(e), "type": "DataValidationError"})
+    except exc.ScompLinkError as e:
+        return json.dumps({"status": "error", "error": str(e), "type": type(e).__name__})
+
+
+@mcp.tool()
+def llm_serve(
+    model_path: str,
+    port: int = 8080,
+    load_in_4bit: bool = False,
+) -> str:
+    """Get info about serving a model (does NOT start the server — use the Python API for that).
+
+    Parameters:
+        model_path: Path to HuggingFace model directory.
+        port: Port for the inference server.
+        load_in_4bit: Whether to load in 4-bit quantization.
+
+    Returns JSON with model info (path, suggested start command).
+    """
+    from pathlib import Path as _Path
+
+    return json.dumps(
+        {
+            "status": "success",
+            "model_path": model_path,
+            "port": port,
+            "load_in_4bit": load_in_4bit,
+            "start_command": (
+                f"python -c \"from scomp_link.llm.serve import InferenceServer; "
+                f"InferenceServer('{model_path}'{', load_in_4bit=True' if load_in_4bit else ''}).start(port={port})\""
+            ),
+            "note": "This tool returns server configuration info. Use the Python API or the start_command to actually launch the server.",
+        },
+        indent=2,
+        default=str,
+    )
+
+
+# ═══════════════════════════════════════════════════════════════════
 # RESOURCES
 # ═══════════════════════════════════════════════════════════════════
 
