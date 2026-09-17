@@ -279,9 +279,9 @@ class FineTuner:
             tokenized_eval.set_format("torch", columns=["input_ids", "attention_mask", "labels"])
 
         train_loader = DataLoader(
-            tokenized_train,
+            tokenized_train,  # type: ignore[arg-type]
             batch_size=batch_size,
-            shuffle=True,  # type: ignore[reportArgumentType]
+            shuffle=True,
         )
 
         optimizer = torch.optim.AdamW(
