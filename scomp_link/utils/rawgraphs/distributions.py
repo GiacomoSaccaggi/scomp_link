@@ -106,7 +106,7 @@ def boxplot(
     fig, ax = plt.subplots(figsize=(width / 100, height / 100))
     bp = ax.boxplot(data, patch_artist=True, notch=False)
     if labels:
-        ax.set_xticklabels(labels)
+        ax.set_xticklabels([str(lb) for lb in labels])
     for i, patch in enumerate(bp["boxes"]):
         patch.set_facecolor(palette[i % len(palette)])
         patch.set_alpha(0.7)
@@ -151,7 +151,7 @@ def violinplot(
             vp[partname].set_edgecolor("#333333")
     if labels:
         ax.set_xticks(range(1, len(labels) + 1))
-        ax.set_xticklabels(labels)
+        ax.set_xticklabels([str(lb) for lb in labels])
     ax.set_title(title)
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)

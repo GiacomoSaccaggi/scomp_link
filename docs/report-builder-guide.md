@@ -135,7 +135,8 @@ scomp-link init-config --local
 | 12 | `report_add_diff` | Add side-by-side diff view (GitHub-style) |
 | 13 | `report_add_mermaid` | Add Mermaid.js diagram (flowchart, sequence, gantt, etc.) |
 | 14 | `report_add_terminal` | Add embedded terminal replay (asciinema player) |
-| 15 | `report_save` | Save to HTML file, close session |
+| 15 | `report_add_math` | Render LaTeX formulas (KaTeX) |
+| 16 | `report_save` | Save to HTML file, close session |
 
 ### Basic Example
 
@@ -763,6 +764,29 @@ with open("demo.cast") as f:
     cast = f.read()
 report_add_terminal("a3f8b2c1", cast, "CLI Demo", cols=100, rows=30, theme="dracula")
 ```
+
+---
+
+## `report_add_math` — LaTeX Formulas
+
+Render LaTeX formulas using KaTeX. Supports display mode (block) and inline math.
+
+### Parameters
+
+| Parameter | Default | Description |
+|-----------|---------|-------------|
+| `report_id` | *required* | Report ID from `report_create` |
+| `formula` | *required* | LaTeX formula string |
+| `title` | `""` | Optional title above the formula |
+
+### Example
+
+```python
+report.add_math(r'\text{BLEU} = \text{BP} \cdot \exp\left(\sum_n w_n \log p_n\right)', title='BLEU Score')
+report.add_math(r'\tau = \theta_{\text{finetuned}} - \theta_{\text{base}}', title='Task Vector')
+```
+
+Supports display mode (`$$...$$`) and inline (`$...$`). Bare `<` and `>` in formulas are auto-sanitized to `\lt` and `\gt` to prevent HTML parsing before KaTeX.
 
 ---
 

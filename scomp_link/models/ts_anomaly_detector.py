@@ -187,7 +187,8 @@ class TimeSeriesAnomalyDetector:
         # Map back to original length (pad beginning with False)
         anomalies = np.zeros(len(values), dtype=bool)
         assert self.ae_threshold_ is not None
-        ae_flags = test_mae > self.ae_threshold_
+        threshold = self.ae_threshold_
+        ae_flags = test_mae > threshold
         # Each sequence covers time_steps points; flag the last point of anomalous sequences
         for i in range(len(ae_flags)):
             if ae_flags[i]:

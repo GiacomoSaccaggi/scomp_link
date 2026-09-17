@@ -279,11 +279,34 @@ results = (
 ## Rules & Constraints
 
 1. **Cannot mix ML and Report steps** in the same chain — raises `TypeError` immediately
-2. **ML chains**: call `.run()` with no arguments — returns a results dict
-3. **Report chains**: call `.run(report)` passing a `ScompLinkHTMLReport` instance
-4. **`SaveStep`** auto-closes any open section before saving
-5. **`SectionStep`** auto-closes the previous section (if using the Python API directly, you must call `close_section()` manually — the DSL handles it for you)
-6. **`LogStep`** is the only step that works in both chain types
+2. **Cannot mix LLM steps with ML or Report steps** — same `TypeError` at `>>` time
+3. **ML chains**: call `.run()` with no arguments — returns a results dict
+4. **Report chains**: call `.run(report)` passing a `ScompLinkHTMLReport` instance
+5. **LLM chains**: call `.run()` with no arguments — returns a results dict
+6. **`SaveStep`** auto-closes any open section before saving
+7. **`SectionStep`** auto-closes the previous section (if using the Python API directly, you must call `close_section()` manually — the DSL handles it for you)
+8. **`LogStep`** is the only step that works in all chain types
+
+---
+
+## LLM Chains
+
+Fine-tune, convert, and persist LLM workflows in a single chain.
+
+```python
+from scomp_link.llm.dsl import LLMFineTuneStep, LLMConvertStep, LLMSaveStep
+
+chain = (
+    LLMFineTuneStep("meta-llama/Llama-3-8B", method="lora", dataset="data.json")
+    >> LLMConvertStep(quantization="Q4_K_M")
+    >> LLMSaveStep("model.scomp")
+)
+chain.run()
+```
+
+Available steps: `LLMFineTuneStep`, `LLMConvertStep`, `LLMSaveStep`, `LLMEvalStep`, `LLMFormatStep`, `LLMDedupStep`, `LLMMergeStep`, `LLMRAGBuildStep`.
+
+LLM steps cannot be mixed with ML or Report steps — `TypeError` at chain construction.
 
 ---
 

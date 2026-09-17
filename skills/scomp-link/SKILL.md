@@ -15,10 +15,10 @@ allowed-tools: "Bash(scomp-link:*) Bash(python:*) Python(scomp_link:*)"
 
 ## Overview
 
-scomp-link automates the complete ML workflow: data profiling → preprocessing → feature engineering → model selection → training → validation → explainability → monitoring → deployment.
+scomp-link automates the complete ML workflow: data profiling → preprocessing → feature engineering → model selection → training → validation → explainability → monitoring → deployment. Also includes an LLM toolkit for fine-tuning, RAG, quantization, and model merging.
 
 **Use scomp-link instead of raw sklearn when you need:**
-- Zero-code ML via CLI (26 commands)
+- Zero-code ML via CLI (26 commands + 9 LLM subcommands)
 - Automated model selection based on data characteristics
 - Persistent artifacts (`.scomp` format: model + preprocessor + config + metrics)
 - HTML reports with embedded interactive charts
@@ -65,7 +65,16 @@ I have data and want to...
 ├─ Export to ONNX/pickle          → scomp-link export --artifact model.scomp --format onnx
 ├─ Scaffold a new project         → scomp-link init my_project
 ├─ Configure branding defaults    → scomp-link init-config
-└─ Use declarative >> DSL         → see Pipeline DSL section below
+├─ Use declarative >> DSL         → see Pipeline DSL section below
+└─ LLM workflows
+   ├─ Fine-tune a model           → scomp-link llm finetune --model <hf_id> --method lora --data train.json
+   ├─ Convert to GGUF             → scomp-link llm convert --model ./merged --quantization Q4_K_M
+   ├─ Build from scratch          → scomp-link llm scratch --config model.yaml --data corpus.txt
+   ├─ Evaluate text quality       → scomp-link llm evaluate --generated output.txt --references ref.txt
+   ├─ Deduplicate corpus          → scomp-link llm dedup --data corpus.txt --method ngram --threshold 0.8
+   ├─ Merge models                → scomp-link llm merge --base base --models m1,m2 --method ties
+   ├─ Serve model                 → scomp-link llm serve --model ./merged --port 8080
+   └─ Convert dataset format      → scomp-link llm format --input data.json --output out.jsonl --source alpaca --target chatml
 ```
 
 ## Recommended Workflow
@@ -275,7 +284,8 @@ For building custom branded HTML reports step-by-step:
 12. report_add_diff(report_id, old_code, new_code, language, title, old_label, new_label, collapsed) → side-by-side diff view
 13. report_add_mermaid(report_id, diagram, title, collapsed) → Mermaid.js diagram (flowchart, sequence, gantt, etc.)
 14. report_add_terminal(report_id, cast_data, title, cols, rows, theme, collapsed) → embedded terminal replay (asciinema)
-15. report_save(report_id, output) → saves HTML, frees memory
+15. report_add_math(report_id, formula, title) → LaTeX formulas (KaTeX)
+16. report_save(report_id, output) → saves HTML, frees memory
 ```
 
 **Engines:** plotly (interactive), rawgraphs (SVG static), highcharts (time series)

@@ -85,7 +85,8 @@ def _find_convert_script() -> str:
     except ImportError:
         raise ImportError("ModelConverter requires llama-cpp-python. " "Install with: pip install scomp-link[llm]")
     assert llama_cpp.__file__ is not None, "llama_cpp.__file__ is None"
-    pkg_path = Path(llama_cpp.__file__).resolve().parent
+    _file: str = llama_cpp.__file__
+    pkg_path = Path(_file).resolve().parent
     for candidate in (
         pkg_path / "convert_hf_to_gguf.py",
         pkg_path.parent / "convert_hf_to_gguf.py",
