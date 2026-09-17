@@ -23,6 +23,13 @@ from scomp_link.llm.rag import (
     validate_response,
 )
 
+try:
+    import chromadb  # noqa: F401
+
+    _has_chromadb = True
+except ImportError:
+    _has_chromadb = False
+
 # ---------------------------------------------------------------------------
 # MockEmbedder (no sentence-transformers needed)
 # ---------------------------------------------------------------------------
@@ -259,6 +266,10 @@ class TestGuardrails:
 # ---------------------------------------------------------------------------
 
 
+@pytest.mark.skipif(
+    not _has_chromadb,
+    reason="chromadb not installed (pip install scomp-link[llm])",
+)
 class TestRAGPipeline:
     def test_build_index(self, tmp_path):
         src = tmp_path / "src"
@@ -328,6 +339,10 @@ class TestRAGPipeline:
 # ---------------------------------------------------------------------------
 
 
+@pytest.mark.skipif(
+    not _has_chromadb,
+    reason="chromadb not installed (pip install scomp-link[llm])",
+)
 class TestDSL:
     def test_rag_build_step(self, tmp_path):
         src = tmp_path / "src"

@@ -14,6 +14,13 @@ from scomp_link.llm.serving.convert import (
     _validate_quantization,
 )
 
+try:
+    import datasets  # noqa: F401
+
+    _has_datasets = True
+except ImportError:
+    _has_datasets = False
+
 # ── TestFormatting ───────────────────────────────────────────────────────────
 
 
@@ -282,6 +289,10 @@ class TestModelConverter:
 # ── TestLoader ───────────────────────────────────────────────────────────────
 
 
+@pytest.mark.skipif(
+    not _has_datasets,
+    reason="datasets package not installed (pip install scomp-link[llm])",
+)
 class TestLoader:
     def test_load_csv(self, tmp_path):
         import pandas as pd
