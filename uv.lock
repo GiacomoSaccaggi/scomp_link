@@ -6546,7 +6546,7 @@ wheels = [
 
 [[package]]
 name = "scomp-link"
-version = "2.3.0"
+version = "2.3.1"
 source = { editable = "." }
 dependencies = [
     { name = "matplotlib", version = "3.8.4", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.12'" },
@@ -6677,8 +6677,8 @@ dev = [
 requires-dist = [
     { name = "accelerate", marker = "extra == 'llm'", specifier = ">=0.25.0,<2.0.0" },
     { name = "bitsandbytes", marker = "extra == 'llm'", specifier = ">=0.42.0,<1.0.0" },
-    { name = "chromadb", marker = "extra == 'llm'", specifier = ">=0.4.0,<1.0.0" },
-    { name = "datasets", marker = "extra == 'llm'", specifier = ">=2.16.0,<4.0.0" },
+    { name = "chromadb", marker = "extra == 'llm'", specifier = ">=0.4.0,<2.0.0" },
+    { name = "datasets", marker = "extra == 'llm'", specifier = ">=2.16.0,<6.0.0" },
     { name = "faiss-cpu", marker = "extra == 'nlp'", specifier = ">=1.7.0,<2.0.0" },
     { name = "flask", marker = "extra == 'serve'", specifier = ">=2.0.0,<4.0.0" },
     { name = "lime", marker = "extra == 'shap'", specifier = ">=0.2.0,<1.0.0" },
@@ -6706,7 +6706,7 @@ requires-dist = [
     { name = "pillow", marker = "python_full_version >= '3.12' and extra == 'cv'", specifier = ">=10.0.0,<13.0.0" },
     { name = "playwright", marker = "extra == 'reports'", specifier = ">=1.40.0,<2.0.0" },
     { name = "plotly", specifier = ">=5.0.0,<8.0.0" },
-    { name = "polars", specifier = ">=0.20.0,<2.0.0" },
+    { name = "polars", specifier = ">=0.20.0,<3.0.0" },
     { name = "pre-commit", marker = "extra == 'dev'", specifier = ">=3.0.0,<5.0.0" },
     { name = "pyarrow", specifier = ">=12.0.0" },
     { name = "pyjwt", marker = "extra == 'reports'", specifier = ">=2.0.0,<3.0.0" },
@@ -6726,7 +6726,7 @@ requires-dist = [
     { name = "scipy", marker = "python_full_version >= '3.14'", specifier = ">=1.14.0,<2.0.0" },
     { name = "scomp-link", extras = ["nlp", "cv", "anomaly", "reports", "shap", "mcp", "serve", "llm"], marker = "extra == 'all'" },
     { name = "seaborn", specifier = ">=0.11.0,<0.14.0" },
-    { name = "sentence-transformers", marker = "extra == 'llm'", specifier = ">=2.2.0,<4.0.0" },
+    { name = "sentence-transformers", marker = "extra == 'llm'", specifier = ">=2.2.0,<7.0.0" },
     { name = "sentence-transformers", marker = "extra == 'nlp'", specifier = ">=2.2.0,<7.0.0" },
     { name = "shap", marker = "extra == 'shap'", specifier = ">=0.42.0,<1.0.0" },
     { name = "spacy", marker = "extra == 'nlp'", specifier = ">=3.5.0,<4.0.0" },
@@ -6744,7 +6744,7 @@ requires-dist = [
     { name = "tqdm", specifier = ">=4.50.0,<5.0.0" },
     { name = "transformers", marker = "extra == 'llm'", specifier = ">=4.38.0,<6.0.0" },
     { name = "transformers", marker = "extra == 'nlp'", specifier = ">=4.30.0,<6.0.0" },
-    { name = "trl", marker = "extra == 'llm'", specifier = ">=0.7.0,<1.0.0" },
+    { name = "trl", marker = "extra == 'llm'", specifier = ">=0.7.0,<2.0.0" },
     { name = "wandb", marker = "extra == 'llm'", specifier = ">=0.16.0,<1.0.0" },
     { name = "weasyprint", marker = "extra == 'reports'", specifier = ">=57.0,<71.0" },
 ]

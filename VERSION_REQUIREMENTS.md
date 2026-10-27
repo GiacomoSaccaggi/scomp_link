@@ -112,7 +112,7 @@ All version ranges are defined in `pyproject.toml` under `[project] dependencies
 
 | Python | Version Range |
 |--------|--------------|
-| All    | >=2.2.0, <6.0.0 |
+| All    | >=2.2.0, <7.0.0 |
 
 ## Computer Vision Dependencies
 
